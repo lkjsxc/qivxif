@@ -7,3 +7,9 @@ authors.workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
+qivxif-core = { workspace = true }
+qivxif-net = { workspace = true }
+qivxif-protocol = { workspace = true }
+qivxif-world = { workspace = true }
+quinn = { workspace = true }
+tokio = { workspace = true }
