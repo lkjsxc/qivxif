@@ -1,0 +1,58 @@
+services:
+  verify:
+    build:
+      context: .
+      dockerfile: Dockerfile.verify
+    working_dir: /workspace
+    environment:
+      CARGO_TARGET_DIR: /target
+    volumes:
+      - .:/workspace:ro
+      - cargo-registry:/usr/local/cargo/registry
+      - target-cache:/target
+
+  smoke:
+    build:
+      context: .
+      dockerfile: Dockerfile.verify
+    entrypoint: ["cargo", "run", "--bin", "qivxifctl", "--", "probe", "smoke", "--addr", "server:4443"]
+    environment:
+      CARGO_TARGET_DIR: /target
+    volumes:
+      - .:/workspace:ro
+      - cargo-registry:/usr/local/cargo/registry
+      - target-cache:/target
+    depends_on:
+      - server
+
+  persist-place:
+    build:
+      context: .
+      dockerfile: Dockerfile.verify
+    entrypoint: ["cargo", "run", "--bin", "qivxifctl", "--", "probe", "persist-place", "--addr", "server:4443"]
+    environment:
+      CARGO_TARGET_DIR: /target
+    volumes:
+      - .:/workspace:ro
+      - cargo-registry:/usr/local/cargo/registry
+      - target-cache:/target
+    depends_on:
+      - server
+
+  persist-check:
+    build:
+      context: .
+      dockerfile: Dockerfile.verify
+    entrypoint: ["cargo", "run", "--bin", "qivxifctl", "--", "probe", "persist-check", "--addr", "server:4443"]
+    environment:
+      CARGO_TARGET_DIR: /target
+    volumes:
+      - .:/workspace:ro
+      - cargo-registry:/usr/local/cargo/registry
+      - target-cache:/target
+    depends_on:
+      - server
+
+volumes:
+  cargo-registry:
+  target-cache:

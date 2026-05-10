@@ -1,0 +1,13 @@
+[package]
+name = "qivxif-sim"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+qivxif-core = { workspace = true }
+qivxif-protocol = { workspace = true }
+qivxif-storage = { workspace = true }
+qivxif-world = { workspace = true }
+thiserror = { workspace = true }

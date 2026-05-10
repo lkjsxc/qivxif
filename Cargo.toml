@@ -1,0 +1,45 @@
+[workspace]
+members = [
+  "apps/qivxif-serverd",
+  "apps/qivxifctl",
+  "crates/qivxif-core",
+  "crates/qivxif-protocol",
+  "crates/qivxif-net",
+  "crates/qivxif-world",
+  "crates/qivxif-sim",
+  "crates/qivxif-storage",
+  "crates/qivxif-quality",
+  "crates/qivxif-probe",
+]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+authors = ["qivxif contributors"]
+
+[workspace.dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+quinn = "0.11"
+rcgen = "0.13"
+redb = "4"
+rustls = "0.23"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tempfile = "3"
+thiserror = "2"
+tokio = { version = "1", features = ["full"] }
+toml = "0.8"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+qivxif-core = { path = "crates/qivxif-core" }
+qivxif-protocol = { path = "crates/qivxif-protocol" }
+qivxif-net = { path = "crates/qivxif-net" }
+qivxif-world = { path = "crates/qivxif-world" }
+qivxif-sim = { path = "crates/qivxif-sim" }
+qivxif-storage = { path = "crates/qivxif-storage" }
+qivxif-quality = { path = "crates/qivxif-quality" }
+qivxif-probe = { path = "crates/qivxif-probe" }

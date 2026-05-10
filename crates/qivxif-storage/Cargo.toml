@@ -1,0 +1,14 @@
+[package]
+name = "qivxif-storage"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+qivxif-core = { workspace = true }
+qivxif-protocol = { workspace = true }
+qivxif-world = { workspace = true }
+redb = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }

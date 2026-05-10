@@ -1,0 +1,14 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["serve", "--config", "/app/config/server.toml"]
+    volumes:
+      - ./config/verify/basic-server.toml:/app/config/server.toml:ro
+      - server-data:/app/data
+    ports:
+      - "4443:4443/udp"
+
+volumes:
+  server-data:
