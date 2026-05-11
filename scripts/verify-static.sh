@@ -26,11 +26,11 @@ run_stage() {
 }
 
 run_stage fmt cargo fmt -- --check
-run_stage clippy cargo clippy --workspace --all-targets -- -D warnings
-run_stage test cargo nextest run --workspace
-run_stage doctest cargo test --doc --workspace
-run_stage build cargo build --release --workspace
-run_stage docs-topology cargo run --bin qivxifctl -- docs validate-topology
-run_stage line-limits cargo run --bin qivxifctl -- quality check-lines
+run_stage clippy cargo clippy --locked --workspace --all-targets -- -D warnings
+run_stage test cargo nextest run --locked --workspace
+run_stage doctest cargo test --locked --doc --workspace
+run_stage build cargo build --locked --release --workspace
+run_stage docs-topology cargo run --locked --bin qivxifctl -- docs validate-topology
+run_stage line-limits cargo run --locked --bin qivxifctl -- quality check-lines
 
 printf 'verify pass\n'

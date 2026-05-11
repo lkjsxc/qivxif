@@ -15,7 +15,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.verify
-    entrypoint: ["cargo", "run", "--bin", "qivxifctl", "--", "probe", "smoke", "--addr", "server:4443"]
+    entrypoint: ["cargo", "run", "--locked", "--bin", "qivxifctl", "--", "probe", "smoke", "--addr", "server:4443"]
     environment:
       CARGO_TARGET_DIR: /target
     volumes:
@@ -29,7 +29,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.verify
-    entrypoint: ["cargo", "run", "--bin", "qivxifctl", "--", "probe", "persist-place", "--addr", "server:4443"]
+    entrypoint: ["cargo", "run", "--locked", "--bin", "qivxifctl", "--", "probe", "persist-place", "--addr", "server:4443"]
     environment:
       CARGO_TARGET_DIR: /target
     volumes:
@@ -43,7 +43,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.verify
-    entrypoint: ["cargo", "run", "--bin", "qivxifctl", "--", "probe", "persist-check", "--addr", "server:4443"]
+    entrypoint: ["cargo", "run", "--locked", "--bin", "qivxifctl", "--", "probe", "persist-check", "--addr", "server:4443"]
     environment:
       CARGO_TARGET_DIR: /target
     volumes:
