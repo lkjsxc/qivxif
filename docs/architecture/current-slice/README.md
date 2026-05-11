@@ -6,6 +6,7 @@ This directory owns the implemented authoritative server slice.
 
 - [vertical-loop.md](vertical-loop.md): public path proven by Compose probes
 - [ownership-map.md](ownership-map.md): code owners for each runtime contract
+- [contract-matrix.md](contract-matrix.md): docs-to-code verification matrix
 - [request-replay.md](request-replay.md): duplicate mutating request behavior
 
 ## Scope
