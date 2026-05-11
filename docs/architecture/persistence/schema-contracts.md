@@ -3,7 +3,7 @@
 ## Tables
 
 - `meta`: world and schema epochs.
-- `sections`: edited section payloads.
+- `sections`: chunk-scoped edit overlay payloads in the initial slice.
 - `profiles`: player state.
 - `bases`: base and claim records.
 - `skills`: progression state.
@@ -20,3 +20,10 @@
 ## Rule
 
 Each table has one owner crate and one owner doc.
+
+## Section Migration
+
+The `sections` table currently uses keys shaped as
+`section/{chunk_x}/{chunk_z}` and values containing edited block cells for that
+chunk. True section keys require `SectionCoord { x, y, z }` and a schema epoch
+decision before deeper world persistence work.

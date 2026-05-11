@@ -7,7 +7,8 @@ Worldgen goldens keep deterministic terrain stable.
 ## Initial Check
 
 The initial slice checks that the same seed and chunk coordinate return the same
-block data plus persisted overrides.
+block data plus chunk-scoped persisted overlays, including negative chunk
+coordinates and air overrides.
 
 ## Rule
 

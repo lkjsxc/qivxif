@@ -1,6 +1,12 @@
 # Quickstart
 
-## Build And Verify
+## Full Acceptance
+
+```bash
+./scripts/verify-compose.sh
+```
+
+## Static Gate
 
 ```bash
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm --build -T verify

@@ -10,4 +10,5 @@ Use this subtree for transport, sessions, and replication.
 - [replication.md](replication.md): state delivery and correction
 - [protocol-epoch.md](protocol-epoch.md): epoch and build gating
 - [protocol-codecs.md](protocol-codecs.md): wire and archive codec ownership
+- [protocol-messages.md](protocol-messages.md): public message catalog
 - [security.md](security.md): transport, secrets, and admin proof

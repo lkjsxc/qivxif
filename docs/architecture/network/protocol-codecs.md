@@ -15,7 +15,8 @@ lanes.
 ## Rules
 
 - Protocol payloads are schema-bound and non-self-describing.
-- Every protocol message has one owner doc and one owner crate.
+- Every protocol message is cataloged in
+  [protocol-messages.md](protocol-messages.md).
 - Mutating requests carry stable request identifiers.
 - Authoritative acknowledgements echo the request identifier.
 - Flush requests carry stable request identifiers.

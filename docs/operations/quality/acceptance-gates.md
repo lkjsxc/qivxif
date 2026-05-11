@@ -12,3 +12,10 @@ verification.
 3. Static gate.
 4. Live probes when behavior is runtime-visible.
 5. Commit.
+
+## Reproducibility
+
+- `.dockerignore` excludes repository history, local temp data, build output,
+  and local redb files from verification builds.
+- Cargo verification commands use `--locked`.
+- The verify image pins `cargo-nextest`.

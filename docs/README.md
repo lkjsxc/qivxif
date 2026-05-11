@@ -38,7 +38,7 @@ operations, and repository rules.
   - `social/`: parties, chat, player markets.
 - `architecture/`
   - `runtime/`: process model, services, task classes, observability.
-  - `network/`: transport, sessions, lanes, replication, epochs, codecs, security.
+  - `network/`: transport, sessions, lanes, replication, epochs, codecs, messages, security.
   - `simulation/`: region ownership, ECS boundary, ticks, handoff, authority.
   - `world/`: coordinates, terrain, chunk streaming, summaries, safe travel.
   - `persistence/`: hot state, archives, schemas, backup and restore.
@@ -65,6 +65,7 @@ operations, and repository rules.
 6. [architecture/network/transport.md](architecture/network/transport.md)
 7. [architecture/simulation/region-ownership.md](architecture/simulation/region-ownership.md)
 8. [architecture/network/protocol-codecs.md](architecture/network/protocol-codecs.md)
-9. [architecture/persistence/hot-state.md](architecture/persistence/hot-state.md)
-10. [operations/verification/compose-pipeline.md](operations/verification/compose-pipeline.md)
-11. [repository/workflow/docs-first-change-sequence.md](repository/workflow/docs-first-change-sequence.md)
+9. [architecture/network/protocol-messages.md](architecture/network/protocol-messages.md)
+10. [architecture/persistence/hot-state.md](architecture/persistence/hot-state.md)
+11. [operations/verification/compose-pipeline.md](operations/verification/compose-pipeline.md)
+12. [repository/workflow/docs-first-change-sequence.md](repository/workflow/docs-first-change-sequence.md)

@@ -28,3 +28,10 @@
 Research facts become durable only when copied into owner docs under `docs/`.
 Report wording that implies named product lines or retired-path preservation is
 translated into epoch wording before it becomes canon.
+
+## Quarantined Wording
+
+- Treat raw report terms as research input until an owner doc translates them.
+- Replace compatibility or legacy-shape language with protocol epoch, build
+  epoch, or schema epoch decisions.
+- Do not copy wording that preserves retired contracts as parallel canon.

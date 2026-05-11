@@ -17,3 +17,5 @@
 ## Rule
 
 Probes use public protocol paths.
+Probe messages, request identifiers, and response codes are owned by
+[../../architecture/network/protocol-messages.md](../../architecture/network/protocol-messages.md).

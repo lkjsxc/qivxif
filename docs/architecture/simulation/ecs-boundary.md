@@ -2,8 +2,8 @@
 
 ## Direction
 
-Use `bevy_ecs` as the standalone ECS inside region actors when entity
-complexity requires dense queries and scheduled systems.
+Use `bevy_ecs` as the standalone ECS inside region actors for region-local
+state that benefits from dense queries and scheduled systems.
 
 ## Rules
 
@@ -15,5 +15,5 @@ complexity requires dense queries and scheduled systems.
 
 ## Initial Slice
 
-The initial chunk mutation path can use simple structs before the ECS boundary
-is needed.
+`bevy_ecs` is already active for region-local stats. Gameplay mutation still
+uses simple structs until entity behavior requires ECS systems.

@@ -11,3 +11,6 @@
 ## Rule
 
 Probe services own readiness and retry behavior.
+Local Compose may use self-signed rcgen certificates and probe-side skipped
+verification. Production deployment must provide trust roots and certificate
+rotation outside the probe path.

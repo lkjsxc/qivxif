@@ -2,18 +2,20 @@
 
 ## Current Objective
 
-Seed the documentation canon, then build the initial authoritative server slice.
+Harden the documented authoritative server slice before client or gameplay work.
 
 ## Work Lanes
 
-- Documentation canon and repository rules.
-- Rust workspace and Docker Compose verification.
-- QUIC server and probe smoke path.
-- Deterministic chunk generation and permanent mutation persistence.
+- Documentation canon and repository rules are active.
+- Rust workspace and Docker Compose verification are active.
+- QUIC hello, join, chunk request, place, flush, restart, and persistence check
+  are complete for the initial slice.
+- Deterministic chunk generation and chunk-scoped edit overlay persistence are
+  complete for the initial slice.
 
 ## Near-Term Exit Criteria
 
-- Docs topology and line limits pass.
-- Workspace builds in Docker.
-- Server starts through Compose.
-- Probe can join, request a chunk, place a block, restart the server, and verify the mutation remains.
+- Protocol ownership docs match the public wire catalog.
+- Verification inputs are reproducible.
+- Storage, protocol, and probe crates stay below line limits.
+- Full `./scripts/verify-compose.sh` acceptance passes.

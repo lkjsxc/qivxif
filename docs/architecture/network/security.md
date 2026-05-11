@@ -11,6 +11,9 @@ mutation.
 - Quinn QUIC sessions provide the game transport.
 - Session transport uses TLS through QUIC.
 - Admin and content HTTPS endpoints use rustls when they exist.
+- The current local Compose server creates self-signed rcgen certificates.
+- The current probe client skips certificate verification only for local
+  Compose acceptance.
 
 ## Secrets And Signatures
 

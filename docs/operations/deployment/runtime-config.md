@@ -11,3 +11,5 @@
 ## Rule
 
 Config must be explicit. Runtime defaults belong in owner docs and tests.
+Production certificate paths, trust roots, and rotation ownership must be added
+here before any non-local deployment accepts clients.

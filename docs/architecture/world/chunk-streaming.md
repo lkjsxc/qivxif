@@ -14,4 +14,5 @@ Collision and interaction data have priority over decorative data.
 
 ## Initial Slice
 
-The first slice returns one deterministic chunk plus persisted block overrides.
+The first slice returns one deterministic chunk plus chunk-scoped edit overlays
+loaded from the `sections` table.

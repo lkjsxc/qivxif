@@ -26,8 +26,11 @@ The project is built for LLM-maintained development. Durable truth belongs in
 
 ## Verification
 
-Use Docker Compose for acceptance:
+Use the full Docker Compose acceptance flow:
 
 ```bash
-docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm --build -T verify
+./scripts/verify-compose.sh
 ```
+
+The script runs the static gate, starts the server, runs smoke and persistence
+probes, restarts the server, and verifies the persisted mutation.

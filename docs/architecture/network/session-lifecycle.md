@@ -19,3 +19,5 @@
 ## Rule
 
 Session state is separate from region-owned world state.
+Public request and response shapes are owned by
+[protocol-messages.md](protocol-messages.md).
