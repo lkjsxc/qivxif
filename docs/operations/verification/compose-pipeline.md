@@ -7,6 +7,7 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm --build -T verify
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml up -d --build server
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T smoke
+docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T protocol-guards
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T request-replay
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T persist-place
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml restart server

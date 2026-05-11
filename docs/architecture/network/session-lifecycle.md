@@ -12,8 +12,8 @@
 
 ## Rejection
 
-- Requests before hello return `HelloRequired`.
-- Gameplay requests before join return `JoinRequired`.
+- `JoinWorld` and `Ping` before accepted hello return `HelloRequired`.
+- Chunk, mutation, and flush requests before accepted join return `JoinRequired`.
 - Protocol epoch mismatch returns `ProtocolEpochMismatch`.
 
 ## Guard Matrix
