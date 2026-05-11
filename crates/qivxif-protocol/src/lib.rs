@@ -23,6 +23,9 @@ pub enum ClientMsg {
         pos: BlockPos,
         block: u16,
     },
+    FlushPersistence {
+        request_id: RequestId,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -46,6 +49,9 @@ pub enum ServerMsg {
         request_id: RequestId,
         cell: BlockCell,
     },
+    FlushAck {
+        request_id: RequestId,
+    },
     Error {
         code: ErrorCode,
         message: String,
@@ -68,6 +74,7 @@ pub enum ErrorCode {
     JoinRequired,
     ChunkError,
     MutationError,
+    FlushError,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -122,6 +129,12 @@ mod tests {
             request_id: 99,
             cell,
         };
+        assert_eq!(decode::<ServerMsg>(&encode(&msg).unwrap()).unwrap(), msg);
+    }
+
+    #[test]
+    fn flush_ack_round_trips_with_request_id() {
+        let msg = ServerMsg::FlushAck { request_id: 100 };
         assert_eq!(decode::<ServerMsg>(&encode(&msg).unwrap()).unwrap(), msg);
     }
 }

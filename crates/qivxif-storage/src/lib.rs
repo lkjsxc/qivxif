@@ -1,4 +1,4 @@
-use qivxif_core::{BlockPos, ChunkCoord, WorldMeta};
+use qivxif_core::{ChunkCoord, WorldMeta};
 use qivxif_protocol::BlockCell;
 use redb::{Database, ReadableDatabase, TableDefinition};
 use std::{fs, path::Path};
@@ -38,7 +38,7 @@ impl WorldStore {
     }
 
     pub fn put_block(&self, cell: &BlockCell) -> Result<(), StoreError> {
-        let coord = block_chunk(cell.pos);
+        let coord = qivxif_world::chunk_coord(cell.pos);
         let mut cells = self.load_chunk(coord)?;
         replace_cell(&mut cells, cell.clone());
         self.put_chunk(coord, &cells)
@@ -53,7 +53,7 @@ impl WorldStore {
         }
     }
 
-    fn put_chunk(&self, coord: ChunkCoord, cells: &[BlockCell]) -> Result<(), StoreError> {
+    pub fn put_chunk(&self, coord: ChunkCoord, cells: &[BlockCell]) -> Result<(), StoreError> {
         let write = self.db.begin_write().map_err(redb_error)?;
         {
             let mut table = write.open_table(SECTIONS).map_err(redb_error)?;
@@ -103,16 +103,7 @@ fn load_meta(db: &Database) -> Result<Option<WorldMeta>, StoreError> {
 
 fn replace_cell(cells: &mut Vec<BlockCell>, edit: BlockCell) {
     cells.retain(|cell| cell.pos != edit.pos);
-    if edit.block != qivxif_world::AIR {
-        cells.push(edit);
-    }
-}
-
-fn block_chunk(pos: BlockPos) -> ChunkCoord {
-    ChunkCoord {
-        x: pos.x.div_euclid(qivxif_world::CHUNK_EDGE),
-        z: pos.z.div_euclid(qivxif_world::CHUNK_EDGE),
-    }
+    cells.push(edit);
 }
 
 fn section_key(coord: ChunkCoord) -> String {
@@ -126,6 +117,7 @@ fn redb_error(error: impl std::fmt::Display) -> StoreError {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use qivxif_core::BlockPos;
 
     #[test]
     fn stores_edits_by_section() {
@@ -138,6 +130,21 @@ mod tests {
         store.put_block(&cell).unwrap();
         assert_eq!(
             store.load_chunk(ChunkCoord { x: 1, z: 0 }).unwrap(),
+            vec![cell]
+        );
+    }
+
+    #[test]
+    fn stores_air_as_removal_override() {
+        let root = tempfile::tempdir().unwrap();
+        let store = WorldStore::open(root.path(), 55).unwrap();
+        let cell = BlockCell {
+            pos: BlockPos { x: 1, y: 0, z: 1 },
+            block: qivxif_world::AIR,
+        };
+        store.put_block(&cell).unwrap();
+        assert_eq!(
+            store.load_chunk(ChunkCoord { x: 0, z: 0 }).unwrap(),
             vec![cell]
         );
     }

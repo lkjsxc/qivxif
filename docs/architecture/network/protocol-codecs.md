@@ -18,6 +18,7 @@ lanes.
 - Every protocol message has one owner doc and one owner crate.
 - Mutating requests carry stable request identifiers.
 - Authoritative acknowledgements echo the request identifier.
+- Flush requests carry stable request identifiers.
 - Error codes are typed protocol values; message text is diagnostic only.
 - Hello responses include server capabilities for the active epoch.
 - Datagram payloads stay small and latest-wins.

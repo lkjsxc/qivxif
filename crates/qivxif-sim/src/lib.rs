@@ -2,9 +2,12 @@ use bevy_ecs::prelude::*;
 use qivxif_core::{BlockPos, ChunkCoord};
 use qivxif_protocol::BlockCell;
 use qivxif_storage::{StoreError, WorldStore};
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc};
 use thiserror::Error;
 use tokio::sync::{mpsc, oneshot};
+
+#[cfg(test)]
+mod region_tests;
 
 #[derive(Clone)]
 pub struct RegionHandle {
@@ -64,6 +67,7 @@ enum RegionCmd {
 struct Region {
     seed: u64,
     store: Arc<WorldStore>,
+    dirty: HashMap<ChunkCoord, Vec<BlockCell>>,
     ecs: World,
 }
 
@@ -71,25 +75,52 @@ impl Region {
     fn new(seed: u64, store: Arc<WorldStore>) -> Self {
         let mut ecs = World::new();
         ecs.insert_resource(RegionStats::default());
-        Self { seed, store, ecs }
+        Self {
+            seed,
+            store,
+            dirty: HashMap::new(),
+            ecs,
+        }
     }
 
     fn chunk(&self, coord: ChunkCoord) -> Result<Vec<BlockCell>, SimError> {
-        let edits = self.store.load_chunk(coord)?;
+        let mut edits = self.store.load_chunk(coord)?;
+        if let Some(dirty) = self.dirty.get(&coord) {
+            for cell in dirty {
+                replace_cell(&mut edits, cell.clone());
+            }
+        }
         Ok(qivxif_world::chunk_cells(coord, self.seed, &edits))
     }
 
     fn place_block(&mut self, pos: BlockPos, block: u16) -> Result<BlockCell, SimError> {
+        validate_pos(pos)?;
         let cell = BlockCell { pos, block };
-        self.store.put_block(&cell)?;
+        let coord = qivxif_world::chunk_coord(pos);
+        if !self.dirty.contains_key(&coord) {
+            self.dirty.insert(coord, self.store.load_chunk(coord)?);
+        }
+        replace_cell(
+            self.dirty.get_mut(&coord).expect("dirty chunk exists"),
+            cell.clone(),
+        );
         self.ecs.resource_mut::<RegionStats>().mutations += 1;
         Ok(cell)
+    }
+
+    fn flush(&mut self) -> Result<(), SimError> {
+        for (coord, cells) in self.dirty.drain() {
+            self.store.put_chunk(coord, &cells)?;
+        }
+        self.ecs.resource_mut::<RegionStats>().flushes += 1;
+        Ok(())
     }
 }
 
 #[derive(Default, Resource)]
 struct RegionStats {
     mutations: u64,
+    flushes: u64,
 }
 
 async fn run_region(mut rx: mpsc::Receiver<RegionCmd>, mut region: Region) {
@@ -102,32 +133,31 @@ async fn run_region(mut rx: mpsc::Receiver<RegionCmd>, mut region: Region) {
                 let _ = reply.send(region.place_block(pos, block));
             }
             RegionCmd::Flush { reply } => {
-                let _ = reply.send(Ok(()));
+                let _ = reply.send(region.flush());
             }
         }
     }
+}
+
+fn validate_pos(pos: BlockPos) -> Result<(), SimError> {
+    if (0..qivxif_world::CHUNK_EDGE).contains(&pos.y) {
+        Ok(())
+    } else {
+        Err(SimError::InvalidBlockPos(pos))
+    }
+}
+
+fn replace_cell(cells: &mut Vec<BlockCell>, edit: BlockCell) {
+    cells.retain(|cell| cell.pos != edit.pos);
+    cells.push(edit);
 }
 
 #[derive(Debug, Error)]
 pub enum SimError {
     #[error("region actor closed")]
     Closed,
+    #[error("invalid block position: {0:?}")]
+    InvalidBlockPos(BlockPos),
     #[error(transparent)]
     Store(#[from] StoreError),
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[tokio::test]
-    async fn actor_serializes_mutation() {
-        let root = tempfile::tempdir().unwrap();
-        let store = Arc::new(WorldStore::open(root.path(), 3).unwrap());
-        let region = RegionHandle::spawn(3, store);
-        let pos = BlockPos { x: 1, y: 3, z: 1 };
-        region.place_block(pos, 8).await.unwrap();
-        let cells = region.chunk(ChunkCoord { x: 0, z: 0 }).await.unwrap();
-        assert!(cells.contains(&BlockCell { pos, block: 8 }));
-    }
 }

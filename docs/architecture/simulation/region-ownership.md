@@ -9,6 +9,7 @@ Region actors own mutable world state.
 - Non-owner services send messages.
 - A region validates mutation before applying it.
 - Dirty sections are queued for persistence after mutation.
+- Flush commands write queued dirty sections before restart-sensitive checks.
 - Cross-region work uses explicit handoff messages.
 
 ## Initial Slice

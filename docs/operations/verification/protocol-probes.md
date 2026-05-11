@@ -11,6 +11,7 @@
 ## Persistence Probes
 
 - `persist-place` places a block with a stable request identifier.
+- `persist-place` forces a public flush before exiting.
 - `persist-check` reconnects after restart and confirms the block.
 
 ## Rule

@@ -16,3 +16,4 @@ Use `redb` for authoritative local hot state.
 ## Rule
 
 Writes happen outside the region tick path.
+Restart-sensitive probes force an explicit flush before server restart.

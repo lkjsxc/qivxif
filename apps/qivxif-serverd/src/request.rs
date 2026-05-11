@@ -30,6 +30,16 @@ pub async fn respond(request: ClientMsg, state: &AppState, session: &mut Session
             Err(error) => error_msg(ErrorCode::MutationError, error),
         },
         ClientMsg::PlaceBlock { .. } => phase_error(ErrorCode::JoinRequired),
+        ClientMsg::FlushPersistence { request_id } if session.can_play() => {
+            match state.region.flush().await {
+                Ok(()) => {
+                    tracing::info!(session_id = session.id, "persistence flushed");
+                    ServerMsg::FlushAck { request_id }
+                }
+                Err(error) => error_msg(ErrorCode::FlushError, error),
+            }
+        }
+        ClientMsg::FlushPersistence { .. } => phase_error(ErrorCode::JoinRequired),
     }
 }
 

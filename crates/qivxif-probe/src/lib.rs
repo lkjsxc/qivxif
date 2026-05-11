@@ -33,11 +33,17 @@ pub async fn persist_place(addr: &str) -> Result<()> {
         .await?
     {
         ServerMsg::MutationAck { request_id, cell }
-            if request_id == REQUEST_ID && cell == test_cell() =>
-        {
-            Ok(())
-        }
+            if request_id == REQUEST_ID && cell == test_cell() => {}
         other => bail!("unexpected mutation response: {other:?}"),
+    }
+    match client
+        .request(ClientMsg::FlushPersistence {
+            request_id: REQUEST_ID + 1,
+        })
+        .await?
+    {
+        ServerMsg::FlushAck { request_id } if request_id == REQUEST_ID + 1 => Ok(()),
+        other => bail!("unexpected flush response: {other:?}"),
     }
 }
 

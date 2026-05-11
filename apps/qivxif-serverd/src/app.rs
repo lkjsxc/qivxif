@@ -98,5 +98,6 @@ fn request_name(request: &ClientMsg) -> &'static str {
         ClientMsg::Ping { .. } => "ping",
         ClientMsg::ChunkRequest { .. } => "chunk_request",
         ClientMsg::PlaceBlock { .. } => "place_block",
+        ClientMsg::FlushPersistence { .. } => "flush_persistence",
     }
 }

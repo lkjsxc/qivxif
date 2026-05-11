@@ -6,6 +6,7 @@
 - Tick work never blocks on file I/O.
 - Tick work never waits on network backpressure.
 - Expensive jobs leave the tick path through bounded queues.
+- The initial server slice may flush on explicit probe/admin commands only.
 
 ## Failure
 

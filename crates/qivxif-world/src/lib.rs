@@ -56,6 +56,13 @@ pub fn in_chunk(pos: BlockPos, coord: ChunkCoord) -> bool {
     pos.x.div_euclid(CHUNK_EDGE) == coord.x && pos.z.div_euclid(CHUNK_EDGE) == coord.z
 }
 
+pub fn chunk_coord(pos: BlockPos) -> ChunkCoord {
+    ChunkCoord {
+        x: pos.x.div_euclid(CHUNK_EDGE),
+        z: pos.z.div_euclid(CHUNK_EDGE),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
