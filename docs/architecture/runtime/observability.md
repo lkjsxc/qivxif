@@ -9,7 +9,7 @@
 
 | Signal | Implementation fact |
 | --- | --- |
-| `server starting` | Includes config path, bind address, data directory, build epoch, and protocol epoch |
+| `server starting` | Includes config path, bind address, data directory, build contract, and protocol contract |
 | `server listening` | Includes bound address |
 | `connection accepted` | Info log without raw client address |
 | `connection remote address` | Debug log with raw client address |

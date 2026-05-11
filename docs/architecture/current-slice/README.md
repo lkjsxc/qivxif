@@ -6,7 +6,7 @@ This directory owns the implemented authoritative server slice.
 
 - Status: implemented.
 - Runtime: one server process.
-- Client: probe CLI only; no game client.
+- Client: headless protocol client plus probe CLI; no graphical game client.
 - Persistence: redb hot database plus local archive manifest smoke path.
 
 ## Child Index
@@ -25,7 +25,8 @@ This directory owns the implemented authoritative server slice.
 - Postcard-encoded public protocol messages.
 - redb-backed chunk edit overlays.
 - Local object archive manifest write/read/list tests.
-- Compose probes for smoke, protocol guards, malformed wire, request replay, and restart persistence.
+- Compose probes for smoke, protocol guards, malformed wire, request replay,
+  headless client smoke, and restart persistence.
 
 ## Not Implemented In Current Slice
 

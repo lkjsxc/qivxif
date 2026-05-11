@@ -34,7 +34,7 @@ identifiers, and response codes are owned by
 - `protocol-guards` verifies public rejection codes through QUIC.
 - It sends join, ping, chunk, place, and flush requests before their required
   phases.
-- It sends hello requests with empty build epoch and mismatched protocol epoch.
+- It sends hello requests with empty build contract and mismatched protocol contract.
 - It asserts only durable `Error.code` values.
 
 ## Malformed Wire Probe

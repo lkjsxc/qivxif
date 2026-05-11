@@ -16,7 +16,7 @@ Use this subtree for implemented QUIC transport, sessions, and public protocol.
 - [session-lifecycle.md](session-lifecycle.md): connection phases and guards.
 - [message-lanes.md](message-lanes.md): active and dormant lane facts.
 - [replication.md](replication.md): current chunk response facts.
-- [protocol-epoch.md](protocol-epoch.md): epoch and build gating.
+- [protocol-contract.md](protocol-contract.md): protocol and build contract gating.
 - [protocol-codecs.md](protocol-codecs.md): wire codec ownership.
 - [protocol-messages.md](protocol-messages.md): public message catalog.
 - [security.md](security.md): implemented transport security facts.

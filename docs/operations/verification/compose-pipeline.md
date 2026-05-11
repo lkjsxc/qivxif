@@ -27,6 +27,7 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T protocol-guards
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T malformed-wire
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T request-replay
+docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T client-cli
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T persist-place
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml restart server
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T persist-check
@@ -42,6 +43,7 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 | `protocol-guards` | Verifies session-phase and hello rejection codes through public QUIC requests. |
 | `malformed-wire` | Verifies decode failures return `BadRequest` and do not advance session phase. |
 | `request-replay` | Verifies duplicate mutating identifiers return the first response without applying or flushing again. |
+| `client-cli` | Verifies the headless protocol client through the public server path. |
 | `persist-place` | Mutates a block through the public path. |
 | `persist-check` | Verifies the mutation after restart. |
 

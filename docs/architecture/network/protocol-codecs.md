@@ -13,12 +13,12 @@
 - `qivxif_net::recv_wire` reads up to 1 MiB and deserializes with postcard.
 - Malformed bytes return `ErrorCode::BadRequest` through the public QUIC path.
 
-## Epoch Ownership
+## Contract Ownership
 
-- `protocol_epoch` owns message shape, enum tags, and field meaning.
-- `build_epoch` owns client and server build identity.
-- `world_epoch` owns persistent world identity.
-- A wire-shape change requires an explicit protocol epoch decision.
+- `protocol_contract` owns message shape, enum tags, and field meaning.
+- `build_contract` owns client and server build identity.
+- `world_id` owns persistent world identity.
+- A wire-shape change requires an explicit protocol contract decision.
 
 ## Rules
 

@@ -1,10 +1,10 @@
 # Client Architecture
 
-Use this subtree for dormant client contracts.
+Use this subtree for implemented and dormant client contracts.
 
 ## Current Implementation
 
-- No native client crate exists.
+- `apps/qivxif-client-cli` is the implemented headless protocol client.
 - No renderer crate exists.
 - No platform shell exists.
 - `apps/qivxifctl` is a probe CLI, not a game client.
@@ -12,6 +12,7 @@ Use this subtree for dormant client contracts.
 
 ## Child Index
 
+- [headless-client.md](headless-client.md): implemented protocol client boundary.
 - [platform-shells.md](platform-shells.md): dormant platform shell boundary.
 - [renderer.md](renderer.md): dormant renderer boundary.
 - [asset-streaming.md](asset-streaming.md): dormant asset streaming boundary.
@@ -20,4 +21,5 @@ Use this subtree for dormant client contracts.
 
 ## Rule
 
-- Do not describe client behavior as implemented until workspace client crates exist.
+- Describe only `qivxif-client-cli` behavior as implemented until shared client
+  core, shell, or renderer crates exist.

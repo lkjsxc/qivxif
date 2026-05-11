@@ -7,9 +7,9 @@ Owner doc for repository wording constraints.
 | Term | Use |
 |---|---|
 | Initial slice | Current limited implementation scope. |
-| Protocol epoch | Protocol compatibility marker. |
-| Build epoch | Build compatibility marker. |
-| Schema epoch | Storage or payload schema compatibility marker. |
+| Protocol contract | Protocol compatibility marker. |
+| Build contract | Build identity marker. |
+| Schema contract | Storage or payload schema marker. |
 | Deprecated path deleted | Retired paths are removed instead of aliased. |
 
 ## Avoid

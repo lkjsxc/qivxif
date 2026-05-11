@@ -14,8 +14,8 @@ semantics must stay aligned with implementation tests and owner docs.
 | `bind_addr` | Socket address for QUIC. |
 | `data_dir` | Durable state directory. |
 | `world_seed` | Deterministic world seed. |
-| `build_epoch` | Build gate. |
-| `protocol_epoch` | Wire gate. |
+| `build_contract` | Build identity gate. |
+| `protocol_contract` | Wire contract gate. |
 
 ## Rule
 

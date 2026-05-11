@@ -1,16 +1,13 @@
 # Line Limits
 
-LLM purpose: state file-size limits that keep agent context usable.
+LLM purpose: link to the repository owner for file-size limits.
 
-## Limits
+## Owner
 
-| File type | Limit |
-| --- | --- |
-| Docs Markdown | `<=300` lines. |
-| Authored Rust and shell source | `<=200` lines. |
+The durable line-limit contract is
+[../../repository/rules/line-limits.md](../../repository/rules/line-limits.md).
 
-## Rules
+## Quality Gate
 
-- Split by ownership.
-- Do not minify.
-- Do not remove useful names to save lines.
+- `qivxifctl quality check-lines` enforces the owner contract.
+- This file exists so operations quality readers can find the gate.

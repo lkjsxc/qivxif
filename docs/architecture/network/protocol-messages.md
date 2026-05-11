@@ -2,7 +2,7 @@
 
 ## Status
 
-- Status: implemented for protocol epoch `1`.
+- Status: implemented for protocol contract `1`.
 - Owner: `crates/qivxif-protocol`.
 - Encoding: postcard.
 
@@ -19,7 +19,7 @@
 
 | Message | Fields | Phase | Response |
 | --- | --- | --- | --- |
-| `Hello` | `build_epoch`, `protocol_epoch` | After connect | `HelloOk` or `Error` |
+| `Hello` | `build_contract`, `protocol_contract` | After connect | `HelloOk` or `Error` |
 | `JoinWorld` | `player` | After hello | `Joined` or `Error` |
 | `Ping` | `nonce` | After hello | `Pong` or `Error` |
 | `ChunkRequest` | `coord` | After join | `Chunk` or `Error` |
@@ -30,7 +30,7 @@
 
 | Message | Fields | Rule |
 | --- | --- | --- |
-| `HelloOk` | `session_id`, `world_epoch`, `caps` | Opens the session for join and ping |
+| `HelloOk` | `session_id`, `world_id`, `caps` | Opens the session for join and ping |
 | `Joined` | `player` | Echoes accepted player label |
 | `Pong` | `nonce` | Echoes ping nonce |
 | `Chunk` | `coord`, `cells` | Returns generated visible cells plus persisted overlays |
@@ -51,8 +51,8 @@
 | Code | Meaning |
 | --- | --- |
 | `BadRequest` | Decode or request framing failed before session mutation |
-| `BuildEpochMissing` | Client or server build epoch was empty |
-| `ProtocolEpochMismatch` | Client protocol epoch differs from server |
+| `BuildContractMissing` | Client or server build contract was empty |
+| `ProtocolContractMismatch` | Client protocol contract differs from server |
 | `HelloRequired` | Request requires hello first |
 | `JoinRequired` | Request requires join first |
 | `ChunkError` | Chunk load or generation failed |
@@ -62,5 +62,5 @@
 ## Encoding Rules
 
 - Public messages round-trip through postcard.
-- Enum tags and field meanings are owned by `protocol_epoch`.
+- Enum tags and field meanings are owned by `protocol_contract`.
 - No retired wire-shape shims exist.

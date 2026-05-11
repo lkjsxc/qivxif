@@ -19,5 +19,5 @@ before writing behavior that depends on them.
 - Far-field visual style.
 - Physics helper ownership.
 - Windows artifact release policy after the headless/protocol client milestone.
-- Schema epoch for deeper `SectionCoord { x, y, z }` storage.
+- Schema contract for deeper `SectionCoord { x, y, z }` storage.
 - Archive retention and restore-drill cadence.

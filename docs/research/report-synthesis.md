@@ -10,12 +10,12 @@
 
 ## Durable Findings
 
-- qivxif already has a coherent docs-first canon and an initial server slice.
+- qivxif already has a coherent docs-first canon, server slice, and headless client.
 - Sibling repositories use docs-first workflow, recursive TOCs, line limits, and Compose gates.
 - The recommended product is a Rust-native voxel MMORPG survival sandbox.
 - The recommended architecture is one authoritative world server with native clients.
 - The recommended path is canon, verified server authority, persistence hardening,
-  protocol lanes, world depth, then client and gameplay.
+  protocol lanes, world depth, then graphical client and gameplay.
 - Keep the architecture narrow: one renderer family, one protocol library, one persistence boundary, and region-owned mutation.
 - Use `bevy_ecs` inside region actors once entity complexity needs dense data-oriented simulation.
 - Use QUIC streams plus datagrams through Quinn for transactional and latest-wins traffic.
@@ -61,7 +61,7 @@
 5. Persist active terrain edits in `redb` before adding archive workflows.
 6. Add `object_store` archive smoke paths only after hot-state behavior is stable.
 7. Keep renderer and native-shell work behind the client boundary docs.
-8. Prove a protocol/headless client path before user-facing graphical clients.
+8. Prove a Windows headless client artifact before graphical clients.
 
 ## Stack Boundaries
 
@@ -81,13 +81,13 @@
 
 Research facts become durable only when copied into owner docs under `docs/`.
 Report wording that implies named product lines or retired-path preservation is
-translated into epoch wording before it becomes canon.
+translated into contract wording before it becomes canon.
 
 ## Quarantined Wording
 
 - Treat raw report terms as research input until an owner doc translates them.
-- Translate retired-shape language into protocol epoch, build epoch, or schema
-  epoch decisions.
+- Translate retired-shape language into protocol contract, build contract, or schema
+  contract decisions.
 - Do not copy wording that keeps retired contracts as parallel canon.
 
 ## Non-Canon Report Content

@@ -16,6 +16,10 @@ This file owns local Compose service roles only. Probe behavior is defined in
 | `server` | Authoritative world server. |
 | `verify` | Static build and quality gate. |
 | `smoke` | Live QUIC smoke probe. |
+| `protocol-guards` | Session guard rejection probe. |
+| `malformed-wire` | Decode failure probe. |
+| `request-replay` | Mutating request replay probe. |
+| `client-cli` | Headless protocol client smoke path. |
 | `persist-place` | Writes a mutation through the public path. |
 | `persist-check` | Verifies persisted mutation after restart. |
 

@@ -9,7 +9,7 @@
 ## Public Request Path
 
 1. Probe connects to the server over QUIC.
-2. Probe sends `Hello` with non-empty `build_epoch` and matching `protocol_epoch`.
+2. Probe sends `Hello` with non-empty `build_contract` and matching `protocol_contract`.
 3. Probe sends `JoinWorld`.
 4. Probe sends `ChunkRequest` for `ChunkCoord { x: 0, z: 0 }`.
 5. Probe sends `PlaceBlock` with a session-scoped `request_id`.

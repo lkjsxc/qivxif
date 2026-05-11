@@ -7,8 +7,9 @@
 
 ## Durable Findings
 
-- The current repository has a server/probe slice, not a graphical client crate.
-- The first credible Windows milestone is a headless/protocol client executable.
+- The current repository has a server, probe, and headless client slice.
+- The next credible Windows milestone is a headless/protocol client executable
+  built as a Windows artifact.
 - The longer delivery path is shared client core, desktop shell, renderer shell,
   then mobile shells.
 - Use one shared Rust client core behind thin platform shells.

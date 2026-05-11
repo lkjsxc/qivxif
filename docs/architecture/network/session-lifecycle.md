@@ -27,8 +27,8 @@
 
 | Guard | Trigger | Durable code |
 | --- | --- | --- |
-| Build epoch present | `Hello` carries empty build epoch | `BuildEpochMissing` |
-| Protocol epoch match | `Hello` carries mismatched protocol epoch | `ProtocolEpochMismatch` |
+| Build contract present | `Hello` carries empty build contract | `BuildContractMissing` |
+| Protocol contract match | `Hello` carries mismatched protocol contract | `ProtocolContractMismatch` |
 | Hello before join | `JoinWorld` before accepted `Hello` | `HelloRequired` |
 | Hello before ping | `Ping` before accepted `Hello` | `HelloRequired` |
 | Join before chunk | `ChunkRequest` before accepted `JoinWorld` | `JoinRequired` |

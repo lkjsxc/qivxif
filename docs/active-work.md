@@ -4,7 +4,8 @@
 
 Improve documentation first, then implementation.
 
-Current state: the authoritative server slice is implemented; there is no client yet.
+Current state: the authoritative server slice and headless protocol client are
+implemented; there is no graphical client yet.
 
 ## Work Lanes
 
@@ -12,6 +13,7 @@ Current state: the authoritative server slice is implemented; there is no client
 - Rust workspace and Docker Compose verification are active.
 - QUIC hello, join, chunk, place, flush, restart, and persistence lanes are
   complete.
+- `qivxif-client-cli` is part of Compose acceptance.
 - Deterministic chunk generation and edit overlay persistence are complete.
 - Protocol guard docs own the public session-phase rejection matrix.
 - Malformed-wire docs own the public decode rejection contract.
@@ -23,3 +25,4 @@ Current state: the authoritative server slice is implemented; there is no client
 - Malformed-wire probes match the public decode rejection contract.
 - Verification inputs are reproducible.
 - Full `./scripts/verify-compose.sh` acceptance passes.
+- Windows headless client artifact verification is documented and automated.

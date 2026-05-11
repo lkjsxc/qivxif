@@ -39,6 +39,7 @@
   - [request-replay.md](architecture/current-slice/request-replay.md): duplicate mutating request behavior.
 - `client/`
   - [README.md](architecture/client/README.md): native clients.
+  - [headless-client.md](architecture/client/headless-client.md): implemented protocol client.
   - [platform-shells.md](architecture/client/platform-shells.md): desktop and mobile shell rules.
   - [renderer.md](architecture/client/renderer.md): `wgpu` renderer family.
   - [asset-streaming.md](architecture/client/asset-streaming.md): streaming and cache rules.
@@ -50,7 +51,7 @@
   - [session-lifecycle.md](architecture/network/session-lifecycle.md): connection phases.
   - [message-lanes.md](architecture/network/message-lanes.md): reliable and latest-wins lanes.
   - [replication.md](architecture/network/replication.md): state delivery and correction.
-  - [protocol-epoch.md](architecture/network/protocol-epoch.md): epoch and build gating.
+  - [protocol-contract.md](architecture/network/protocol-contract.md): protocol and build contract gating.
   - [protocol-codecs.md](architecture/network/protocol-codecs.md): wire and archive codec ownership.
   - [protocol-messages.md](architecture/network/protocol-messages.md): public message catalog.
   - [security.md](architecture/network/security.md): transport, secrets, and admin proof.
@@ -132,6 +133,7 @@
   - [compose-pipeline.md](operations/verification/compose-pipeline.md): canonical commands.
   - [static-gates.md](operations/verification/static-gates.md): static checks.
   - [protocol-probes.md](operations/verification/protocol-probes.md): live network probes.
+  - [windows-client-artifact.md](operations/verification/windows-client-artifact.md): Windows headless client build.
   - [worldgen-goldens.md](operations/verification/worldgen-goldens.md): deterministic generation checks.
   - [render-goldens.md](operations/verification/render-goldens.md): renderer checks.
   - [soak-load.md](operations/verification/soak-load.md): long-running checks.
@@ -167,10 +169,21 @@
 ### `research/`
 
 - [README.md](research/README.md): durable synthesis of non-canon input.
-- [report-synthesis.md](research/report-synthesis.md): synthesis of the latest research report.
+- [report-synthesis.md](research/report-synthesis.md): synthesis of research reports.
 - [rendering-references.md](research/rendering-references.md): renderer findings.
 - [networking-references.md](research/networking-references.md): network findings.
 - [storage-references.md](research/storage-references.md): storage findings.
+- [client-delivery-references.md](research/client-delivery-references.md): Windows and client delivery findings.
+- [operations-references.md](research/operations-references.md): verification and tooling findings.
+- [security-references.md](research/security-references.md): trust boundary findings.
+
+### `vision/`
+
+- [README.md](vision/README.md): purpose and direction.
+- [purpose.md](vision/purpose.md): goals, non-goals, and source of truth.
+- [principles.md](vision/principles.md): product, engineering, and maintenance guardrails.
+- [product-shape.md](vision/product-shape.md): canonical game shape.
+- [llm-authoring.md](vision/llm-authoring.md): LLM-oriented authoring constraints.
 
 ### `getting-started/`
 

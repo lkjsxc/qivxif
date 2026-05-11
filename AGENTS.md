@@ -16,7 +16,7 @@
 
 ## Wording
 
-- Use protocol epoch, build epoch, or schema epoch.
+- Use protocol contract, build contract, or schema contract.
 - Avoid named product-line labels and stale old-path aliases.
 - Delete retired contracts instead of preserving parallel meanings.
 

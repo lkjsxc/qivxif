@@ -19,4 +19,4 @@ This file stores persistence research. Schema changes require an owner decision.
 
 The initial slice stores chunk-scoped edit overlays in the redb `sections`
 table. The intended deeper-world move is true `SectionCoord { x, y, z }`
-storage behind a schema epoch decision.
+storage behind a schema contract decision.

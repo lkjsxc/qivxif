@@ -4,7 +4,7 @@ Owner doc for the active Rust workspace shape.
 
 ## Scope
 
-The active workspace is the server/probe slice. Client, renderer,
+The active workspace is the server, probe, and headless client slice. Renderer,
 authentication, gameplay, and mobile crates are added only after their owner
 docs are active.
 
@@ -13,6 +13,7 @@ docs are active.
 | App | Role |
 |---|---|
 | `qivxif-serverd` | Authoritative server. |
+| `qivxif-client-cli` | Headless protocol client. |
 | `qivxifctl` | Quality and probe command. |
 
 ## Crates
@@ -30,8 +31,8 @@ docs are active.
 
 ## Planned Areas
 
-- Shared client core.
 - Desktop and mobile platform shells.
+- Shared client core.
 - Renderer family.
 - Authentication and identity.
 - Gameplay systems.

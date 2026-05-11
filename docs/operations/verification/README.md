@@ -8,7 +8,8 @@ long-running checks.
 1. [compose-pipeline.md](compose-pipeline.md) for full acceptance order.
 2. [static-gates.md](static-gates.md) for build and docs gates.
 3. [protocol-probes.md](protocol-probes.md) for live public-path probes.
-4. Golden and soak files for specialized regression areas.
+4. [windows-client-artifact.md](windows-client-artifact.md) for the headless Windows artifact.
+5. Golden and soak files for specialized regression areas.
 
 ## Boundary
 
@@ -20,6 +21,7 @@ behavior means.
 - [compose-pipeline.md](compose-pipeline.md): canonical commands
 - [static-gates.md](static-gates.md): static checks
 - [protocol-probes.md](protocol-probes.md): live network probes
+- [windows-client-artifact.md](windows-client-artifact.md): Windows headless client build
 - [worldgen-goldens.md](worldgen-goldens.md): deterministic generation checks
 - [render-goldens.md](render-goldens.md): renderer checks
 - [soak-load.md](soak-load.md): long-running checks

@@ -32,6 +32,6 @@
 | Finding | Durable owner |
 | --- | --- |
 | Compose acceptance | `operations/verification/compose-pipeline.md` |
-| Line limits | `vision/llm-authoring.md` |
+| Line limits | `repository/rules/line-limits.md` |
 | Evidence files | `getting-started/verification.md` |
 | Runtime observability | `architecture/runtime/` |

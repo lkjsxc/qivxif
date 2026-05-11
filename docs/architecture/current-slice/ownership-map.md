@@ -3,7 +3,7 @@
 ## Status
 
 - Status: implemented for server slice owners.
-- Client owners are dormant because no client crate exists.
+- Graphical client owners are dormant because no shell or renderer crate exists.
 
 ## Runtime Owners
 
@@ -18,6 +18,7 @@
 | Deterministic chunk generation | `crates/qivxif-world` |
 | Hot edit overlays | `crates/qivxif-storage` |
 | Public probe scenarios | `crates/qivxif-probe` |
+| Headless protocol client | `apps/qivxif-client-cli` |
 | Static repository gates | `crates/qivxif-quality` |
 
 ## Doc Owners
@@ -31,6 +32,7 @@
 | redb hot state | [../persistence/hot-state.md](../persistence/hot-state.md) |
 | redb schema | [../persistence/schema-contracts.md](../persistence/schema-contracts.md) |
 | Object archive manifests | [../persistence/object-archives.md](../persistence/object-archives.md) |
+| Headless protocol client | [../client/headless-client.md](../client/headless-client.md) |
 
 ## Change Rule
 
