@@ -53,6 +53,20 @@ services:
     depends_on:
       - server
 
+  protocol-guards:
+    build:
+      context: .
+      dockerfile: Dockerfile.verify
+    entrypoint: ["cargo", "run", "--locked", "--bin", "qivxifctl", "--", "probe", "protocol-guards", "--addr", "server:4443"]
+    environment:
+      CARGO_TARGET_DIR: /target
+    volumes:
+      - .:/workspace:ro
+      - cargo-registry:/usr/local/cargo/registry
+      - target-cache:/target
+    depends_on:
+      - server
+
   persist-check:
     build:
       context: .

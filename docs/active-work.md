@@ -12,10 +12,11 @@ Harden the documented authoritative server slice before client or gameplay work.
   are complete for the initial slice.
 - Deterministic chunk generation and chunk-scoped edit overlay persistence are
   complete for the initial slice.
+- Protocol guard docs now own the public session-phase rejection matrix.
 
 ## Near-Term Exit Criteria
 
-- Protocol ownership docs match the public wire catalog.
+- Protocol guard probes match the public wire catalog.
 - Verification inputs are reproducible.
 - Storage, protocol, and probe crates stay below line limits.
 - Full `./scripts/verify-compose.sh` acceptance passes.

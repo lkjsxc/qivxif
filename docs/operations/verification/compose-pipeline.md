@@ -18,6 +18,8 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 
 - `verify` runs formatting, Clippy, nextest, doctests, optimized build, docs topology, and line limits.
 - `smoke` verifies connect, hello, join, chunk request, and ping.
+- `protocol-guards` verifies session-phase and hello rejection codes through
+  public QUIC requests.
 - `request-replay` verifies duplicate mutating identifiers return the first
   response without applying or flushing again.
 - `persist-place` mutates a block through the public path.

@@ -68,6 +68,9 @@ This file owns public qivxif protocol messages for protocol epoch `1`.
 | `MutationError` | Mutation validation or queueing failed |
 | `FlushError` | Persistence flush failed |
 
+Error codes are durable protocol outcomes. Error messages are diagnostic text
+for operators and probes must not assert exact message wording.
+
 ## Encoding Rules
 
 - Public messages round-trip through postcard.

@@ -21,6 +21,14 @@
 - `request-replay` sends the same `FlushPersistence` identifier twice.
 - The second flush response must equal the first flush acknowledgement.
 
+## Guard Probe
+
+- `protocol-guards` verifies public rejection codes through QUIC.
+- It sends join, ping, chunk, place, and flush requests before their required
+  phases.
+- It sends hello requests with empty build epoch and mismatched protocol epoch.
+- It asserts only durable `Error.code` values.
+
 ## Rule
 
 Probes use public protocol paths.
