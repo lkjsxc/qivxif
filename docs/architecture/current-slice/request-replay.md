@@ -18,6 +18,9 @@ Mutating request identifiers are session-scoped replay guards.
 - The `request-replay` Compose probe verifies both behaviors through the public
   QUIC path.
 
+Player-visible terrain editing expectations are owned by
+[../../product/world/terrain-editing.md](../../product/world/terrain-editing.md).
+
 ## Rationale
 
 Reliable streams already preserve ordered bytes inside one stream. Request

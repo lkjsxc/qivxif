@@ -10,6 +10,9 @@
 6. Receive authoritative outcome.
 7. Disconnect or timeout.
 
+Player-facing onboarding flow is owned by
+[../../product/player/onboarding.md](../../product/player/onboarding.md).
+
 ## Rejection
 
 - `JoinWorld` and `Ping` before accepted hello return `HelloRequired`.

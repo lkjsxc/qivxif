@@ -2,7 +2,7 @@
 
 ## Rule
 
-Accepted terrain edits are permanent everywhere.
+Accepted terrain edits are durable player-visible world changes.
 
 ## Safety Model
 

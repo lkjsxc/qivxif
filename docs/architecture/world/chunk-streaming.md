@@ -8,6 +8,10 @@
 - Interaction radius.
 - Pending requests.
 
+Player-facing world and camera expectations are owned by
+[../../product/world/README.md](../../product/world/README.md) and
+[../../product/player/camera-controls.md](../../product/player/camera-controls.md).
+
 ## Rule
 
 Collision and interaction data have priority over decorative data.
