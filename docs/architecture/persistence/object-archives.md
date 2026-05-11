@@ -24,6 +24,10 @@ one async storage boundary.
 - Archive smoke checks write, read, and list a manifest object.
 - Local archive checks must not require cloud credentials.
 - Manifest paths live under `manifests/`.
+- Manifest names are single-segment ASCII identifiers using letters, numbers,
+  `_`, `.`, or `-`.
+- Manifest names must not be empty, begin with `.`, or contain `/`, `\`,
+  control characters, or `..`.
 
 ## Archive Encoding
 

@@ -1,32 +1,36 @@
-use crate::errors::{StoreError, archive_error};
+use crate::StoreError;
 use object_store::{ObjectStore, local::LocalFileSystem, path::Path as ObjectPath};
-use std::path::Path;
+use std::{path::Path, sync::Arc};
 
 pub struct ArchiveStore {
-    store: LocalFileSystem,
+    store: Arc<dyn ObjectStore>,
 }
 
 impl ArchiveStore {
     pub fn local(root: &Path) -> Result<Self, StoreError> {
-        let store = LocalFileSystem::new_with_prefix(root).map_err(archive_error)?;
-        Ok(Self { store })
+        let store = LocalFileSystem::new_with_prefix(root)?;
+        Ok(Self::from_object_store(Arc::new(store)))
+    }
+
+    pub fn from_object_store(store: Arc<dyn ObjectStore>) -> Self {
+        Self { store }
     }
 
     pub async fn put_manifest(&self, name: &str, bytes: Vec<u8>) -> Result<(), StoreError> {
         self.store
-            .put(&manifest_path(name), bytes.into())
+            .put(&manifest_path(name)?, bytes.into())
             .await
-            .map_err(archive_error)?;
+            .map_err(StoreError::from)?;
         Ok(())
     }
 
     pub async fn get_manifest(&self, name: &str) -> Result<Vec<u8>, StoreError> {
         let result = self
             .store
-            .get(&manifest_path(name))
+            .get(&manifest_path(name)?)
             .await
-            .map_err(archive_error)?;
-        Ok(result.bytes().await.map_err(archive_error)?.to_vec())
+            .map_err(StoreError::from)?;
+        Ok(result.bytes().await.map_err(StoreError::from)?.to_vec())
     }
 
     pub async fn list_manifests(&self) -> Result<Vec<String>, StoreError> {
@@ -34,7 +38,7 @@ impl ArchiveStore {
             .store
             .list_with_delimiter(Some(&ObjectPath::from("manifests")))
             .await
-            .map_err(archive_error)?;
+            .map_err(StoreError::from)?;
         Ok(result
             .objects
             .into_iter()
@@ -43,8 +47,25 @@ impl ArchiveStore {
     }
 }
 
-fn manifest_path(name: &str) -> ObjectPath {
-    ObjectPath::from(format!("manifests/{name}.json"))
+fn manifest_path(name: &str) -> Result<ObjectPath, StoreError> {
+    Ok(ObjectPath::from(format!(
+        "manifests/{}.json",
+        manifest_name(name)?
+    )))
+}
+
+fn manifest_name(name: &str) -> Result<&str, StoreError> {
+    let valid = !name.is_empty()
+        && !name.starts_with('.')
+        && !name.contains("..")
+        && name
+            .bytes()
+            .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'_' | b'.' | b'-'));
+    if valid {
+        Ok(name)
+    } else {
+        Err(StoreError::InvalidArchiveName)
+    }
 }
 
 #[cfg(test)]
@@ -77,5 +98,15 @@ mod tests {
             archives.get_manifest("missing").await,
             Err(StoreError::Archive(_))
         ));
+    }
+
+    #[test]
+    fn rejects_ambiguous_manifest_names() {
+        for name in ["", ".", "..", "../x", "a/b", "a\\b", "line\nbreak"] {
+            assert!(matches!(
+                manifest_path(name),
+                Err(StoreError::InvalidArchiveName)
+            ));
+        }
     }
 }

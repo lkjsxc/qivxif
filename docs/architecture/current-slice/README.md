@@ -16,6 +16,7 @@ This directory owns the implemented authoritative server slice.
 - One reliable-stream QUIC request per bidirectional stream.
 - Postcard-encoded public messages.
 - redb-backed chunk edit overlays.
+- Local object archive manifest smoke path.
 - Compose probes for smoke and restart persistence.
 
 ## Excluded
@@ -24,4 +25,4 @@ This directory owns the implemented authoritative server slice.
 - Authentication and account recovery.
 - Markets, bases, skills, combat, and claims.
 - Multi-region handoff.
-- Object-store archives.
+- Hosted object archive backends.
