@@ -1,5 +1,5 @@
 bind_addr = "0.0.0.0:4443"
 data_dir = "/app/data"
 world_seed = 1001
-build_epoch = "verify"
-protocol_epoch = 1
+build_contract = "verify"
+protocol_contract = "postcard-reliable-streams"

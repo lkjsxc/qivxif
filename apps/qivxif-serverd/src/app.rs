@@ -18,8 +18,8 @@ pub async fn serve(config: PathBuf) -> Result<()> {
         config = %config.display(),
         bind_addr = %cfg.bind_addr,
         data_dir = %cfg.data_dir,
-        build_epoch = %cfg.build_epoch,
-        protocol_epoch = cfg.protocol_epoch,
+        build_contract = %cfg.build_contract,
+        protocol_contract = %cfg.protocol_contract,
         "server starting"
     );
 
@@ -28,9 +28,9 @@ pub async fn serve(config: PathBuf) -> Result<()> {
         cfg.world_seed,
     )?);
     let state = Arc::new(AppState {
-        build_epoch: cfg.build_epoch,
-        protocol_epoch: cfg.protocol_epoch,
-        world_epoch: store.meta().world_epoch.clone(),
+        build_contract: cfg.build_contract,
+        protocol_contract: cfg.protocol_contract,
+        world_id: store.meta().world_id.clone(),
         next_session: AtomicU64::new(1),
         region: RegionHandle::spawn(cfg.world_seed, store),
     });
@@ -52,9 +52,9 @@ pub async fn serve(config: PathBuf) -> Result<()> {
 }
 
 pub(crate) struct AppState {
-    pub(crate) build_epoch: String,
-    pub(crate) protocol_epoch: u32,
-    pub(crate) world_epoch: String,
+    pub(crate) build_contract: String,
+    pub(crate) protocol_contract: String,
+    pub(crate) world_id: String,
     pub(crate) next_session: AtomicU64,
     pub(crate) region: RegionHandle,
 }

@@ -1,7 +1,7 @@
 use crate::transport::ProbeClient;
 use anyhow::{Result, bail};
 use qivxif_core::{BlockPos, ChunkCoord};
-use qivxif_protocol::{CURRENT_PROTOCOL_EPOCH, ClientMsg, ErrorCode, ServerMsg};
+use qivxif_protocol::{CURRENT_PROTOCOL_CONTRACT, ClientMsg, ErrorCode, ServerMsg};
 
 pub async fn protocol_guards(addr: &str) -> Result<()> {
     let client = ProbeClient::connect(addr).await?;
@@ -35,26 +35,24 @@ pub async fn protocol_guards(addr: &str) -> Result<()> {
     let missing_build = ProbeClient::connect(addr).await?;
     expect_error(
         missing_build
-            .request(hello("", CURRENT_PROTOCOL_EPOCH))
+            .request(hello("", CURRENT_PROTOCOL_CONTRACT))
             .await?,
-        ErrorCode::BuildEpochMissing,
-        "missing build epoch",
+        ErrorCode::BuildContractMissing,
+        "missing build contract",
     )?;
 
     let wrong_protocol = ProbeClient::connect(addr).await?;
     expect_error(
-        wrong_protocol
-            .request(hello("probe", CURRENT_PROTOCOL_EPOCH + 1))
-            .await?,
-        ErrorCode::ProtocolEpochMismatch,
-        "protocol epoch mismatch",
+        wrong_protocol.request(hello("probe", "mismatch")).await?,
+        ErrorCode::ProtocolContractMismatch,
+        "protocol contract mismatch",
     )
 }
 
-fn hello(build_epoch: &str, protocol_epoch: u32) -> ClientMsg {
+fn hello(build_contract: &str, protocol_contract: &str) -> ClientMsg {
     ClientMsg::Hello {
-        build_epoch: build_epoch.to_string(),
-        protocol_epoch,
+        build_contract: build_contract.to_string(),
+        protocol_contract: protocol_contract.to_string(),
     }
 }
 

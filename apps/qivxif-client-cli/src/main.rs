@@ -58,7 +58,7 @@ async fn connect_sequence(addr: &str, player: &str, coord: ChunkCoord) -> Result
     let hello = client.hello().await?;
     println!(
         "hello ok: session={} world={}",
-        hello.session_id, hello.world_epoch
+        hello.session_id, hello.world_id
     );
     join::join_world(&client, player).await?;
     println!("joined: {player}");

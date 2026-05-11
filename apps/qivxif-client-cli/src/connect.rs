@@ -1,5 +1,5 @@
 use anyhow::{Result, anyhow, bail};
-use qivxif_protocol::{CURRENT_PROTOCOL_EPOCH, ClientMsg, ServerCaps, ServerMsg};
+use qivxif_protocol::{CURRENT_PROTOCOL_CONTRACT, ClientMsg, ServerCaps, ServerMsg};
 use std::{net::SocketAddr, time::Duration};
 
 pub struct Client {
@@ -9,7 +9,7 @@ pub struct Client {
 
 pub struct HelloReceipt {
     pub session_id: u64,
-    pub world_epoch: String,
+    pub world_id: String,
     pub _caps: ServerCaps,
 }
 
@@ -31,18 +31,18 @@ impl Client {
     pub async fn hello(&self) -> Result<HelloReceipt> {
         match self
             .request(ClientMsg::Hello {
-                build_epoch: "client-cli".to_string(),
-                protocol_epoch: CURRENT_PROTOCOL_EPOCH,
+                build_contract: "client-cli".to_string(),
+                protocol_contract: CURRENT_PROTOCOL_CONTRACT.to_string(),
             })
             .await?
         {
             ServerMsg::HelloOk {
                 session_id,
-                world_epoch,
+                world_id,
                 caps,
             } => Ok(HelloReceipt {
                 session_id,
-                world_epoch,
+                world_id,
                 _caps: caps,
             }),
             other => bail!("unexpected hello response: {other:?}"),

@@ -77,12 +77,12 @@ mod tests {
         let root = tempfile::tempdir().unwrap();
         let archives = ArchiveStore::local(root.path()).unwrap();
         archives
-            .put_manifest("smoke", br#"{"epoch":"local"}"#.to_vec())
+            .put_manifest("smoke", br#"{"contract":"local"}"#.to_vec())
             .await
             .unwrap();
         assert_eq!(
             archives.get_manifest("smoke").await.unwrap(),
-            br#"{"epoch":"local"}"#.to_vec()
+            br#"{"contract":"local"}"#.to_vec()
         );
         assert_eq!(
             archives.list_manifests().await.unwrap(),

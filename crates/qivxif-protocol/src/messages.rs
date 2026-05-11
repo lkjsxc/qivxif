@@ -5,8 +5,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ClientMsg {
     Hello {
-        build_epoch: String,
-        protocol_epoch: u32,
+        build_contract: String,
+        protocol_contract: String,
     },
     JoinWorld {
         player: String,
@@ -31,7 +31,7 @@ pub enum ClientMsg {
 pub enum ServerMsg {
     HelloOk {
         session_id: u64,
-        world_epoch: String,
+        world_id: String,
         caps: ServerCaps,
     },
     Joined {

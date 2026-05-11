@@ -31,8 +31,8 @@ fn every_error_code_round_trips_in_doc_order() {
 }
 
 #[test]
-fn current_protocol_epoch_matches_docs() {
-    assert_eq!(CURRENT_PROTOCOL_EPOCH, 1);
+fn current_protocol_contract_matches_docs() {
+    assert_eq!(CURRENT_PROTOCOL_CONTRACT, "postcard-reliable-streams");
 }
 
 #[test]
@@ -40,7 +40,10 @@ fn postcard_client_message_envelopes_are_stable() {
     let expected = [
         (
             client_messages()[0].clone(),
-            vec![0, 5, 112, 114, 111, 98, 101, 1],
+            vec![
+                0, 5, 112, 114, 111, 98, 101, 25, 112, 111, 115, 116, 99, 97, 114, 100, 45, 114,
+                101, 108, 105, 97, 98, 108, 101, 45, 115, 116, 114, 101, 97, 109, 115,
+            ],
         ),
         (
             client_messages()[1].clone(),
@@ -64,8 +67,8 @@ fn invalid_postcard_envelope_is_bad_request_shape() {
 fn client_messages() -> [ClientMsg; 6] {
     [
         ClientMsg::Hello {
-            build_epoch: "probe".to_string(),
-            protocol_epoch: CURRENT_PROTOCOL_EPOCH,
+            build_contract: "probe".to_string(),
+            protocol_contract: CURRENT_PROTOCOL_CONTRACT.to_string(),
         },
         ClientMsg::JoinWorld {
             player: "probe".to_string(),
@@ -87,7 +90,7 @@ fn server_messages() -> [ServerMsg; 7] {
     [
         ServerMsg::HelloOk {
             session_id: 7,
-            world_epoch: "world-11".to_string(),
+            world_id: "world-11".to_string(),
             caps: LOCAL_COMPOSE_CAPS,
         },
         ServerMsg::Joined {
@@ -113,8 +116,8 @@ fn server_messages() -> [ServerMsg; 7] {
 fn documented_error_codes() -> [ErrorCode; 8] {
     [
         ErrorCode::BadRequest,
-        ErrorCode::BuildEpochMissing,
-        ErrorCode::ProtocolEpochMismatch,
+        ErrorCode::BuildContractMissing,
+        ErrorCode::ProtocolContractMismatch,
         ErrorCode::HelloRequired,
         ErrorCode::JoinRequired,
         ErrorCode::ChunkError,

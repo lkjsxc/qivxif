@@ -4,9 +4,9 @@ use qivxif_protocol::{ClientMsg, ErrorCode, LOCAL_COMPOSE_CAPS, ServerMsg};
 pub async fn respond(request: ClientMsg, state: &AppState, session: &mut Session) -> ServerMsg {
     match request {
         ClientMsg::Hello {
-            build_epoch,
-            protocol_epoch,
-        } => hello(build_epoch, protocol_epoch, state, session),
+            build_contract,
+            protocol_contract,
+        } => hello(build_contract, protocol_contract, state, session),
         ClientMsg::JoinWorld { player } if session.can_join() => {
             session.mark_joined();
             ServerMsg::Joined { player }
@@ -100,24 +100,27 @@ pub async fn respond(request: ClientMsg, state: &AppState, session: &mut Session
 }
 
 fn hello(
-    build_epoch: String,
-    protocol_epoch: u32,
+    build_contract: String,
+    protocol_contract: String,
     state: &AppState,
     session: &mut Session,
 ) -> ServerMsg {
-    if build_epoch.is_empty() || state.build_epoch.is_empty() {
+    if build_contract.is_empty() || state.build_contract.is_empty() {
         return error_msg(
-            ErrorCode::BuildEpochMissing,
-            "build epoch must not be empty",
+            ErrorCode::BuildContractMissing,
+            "build contract must not be empty",
         );
     }
-    if protocol_epoch != state.protocol_epoch {
-        return error_msg(ErrorCode::ProtocolEpochMismatch, state.protocol_epoch);
+    if protocol_contract != state.protocol_contract {
+        return error_msg(
+            ErrorCode::ProtocolContractMismatch,
+            state.protocol_contract.as_str(),
+        );
     }
     session.mark_hello();
     ServerMsg::HelloOk {
         session_id: session.id,
-        world_epoch: state.world_epoch.clone(),
+        world_id: state.world_id.clone(),
         caps: LOCAL_COMPOSE_CAPS,
     }
 }

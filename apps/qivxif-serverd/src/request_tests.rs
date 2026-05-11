@@ -6,11 +6,11 @@ use std::sync::{Arc, atomic::AtomicU64};
 fn test_state() -> (tempfile::TempDir, AppState) {
     let root = tempfile::tempdir().unwrap();
     let store = Arc::new(WorldStore::open(root.path(), 5).unwrap());
-    let world_epoch = store.meta().world_epoch.clone();
+    let world_id = store.meta().world_id.clone();
     let state = AppState {
-        build_epoch: "test".to_string(),
-        protocol_epoch: 1,
-        world_epoch,
+        build_contract: "test".to_string(),
+        protocol_contract: qivxif_protocol::CURRENT_PROTOCOL_CONTRACT.to_string(),
+        world_id,
         next_session: AtomicU64::new(1),
         region: RegionHandle::spawn(5, store),
     };
@@ -39,13 +39,13 @@ async fn join_before_hello_is_rejected() {
 }
 
 #[tokio::test]
-async fn protocol_epoch_mismatch_is_rejected() {
+async fn protocol_contract_mismatch_is_rejected() {
     let (_root, state) = test_state();
     let mut session = Session::new(1);
     let msg = respond(
         ClientMsg::Hello {
-            build_epoch: "test".to_string(),
-            protocol_epoch: 99,
+            build_contract: "test".to_string(),
+            protocol_contract: "mismatch".to_string(),
         },
         &state,
         &mut session,
@@ -54,7 +54,7 @@ async fn protocol_epoch_mismatch_is_rejected() {
     assert!(matches!(
         msg,
         ServerMsg::Error {
-            code: ErrorCode::ProtocolEpochMismatch,
+            code: ErrorCode::ProtocolContractMismatch,
             ..
         }
     ));
@@ -66,8 +66,8 @@ async fn hello_reports_local_compose_capabilities() {
     let mut session = Session::new(1);
     let msg = respond(
         ClientMsg::Hello {
-            build_epoch: "test".to_string(),
-            protocol_epoch: 1,
+            build_contract: "test".to_string(),
+            protocol_contract: qivxif_protocol::CURRENT_PROTOCOL_CONTRACT.to_string(),
         },
         &state,
         &mut session,

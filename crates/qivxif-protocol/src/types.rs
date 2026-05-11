@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 pub type RequestId = u64;
 
-pub const CURRENT_PROTOCOL_EPOCH: u32 = 1;
+pub const CURRENT_PROTOCOL_CONTRACT: &str = "postcard-reliable-streams";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ServerCaps {

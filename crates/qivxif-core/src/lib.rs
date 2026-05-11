@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::{fs, path::Path};
 use thiserror::Error;
 
-const WORLD_SCHEMA_EPOCH: u32 = 1;
+const WORLD_SCHEMA_CONTRACT: &str = "redb-chunk-overlays";
 
 /// Server bootstrap config loaded from TOML.
 #[derive(Debug, Clone, Deserialize)]
@@ -10,8 +10,8 @@ pub struct ServerConfig {
     pub bind_addr: String,
     pub data_dir: String,
     pub world_seed: u64,
-    pub build_epoch: String,
-    pub protocol_epoch: u32,
+    pub build_contract: String,
+    pub protocol_contract: String,
 }
 
 impl ServerConfig {
@@ -40,18 +40,18 @@ pub struct ChunkCoord {
 /// Persisted world metadata stored under the `world` key.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct WorldMeta {
-    pub schema_epoch: u32,
+    pub schema_contract: String,
     pub world_seed: u64,
-    pub world_epoch: String,
+    pub world_id: String,
 }
 
 impl WorldMeta {
     /// Build the current world metadata for a seed.
     pub fn new(world_seed: u64) -> Self {
         Self {
-            schema_epoch: WORLD_SCHEMA_EPOCH,
+            schema_contract: WORLD_SCHEMA_CONTRACT.to_string(),
             world_seed,
-            world_epoch: format!("world-{world_seed}"),
+            world_id: format!("world-{world_seed}"),
         }
     }
 }
@@ -72,9 +72,9 @@ mod tests {
     #[test]
     fn world_meta_matches_contract() {
         let meta = WorldMeta::new(11);
-        assert_eq!(meta.schema_epoch, 1);
+        assert_eq!(meta.schema_contract, "redb-chunk-overlays");
         assert_eq!(meta.world_seed, 11);
-        assert_eq!(meta.world_epoch, "world-11");
+        assert_eq!(meta.world_id, "world-11");
     }
 
     #[test]
@@ -83,7 +83,7 @@ mod tests {
             std::env::temp_dir().join(format!("qivxif-core-config-{}.toml", std::process::id()));
         fs::write(
             &path,
-            "bind_addr = \"127.0.0.1:3000\"\ndata_dir = \"/tmp/world\"\nworld_seed = 7\nbuild_epoch = \"test\"\nprotocol_epoch = 1\n",
+            "bind_addr = \"127.0.0.1:3000\"\ndata_dir = \"/tmp/world\"\nworld_seed = 7\nbuild_contract = \"test\"\nprotocol_contract = \"postcard-reliable-streams\"\n",
         )
         .unwrap();
 
@@ -91,8 +91,8 @@ mod tests {
         assert_eq!(config.bind_addr, "127.0.0.1:3000");
         assert_eq!(config.data_dir, "/tmp/world");
         assert_eq!(config.world_seed, 7);
-        assert_eq!(config.build_epoch, "test");
-        assert_eq!(config.protocol_epoch, 1);
+        assert_eq!(config.build_contract, "test");
+        assert_eq!(config.protocol_contract, "postcard-reliable-streams");
 
         fs::remove_file(&path).unwrap();
     }
