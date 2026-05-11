@@ -23,6 +23,7 @@ authors = ["qivxif contributors"]
 anyhow = "1"
 bevy_ecs = "0.18"
 clap = { version = "4", features = ["derive"] }
+object_store = { version = "0.12", features = ["fs"] }
 postcard = { version = "1", features = ["use-std"] }
 quinn = "0.11"
 rcgen = "0.13"

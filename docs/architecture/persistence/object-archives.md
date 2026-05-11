@@ -18,6 +18,13 @@ one async storage boundary.
 - Render goldens.
 - Build and verification artifacts.
 
+## Local Smoke Path
+
+- Local verification uses `object_store` with a filesystem-backed store.
+- Archive smoke checks write, read, and list a manifest object.
+- Local archive checks must not require cloud credentials.
+- Manifest paths live under `manifests/`.
+
 ## Archive Encoding
 
 - Use `rkyv` for read-mostly archive indexes, replay indexes, mesh caches, and

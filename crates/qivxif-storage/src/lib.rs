@@ -1,9 +1,11 @@
+mod archives;
 mod database;
 mod edit_overlays;
 mod errors;
 mod metadata;
 mod tables;
 
+pub use archives::ArchiveStore;
 pub use errors::StoreError;
 
 use qivxif_core::{ChunkCoord, WorldMeta};

@@ -6,6 +6,7 @@ license.workspace = true
 authors.workspace = true
 
 [dependencies]
+object_store = { workspace = true }
 postcard = { workspace = true }
 qivxif-core = { workspace = true }
 qivxif-protocol = { workspace = true }
@@ -15,3 +16,4 @@ thiserror = { workspace = true }
 
 [dev-dependencies]
 tempfile = { workspace = true }
+tokio = { workspace = true }
