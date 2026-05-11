@@ -25,18 +25,34 @@ pub async fn respond(request: ClientMsg, state: &AppState, session: &mut Session
             request_id,
             pos,
             block,
-        } if session.can_play() => match state.region.place_block(pos, block).await {
-            Ok(cell) => ServerMsg::MutationAck { request_id, cell },
-            Err(error) => error_msg(ErrorCode::MutationError, error),
-        },
+        } if session.can_play() => {
+            if let Some(response) = session.replayed_response(request_id) {
+                return response;
+            }
+            let response = match state.region.place_block(pos, block).await {
+                Ok(cell) => ServerMsg::MutationAck { request_id, cell },
+                Err(error) => error_msg(ErrorCode::MutationError, error),
+            };
+            session.remember_response(request_id, &response);
+            response
+        }
         ClientMsg::PlaceBlock { .. } => phase_error(ErrorCode::JoinRequired),
         ClientMsg::FlushPersistence { request_id } if session.can_play() => {
+            if let Some(response) = session.replayed_response(request_id) {
+                return response;
+            }
             match state.region.flush().await {
                 Ok(()) => {
                     tracing::info!(session_id = session.id, "persistence flushed");
-                    ServerMsg::FlushAck { request_id }
+                    let response = ServerMsg::FlushAck { request_id };
+                    session.remember_response(request_id, &response);
+                    response
                 }
-                Err(error) => error_msg(ErrorCode::FlushError, error),
+                Err(error) => {
+                    let response = error_msg(ErrorCode::FlushError, error);
+                    session.remember_response(request_id, &response);
+                    response
+                }
             }
         }
         ClientMsg::FlushPersistence { .. } => phase_error(ErrorCode::JoinRequired),

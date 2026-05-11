@@ -1,7 +1,11 @@
+use qivxif_protocol::{RequestId, ServerMsg};
+use std::collections::HashMap;
+
 pub struct Session {
     pub id: u64,
     hello: bool,
     joined: bool,
+    mutating_responses: HashMap<RequestId, ServerMsg>,
 }
 
 impl Session {
@@ -10,6 +14,7 @@ impl Session {
             id,
             hello: false,
             joined: false,
+            mutating_responses: HashMap::new(),
         }
     }
 
@@ -32,6 +37,16 @@ impl Session {
     pub fn can_play(&self) -> bool {
         self.joined
     }
+
+    pub fn replayed_response(&self, request_id: RequestId) -> Option<ServerMsg> {
+        self.mutating_responses.get(&request_id).cloned()
+    }
+
+    pub fn remember_response(&mut self, request_id: RequestId, response: &ServerMsg) {
+        self.mutating_responses
+            .entry(request_id)
+            .or_insert_with(|| response.clone());
+    }
 }
 
 #[cfg(test)]
@@ -50,5 +65,20 @@ mod tests {
 
         session.mark_joined();
         assert!(session.can_play());
+    }
+
+    #[test]
+    fn mutating_responses_are_remembered_once() {
+        let mut session = Session::new(1);
+        let first = ServerMsg::FlushAck { request_id: 7 };
+        let second = ServerMsg::Error {
+            code: qivxif_protocol::ErrorCode::FlushError,
+            message: "late".to_string(),
+        };
+
+        session.remember_response(7, &first);
+        session.remember_response(7, &second);
+
+        assert_eq!(session.replayed_response(7), Some(first));
     }
 }
