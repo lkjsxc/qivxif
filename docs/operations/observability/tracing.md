@@ -2,24 +2,24 @@
 
 ## Required Events
 
-- Startup.
-- Shutdown.
-- Connection accepted.
-- Connection closed.
-- Request handled.
-- Chunk request completed.
-- Mutation accepted.
-- Mutation rejected.
-- Persistence flushed.
-- Persistence flush rejected.
-- Probe result.
+- `server starting`.
+- `server shutdown`.
+- `connection accepted`.
+- `connection closed`.
+- `request handled`.
+- `chunk request completed`.
+- `mutation accepted`.
+- `mutation rejected`.
+- `persistence flushed`.
+- `persistence flush rejected`.
+- `probe <name> ... ok`.
 
 ## Dormant Events
 
-- Archive manifest written.
-- Archive manifest listed.
-- Region tick completed.
-- Request replayed.
+- `archive manifest written`.
+- `archive manifest listed`.
+- `region tick completed`.
+- `request replayed`.
 
 ## Probe Output
 

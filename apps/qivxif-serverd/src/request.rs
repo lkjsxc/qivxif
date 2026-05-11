@@ -87,7 +87,15 @@ pub async fn respond(request: ClientMsg, state: &AppState, session: &mut Session
                 }
             }
         }
-        ClientMsg::FlushPersistence { .. } => phase_error(ErrorCode::JoinRequired),
+        ClientMsg::FlushPersistence { request_id } => {
+            tracing::warn!(
+                session_id = session.id,
+                request_id,
+                code = ?ErrorCode::JoinRequired,
+                "persistence flush rejected"
+            );
+            phase_error(ErrorCode::JoinRequired)
+        }
     }
 }
 
