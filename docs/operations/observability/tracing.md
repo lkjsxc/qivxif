@@ -3,6 +3,7 @@
 ## Required Events
 
 - `server starting`.
+- `server listening`.
 - `server shutdown`.
 - `connection accepted`.
 - `connection closed`.
