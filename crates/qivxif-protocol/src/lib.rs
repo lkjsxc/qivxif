@@ -1,140 +1,102 @@
-use qivxif_core::{BlockPos, ChunkCoord};
-use serde::{Deserialize, Serialize};
+mod codec;
+mod errors;
+mod messages;
+mod types;
 
-pub type RequestId = u64;
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ClientMsg {
-    Hello {
-        build_epoch: String,
-        protocol_epoch: u32,
-    },
-    JoinWorld {
-        player: String,
-    },
-    Ping {
-        nonce: u64,
-    },
-    ChunkRequest {
-        coord: ChunkCoord,
-    },
-    PlaceBlock {
-        request_id: RequestId,
-        pos: BlockPos,
-        block: u16,
-    },
-    FlushPersistence {
-        request_id: RequestId,
-    },
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ServerMsg {
-    HelloOk {
-        session_id: u64,
-        world_epoch: String,
-        caps: ServerCaps,
-    },
-    Joined {
-        player: String,
-    },
-    Pong {
-        nonce: u64,
-    },
-    Chunk {
-        coord: ChunkCoord,
-        cells: Vec<BlockCell>,
-    },
-    MutationAck {
-        request_id: RequestId,
-        cell: BlockCell,
-    },
-    FlushAck {
-        request_id: RequestId,
-    },
-    Error {
-        code: ErrorCode,
-        message: String,
-    },
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ServerCaps {
-    pub reliable_streams: bool,
-    pub datagrams: bool,
-    pub persistent_mutations: bool,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ErrorCode {
-    BadRequest,
-    BuildEpochMissing,
-    ProtocolEpochMismatch,
-    HelloRequired,
-    JoinRequired,
-    ChunkError,
-    MutationError,
-    FlushError,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct BlockCell {
-    pub pos: BlockPos,
-    pub block: u16,
-}
-
-pub fn encode<T: Serialize>(value: &T) -> Result<Vec<u8>, postcard::Error> {
-    postcard::to_stdvec(value)
-}
-
-pub fn decode<T: for<'de> Deserialize<'de>>(bytes: &[u8]) -> Result<T, postcard::Error> {
-    postcard::from_bytes(bytes)
-}
+pub use codec::{decode, encode};
+pub use errors::ErrorCode;
+pub use messages::{ClientMsg, ServerMsg};
+pub use types::{BlockCell, LOCAL_COMPOSE_CAPS, RequestId, ServerCaps};
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use qivxif_core::{BlockPos, ChunkCoord};
+
+    fn cell() -> BlockCell {
+        BlockCell {
+            pos: BlockPos { x: 1, y: 2, z: 3 },
+            block: 9,
+        }
+    }
+
+    #[test]
+    fn every_client_message_round_trips() {
+        let messages = [
+            ClientMsg::Hello {
+                build_epoch: "probe".to_string(),
+                protocol_epoch: 1,
+            },
+            ClientMsg::JoinWorld {
+                player: "probe".to_string(),
+            },
+            ClientMsg::Ping { nonce: 42 },
+            ClientMsg::ChunkRequest {
+                coord: ChunkCoord { x: -1, z: 2 },
+            },
+            ClientMsg::PlaceBlock {
+                request_id: 7,
+                pos: cell().pos,
+                block: 9,
+            },
+            ClientMsg::FlushPersistence { request_id: 8 },
+        ];
+        for msg in messages {
+            assert_eq!(decode::<ClientMsg>(&encode(&msg).unwrap()).unwrap(), msg);
+        }
+    }
+
+    #[test]
+    fn every_server_message_round_trips() {
+        let messages = [
+            ServerMsg::HelloOk {
+                session_id: 7,
+                world_epoch: "world-11".to_string(),
+                caps: LOCAL_COMPOSE_CAPS,
+            },
+            ServerMsg::Joined {
+                player: "probe".to_string(),
+            },
+            ServerMsg::Pong { nonce: 42 },
+            ServerMsg::Chunk {
+                coord: ChunkCoord { x: -1, z: 2 },
+                cells: vec![cell()],
+            },
+            ServerMsg::MutationAck {
+                request_id: 9,
+                cell: cell(),
+            },
+            ServerMsg::FlushAck { request_id: 10 },
+            ServerMsg::Error {
+                code: ErrorCode::BadRequest,
+                message: "bad".to_string(),
+            },
+        ];
+        for msg in messages {
+            assert_eq!(decode::<ServerMsg>(&encode(&msg).unwrap()).unwrap(), msg);
+        }
+    }
+
+    #[test]
+    fn every_error_code_round_trips() {
+        let codes = [
+            ErrorCode::BadRequest,
+            ErrorCode::BuildEpochMissing,
+            ErrorCode::ProtocolEpochMismatch,
+            ErrorCode::HelloRequired,
+            ErrorCode::JoinRequired,
+            ErrorCode::ChunkError,
+            ErrorCode::MutationError,
+            ErrorCode::FlushError,
+        ];
+        for code in codes {
+            assert_eq!(decode::<ErrorCode>(&encode(&code).unwrap()).unwrap(), code);
+        }
+    }
 
     #[test]
     fn ping_wire_bytes_are_stable() {
         let bytes = encode(&ClientMsg::Ping { nonce: 42 }).unwrap();
         assert_eq!(bytes, vec![2, 42]);
-        assert_eq!(
-            decode::<ClientMsg>(&bytes).unwrap(),
-            ClientMsg::Ping { nonce: 42 }
-        );
-    }
-
-    #[test]
-    fn hello_ok_round_trips() {
-        let msg = ServerMsg::HelloOk {
-            session_id: 7,
-            world_epoch: "world-11".to_string(),
-            caps: ServerCaps {
-                reliable_streams: true,
-                datagrams: false,
-                persistent_mutations: true,
-            },
-        };
-        assert_eq!(decode::<ServerMsg>(&encode(&msg).unwrap()).unwrap(), msg);
-    }
-
-    #[test]
-    fn mutation_ack_round_trips_with_request_id() {
-        let cell = BlockCell {
-            pos: BlockPos { x: 1, y: 2, z: 3 },
-            block: 9,
-        };
-        let msg = ServerMsg::MutationAck {
-            request_id: 99,
-            cell,
-        };
-        assert_eq!(decode::<ServerMsg>(&encode(&msg).unwrap()).unwrap(), msg);
-    }
-
-    #[test]
-    fn flush_ack_round_trips_with_request_id() {
-        let msg = ServerMsg::FlushAck { request_id: 100 };
-        assert_eq!(decode::<ServerMsg>(&encode(&msg).unwrap()).unwrap(), msg);
     }
 }

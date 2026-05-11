@@ -1,5 +1,5 @@
 use crate::{app::AppState, session::Session};
-use qivxif_protocol::{ClientMsg, ErrorCode, ServerCaps, ServerMsg};
+use qivxif_protocol::{ClientMsg, ErrorCode, LOCAL_COMPOSE_CAPS, ServerMsg};
 
 pub async fn respond(request: ClientMsg, state: &AppState, session: &mut Session) -> ServerMsg {
     match request {
@@ -62,11 +62,7 @@ fn hello(
     ServerMsg::HelloOk {
         session_id: session.id,
         world_epoch: state.world_epoch.clone(),
-        caps: ServerCaps {
-            reliable_streams: true,
-            datagrams: false,
-            persistent_mutations: true,
-        },
+        caps: LOCAL_COMPOSE_CAPS,
     }
 }
 
@@ -143,6 +139,28 @@ mod tests {
             msg,
             ServerMsg::Error {
                 code: ErrorCode::ProtocolEpochMismatch,
+                ..
+            }
+        ));
+    }
+
+    #[tokio::test]
+    async fn hello_reports_local_compose_capabilities() {
+        let (_root, state) = test_state();
+        let mut session = Session::new(1);
+        let msg = respond(
+            ClientMsg::Hello {
+                build_epoch: "test".to_string(),
+                protocol_epoch: 1,
+            },
+            &state,
+            &mut session,
+        )
+        .await;
+        assert!(matches!(
+            msg,
+            ServerMsg::HelloOk {
+                caps: LOCAL_COMPOSE_CAPS,
                 ..
             }
         ));
