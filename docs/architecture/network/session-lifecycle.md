@@ -1,42 +1,45 @@
 # Session Lifecycle
 
-## Phases
+## Status
 
-1. Connect.
-2. Hello.
-3. Join world.
-4. Request chunks.
-5. Send gameplay intent.
-6. Receive authoritative outcome.
-7. Disconnect or timeout.
+- Status: implemented.
+- Owner: `apps/qivxif-serverd::session` and `apps/qivxif-serverd::request`.
 
-Player-facing onboarding flow is owned by
-[../../product/player/onboarding.md](../../product/player/onboarding.md).
+## Phase State
 
-## Rejection
+| Phase fact | Implementation |
+| --- | --- |
+| New session starts without hello | `Session::new` sets `hello = false` |
+| New session starts without join | `Session::new` sets `joined = false` |
+| Accepted hello allows join | `mark_hello`; `can_join` |
+| Accepted hello allows ping | `can_ping` |
+| Accepted join allows play requests | `mark_joined`; `can_play` |
 
-- `JoinWorld` and `Ping` before accepted hello return `HelloRequired`.
-- Chunk, mutation, and flush requests before accepted join return `JoinRequired`.
-- Protocol epoch mismatch returns `ProtocolEpochMismatch`.
+## Implemented Request Order
+
+1. Connect over QUIC.
+2. Send `Hello`.
+3. Send `JoinWorld`.
+4. Send `Ping`, `ChunkRequest`, `PlaceBlock`, or `FlushPersistence` according to guards.
+5. Disconnect by closing the QUIC connection.
 
 ## Guard Matrix
 
 | Guard | Trigger | Durable code |
 | --- | --- | --- |
-| Build epoch present | `Hello` carries an empty build epoch | `BuildEpochMissing` |
-| Protocol epoch match | `Hello` carries a mismatched protocol epoch | `ProtocolEpochMismatch` |
-| Hello before join | `JoinWorld` is sent before accepted `Hello` | `HelloRequired` |
-| Hello before ping | `Ping` is sent before accepted `Hello` | `HelloRequired` |
-| Join before chunk | `ChunkRequest` is sent before accepted `JoinWorld` | `JoinRequired` |
-| Join before mutation | `PlaceBlock` is sent before accepted `JoinWorld` | `JoinRequired` |
-| Join before flush | `FlushPersistence` is sent before accepted `JoinWorld` | `JoinRequired` |
-| Decodable request | Malformed wire bytes are sent on a request stream | `BadRequest` |
+| Build epoch present | `Hello` carries empty build epoch | `BuildEpochMissing` |
+| Protocol epoch match | `Hello` carries mismatched protocol epoch | `ProtocolEpochMismatch` |
+| Hello before join | `JoinWorld` before accepted `Hello` | `HelloRequired` |
+| Hello before ping | `Ping` before accepted `Hello` | `HelloRequired` |
+| Join before chunk | `ChunkRequest` before accepted `JoinWorld` | `JoinRequired` |
+| Join before mutation | `PlaceBlock` before accepted `JoinWorld` | `JoinRequired` |
+| Join before flush | `FlushPersistence` before accepted `JoinWorld` | `JoinRequired` |
+| Decodable request | Malformed wire bytes on a request stream | `BadRequest` |
 
-The public probe asserts codes only. Diagnostic `Error.message` text is not a
-durable contract surface.
+## Rules
 
-## Rule
-
-Session state is separate from region-owned world state.
-Public request and response shapes are owned by
-[protocol-messages.md](protocol-messages.md).
+- Session state is separate from region-owned world state.
+- Probes assert `Error.code` only.
+- `Error.message` is diagnostic text.
+- Public message shapes are owned by [protocol-messages.md](protocol-messages.md).
+- Player onboarding product flow is owned by [../../product/player/onboarding.md](../../product/player/onboarding.md).

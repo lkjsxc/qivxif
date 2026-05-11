@@ -1,12 +1,21 @@
 # Runtime Config
 
+LLM purpose: list server runtime config fields that must be explicit.
+
+## Owner Scope
+
+This file owns operational config names and deployment requirements. Field
+semantics must stay aligned with implementation tests and owner docs.
+
 ## Fields
 
-- `bind_addr`: socket address for QUIC.
-- `data_dir`: durable state directory.
-- `world_seed`: deterministic world seed.
-- `build_epoch`: build gate.
-- `protocol_epoch`: wire gate.
+| Field | Meaning |
+| --- | --- |
+| `bind_addr` | Socket address for QUIC. |
+| `data_dir` | Durable state directory. |
+| `world_seed` | Deterministic world seed. |
+| `build_epoch` | Build gate. |
+| `protocol_epoch` | Wire gate. |
 
 ## Rule
 

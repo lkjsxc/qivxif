@@ -1,14 +1,29 @@
 # Process Model
 
-## Canon
+## Status
 
-One authoritative world server process owns protocol, sessions, simulation,
-mutation, persistence handoff, and replication.
+- Status: implemented for one server process.
+- Owner: `apps/qivxif-serverd::app`.
+
+## Implemented Facts
+
+- `serve` loads `ServerConfig` before opening network transport.
+- `serve` opens `WorldStore` with configured `data_dir` and `world_seed`.
+- `serve` spawns one `RegionHandle`.
+- `serve` binds a Quinn endpoint to `bind_addr`.
+- Each accepted connection runs in a Tokio task.
+- Each connection owns one `Session`.
+- Each accepted bidirectional stream handles one request.
 
 ## Rules
 
-- Clients send intent.
-- Server owns truth.
-- Region actors own mutable world state.
-- Session code does not mutate world sections directly.
-- Persistence code does not block region ticks.
+- Clients and probes send intent.
+- Server owns protocol acceptance.
+- Region actor owns terrain mutation.
+- Session code does not mutate world storage directly.
+
+## Not Implemented
+
+- Multi-process world sharding.
+- Native client runtime.
+- Dedicated persistence worker pool.

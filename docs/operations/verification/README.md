@@ -1,6 +1,19 @@
 # Verification
 
-Use this subtree for acceptance gates.
+LLM purpose: find acceptance gates for static checks, live probes, goldens, and
+long-running checks.
+
+## Reading Order
+
+1. [compose-pipeline.md](compose-pipeline.md) for full acceptance order.
+2. [static-gates.md](static-gates.md) for build and docs gates.
+3. [protocol-probes.md](protocol-probes.md) for live public-path probes.
+4. Golden and soak files for specialized regression areas.
+
+## Boundary
+
+Verification docs define how behavior is checked. Owner docs define what the
+behavior means.
 
 ## Child Index
 

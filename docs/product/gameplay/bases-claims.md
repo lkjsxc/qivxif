@@ -1,5 +1,9 @@
 # Bases And Claims
 
+## Scope
+
+This file owns base purpose, claim permissions, claim activity, and claim decay.
+
 ## Purpose
 
 Bases give players durable identity, defense, storage, and crafting hubs.
@@ -28,3 +32,9 @@ defense, logistics, and regional market use tied to the claim.
 ## Server Authority
 
 All claim-sensitive actions are validated by the server.
+
+## Cross-References
+
+- Terrain editing durability is defined in [../world/terrain-editing.md](../world/terrain-editing.md).
+- Zone-specific claim constraints are listed in [../world/zones.md](../world/zones.md).
+- Guild ownership can attach to claims per [../social/parties-guilds.md](../social/parties-guilds.md).

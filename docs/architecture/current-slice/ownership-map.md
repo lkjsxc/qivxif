@@ -1,10 +1,15 @@
 # Ownership Map
 
+## Status
+
+- Status: implemented for server slice owners.
+- Client owners are dormant because no client crate exists.
+
 ## Runtime Owners
 
 | Contract | Owner |
 | --- | --- |
-| Process startup and QUIC endpoint | `apps/qivxif-serverd` |
+| Process startup and QUIC endpoint | `apps/qivxif-serverd::app` |
 | Session phase state | `apps/qivxif-serverd::session` |
 | Request translation | `apps/qivxif-serverd::request` |
 | Public message catalog | `crates/qivxif-protocol` |
@@ -19,16 +24,15 @@
 
 | Contract | Owner doc |
 | --- | --- |
-| Public vertical loop | `architecture/current-slice/vertical-loop.md` |
-| Mutating replay guard | `architecture/current-slice/request-replay.md` |
-| Wire messages | `architecture/network/protocol-messages.md` |
-| Session phases | `architecture/network/session-lifecycle.md` |
-| redb hot state | `architecture/persistence/hot-state.md` |
-| redb tables | `architecture/persistence/schema-contracts.md` |
-| Public probes | `operations/verification/protocol-probes.md` |
-| Compose acceptance | `operations/verification/compose-pipeline.md` |
+| Public vertical loop | [vertical-loop.md](vertical-loop.md) |
+| Request replay | [request-replay.md](request-replay.md) |
+| Wire messages | [../network/protocol-messages.md](../network/protocol-messages.md) |
+| Session phases | [../network/session-lifecycle.md](../network/session-lifecycle.md) |
+| redb hot state | [../persistence/hot-state.md](../persistence/hot-state.md) |
+| redb schema | [../persistence/schema-contracts.md](../persistence/schema-contracts.md) |
+| Object archive manifests | [../persistence/object-archives.md](../persistence/object-archives.md) |
 
-## Rule
+## Change Rule
 
-A behavior change updates the owner doc and owner crate together in the same
-coherent batch.
+- A behavior change updates the owner doc and owner crate together.
+- A dormant contract must gain executable verification before it becomes active.

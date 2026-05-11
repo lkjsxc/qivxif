@@ -1,17 +1,23 @@
 # LOD And Summaries
 
-## Near Field
+## Status
 
-Exact chunk meshes for editable play space.
+- Status: not implemented.
+- No renderer crate exists.
+- No mesh or summary storage exists.
 
-## Mid Field
+## Current Facts
 
-Merged chunk groups or section summaries.
+- Server returns exact `BlockCell` lists for requested chunks.
+- Gameplay does not depend on GPU features.
 
-## Far Field
+## Activation Requirements
 
-Clipmap-like terrain proxies from coarse summaries.
+- Define a client renderer crate.
+- Define mesh or summary payloads.
+- Define cache ownership.
+- Add verification for near-field correctness.
 
 ## Rule
 
-Gameplay cannot depend on experimental GPU features.
+- Do not describe LOD as active until chunk summaries or renderer code exists.

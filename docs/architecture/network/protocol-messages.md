@@ -1,28 +1,19 @@
 # Protocol Messages
 
-## Owner
+## Status
 
-This file owns public qivxif protocol messages for protocol epoch `1`.
-`qivxif-protocol` owns the Rust definitions and postcard encoding.
-
-## Lanes
-
-| Lane | Current use | Owner |
-| --- | --- | --- |
-| Reliable bidirectional stream | Hello, join, ping, chunk, mutation, flush, and errors | Protocol crate and server session code |
-| Datagram | Reserved for later latest-wins state | No public payloads in epoch `1` |
+- Status: implemented for protocol epoch `1`.
+- Owner: `crates/qivxif-protocol`.
+- Encoding: postcard.
 
 ## Request Identifiers
 
-- Mutating client requests carry `request_id: u64`.
+- Type alias: `RequestId = u64`.
+- `PlaceBlock` carries `request_id`.
+- `FlushPersistence` carries `request_id`.
 - Acknowledgements echo the same identifier.
-- `PlaceBlock` and `FlushPersistence` require request identifiers.
-- Non-mutating bootstrap and query messages do not carry request identifiers.
-- Request identifiers are scoped to one server session.
-- Repeated mutating identifiers return the first authoritative response without
-  applying the mutation or flush again.
-- Reusing a mutating identifier for a different intent is invalid client
-  behavior; the server still preserves the first response as session truth.
+- Identifiers are scoped to one server session.
+- Replay behavior is owned by [../current-slice/request-replay.md](../current-slice/request-replay.md).
 
 ## Client Messages
 
@@ -42,18 +33,18 @@ This file owns public qivxif protocol messages for protocol epoch `1`.
 | `HelloOk` | `session_id`, `world_epoch`, `caps` | Opens the session for join and ping |
 | `Joined` | `player` | Echoes accepted player label |
 | `Pong` | `nonce` | Echoes ping nonce |
-| `Chunk` | `coord`, `cells` | Returns generated cells plus persisted overlays |
+| `Chunk` | `coord`, `cells` | Returns generated visible cells plus persisted overlays |
 | `MutationAck` | `request_id`, `cell` | Echoes mutation id and authoritative cell |
-| `FlushAck` | `request_id` | Echoes flush id after queued overlays are written |
+| `FlushAck` | `request_id` | Echoes flush id after dirty overlays are written |
 | `Error` | `code`, `message` | Code is durable; message is diagnostic |
 
 ## Capability Fields
 
-| Field | Local Compose value | Meaning |
+| Field | Current value | Meaning |
 | --- | --- | --- |
 | `reliable_streams` | `true` | Public protocol uses reliable streams |
-| `datagrams` | `false` | No public datagram payloads in epoch `1` |
-| `persistent_mutations` | `true` | Place and flush persist chunk-scoped overlays |
+| `datagrams` | `false` | No public datagram payloads exist |
+| `persistent_mutations` | `true` | Place and flush persist chunk overlays |
 
 ## Error Codes
 
@@ -67,12 +58,6 @@ This file owns public qivxif protocol messages for protocol epoch `1`.
 | `ChunkError` | Chunk load or generation failed |
 | `MutationError` | Mutation validation or queueing failed |
 | `FlushError` | Persistence flush failed |
-
-Error codes are durable protocol outcomes. Error messages are diagnostic text
-for operators and probes must not assert exact message wording.
-
-Malformed wire bytes must return `BadRequest` through the public QUIC path and
-must not advance the session phase.
 
 ## Encoding Rules
 

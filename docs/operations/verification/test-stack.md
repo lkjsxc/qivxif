@@ -1,5 +1,7 @@
 # Test Stack
 
+LLM purpose: identify test tools and where they fit in acceptance.
+
 ## Canon
 
 Use a small Rust-native test stack that separates fast acceptance from deeper
@@ -7,12 +9,13 @@ regression evidence.
 
 ## Tools
 
-- `cargo nextest run`: workspace test execution.
-- `cargo test --doc`: doctest execution.
-- `insta`: snapshot expectations for protocols, worldgen, and rendered output.
-- `proptest`: property coverage for protocol, world, inventory, and persistence
-  invariants.
-- `Criterion.rs`: benchmark evidence for hot paths and regression budgets.
+| Tool | Use |
+| --- | --- |
+| `cargo nextest run` | Workspace test execution. |
+| `cargo test --doc` | Doctest execution. |
+| `insta` | Snapshot expectations for protocols, worldgen, and rendered output. |
+| `proptest` | Property coverage for protocol, world, inventory, and persistence invariants. |
+| `Criterion.rs` | Benchmark evidence for hot paths and regression budgets. |
 
 ## Rules
 

@@ -1,47 +1,44 @@
 # Contract Matrix
 
-This matrix maps active docs canon to implementation owners and executable
-checks. Implementation behavior outside these rows is not protected.
+## Status
+
+- Status: implemented where verification is listed.
+- Dormant rows are explicitly marked.
 
 ## Acceptance Rule
 
 - Update the owner doc before changing implementation behavior.
-- Keep the implementation owner and verification path in the same coherent
-  batch.
+- Keep implementation owner and verification in one coherent change.
 - Prefer public QUIC probes over in-process shortcuts for server acceptance.
 
 ## Active Contracts
 
 | Contract | Owner doc | Implementation | Verification |
 | --- | --- | --- | --- |
-| Public vertical loop | `architecture/current-slice/vertical-loop.md` | `apps/qivxif-serverd`, `apps/qivxifctl`, `crates/qivxif-probe` | `scripts/verify-compose.sh` smoke and persistence probes |
-| Session phases | `architecture/network/session-lifecycle.md` | `apps/qivxif-serverd/src/session.rs` | server session tests and `protocol-guards` probe |
-| Request replay | `architecture/current-slice/request-replay.md` | `apps/qivxif-serverd/src/request.rs` | `request-replay` probe and request tests |
-| Public messages | `architecture/network/protocol-messages.md` | `crates/qivxif-protocol` | protocol roundtrip and guard tests |
-| Codec boundary | `architecture/network/protocol-codecs.md` | `crates/qivxif-protocol`, `crates/qivxif-net` | malformed-wire probe and protocol tests |
-| QUIC transport | `architecture/network/transport.md` | `crates/qivxif-net`, `apps/qivxif-serverd` | smoke probe through Compose network |
-| Region mutation authority | `architecture/simulation/region-ownership.md` | `crates/qivxif-sim` | region tests and mutation probe |
-| ECS boundary | `architecture/simulation/ecs-boundary.md` | `crates/qivxif-sim` | dependency audit and region tests |
-| Tick policy | `architecture/simulation/tick-policy.md` | `crates/qivxif-sim` | simulation tick tests |
-| Coordinate model | `architecture/world/coordinate-model.md` | `crates/qivxif-world`, `crates/qivxif-core` | world tests |
-| Chunk streaming | `architecture/world/chunk-streaming.md` | `crates/qivxif-world`, `crates/qivxif-probe` | chunk probe path |
-| Hot state | `architecture/persistence/hot-state.md` | `crates/qivxif-storage` | hot write/read/reopen storage tests and `persist-check` probe |
-| Storage schema | `architecture/persistence/schema-contracts.md` | `crates/qivxif-storage` | storage schema and commit-boundary tests |
-| Cold archives | `architecture/persistence/object-archives.md` | `crates/qivxif-storage` | object_store manifest smoke tests |
-| Compose acceptance | `operations/verification/compose-pipeline.md` | `scripts/verify-compose.sh`, Compose files | `scripts/verify-compose.sh` |
-| Static gates | `operations/verification/static-gates.md` | `scripts/verify-static.sh`, `crates/qivxif-quality` | `verify` Compose service |
-| Protocol probes | `operations/verification/protocol-probes.md` | `crates/qivxif-probe`, `apps/qivxifctl` | probe services in Compose |
-| Docs topology | `repository/rules/line-limits.md` | `apps/qivxifctl`, `crates/qivxif-quality` | `qivxifctl docs validate-topology` |
-| Source line limits | `repository/rules/line-limits.md` | `crates/qivxif-quality` | `qivxifctl quality check-lines` |
-| LLM authoring | `vision/llm-authoring.md` | repository docs structure | docs topology and line-limit gates |
+| Public vertical loop | [vertical-loop.md](vertical-loop.md) | `apps/qivxif-serverd`, `apps/qivxifctl`, `crates/qivxif-probe` | `scripts/verify-compose.sh` |
+| Session phases | [../network/session-lifecycle.md](../network/session-lifecycle.md) | `apps/qivxif-serverd::session`, `apps/qivxif-serverd::request` | `protocol-guards` probe; session tests |
+| Request replay | [request-replay.md](request-replay.md) | `apps/qivxif-serverd::session`, `apps/qivxif-serverd::request` | `request-replay` probe; request tests |
+| Public messages | [../network/protocol-messages.md](../network/protocol-messages.md) | `crates/qivxif-protocol` | protocol tests |
+| Codec boundary | [../network/protocol-codecs.md](../network/protocol-codecs.md) | `crates/qivxif-protocol`, `crates/qivxif-net` | malformed-wire probe; protocol tests |
+| QUIC transport | [../network/transport.md](../network/transport.md) | `crates/qivxif-net`, `apps/qivxif-serverd` | smoke probe through Compose network |
+| Region authority | [../simulation/region-ownership.md](../simulation/region-ownership.md) | `crates/qivxif-sim` | region tests; mutation probe |
+| ECS boundary | [../simulation/ecs-boundary.md](../simulation/ecs-boundary.md) | `crates/qivxif-sim` | region tests |
+| Coordinate model | [../world/coordinate-model.md](../world/coordinate-model.md) | `crates/qivxif-core`, `crates/qivxif-world` | world tests |
+| Chunk cells | [../world/chunk-streaming.md](../world/chunk-streaming.md) | `crates/qivxif-world`, `crates/qivxif-probe` | chunk probe path |
+| Hot state | [../persistence/hot-state.md](../persistence/hot-state.md) | `crates/qivxif-storage` | storage tests; `persist-check` probe |
+| Storage schema | [../persistence/schema-contracts.md](../persistence/schema-contracts.md) | `crates/qivxif-storage` | storage tests |
+| Object archive manifests | [../persistence/object-archives.md](../persistence/object-archives.md) | `crates/qivxif-storage::ArchiveStore` | archive manifest tests |
+| Docs topology | [../../repository/rules/line-limits.md](../../repository/rules/line-limits.md) | `crates/qivxif-quality` | `qivxifctl docs validate-topology` |
+| Line limits | [../../repository/rules/line-limits.md](../../repository/rules/line-limits.md) | `crates/qivxif-quality` | `qivxifctl quality check-lines` |
 
 ## Dormant Contracts
 
-| Contract | Owner doc | Activation rule |
+| Contract | Owner doc | Current state |
 | --- | --- | --- |
-| Native client shells | `architecture/client/` | Add workspace crates only after shell docs define public checks |
-| Renderer family | `architecture/client/renderer.md` | Add renderer code only after client shell boundary is active |
-| Markets and claims | `product/gameplay/`, `product/social/` | Add gameplay code after server authority and persistence checks pass |
+| Native client shells | [../client/README.md](../client/README.md) | No client crate exists |
+| Renderer family | [../client/renderer.md](../client/renderer.md) | No renderer crate exists |
+| Multi-region handoff | [../simulation/cross-region-handoff.md](../simulation/cross-region-handoff.md) | One region actor only |
+| Gameplay systems | `docs/product/gameplay/` | No server gameplay crates beyond terrain mutation |
 
 ## Workspace Members
 
@@ -49,11 +46,11 @@ checks. Implementation behavior outside these rows is not protected.
 | --- | --- |
 | `apps/qivxif-serverd` | Authoritative server process |
 | `apps/qivxifctl` | Agent-friendly quality and probe CLI |
-| `crates/qivxif-core` | Shared primitive types |
-| `crates/qivxif-protocol` | Public protocol catalog and postcard encoding |
+| `crates/qivxif-core` | Shared primitive types and config |
+| `crates/qivxif-protocol` | Public protocol catalog and postcard helpers |
 | `crates/qivxif-net` | QUIC and certificate helpers |
-| `crates/qivxif-world` | Coordinates and chunk generation |
-| `crates/qivxif-sim` | Region-local mutation authority |
-| `crates/qivxif-storage` | Hot durable state and archive boundary |
+| `crates/qivxif-world` | Chunk coordinates and generated cells |
+| `crates/qivxif-sim` | Region actor and mutation authority |
+| `crates/qivxif-storage` | redb hot state and archive boundary |
 | `crates/qivxif-quality` | Repository quality checks |
 | `crates/qivxif-probe` | Public probe scenarios |

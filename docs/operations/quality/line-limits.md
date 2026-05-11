@@ -1,9 +1,13 @@
 # Line Limits
 
+LLM purpose: state file-size limits that keep agent context usable.
+
 ## Limits
 
-- Docs Markdown: `<=300` lines.
-- Authored Rust and shell source: `<=200` lines.
+| File type | Limit |
+| --- | --- |
+| Docs Markdown | `<=300` lines. |
+| Authored Rust and shell source | `<=200` lines. |
 
 ## Rules
 

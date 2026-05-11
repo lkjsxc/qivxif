@@ -1,27 +1,29 @@
 # Transport
 
-## Canon
+## Status
 
-qivxif uses QUIC through Quinn.
+- Status: implemented for reliable QUIC streams.
+- Owner: `crates/qivxif-net` and `apps/qivxif-serverd::app`.
 
-## Reliable Streams
+## Implemented Facts
 
-- Login.
-- Join.
-- Inventory.
-- Crafting.
-- Ability casts.
-- Chunk bundles.
-- Admin probes.
+- qivxif uses Quinn for QUIC.
+- `server_config()` creates a Quinn server config.
+- `client_endpoint()` creates a Quinn client endpoint for probes.
+- The server accepts bidirectional streams with `connection.accept_bi()`.
+- The probe client opens bidirectional streams with `connection.open_bi()`.
+- Unidirectional streams are disabled in server transport config.
+- `recv_wire` caps each request body at 1 MiB.
 
-## Datagrams
+## Current Lane
 
-- Input frames.
-- Look deltas.
-- Ephemeral entity deltas.
-- Effect notifications.
+- Active lane: reliable bidirectional stream.
+- Request pattern: one `ClientMsg` per stream.
+- Response pattern: one `ServerMsg` per stream.
 
-## Initial Slice
+## Not Implemented
 
-The first server slice may use reliable streams only, but it must run through
-QUIC so later lanes share the same transport boundary.
+- Public datagram payloads.
+- Gameplay input datagrams.
+- Entity delta streams.
+- Client asset transport.

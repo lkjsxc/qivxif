@@ -1,5 +1,7 @@
 # Acceptance Gates
 
+LLM purpose: define the minimum acceptance order for behavior changes.
+
 ## Rule
 
 No behavior change is accepted without matching docs, implementation, and

@@ -1,8 +1,15 @@
 # Request Replay
 
+## Status
+
+- Status: implemented.
+- Owner: `apps/qivxif-serverd::session` and `apps/qivxif-serverd::request`.
+- Public verification: `request-replay` probe.
+
 ## Rule
 
-Mutating request identifiers are session-scoped replay guards.
+- Mutating request identifiers are session-scoped replay guards.
+- The replay cache lives in `Session::mutating_responses`.
 
 ## Applies To
 
@@ -12,17 +19,14 @@ Mutating request identifiers are session-scoped replay guards.
 ## Behavior
 
 - The first mutating request for an identifier executes normally.
-- A repeated identifier returns the first recorded authoritative response.
+- The first response is stored by request identifier.
+- A repeated identifier returns the stored response.
 - A repeated `PlaceBlock` does not apply another mutation.
 - A repeated `FlushPersistence` does not perform another flush.
-- The `request-replay` Compose probe verifies both behaviors through the public
-  QUIC path.
+- Reusing one identifier for different mutating intents is invalid client behavior.
 
-Player-visible terrain editing expectations are owned by
-[../../product/world/terrain-editing.md](../../product/world/terrain-editing.md).
+## Cross-References
 
-## Rationale
-
-Reliable streams already preserve ordered bytes inside one stream. Request
-replay guards protect client retry behavior across newly opened streams in the
-same session without expanding the public protocol.
+- Message fields: [../network/protocol-messages.md](../network/protocol-messages.md).
+- Session phases: [../network/session-lifecycle.md](../network/session-lifecycle.md).
+- Player terrain intent: [../../product/world/terrain-editing.md](../../product/world/terrain-editing.md).

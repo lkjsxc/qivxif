@@ -1,26 +1,37 @@
 # Authority Rules
 
-## Server Owns
+## Status
 
-- Movement acceptance.
-- Combat result.
+- Status: implemented for terrain mutation only.
+- Owner: `apps/qivxif-serverd::request` and `crates/qivxif-sim`.
+
+## Server Owns Now
+
+- Session phase acceptance.
+- Chunk request handling.
+- Terrain mutation acceptance.
+- Persistence flush acceptance.
+
+## Client Or Probe Owns Now
+
+- Request construction.
+- Local transport connection.
+- Probe assertions.
+
+## Not Implemented
+
+- Movement simulation.
+- Combat results.
 - Inventory state.
-- Crafting outcome.
+- Crafting outcomes.
 - Claim permissions.
-- World mutation.
 
-Player-facing combat, inventory, crafting, and claim behavior is owned by
-[../../product/gameplay/combat-abilities.md](../../product/gameplay/combat-abilities.md),
-[../../product/gameplay/inventory-crafting.md](../../product/gameplay/inventory-crafting.md),
-and [../../product/gameplay/bases-claims.md](../../product/gameplay/bases-claims.md).
+## Product Links
 
-## Client Owns
-
-- Input collection.
-- Presentation.
-- Prediction.
-- Local cache.
+- Combat: [../../product/gameplay/combat-abilities.md](../../product/gameplay/combat-abilities.md).
+- Inventory and crafting: [../../product/gameplay/inventory-crafting.md](../../product/gameplay/inventory-crafting.md).
+- Bases and claims: [../../product/gameplay/bases-claims.md](../../product/gameplay/bases-claims.md).
 
 ## Rule
 
-Client data is intent until the server accepts it.
+- Client data is intent until the server accepts it.

@@ -1,22 +1,29 @@
 # Chunk Streaming
 
-## Interest Inputs
+## Status
 
-- Player position.
-- Velocity.
-- Visual radius.
-- Interaction radius.
-- Pending requests.
+- Status: implemented as direct chunk request and response.
+- Owner: `ClientMsg::ChunkRequest`, `ServerMsg::Chunk`, and `qivxif_world::chunk_cells`.
 
-Player-facing world and camera expectations are owned by
-[../../product/world/README.md](../../product/world/README.md) and
-[../../product/player/camera-controls.md](../../product/player/camera-controls.md).
+## Implemented Behavior
 
-## Rule
+- Client or probe sends `ChunkRequest { coord }` after join.
+- Server asks the region actor for the chunk.
+- Region loads persisted overlay cells for the chunk.
+- Region merges dirty in-memory cells for the chunk.
+- World generation creates visible generated cells.
+- Overlays replace generated cells at the same position.
+- Response is `Chunk { coord, cells }`.
 
-Collision and interaction data have priority over decorative data.
+## Not Implemented
 
-## Initial Slice
+- Interest management by player position.
+- Visual radius selection.
+- Interaction radius prioritization.
+- Chunk subscriptions.
+- Decorative data tiers.
 
-The first slice returns one deterministic chunk plus chunk-scoped edit overlays
-loaded from the `sections` table.
+## Product Links
+
+- World expectations: [../../product/world/README.md](../../product/world/README.md).
+- Camera expectations: [../../product/player/camera-controls.md](../../product/player/camera-controls.md).

@@ -1,16 +1,27 @@
 # Wording
 
+Owner doc for repository wording constraints.
+
 ## Preferred Terms
 
-- Initial slice.
-- Protocol epoch.
-- Build epoch.
-- Schema epoch.
-- Deprecated path deleted.
+| Term | Use |
+|---|---|
+| Initial slice | Current limited implementation scope. |
+| Protocol epoch | Protocol compatibility marker. |
+| Build epoch | Build compatibility marker. |
+| Schema epoch | Storage or payload schema compatibility marker. |
+| Deprecated path deleted | Retired paths are removed instead of aliased. |
 
 ## Avoid
 
-- Named product-line labels.
-- Preserved old-path aliases.
-- Temporary parallel contracts.
-- Long speculative prose.
+| Wording | Reason |
+|---|---|
+| Named product-line labels | They become stale. |
+| Preserved old-path aliases | They create parallel meanings. |
+| Temporary parallel contracts | They obscure the owner doc. |
+| Long speculative prose | It is hard to retrieve and verify. |
+
+## LLM Notes
+
+- Prefer short declarative facts.
+- Use exact names from owner docs.

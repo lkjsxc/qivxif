@@ -1,23 +1,33 @@
 # Coordinate Model
 
-## Terms
+## Status
 
-- Block: smallest editable unit.
-- Section: future fixed cube of blocks addressed by `SectionCoord { x, y, z }`.
-- Chunk: horizontal grouping for streaming.
-- Region: authoritative simulation ownership area.
+- Status: implemented for block positions and chunk coordinates.
+- Owner: `crates/qivxif-core` and `crates/qivxif-world`.
 
-## Rule
+## Implemented Types
 
-Coordinates must be deterministic and serializable.
-Chunk ownership uses Euclidean division so negative world coordinates map
-deterministically to negative chunk coordinates.
+| Type | Fields | Owner |
+| --- | --- | --- |
+| `BlockPos` | `x: i32`, `y: i32`, `z: i32` | `qivxif-core` |
+| `ChunkCoord` | `x: i32`, `z: i32` | `qivxif-core` |
 
-## Initial Slice
+## Implemented Rules
 
-The current persistence slice stores chunk-scoped edit overlays in the
-`sections` table. The table name is reserved for the future section model, but
-the current key is chunk-based: `section/{chunk_x}/{chunk_z}`.
+- `CHUNK_EDGE` is `8`.
+- `chunk_coord(pos)` uses Euclidean division for `x` and `z`.
+- Negative block coordinates map deterministically to negative chunk coordinates.
+- `in_chunk(pos, coord)` uses the same Euclidean chunk mapping.
+- Current chunk generation iterates local `x`, `y`, and `z` in `0..CHUNK_EDGE`.
 
-Before deeper world work, introduce true `SectionCoord { x, y, z }` ownership
-and migrate the overlay key contract in a schema epoch decision.
+## Persistence Key Link
+
+- Current overlay keys are chunk-based.
+- Key shape: `section/{chunk_x}/{chunk_z}`.
+- Storage details are owned by [../persistence/schema-contracts.md](../persistence/schema-contracts.md).
+
+## Not Implemented
+
+- `SectionCoord { x, y, z }`.
+- Vertical section ownership.
+- Region coordinate partitioning.

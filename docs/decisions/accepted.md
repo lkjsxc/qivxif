@@ -1,5 +1,9 @@
 # Accepted Decisions
 
+## Scope
+
+These decisions are durable unless a later owner doc explicitly changes them.
+
 ## Product
 
 - Native full-parity clients.
@@ -10,6 +14,7 @@
 - Zone-scaled death loss.
 - Activity-based claim decay.
 - Regional player markets.
+- Protected sanctuary and starter spaces.
 
 ## Architecture
 
@@ -25,3 +30,6 @@
 - Layered security with QUIC/TLS, Argon2id, Ed25519, rcgen for local certificates, and rustls for HTTPS endpoints.
 - nextest, doctests, insta, proptest, and Criterion for the test stack.
 - Docker Compose acceptance.
+- Docs-first change order with recursive README navigation and line limits.
+- Client delivery sequence: headless/protocol client surface, shared client core,
+  desktop shell, renderer shell, then mobile shells.

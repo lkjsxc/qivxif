@@ -1,5 +1,8 @@
 # Soak And Load
 
+LLM purpose: reserve long-running operational checks for authoritative tick
+pressure.
+
 ## Purpose
 
 Soak and load checks protect the authoritative tick path.

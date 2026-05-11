@@ -1,5 +1,13 @@
 # Protocol Probes
 
+LLM purpose: summarize live public-path probe coverage and stable output.
+
+## Owner Scope
+
+This file owns probe coverage and output expectations. Message schemas, request
+identifiers, and response codes are owned by
+[../../architecture/network/protocol-messages.md](../../architecture/network/protocol-messages.md).
+
 ## Smoke Probe
 
 - Connects over QUIC.

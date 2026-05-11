@@ -1,5 +1,12 @@
 # Tracing
 
+LLM purpose: list stable runtime events that agents can search in logs.
+
+## Owner Scope
+
+This file owns required and dormant event names. Probe behavior is owned by
+[../verification/protocol-probes.md](../verification/protocol-probes.md).
+
 ## Required Events
 
 - `server starting`.

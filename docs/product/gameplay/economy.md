@@ -1,6 +1,10 @@
 # Economy
 
-## Canon
+## Scope
+
+This file owns the high-level direction of the player-crafted economy.
+
+## Canon Facts
 
 qivxif uses a player-crafted economy.
 
@@ -14,7 +18,8 @@ qivxif uses a player-crafted economy.
 
 Markets should reward transport, risk, specialization, and base infrastructure.
 
-## Canon Link
+## Cross-References
 
-Regional listing and settlement rules are owned by
-[../social/player-markets.md](../social/player-markets.md).
+- Regional listing and settlement rules are owned by [../social/player-markets.md](../social/player-markets.md).
+- Crafting supply depends on [inventory-crafting.md](inventory-crafting.md).
+- Transport risk depends on [../world/zones.md](../world/zones.md).

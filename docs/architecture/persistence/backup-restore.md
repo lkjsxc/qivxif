@@ -1,13 +1,28 @@
 # Backup And Restore
 
-## Required Operations
+## Status
 
-- Flush dirty sections.
-- Snapshot hot state.
-- Archive replay tail.
-- Restore into a fresh server data directory.
-- Verify world mutation and profile continuity.
+- Status: restart persistence probe only.
+- No full backup or restore workflow exists.
 
-## Rule
+## Implemented Persistence Check
 
-Permanent terrain editing makes restore drills mandatory.
+1. Probe places a block.
+2. Probe sends `FlushPersistence`.
+3. Compose restarts the server.
+4. Probe requests the same chunk.
+5. Probe expects the placed block in the returned cells.
+
+## Implemented Storage Support
+
+- `WorldStore` can reopen an existing database.
+- Existing `WorldMeta` persists across reopen.
+- Committed chunk overlays persist across reopen.
+
+## Not Implemented
+
+- Snapshot creation.
+- Replay tail archiving.
+- Restore into a fresh data directory.
+- Profile continuity checks.
+- Automated backup drills.

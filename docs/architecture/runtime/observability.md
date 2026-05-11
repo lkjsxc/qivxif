@@ -1,29 +1,37 @@
 # Runtime Observability
 
-## Required Signals
+## Status
 
-- `server starting`: includes config path, bind address, data directory,
-  build epoch, and protocol epoch.
-- `server shutdown`: emitted after the serve loop exits.
-- `server listening`: includes the bound address.
-- `connection accepted`: no raw client address at info level.
-- `connection closed`: includes session identifier.
-- `request handled`: includes session identifier and request name.
-- `chunk request completed`: includes session identifier and returned cell count.
-- `mutation accepted`: includes session identifier and request identifier.
-- `mutation rejected`: includes session identifier and durable error code.
-- `persistence flushed`: includes session identifier and request identifier.
-- `persistence flush rejected`: includes session identifier, request identifier,
-  and durable error code.
-- `probe <name> ... ok`: emitted by `qivxifctl` after a successful probe.
+- Status: implemented for tracing logs and probe stdout.
+- Owner: `apps/qivxif-serverd`, `apps/qivxifctl`.
 
-## Dormant Signals
+## Implemented Server Signals
 
-- `archive manifest written`: added when archive writes enter runtime paths.
-- `archive manifest listed`: added when archive listing enters runtime paths.
-- `region tick completed`: added when region ticks become externally observable.
-- `request replayed`: added when replay diagnostics become part of acceptance.
+| Signal | Implementation fact |
+| --- | --- |
+| `server starting` | Includes config path, bind address, data directory, build epoch, and protocol epoch |
+| `server listening` | Includes bound address |
+| `connection accepted` | Info log without raw client address |
+| `connection remote address` | Debug log with raw client address |
+| `request handled` | Includes session identifier and request name |
+| `chunk request completed` | Includes session identifier and returned cell count |
+| `mutation accepted` | Includes session identifier and request identifier |
+| `mutation rejected` | Includes session identifier and durable error code |
+| `persistence flushed` | Includes session identifier and request identifier |
+| `persistence flush rejected` | Includes session identifier, request identifier, and durable error code |
+| `connection closed` | Includes session identifier |
+| `server shutdown` | Emitted after serve loop exits |
 
-## Direction
+## Implemented Probe Signal
 
-Use structured tracing. Logs must be compact enough for Compose gate failures.
+- `qivxifctl` prints `probe {label} ... ok` after a successful probe.
+
+## Not Implemented
+
+- Archive manifest runtime logs.
+- Region tick completion logs.
+- Request replay diagnostic logs.
+
+## Rule
+
+- Logs must stay compact enough for Compose gate failures.

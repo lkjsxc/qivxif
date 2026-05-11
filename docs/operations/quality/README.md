@@ -1,6 +1,17 @@
 # Quality
 
-Use this subtree for structural quality gates.
+LLM purpose: structural quality gates for docs topology, line limits, and
+acceptance rules.
+
+## Scope
+
+- Repository documentation shape.
+- File line budgets.
+- Acceptance gate order.
+
+## Boundary
+
+This subtree does not replace implementation tests or owner docs.
 
 ## Child Index
 

@@ -1,6 +1,10 @@
 # Death And Respawn
 
-## Death
+## Scope
+
+This file owns player death loss, cache recovery, and respawn destination rules.
+
+## Death Facts
 
 - Server owns lethal damage.
 - Client may predict presentation only.
@@ -28,3 +32,9 @@
 - Respawn uses sanctuary, starter basin, base bed, or explicit anchor rules.
 - Destination checks use the same safety style as starter teleport.
 - Unsafe anchors fall back to the nearest valid sanctuary or starter basin.
+
+## Cross-References
+
+- Zone loss categories depend on [../world/zones.md](../world/zones.md).
+- Starter basin safety checks are defined in [../world/starter-basins.md](../world/starter-basins.md).
+- Base bed ownership depends on [../gameplay/bases-claims.md](../gameplay/bases-claims.md).

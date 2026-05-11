@@ -1,6 +1,10 @@
 # Camera And Controls
 
-## Camera Contract
+## Scope
+
+This file owns camera modes and player movement responsibility.
+
+## Facts
 
 - Third-person is the default MMORPG camera.
 - First-person is a precision mode for building, mining, and aiming.
@@ -16,3 +20,8 @@
 
 - Accept, reject, or correct movement.
 - Own combat and interaction truth.
+
+## Cross-References
+
+- Combat authority is defined in [../gameplay/combat-abilities.md](../gameplay/combat-abilities.md).
+- Terrain editing use cases are defined in [../world/terrain-editing.md](../world/terrain-editing.md).

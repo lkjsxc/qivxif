@@ -1,15 +1,25 @@
 # Renderer
 
-## Canon
+## Status
 
-Use one `wgpu` renderer family with capability gates.
+- Status: not implemented.
+- No renderer crate exists.
+- No `wgpu` renderer code exists in the current workspace.
 
-## Quality Direction
+## Current Codebase Facts
 
-- Portable baseline first.
-- Higher quality through runtime capability checks.
-- Experimental features cannot define gameplay visibility.
+- Server returns `BlockCell` data.
+- No mesh generation path exists.
+- No GPU capability gate exists.
+- No render quality settings exist.
+
+## Activation Requirements
+
+- Add renderer crate ownership.
+- Define chunk mesh input format.
+- Define capability gates.
+- Add visual or golden verification.
 
 ## Rule
 
-Do not create separate engines for low-end and high-end clients.
+- Do not make gameplay visibility depend on experimental GPU features.

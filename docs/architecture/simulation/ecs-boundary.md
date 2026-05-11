@@ -1,19 +1,27 @@
 # ECS Boundary
 
-## Direction
+## Status
 
-Use `bevy_ecs` as the standalone ECS inside region actors for region-local
-state that benefits from dense queries and scheduled systems.
+- Status: implemented for region-local stats only.
+- Owner: `crates/qivxif-sim`.
+
+## Implemented Facts
+
+- `Region` contains a `bevy_ecs::World`.
+- `RegionStats` is inserted as a resource.
+- `place_block` increments `RegionStats::mutations`.
+- `flush` increments `RegionStats::flushes`.
+- Gameplay block mutation uses simple Rust structs, not ECS systems.
 
 ## Rules
 
-- `bevy_ecs` is an internal region data model.
+- `bevy_ecs` is internal to a region actor.
 - `bevy_ecs` does not replace actor ownership.
-- Cross-region state transfer is serialized through handoff messages.
-- Tokio actors own region mailboxes and service orchestration.
+- Cross-region data must not share mutable ECS state.
 - ECS systems may mutate only the region world they are scheduled inside.
 
-## Initial Slice
+## Not Implemented
 
-`bevy_ecs` is already active for region-local stats. Gameplay mutation still
-uses simple structs until entity behavior requires ECS systems.
+- ECS component catalogs.
+- ECS schedules for gameplay systems.
+- Cross-region ECS handoff.

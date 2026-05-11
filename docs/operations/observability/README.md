@@ -1,6 +1,18 @@
 # Observability
 
-Use this subtree for runtime signals and incident work.
+LLM purpose: runtime signals, profiling direction, and incident response entry
+points.
+
+## Scope
+
+- Required tracing events and probe output.
+- Profiling constraints.
+- Incident first checks and recovery rule.
+
+## Boundary
+
+This subtree describes operational visibility; it does not define gameplay or
+network protocol semantics.
 
 ## Child Index
 

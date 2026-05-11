@@ -1,42 +1,42 @@
 # Schema Contracts
 
-## Tables
+## Status
 
-- `meta`: world and schema epochs.
-- `sections`: chunk-scoped edit overlay payloads in the initial slice.
-- `profiles`: player state.
-- `bases`: base and claim records.
-- `skills`: progression state.
-- `market_orders`: regional listing and settlement records.
-- `mail`: durable delivery records when mail exists.
+- Status: implemented for two redb tables.
+- Owner: `crates/qivxif-storage::tables`.
 
-## Encoding
+## Active Tables
 
-- Hot-state records use compact explicit schemas.
-- `postcard` is acceptable for compact hot records when the owner crate controls
-  the schema.
-- `rkyv` belongs to read-mostly archives and caches, not mutable hot truth.
+| Table | Key type | Value type | Current contents |
+| --- | --- | --- | --- |
+| `meta` | `&str` | `&[u8]` | key `world` stores postcard `WorldMeta` |
+| `sections` | `&str` | `&[u8]` | chunk overlay keys store postcard `Vec<BlockCell>` |
 
-## Rule
+## Files And Keys
 
-Each table has one owner crate and one owner doc.
+- Database file: `world.redb`.
+- Metadata key: `world`.
+- Overlay key shape: `section/{chunk_x}/{chunk_z}`.
+- Negative chunk coordinates keep their signed decimal form.
 
 ## Bootstrap
 
-- `qivxif-storage` opens every active table during database startup.
+- `database::open` creates the root directory.
+- `database::open` creates or opens `world.redb`.
+- `init_tables` opens `meta` and `sections` in a write transaction.
 - Hot-path reads and writes assume active tables already exist.
-- Adding a table requires updating this file, the storage table catalog, and the
-  startup bootstrap together.
 
 ## Commit Boundary
 
-- Each public flush writes a complete chunk overlay in one redb transaction.
-- The transaction uses immediate durability before commit.
-- A committed transaction is the persistence boundary observed by restart probes.
+- `put_chunk_overlay` writes one complete chunk overlay per transaction.
+- The transaction sets `Durability::Immediate` before commit.
+- A committed transaction is the boundary observed by restart probes.
 
-## Section Migration
+## Not Implemented
 
-The `sections` table currently uses keys shaped as
-`section/{chunk_x}/{chunk_z}` and values containing edited block cells for that
-chunk. True section keys require `SectionCoord { x, y, z }` and a schema epoch
-decision before deeper world persistence work.
+- `profiles` table.
+- `bases` table.
+- `skills` table.
+- `market_orders` table.
+- `mail` table.
+- True section keys with `SectionCoord { x, y, z }`.

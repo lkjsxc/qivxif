@@ -1,17 +1,28 @@
 # Region Ownership
 
-## Canon
+## Status
 
-Region actors own mutable world state.
+- Status: implemented for one region actor.
+- Owner: `crates/qivxif-sim::RegionHandle`.
 
-## Rules
+## Implemented Facts
 
-- Non-owner services send messages.
-- A region validates mutation before applying it.
-- Dirty sections are queued for persistence after mutation.
-- Flush commands write queued dirty sections before restart-sensitive checks.
-- Cross-region work uses explicit handoff messages.
+- `RegionHandle::spawn` starts one Tokio task.
+- The actor owns `Region` state.
+- Commands are `Chunk`, `PlaceBlock`, and `Flush`.
+- Non-owner code calls async methods on `RegionHandle`.
+- `place_block` validates block height before mutation.
+- Valid mutation updates the dirty chunk overlay.
+- `flush` writes dirty chunk overlays through `WorldStore`.
+- Dirty state is cleared after flush by draining the map.
 
-## Initial Slice
+## Validation Rule
 
-The first slice may use one region actor. It must keep the ownership boundary.
+- Current y bounds are `0..CHUNK_EDGE`.
+- Invalid y returns `SimError::InvalidBlockPos`.
+
+## Not Implemented
+
+- Multiple region actors.
+- Region partitioning.
+- Cross-region transfer.

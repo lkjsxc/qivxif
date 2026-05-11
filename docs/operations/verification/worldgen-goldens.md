@@ -1,5 +1,7 @@
 # Worldgen Goldens
 
+LLM purpose: state the deterministic terrain regression coverage.
+
 ## Purpose
 
 Worldgen goldens keep deterministic terrain stable.

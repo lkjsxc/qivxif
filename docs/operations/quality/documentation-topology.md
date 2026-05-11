@@ -1,5 +1,8 @@
 # Documentation Topology
 
+LLM purpose: define the tree shape that keeps documentation retrieval
+predictable.
+
 ## Rules
 
 - Every docs directory has exactly one `README.md`.

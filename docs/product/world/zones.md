@@ -1,5 +1,9 @@
 # Zones
 
+## Scope
+
+This file owns the player-facing behavior of sanctuary, starter basin, and frontier spaces.
+
 ## Sanctuary
 
 - PvP is disabled.
@@ -26,3 +30,9 @@
 - Death can expose carried resources, extracted valuables, and unbound goods.
 - Claims require continuing activity and maintenance.
 - Markets are regional and depend on transport risk.
+
+## Cross-References
+
+- Death loss by zone is defined in [../player/death-respawn.md](../player/death-respawn.md).
+- Claim decay by zone is defined in [../gameplay/bases-claims.md](../gameplay/bases-claims.md).
+- Regional market behavior is defined in [../social/player-markets.md](../social/player-markets.md).

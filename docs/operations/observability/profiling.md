@@ -1,5 +1,7 @@
 # Profiling
 
+LLM purpose: state allowed profiling direction without blocking runtime work.
+
 ## Server
 
 Use tracing and task-aware profiling for async stalls and tick pressure.

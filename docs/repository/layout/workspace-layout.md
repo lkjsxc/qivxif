@@ -1,23 +1,32 @@
 # Workspace Layout
 
-The active workspace is the server/probe slice. Client, renderer, auth,
-gameplay, and mobile crates are added only after their owner docs are active.
+Owner doc for the active Rust workspace shape.
+
+## Scope
+
+The active workspace is the server/probe slice. Client, renderer,
+authentication, gameplay, and mobile crates are added only after their owner
+docs are active.
 
 ## Apps
 
-- `qivxif-serverd`: authoritative server.
-- `qivxifctl`: quality and probe command.
+| App | Role |
+|---|---|
+| `qivxif-serverd` | Authoritative server. |
+| `qivxifctl` | Quality and probe command. |
 
 ## Crates
 
-- `qivxif-core`.
-- `qivxif-protocol`.
-- `qivxif-net`.
-- `qivxif-world`.
-- `qivxif-sim`.
-- `qivxif-storage`.
-- `qivxif-quality`.
-- `qivxif-probe`.
+| Crate | Role |
+|---|---|
+| `qivxif-core` | Shared core types. |
+| `qivxif-protocol` | Protocol payloads and schema-bound types. |
+| `qivxif-net` | Network-facing support. |
+| `qivxif-world` | World data support. |
+| `qivxif-sim` | Simulation support. |
+| `qivxif-storage` | Persistence support. |
+| `qivxif-quality` | Quality and verification support. |
+| `qivxif-probe` | Probe support. |
 
 ## Planned Areas
 
@@ -26,3 +35,8 @@ gameplay, and mobile crates are added only after their owner docs are active.
 - Renderer family.
 - Authentication and identity.
 - Gameplay systems.
+
+## LLM Notes
+
+- Do not add planned areas to the active workspace list until owner docs are active.
+- Keep crate names exact.

@@ -1,13 +1,23 @@
 # Tick Policy
 
-## Rules
+## Status
 
-- Authoritative simulation uses fixed steps.
-- Tick work never blocks on file I/O.
-- Tick work never waits on network backpressure.
-- Expensive jobs leave the tick path through bounded queues.
-- The initial server slice may flush on explicit probe/admin commands only.
+- Status: no fixed tick loop implemented.
+- Current actor processes mailbox commands sequentially.
 
-## Failure
+## Implemented Facts
 
-If queues are full, the server must shed, delay, or reject work explicitly.
+- Region work runs in a Tokio task.
+- Chunk generation is called synchronously inside the region command handler.
+- redb flush is called only from explicit `Flush` commands.
+- Current probes call flush explicitly before restart-sensitive checks.
+
+## Active Rule
+
+- Do not claim a fixed-step simulation tick exists in the current slice.
+
+## Future Constraints
+
+- Tick work must not block on network backpressure.
+- Expensive jobs must leave the tick path through bounded queues.
+- Full queues must shed, delay, or reject work explicitly.

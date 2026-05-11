@@ -1,5 +1,14 @@
 # Compose Pipeline
 
+LLM purpose: define the canonical full acceptance command sequence and expected
+evidence shape.
+
+## Owner Scope
+
+This file owns the Compose acceptance order. Individual probe contracts are in
+[protocol-probes.md](protocol-probes.md). Static gate details are in
+[static-gates.md](static-gates.md).
+
 ## Canonical Commands
 
 Run the full acceptance pipeline through the repository wrapper:
@@ -26,17 +35,17 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 
 ## Required Behavior
 
-- `verify` runs formatting, Clippy, nextest, doctests, optimized build, docs topology, and line limits.
-- `smoke` verifies connect, hello, join, chunk request, and ping.
-- `protocol-guards` verifies session-phase and hello rejection codes through
-  public QUIC requests.
-- `malformed-wire` verifies decode failures return `BadRequest` and do not
-  advance session phase.
-- `request-replay` verifies duplicate mutating identifiers return the first
-  response without applying or flushing again.
-- `persist-place` mutates a block through the public path.
-- `persist-check` verifies the mutation after restart.
-- Non-zero exit blocks acceptance.
+| Step | Required behavior |
+| --- | --- |
+| `verify` | Runs formatting, Clippy, nextest, doctests, optimized build, docs topology, and line limits. |
+| `smoke` | Verifies connect, hello, join, chunk request, and ping. |
+| `protocol-guards` | Verifies session-phase and hello rejection codes through public QUIC requests. |
+| `malformed-wire` | Verifies decode failures return `BadRequest` and do not advance session phase. |
+| `request-replay` | Verifies duplicate mutating identifiers return the first response without applying or flushing again. |
+| `persist-place` | Mutates a block through the public path. |
+| `persist-check` | Verifies the mutation after restart. |
+
+Non-zero exit blocks acceptance.
 
 ## Evidence
 

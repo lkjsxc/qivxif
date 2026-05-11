@@ -1,15 +1,25 @@
 # Static Gates
 
+LLM purpose: enumerate non-live checks run by the verification image.
+
+## Owner Scope
+
+This file owns static gate names and command intent. The Compose wrapper order
+is owned by [compose-pipeline.md](compose-pipeline.md).
+
 ## Stages
 
-- `cargo fmt -- --check` checks Rust formatting.
-- `cargo clippy --locked --workspace --all-targets -- -D warnings` denies Clippy warnings.
-- `cargo nextest run --locked --workspace` runs workspace tests.
-- `cargo test --locked --doc --workspace` runs doctests.
-- `cargo build --locked --release --workspace` builds optimized artifacts.
-- `cargo run --locked --bin qivxifctl -- docs validate-topology` checks docs topology.
-- `cargo run --locked --bin qivxifctl -- quality check-lines` checks line limits.
-- Locked Cargo inputs.
+| Stage | Purpose |
+| --- | --- |
+| `cargo fmt -- --check` | Checks Rust formatting. |
+| `cargo clippy --locked --workspace --all-targets -- -D warnings` | Denies Clippy warnings. |
+| `cargo nextest run --locked --workspace` | Runs workspace tests. |
+| `cargo test --locked --doc --workspace` | Runs doctests. |
+| `cargo build --locked --release --workspace` | Builds optimized artifacts. |
+| `cargo run --locked --bin qivxifctl -- docs validate-topology` | Checks docs topology. |
+| `cargo run --locked --bin qivxifctl -- quality check-lines` | Checks line limits. |
+
+All Cargo inputs are locked.
 
 ## Output
 

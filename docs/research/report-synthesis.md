@@ -1,8 +1,12 @@
 # Report Synthesis
 
-## Source
+## Sources
 
-`tmp/deep-research-report (51).md`.
+- `tmp/deep-research-report (47).md`
+- `tmp/deep-research-report (49).md`
+- `tmp/deep-research-report (50).md`
+- `tmp/deep-research-report (51).md`
+- `tmp/deep-research-report (53).md`
 
 ## Durable Findings
 
@@ -22,6 +26,13 @@
 - Use nextest, doctests, insta, proptest, and Criterion as the testing stack.
 - Zone-scaled death loss, activity-based claim decay, and regional markets are
   already product canon.
+- Windows delivery should start with a headless/protocol client surface before a
+  graphical desktop client.
+- Linux Docker builds can produce repeatable `x86_64-pc-windows-gnu` artifacts;
+  final user-facing Windows releases should use a Windows-native MSVC job.
+- Windows-container-first delivery is not the preferred path from a Linux host.
+- Local self-signed certificate helpers are acceptable only for local Compose and
+  must not become production trust policy.
 
 ## Owner Doc Targets
 
@@ -37,6 +48,9 @@
 | Compose acceptance | `operations/verification/compose-pipeline.md` |
 | Native client shell | `architecture/client/` |
 | LLM authoring rules | `vision/llm-authoring.md` |
+| Windows client delivery | `research/client-delivery-references.md` |
+| Verification discipline | `research/operations-references.md` |
+| Trust boundaries | `research/security-references.md` |
 
 ## Implementation Order
 
@@ -47,6 +61,7 @@
 5. Persist active terrain edits in `redb` before adding archive workflows.
 6. Add `object_store` archive smoke paths only after hot-state behavior is stable.
 7. Keep renderer and native-shell work behind the client boundary docs.
+8. Prove a protocol/headless client path before user-facing graphical clients.
 
 ## Stack Boundaries
 

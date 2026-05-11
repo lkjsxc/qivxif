@@ -1,5 +1,7 @@
 # Incident Runbook
 
+LLM purpose: provide the first operational checks before risky recovery.
+
 ## First Checks
 
 - Confirm server process status.

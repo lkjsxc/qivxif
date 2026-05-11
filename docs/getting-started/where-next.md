@@ -1,5 +1,10 @@
 # Where Next
 
+## Rule
+
+Choose the owner doc closest to the behavior. Do not widen scope by following a
+research report directly.
+
 ## Product Work
 
 Read [../product/README.md](../product/README.md).
@@ -12,3 +17,8 @@ and [../architecture/simulation/region-ownership.md](../architecture/simulation/
 ## Verification Work
 
 Read [../operations/verification/compose-pipeline.md](../operations/verification/compose-pipeline.md).
+
+## Research Work
+
+Read [../research/README.md](../research/README.md), then copy only durable
+findings into the relevant owner doc.

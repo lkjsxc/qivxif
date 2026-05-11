@@ -1,31 +1,29 @@
 # Network Security
 
-## Authority
+## Status
 
-The server owns gameplay truth. Client prediction, local rendering, and cached
-assets never authorize movement, combat, inventory, claims, markets, or terrain
-mutation.
+- Status: local transport security only.
+- Owner: `crates/qivxif-net`.
 
-## Transport
+## Implemented Transport Facts
 
-- Quinn QUIC sessions provide the game transport.
-- Session transport uses TLS through QUIC.
-- Admin and content HTTPS endpoints use rustls when they exist.
-- The current local Compose server creates self-signed rcgen certificates.
-- The current probe client skips certificate verification only for local
-  Compose acceptance.
+- Quinn QUIC provides encrypted transport.
+- Local server certificates are generated with `rcgen`.
+- Probe clients use a custom verifier that accepts the local certificate.
+- The verifier bypass exists for local Compose probes.
+- Remote client addresses are logged at debug level only.
 
-## Secrets And Signatures
+## Not Implemented
 
-- Store password-equivalent secrets with Argon2id.
-- Use Ed25519 signatures for manifests, admin capability tokens, and replay
-  attestations when those features exist.
-- Use rcgen for local development certificates only.
-- Production certificate ownership belongs to deployment docs.
+- Account authentication.
+- Session tokens.
+- Admin capability tokens.
+- HTTPS admin endpoints.
+- Password storage.
+- Manifest signatures.
 
-## Rules
+## Rules For Future Activation
 
-- Authenticated identity is separate from character ownership.
-- Session tokens are scoped to one connection and one joined character.
-- Privileged admin actions require signed or otherwise capability-scoped proof.
-- Logs, traces, and replay bundles must not contain reusable secrets.
+- Do not treat client prediction or cached assets as authority.
+- Do not log reusable secrets when authentication exists.
+- Production certificate ownership belongs in deployment docs when deployment exists.

@@ -1,17 +1,24 @@
 # Message Lanes
 
-## Reliable Request Lane
+## Status
 
-Use for durable requests that require clear success or failure.
+- Status: one implemented public lane.
+- Owner: [transport.md](transport.md) and [protocol-messages.md](protocol-messages.md).
 
-## Reliable Bulk Lane
+## Implemented Lane
 
-Use for chunk bundles and larger payloads.
+| Lane | Status | Current use |
+| --- | --- | --- |
+| Reliable bidirectional stream | Implemented | Hello, join, ping, chunk request, mutation, flush, error responses |
 
-## Latest-Wins Lane
+## Dormant Lanes
 
-Use datagrams for realtime intent and ephemeral state after the initial slice.
+| Lane | Status | Activation condition |
+| --- | --- | --- |
+| Datagram latest-wins lane | Not implemented | Add public datagram payloads and protocol tests |
+| Reliable bulk lane | Not separate | Split only after chunk payload verification requires it |
+| Repair keyframe lane | Not implemented | Add latest-wins state first |
 
-## Repair
+## Rule
 
-Reliable keyframes repair lost latest-wins state.
+- Do not document a lane as active until code sends and verifies payloads on it.

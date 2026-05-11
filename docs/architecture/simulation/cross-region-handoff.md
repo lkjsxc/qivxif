@@ -1,12 +1,23 @@
 # Cross-Region Handoff
 
-## Purpose
+## Status
 
-Entity movement across ownership boundaries must be explicit.
+- Status: not implemented.
+- Current implementation has one region actor.
 
-## Contract
+## Current Boundary
 
-- Source region validates outgoing state.
-- Destination region accepts or rejects handoff.
-- Session routing follows the accepted owner.
-- Failed handoff keeps the source region authoritative.
+- `RegionHandle` hides actor internals behind async methods.
+- This boundary can become a handoff message boundary later.
+
+## Activation Requirements
+
+- Define region partitioning.
+- Define source-region validation.
+- Define destination-region acceptance or rejection.
+- Define session routing updates.
+- Add executable multi-region tests.
+
+## Rule
+
+- Do not document handoff behavior as active until more than one region actor exists.

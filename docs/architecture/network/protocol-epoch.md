@@ -1,23 +1,30 @@
 # Protocol Epoch
 
+## Status
+
+- Status: implemented.
+- Owner: `crates/qivxif-protocol::CURRENT_PROTOCOL_EPOCH` and server config.
+
 ## Fields
 
-- `build_epoch`: build identity from client and server.
-- `protocol_epoch`: wire contract identity.
-- `world_epoch`: persistent world identity.
+| Field | Source | Meaning |
+| --- | --- | --- |
+| `build_epoch` | `ServerConfig` and `ClientMsg::Hello` | Build identity gate |
+| `protocol_epoch` | `ServerConfig` and `ClientMsg::Hello` | Wire contract gate |
+| `world_epoch` | `WorldMeta` | Persistent world identity |
 
-## Rule
+## Current Values
 
-Do not use named product-line labels. Epoch fields describe contract gates
-without implying a preserved old path.
+- Active public `protocol_epoch`: `1`.
+- `WorldMeta::new(seed)` creates `world_epoch` as `world-{seed}`.
+- `WorldMeta::new(seed)` sets `schema_epoch` to `1`.
 
-## Current Protocol Epoch
+## Rejection Rules
 
-- The active public `protocol_epoch` is `1`.
-- A message-shape or enum-tag change requires an explicit epoch decision.
-- Rejected hello mismatches return `ProtocolEpochMismatch`.
+- Empty client or server build epoch returns `BuildEpochMissing`.
+- Protocol epoch mismatch returns `ProtocolEpochMismatch`.
+- Rejected hello does not mark the session as hello-complete.
 
 ## Codec Link
 
-Protocol message shape and accepted bytes are owned by
-[protocol-codecs.md](protocol-codecs.md).
+- Message shape and accepted bytes are owned by [protocol-codecs.md](protocol-codecs.md).

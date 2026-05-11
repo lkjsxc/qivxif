@@ -1,5 +1,9 @@
 # Onboarding
 
+## Scope
+
+This file owns the first-session path from sanctuary to starter basin.
+
 ## Flow
 
 1. Player joins sanctuary.
@@ -12,3 +16,9 @@
 
 If safe placement fails, the server reports a clear retryable failure and keeps
 the player in sanctuary.
+
+## Cross-References
+
+- Sanctuary and starter basin zone behavior is defined in [../world/zones.md](../world/zones.md).
+- Starter basin placement rules are defined in [../world/starter-basins.md](../world/starter-basins.md).
+- Starter resources connect to [../gameplay/inventory-crafting.md](../gameplay/inventory-crafting.md).

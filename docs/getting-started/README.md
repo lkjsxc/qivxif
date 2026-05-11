@@ -2,9 +2,18 @@
 
 Use this subtree to orient a new agent before editing.
 
+## LLM Contract
+
+- Start here when the repository state is unfamiliar.
+- Run acceptance through Docker Compose, not host-only shortcuts.
+- Treat `tmp/` as input material and `docs/` as canon.
+- After orientation, move to the owner doc for the behavior being changed.
+
 ## Child Index
 
-- [orientation.md](orientation.md): repository orientation
-- [quickstart.md](quickstart.md): local Compose workflow
-- [verification.md](verification.md): acceptance entrypoints
-- [where-next.md](where-next.md): next reading paths
+| File | Use when |
+| --- | --- |
+| [orientation.md](orientation.md) | Mapping repository paths and canon boundaries. |
+| [quickstart.md](quickstart.md) | Running the standard Compose workflows. |
+| [verification.md](verification.md) | Understanding acceptance gates and evidence rules. |
+| [where-next.md](where-next.md) | Choosing the next owner-doc reading path. |

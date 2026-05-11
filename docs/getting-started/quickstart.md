@@ -1,5 +1,10 @@
 # Quickstart
 
+## Assumption
+
+Use repository scripts and Docker Compose as the repeatable path. Host commands
+are diagnostics only unless an owner doc explicitly says otherwise.
+
 ## Full Acceptance
 
 ```bash
@@ -23,3 +28,8 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 ```bash
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T smoke
 ```
+
+## Evidence
+
+Save task-specific command output under `.sisyphus/evidence/` when an agent is
+asked to prove completion.
