@@ -15,6 +15,8 @@ Mutating request identifiers are session-scoped replay guards.
 - A repeated identifier returns the first recorded authoritative response.
 - A repeated `PlaceBlock` does not apply another mutation.
 - A repeated `FlushPersistence` does not perform another flush.
+- The `request-replay` Compose probe verifies both behaviors through the public
+  QUIC path.
 
 ## Rationale
 

@@ -14,6 +14,13 @@
 - `persist-place` forces a public flush before exiting.
 - `persist-check` reconnects after restart and confirms the block.
 
+## Replay Probe
+
+- `request-replay` sends the same `PlaceBlock` identifier twice.
+- The second place response must equal the first mutation acknowledgement.
+- `request-replay` sends the same `FlushPersistence` identifier twice.
+- The second flush response must equal the first flush acknowledgement.
+
 ## Rule
 
 Probes use public protocol paths.
