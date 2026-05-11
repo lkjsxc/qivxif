@@ -12,7 +12,17 @@ use std::{
     },
 };
 
-pub async fn serve(cfg: qivxif_core::ServerConfig) -> Result<()> {
+pub async fn serve(config: PathBuf) -> Result<()> {
+    let cfg = qivxif_core::ServerConfig::load(&config)?;
+    tracing::info!(
+        config = %config.display(),
+        bind_addr = %cfg.bind_addr,
+        data_dir = %cfg.data_dir,
+        build_epoch = %cfg.build_epoch,
+        protocol_epoch = cfg.protocol_epoch,
+        "server starting"
+    );
+
     let store = Arc::new(WorldStore::open(
         PathBuf::from(&cfg.data_dir).as_path(),
         cfg.world_seed,

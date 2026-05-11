@@ -1455,6 +1455,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "qivxif-client-cli"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "qivxif-core",
+ "qivxif-net",
+ "qivxif-protocol",
+ "quinn",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "qivxif-core"
 version = "0.1.0"
 dependencies = [

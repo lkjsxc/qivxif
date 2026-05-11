@@ -1,6 +1,7 @@
 [workspace]
 members = [
   "apps/qivxif-serverd",
+  "apps/qivxif-client-cli",
   "apps/qivxifctl",
   "crates/qivxif-core",
   "crates/qivxif-protocol",

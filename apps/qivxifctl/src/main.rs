@@ -1,13 +1,32 @@
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 
+const CLI_COMMANDS: &str = r#"Commands:
+  docs validate-topology
+  quality check-lines
+  probe smoke --addr <ADDR>
+  probe persist-place --addr <ADDR>
+  probe request-replay --addr <ADDR>
+  probe protocol-guards --addr <ADDR>
+  probe malformed-wire --addr <ADDR>
+  probe persist-check --addr <ADDR>"#;
+
 #[derive(Parser)]
+#[command(
+    name = "qivxifctl",
+    version,
+    about = "Agent-friendly quality and probe CLI",
+    subcommand_required = true,
+    arg_required_else_help = true,
+    after_help = CLI_COMMANDS,
+)]
 struct Cli {
     #[command(subcommand)]
     command: Command,
 }
 
 #[derive(Subcommand)]
+#[command(rename_all = "kebab-case")]
 enum Command {
     Docs {
         #[command(subcommand)]
@@ -24,16 +43,19 @@ enum Command {
 }
 
 #[derive(Subcommand)]
+#[command(rename_all = "kebab-case")]
 enum DocsCommand {
     ValidateTopology,
 }
 
 #[derive(Subcommand)]
+#[command(rename_all = "kebab-case")]
 enum QualityCommand {
     CheckLines,
 }
 
 #[derive(Subcommand)]
+#[command(rename_all = "kebab-case")]
 enum ProbeCommand {
     Smoke {
         #[arg(long)]

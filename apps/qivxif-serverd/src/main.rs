@@ -30,16 +30,7 @@ async fn main() -> Result<()> {
         .init();
     match Cli::parse().command {
         Command::Serve { config } => {
-            let cfg = qivxif_core::ServerConfig::load(&config)?;
-            tracing::info!(
-                config = %config.display(),
-                bind_addr = %cfg.bind_addr,
-                data_dir = %cfg.data_dir,
-                build_epoch = %cfg.build_epoch,
-                protocol_epoch = cfg.protocol_epoch,
-                "server starting"
-            );
-            app::serve(cfg).await?;
+            app::serve(config).await?;
         }
     }
     Ok(())
