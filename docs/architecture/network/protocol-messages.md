@@ -18,6 +18,11 @@ This file owns public qivxif protocol messages for protocol epoch `1`.
 - Acknowledgements echo the same identifier.
 - `PlaceBlock` and `FlushPersistence` require request identifiers.
 - Non-mutating bootstrap and query messages do not carry request identifiers.
+- Request identifiers are scoped to one server session.
+- Repeated mutating identifiers return the first authoritative response without
+  applying the mutation or flush again.
+- Reusing a mutating identifier for a different intent is invalid client
+  behavior; the server still preserves the first response as session truth.
 
 ## Client Messages
 
@@ -67,4 +72,4 @@ This file owns public qivxif protocol messages for protocol epoch `1`.
 
 - Public messages round-trip through postcard.
 - Enum tags and field meanings are owned by `protocol_epoch`.
-- There are no compatibility shims for retired wire shapes.
+- No retired wire-shape shims exist.
