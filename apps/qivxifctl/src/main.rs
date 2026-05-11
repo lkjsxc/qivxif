@@ -76,12 +76,32 @@ async fn main() -> Result<()> {
 }
 
 async fn run_probe(command: ProbeCommand) -> Result<()> {
-    match command {
-        ProbeCommand::Smoke { addr } => qivxif_probe::smoke(&addr).await,
-        ProbeCommand::PersistPlace { addr } => qivxif_probe::persist_place(&addr).await,
-        ProbeCommand::RequestReplay { addr } => qivxif_probe::request_replay(&addr).await,
-        ProbeCommand::ProtocolGuards { addr } => qivxif_probe::protocol_guards(&addr).await,
-        ProbeCommand::MalformedWire { addr } => qivxif_probe::malformed_wire(&addr).await,
-        ProbeCommand::PersistCheck { addr } => qivxif_probe::persist_check(&addr).await,
-    }
+    let label = match command {
+        ProbeCommand::Smoke { addr } => {
+            qivxif_probe::smoke(&addr).await?;
+            "smoke"
+        }
+        ProbeCommand::PersistPlace { addr } => {
+            qivxif_probe::persist_place(&addr).await?;
+            "persist-place"
+        }
+        ProbeCommand::RequestReplay { addr } => {
+            qivxif_probe::request_replay(&addr).await?;
+            "request-replay"
+        }
+        ProbeCommand::ProtocolGuards { addr } => {
+            qivxif_probe::protocol_guards(&addr).await?;
+            "protocol-guards"
+        }
+        ProbeCommand::MalformedWire { addr } => {
+            qivxif_probe::malformed_wire(&addr).await?;
+            "malformed-wire"
+        }
+        ProbeCommand::PersistCheck { addr } => {
+            qivxif_probe::persist_check(&addr).await?;
+            "persist-check"
+        }
+    };
+    println!("probe {label} ... ok");
+    Ok(())
 }

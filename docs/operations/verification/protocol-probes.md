@@ -41,3 +41,9 @@
 Probes use public protocol paths.
 Probe messages, request identifiers, and response codes are owned by
 [../../architecture/network/protocol-messages.md](../../architecture/network/protocol-messages.md).
+
+## Output Contract
+
+- Successful probes print `probe <name> ... ok`.
+- Failed probes exit non-zero and print the failing public behavior.
+- Probe output must stay stable enough for Compose logs and LLM agents.
