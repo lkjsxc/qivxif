@@ -28,6 +28,18 @@ pub async fn persist_place(addr: &str) -> Result<()> {
     expect_flush(client.request(flush_request()).await?)
 }
 
+pub async fn request_replay(addr: &str) -> Result<()> {
+    let client = ProbeClient::connect(addr).await?;
+    expect_hello(client.request(hello()).await?)?;
+    expect_join(client.request(join()).await?)?;
+    let first_place = client.request(place_request()).await?;
+    let second_place = client.request(place_request()).await?;
+    expect_same(first_place, second_place, "place replay")?;
+    let first_flush = client.request(flush_request()).await?;
+    let second_flush = client.request(flush_request()).await?;
+    expect_same(first_flush, second_flush, "flush replay")
+}
+
 pub async fn persist_check(addr: &str) -> Result<()> {
     let client = ProbeClient::connect(addr).await?;
     expect_hello(client.request(hello()).await?)?;
@@ -116,5 +128,13 @@ fn expect_flush(msg: ServerMsg) -> Result<()> {
     match msg {
         ServerMsg::FlushAck { request_id } if request_id == REQUEST_ID + 1 => Ok(()),
         other => bail!("unexpected flush response: {other:?}"),
+    }
+}
+
+fn expect_same(first: ServerMsg, second: ServerMsg, label: &str) -> Result<()> {
+    if first == second {
+        Ok(())
+    } else {
+        bail!("{label} changed response: first={first:?} second={second:?}")
     }
 }

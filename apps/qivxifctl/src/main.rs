@@ -43,6 +43,10 @@ enum ProbeCommand {
         #[arg(long)]
         addr: String,
     },
+    RequestReplay {
+        #[arg(long)]
+        addr: String,
+    },
     PersistCheck {
         #[arg(long)]
         addr: String,
@@ -67,6 +71,7 @@ async fn run_probe(command: ProbeCommand) -> Result<()> {
     match command {
         ProbeCommand::Smoke { addr } => qivxif_probe::smoke(&addr).await,
         ProbeCommand::PersistPlace { addr } => qivxif_probe::persist_place(&addr).await,
+        ProbeCommand::RequestReplay { addr } => qivxif_probe::request_replay(&addr).await,
         ProbeCommand::PersistCheck { addr } => qivxif_probe::persist_check(&addr).await,
     }
 }
