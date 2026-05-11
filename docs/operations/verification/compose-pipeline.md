@@ -20,3 +20,9 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 - `persist-place` mutates a block through the public path.
 - `persist-check` verifies the mutation after restart.
 - Non-zero exit blocks acceptance.
+
+## Safety Notes
+
+- The pipeline uses `down -v` and deletes Compose project volumes.
+- Do not use Docker Compose dry-run with `run` in this repository.
+- `tmp/` research files are not part of acceptance.

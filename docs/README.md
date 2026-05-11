@@ -27,6 +27,34 @@ operations, and repository rules.
 - [decisions/README.md](decisions/README.md): accepted, rejected, and open decisions
 - [research/README.md](research/README.md): durable synthesis of research input
 
+## Recursive Map
+
+- `vision/`: purpose, principles, LLM authoring, product shape.
+- `getting-started/`: orientation, quickstart, verification, where-next.
+- `product/`
+  - `player/`: camera, onboarding, progression, death and respawn.
+  - `world/`: zones, terrain editing, starter basins.
+  - `gameplay/`: bases, combat, inventory, events, economy.
+  - `social/`: parties, chat, player markets.
+- `architecture/`
+  - `runtime/`: process model, services, task classes, observability.
+  - `network/`: transport, sessions, lanes, replication, epochs, codecs, security.
+  - `simulation/`: region ownership, ECS boundary, ticks, handoff, authority.
+  - `world/`: coordinates, terrain, chunk streaming, summaries, safe travel.
+  - `persistence/`: hot state, archives, schemas, backup and restore.
+  - `client/`: shells, renderer, streaming, prediction, mobile lifecycle.
+- `operations/`
+  - `deployment/`: Compose stack, runtime config, state and backups.
+  - `verification/`: Compose pipeline, static gates, probes, goldens, soak, test stack.
+  - `quality/`: line limits, documentation topology, acceptance gates.
+  - `observability/`: tracing, profiling, incident response.
+- `repository/`
+  - `layout/`: root, docs, and workspace layout.
+  - `rules/`: authoring, wording, line limits, dependency policy.
+  - `workflow/`: docs-first sequence, commits, decision records.
+- `decisions/`: accepted paths, rejected paths, open questions.
+- `research/`: report synthesis plus networking, rendering, and storage references.
+
 ## Reading Order
 
 1. [vision/purpose.md](vision/purpose.md)

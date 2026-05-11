@@ -11,4 +11,5 @@
 - Tokio for async runtime.
 - Quinn for QUIC.
 - redb for hot state.
-- serde JSON for simple initial protocol payloads.
+- `postcard` for compact schema-bound protocol payloads.
+- serde JSON only for diagnostics or tool output that is not protocol traffic.
