@@ -101,6 +101,10 @@ services:
         "connect",
         "--addr",
         "server:4443",
+        "--server-name",
+        "localhost",
+        "--tls",
+        "local-compose",
         "--player",
         "compose-client-cli",
         "--chunk-x",
@@ -110,7 +114,6 @@ services:
       ]
     environment:
       CARGO_TARGET_DIR: /target
-      QIVXIF_ALLOW_LOCAL_COMPOSE_TLS: "1"
     volumes:
       - .:/workspace:ro
       - cargo-registry:/usr/local/cargo/registry

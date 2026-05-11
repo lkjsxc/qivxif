@@ -28,7 +28,7 @@
 | Hot state | [../persistence/hot-state.md](../persistence/hot-state.md) | `crates/qivxif-storage` | storage tests; `persist-check` probe |
 | Storage schema | [../persistence/schema-contracts.md](../persistence/schema-contracts.md) | `crates/qivxif-storage` | storage tests |
 | Object archive manifests | [../persistence/object-archives.md](../persistence/object-archives.md) | `crates/qivxif-storage::ArchiveStore` | archive manifest tests |
-| Headless client smoke | [../client/headless-client.md](../client/headless-client.md) | `apps/qivxif-client-cli` | `client-cli` Compose service |
+| Headless client smoke | [../client/headless-client.md](../client/headless-client.md) | `crates/qivxif-client-core`, `apps/qivxif-client-cli` | `client-cli` Compose service |
 | Docs topology | [../../operations/quality/documentation-topology.md](../../operations/quality/documentation-topology.md) | `crates/qivxif-quality` | `qivxifctl docs validate-topology` |
 | Line limits | [../../repository/rules/line-limits.md](../../repository/rules/line-limits.md) | `crates/qivxif-quality` | `qivxifctl quality check-lines` |
 
@@ -49,6 +49,7 @@
 | `apps/qivxif-client-cli` | Headless protocol client |
 | `apps/qivxifctl` | Agent-friendly quality and probe CLI |
 | `crates/qivxif-core` | Shared primitive types and config |
+| `crates/qivxif-client-core` | Reusable headless client session support |
 | `crates/qivxif-protocol` | Public protocol catalog and postcard helpers |
 | `crates/qivxif-net` | QUIC and certificate helpers |
 | `crates/qivxif-world` | Chunk coordinates and generated cells |

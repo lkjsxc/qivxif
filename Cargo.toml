@@ -3,6 +3,7 @@ members = [
   "apps/qivxif-serverd",
   "apps/qivxif-client-cli",
   "apps/qivxifctl",
+  "crates/qivxif-client-core",
   "crates/qivxif-core",
   "crates/qivxif-protocol",
   "crates/qivxif-net",
@@ -40,6 +41,7 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 qivxif-core = { path = "crates/qivxif-core" }
+qivxif-client-core = { path = "crates/qivxif-client-core" }
 qivxif-protocol = { path = "crates/qivxif-protocol" }
 qivxif-net = { path = "crates/qivxif-net" }
 qivxif-world = { path = "crates/qivxif-world" }

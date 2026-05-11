@@ -18,7 +18,7 @@
 | Deterministic chunk generation | `crates/qivxif-world` |
 | Hot edit overlays | `crates/qivxif-storage` |
 | Public probe scenarios | `crates/qivxif-probe` |
-| Headless protocol client | `apps/qivxif-client-cli` |
+| Headless protocol client | `crates/qivxif-client-core`, `apps/qivxif-client-cli` |
 | Static repository gates | `crates/qivxif-quality` |
 
 ## Doc Owners

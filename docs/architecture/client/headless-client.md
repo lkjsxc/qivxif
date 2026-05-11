@@ -3,13 +3,13 @@
 ## Status
 
 - Status: implemented.
-- Owner: `apps/qivxif-client-cli`.
-- Shared client core is not extracted yet.
+- Owners: `crates/qivxif-client-core` and `apps/qivxif-client-cli`.
 
 ## Role
 
+- Provides reusable headless client session behavior.
 - Provides a protocol-facing client executable.
-- Connects through QUIC.
+- Connects through QUIC with explicit TLS mode and server name.
 - Sends `Hello`, `JoinWorld`, `ChunkRequest`, `PlaceBlock`, and
   `FlushPersistence`.
 - Prints compact command output for agent and artifact smoke checks.
@@ -20,15 +20,14 @@
 - No input loop.
 - No local gameplay cache.
 - No account authentication.
-- No production release trust policy.
+- No production release signing policy.
 
 ## Verification
 
 - Docker Compose runs `client-cli` against the local server.
-- The client uses local Compose trust only when explicitly configured for that
-  environment.
+- The CLI uses `--tls local-compose` only for local Compose.
+- Default CLI TLS mode is `verified`.
 
 ## Next Activation
 
-- Extract shared client session behavior into `crates/qivxif-client-core`.
 - Add Windows artifact build verification before graphical client work.

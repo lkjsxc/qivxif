@@ -21,6 +21,7 @@ docs are active.
 | Crate | Role |
 |---|---|
 | `qivxif-core` | Shared core types. |
+| `qivxif-client-core` | Reusable headless client session support. |
 | `qivxif-protocol` | Protocol payloads and schema-bound types. |
 | `qivxif-net` | Network-facing support. |
 | `qivxif-world` | World data support. |
@@ -32,7 +33,6 @@ docs are active.
 ## Planned Areas
 
 - Desktop and mobile platform shells.
-- Shared client core.
 - Renderer family.
 - Authentication and identity.
 - Gameplay systems.

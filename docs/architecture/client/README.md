@@ -4,6 +4,7 @@ Use this subtree for implemented and dormant client contracts.
 
 ## Current Implementation
 
+- `crates/qivxif-client-core` owns reusable headless client behavior.
 - `apps/qivxif-client-cli` is the implemented headless protocol client.
 - No renderer crate exists.
 - No platform shell exists.

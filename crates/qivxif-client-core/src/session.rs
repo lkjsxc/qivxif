@@ -1,4 +1,5 @@
-use anyhow::{Result, anyhow, bail};
+use crate::{ClientConfig, TlsMode};
+use anyhow::{Result, anyhow};
 use qivxif_protocol::{CURRENT_PROTOCOL_CONTRACT, ClientMsg, ServerCaps, ServerMsg};
 use std::{net::SocketAddr, time::Duration};
 
@@ -14,12 +15,17 @@ pub struct HelloReceipt {
 }
 
 impl Client {
-    pub async fn connect(addr: &str) -> Result<Self> {
-        let remote = wait_for_addr(addr).await?;
-        let endpoint = qivxif_net::client_endpoint()?;
-        tracing::info!(%remote, "connecting with verified TLS config");
+    pub async fn connect(config: &ClientConfig) -> Result<Self> {
+        let remote = wait_for_addr(&config.addr).await?;
+        let endpoint = qivxif_net::client_endpoint_with_tls(tls_mode(config.tls_mode))?;
+        tracing::info!(
+            %remote,
+            server_name = %config.server_name,
+            tls = config.tls_mode.as_str(),
+            "connecting"
+        );
         let connection = endpoint
-            .connect(remote, "localhost")?
+            .connect(remote, &config.server_name)?
             .await
             .map_err(|error| anyhow!("connect failed: {error}"))?;
         Ok(Self {
@@ -45,7 +51,7 @@ impl Client {
                 world_id,
                 _caps: caps,
             }),
-            other => bail!("unexpected hello response: {other:?}"),
+            other => anyhow::bail!("unexpected hello response: {other:?}"),
         }
     }
 
@@ -53,6 +59,13 @@ impl Client {
         let (mut send, mut recv) = self.connection.open_bi().await?;
         qivxif_net::send_wire(&mut send, &msg).await?;
         qivxif_net::recv_wire(&mut recv).await
+    }
+}
+
+fn tls_mode(mode: TlsMode) -> qivxif_net::ClientTlsMode {
+    match mode {
+        TlsMode::Verified => qivxif_net::ClientTlsMode::VerifiedRoots,
+        TlsMode::LocalCompose => qivxif_net::ClientTlsMode::LocalComposeInsecure,
     }
 }
 

@@ -1,7 +1,29 @@
-use crate::connect::Client;
+use crate::Client;
 use anyhow::{Result, bail};
-use qivxif_core::BlockPos;
-use qivxif_protocol::{ClientMsg, RequestId, ServerMsg};
+use qivxif_core::{BlockPos, ChunkCoord};
+use qivxif_protocol::{BlockCell, ClientMsg, RequestId, ServerMsg};
+
+pub async fn join_world(client: &Client, player: &str) -> Result<()> {
+    match client
+        .request(ClientMsg::JoinWorld {
+            player: player.to_string(),
+        })
+        .await?
+    {
+        ServerMsg::Joined { player: joined } if joined == player => Ok(()),
+        other => bail!("unexpected join response: {other:?}"),
+    }
+}
+
+pub async fn request_chunk(client: &Client, coord: ChunkCoord) -> Result<Vec<BlockCell>> {
+    match client.request(ClientMsg::ChunkRequest { coord }).await? {
+        ServerMsg::Chunk {
+            coord: actual,
+            cells,
+        } if actual == coord => Ok(cells),
+        other => bail!("unexpected chunk response: {other:?}"),
+    }
+}
 
 pub async fn place_block(
     client: &Client,

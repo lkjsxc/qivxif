@@ -1,11 +1,8 @@
-mod chunk;
-mod connect;
-mod join;
-mod mutate;
-
 use anyhow::Result;
 use clap::{Parser, Subcommand};
+use qivxif_client_core::{Client, ClientConfig, TlsMode};
 use qivxif_core::{BlockPos, ChunkCoord};
+use qivxif_world::CHUNK_EDGE;
 use tracing_subscriber::{EnvFilter, fmt};
 
 #[derive(Parser)]
@@ -20,6 +17,10 @@ enum Command {
     Connect {
         #[arg(long)]
         addr: String,
+        #[arg(long, default_value = "localhost")]
+        server_name: String,
+        #[arg(long, default_value = "verified")]
+        tls: TlsMode,
         #[arg(long, default_value = "client-cli")]
         player: String,
         #[arg(long, default_value_t = 0)]
@@ -35,12 +36,18 @@ async fn main() -> Result<()> {
     match Cli::parse().command {
         Command::Connect {
             addr,
+            server_name,
+            tls,
             player,
             chunk_x,
             chunk_z,
         } => {
             connect_sequence(
-                &addr,
+                ClientConfig {
+                    addr,
+                    server_name,
+                    tls_mode: tls,
+                },
                 &player,
                 ChunkCoord {
                     x: chunk_x,
@@ -53,25 +60,25 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn connect_sequence(addr: &str, player: &str, coord: ChunkCoord) -> Result<()> {
-    let client = connect::Client::connect(addr).await?;
+async fn connect_sequence(config: ClientConfig, player: &str, coord: ChunkCoord) -> Result<()> {
+    let client = Client::connect(&config).await?;
     let hello = client.hello().await?;
     println!(
         "hello ok: session={} world={}",
         hello.session_id, hello.world_id
     );
-    join::join_world(&client, player).await?;
+    qivxif_client_core::join_world(&client, player).await?;
     println!("joined: {player}");
-    let cells = chunk::request_chunk(&client, coord).await?;
+    let cells = qivxif_client_core::request_chunk(&client, coord).await?;
     println!("chunk ({}, {}) cells={}", coord.x, coord.z, cells.len());
     let pos = BlockPos {
-        x: coord.x * 16 + 1,
+        x: coord.x * CHUNK_EDGE + 1,
         y: 3,
-        z: coord.z * 16 + 1,
+        z: coord.z * CHUNK_EDGE + 1,
     };
-    mutate::place_block(&client, 1, pos, 9).await?;
+    qivxif_client_core::place_block(&client, 1, pos, 9).await?;
     println!("placed block at {},{},{}", pos.x, pos.y, pos.z);
-    mutate::flush_persistence(&client, 2).await?;
+    qivxif_client_core::flush_persistence(&client, 2).await?;
     println!("flush ok");
     Ok(())
 }

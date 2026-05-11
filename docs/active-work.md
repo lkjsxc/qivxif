@@ -11,6 +11,7 @@ implemented; there is no graphical client yet.
 
 - Documentation canon and repository rules are active.
 - Rust workspace and Docker Compose verification are active.
+- Shared headless client core is active.
 - QUIC hello, join, chunk, place, flush, restart, and persistence lanes are
   complete.
 - `qivxif-client-cli` is part of Compose acceptance.

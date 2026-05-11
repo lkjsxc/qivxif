@@ -6,6 +6,12 @@ use std::{env, net::SocketAddr, sync::Arc};
 
 const LOCAL_COMPOSE_TLS_ENV: &str = "QIVXIF_ALLOW_LOCAL_COMPOSE_TLS";
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ClientTlsMode {
+    VerifiedRoots,
+    LocalComposeInsecure,
+}
+
 pub async fn send_wire<T: Serialize>(writer: &mut quinn::SendStream, value: &T) -> Result<()> {
     let bytes = postcard::to_stdvec(value)?;
     writer.write_all(&bytes).await?;
@@ -30,12 +36,20 @@ pub fn server_config() -> Result<quinn::ServerConfig> {
 }
 
 pub fn client_endpoint() -> Result<quinn::Endpoint> {
+    let mode = if allow_local_compose_tls() {
+        ClientTlsMode::LocalComposeInsecure
+    } else {
+        ClientTlsMode::VerifiedRoots
+    };
+    client_endpoint_with_tls(mode)
+}
+
+pub fn client_endpoint_with_tls(mode: ClientTlsMode) -> Result<quinn::Endpoint> {
     let bind = SocketAddr::from(([0, 0, 0, 0], 0));
     let mut endpoint = quinn::Endpoint::client(bind)?;
-    let crypto = if allow_local_compose_tls() {
-        local_compose_crypto()
-    } else {
-        production_crypto()
+    let crypto = match mode {
+        ClientTlsMode::VerifiedRoots => production_crypto(),
+        ClientTlsMode::LocalComposeInsecure => local_compose_crypto(),
     }?;
     endpoint.set_default_client_config(quinn::ClientConfig::new(Arc::new(
         QuicClientConfig::try_from(crypto)?,

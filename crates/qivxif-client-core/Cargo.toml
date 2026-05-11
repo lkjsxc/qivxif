@@ -1,5 +1,5 @@
 [package]
-name = "qivxif-client-cli"
+name = "qivxif-client-core"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -7,10 +7,9 @@ authors.workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
-clap = { workspace = true }
-qivxif-client-core = { workspace = true }
 qivxif-core = { workspace = true }
-qivxif-world = { workspace = true }
+qivxif-net = { workspace = true }
+qivxif-protocol = { workspace = true }
+quinn = { workspace = true }
 tokio = { workspace = true }
 tracing = { workspace = true }
-tracing-subscriber = { workspace = true }
