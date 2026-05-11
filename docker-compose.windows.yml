@@ -1,0 +1,8 @@
+services:
+  windows-client-cli:
+    build:
+      context: .
+      dockerfile: docker/windows/client-cli.Dockerfile
+      target: artifact
+    volumes:
+      - ./dist/windows/client-cli:/dist

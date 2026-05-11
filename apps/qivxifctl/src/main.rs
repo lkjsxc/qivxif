@@ -19,7 +19,6 @@ const CLI_COMMANDS: &str = r#"Commands:
 #[derive(Parser)]
 #[command(
     name = "qivxifctl",
-    version,
     about = "Agent-friendly quality and probe CLI",
     subcommand_required = true,
     arg_required_else_help = true,

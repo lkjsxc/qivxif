@@ -26,4 +26,4 @@ implemented; there is no graphical client yet.
 - Malformed-wire probes match the public decode rejection contract.
 - Verification inputs are reproducible.
 - Full `./scripts/verify-compose.sh` acceptance passes.
-- Windows headless client artifact verification is documented and automated.
+- Windows headless client artifact verification passes through Docker Compose.

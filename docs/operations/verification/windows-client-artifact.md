@@ -2,7 +2,7 @@
 
 ## Status
 
-- Status: planned for the headless client.
+- Status: implemented for the headless client.
 - Owner: `apps/qivxif-client-cli` artifact build.
 
 ## Contract
