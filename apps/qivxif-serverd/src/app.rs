@@ -1,6 +1,6 @@
 use crate::{request, session::Session};
 use anyhow::Result;
-use qivxif_protocol::ClientMsg;
+use qivxif_protocol::{ClientMsg, ErrorCode};
 use qivxif_sim::RegionHandle;
 use qivxif_storage::WorldStore;
 use std::{
@@ -50,7 +50,10 @@ pub(crate) struct AppState {
 
 async fn handle_connection(incoming: quinn::Incoming, state: Arc<AppState>) {
     match incoming.await {
-        Ok(connection) => handle_streams(connection, state).await,
+        Ok(connection) => {
+            tracing::info!(remote = %connection.remote_address(), "connection accepted");
+            handle_streams(connection, state).await;
+        }
         Err(error) => tracing::warn!(%error, "connection failed"),
     }
 }
@@ -75,10 +78,25 @@ async fn handle_request(
     session: &mut Session,
 ) {
     let response = match qivxif_net::recv_wire::<ClientMsg>(&mut recv).await {
-        Ok(request) => request::respond(request, state, session).await,
-        Err(error) => request::error_msg("bad_request", error),
+        Ok(request) => {
+            let name = request_name(&request);
+            let response = request::respond(request, state, session).await;
+            tracing::info!(session_id = session.id, request = name, "request handled");
+            response
+        }
+        Err(error) => request::error_msg(ErrorCode::BadRequest, error),
     };
     if let Err(error) = qivxif_net::send_wire(&mut send, &response).await {
         tracing::warn!(%error, "response send failed");
+    }
+}
+
+fn request_name(request: &ClientMsg) -> &'static str {
+    match request {
+        ClientMsg::Hello { .. } => "hello",
+        ClientMsg::JoinWorld { .. } => "join_world",
+        ClientMsg::Ping { .. } => "ping",
+        ClientMsg::ChunkRequest { .. } => "chunk_request",
+        ClientMsg::PlaceBlock { .. } => "place_block",
     }
 }

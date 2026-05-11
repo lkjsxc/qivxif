@@ -5,6 +5,7 @@ use std::{net::SocketAddr, time::Duration};
 
 const PROTOCOL_EPOCH: u32 = 1;
 const PLAYER: &str = "probe";
+const REQUEST_ID: u64 = 1;
 const TEST_POS: BlockPos = BlockPos { x: 1, y: 3, z: 1 };
 const TEST_BLOCK: u16 = 9;
 
@@ -25,16 +26,25 @@ pub async fn persist_place(addr: &str) -> Result<()> {
     expect_join(client.request(join()).await?)?;
     match client
         .request(ClientMsg::PlaceBlock {
+            request_id: REQUEST_ID,
             pos: TEST_POS,
             block: TEST_BLOCK,
         })
         .await?
     {
-        ServerMsg::MutationAck {
-            pos: TEST_POS,
-            block: TEST_BLOCK,
-        } => Ok(()),
+        ServerMsg::MutationAck { request_id, cell }
+            if request_id == REQUEST_ID && cell == test_cell() =>
+        {
+            Ok(())
+        }
         other => bail!("unexpected mutation response: {other:?}"),
+    }
+}
+
+fn test_cell() -> BlockCell {
+    BlockCell {
+        pos: TEST_POS,
+        block: TEST_BLOCK,
     }
 }
 

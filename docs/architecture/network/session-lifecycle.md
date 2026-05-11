@@ -10,6 +10,12 @@
 6. Receive authoritative outcome.
 7. Disconnect or timeout.
 
+## Rejection
+
+- Requests before hello return `HelloRequired`.
+- Gameplay requests before join return `JoinRequired`.
+- Protocol epoch mismatch returns `ProtocolEpochMismatch`.
+
 ## Rule
 
 Session state is separate from region-owned world state.

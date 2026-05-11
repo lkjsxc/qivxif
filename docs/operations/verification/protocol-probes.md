@@ -10,7 +10,7 @@
 
 ## Persistence Probes
 
-- `persist-place` places a block.
+- `persist-place` places a block with a stable request identifier.
 - `persist-check` reconnects after restart and confirms the block.
 
 ## Rule

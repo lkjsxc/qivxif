@@ -1,6 +1,8 @@
 use qivxif_core::{BlockPos, ChunkCoord};
 use serde::{Deserialize, Serialize};
 
+pub type RequestId = u64;
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ClientMsg {
     Hello {
@@ -17,6 +19,7 @@ pub enum ClientMsg {
         coord: ChunkCoord,
     },
     PlaceBlock {
+        request_id: RequestId,
         pos: BlockPos,
         block: u16,
     },
@@ -27,6 +30,7 @@ pub enum ServerMsg {
     HelloOk {
         session_id: u64,
         world_epoch: String,
+        caps: ServerCaps,
     },
     Joined {
         player: String,
@@ -39,13 +43,31 @@ pub enum ServerMsg {
         cells: Vec<BlockCell>,
     },
     MutationAck {
-        pos: BlockPos,
-        block: u16,
+        request_id: RequestId,
+        cell: BlockCell,
     },
     Error {
-        code: String,
+        code: ErrorCode,
         message: String,
     },
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ServerCaps {
+    pub reliable_streams: bool,
+    pub datagrams: bool,
+    pub persistent_mutations: bool,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ErrorCode {
+    BadRequest,
+    BuildEpochMissing,
+    ProtocolEpochMismatch,
+    HelloRequired,
+    JoinRequired,
+    ChunkError,
+    MutationError,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -81,6 +103,24 @@ mod tests {
         let msg = ServerMsg::HelloOk {
             session_id: 7,
             world_epoch: "world-11".to_string(),
+            caps: ServerCaps {
+                reliable_streams: true,
+                datagrams: false,
+                persistent_mutations: true,
+            },
+        };
+        assert_eq!(decode::<ServerMsg>(&encode(&msg).unwrap()).unwrap(), msg);
+    }
+
+    #[test]
+    fn mutation_ack_round_trips_with_request_id() {
+        let cell = BlockCell {
+            pos: BlockPos { x: 1, y: 2, z: 3 },
+            block: 9,
+        };
+        let msg = ServerMsg::MutationAck {
+            request_id: 99,
+            cell,
         };
         assert_eq!(decode::<ServerMsg>(&encode(&msg).unwrap()).unwrap(), msg);
     }
