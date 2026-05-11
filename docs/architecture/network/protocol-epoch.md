@@ -8,5 +8,10 @@
 
 ## Rule
 
-Do not use release-family labels. Epoch fields describe contract gates
-without implying a preserved legacy path.
+Do not use named product-line labels. Epoch fields describe contract gates
+without implying a preserved old path.
+
+## Codec Link
+
+Protocol message shape and accepted bytes are owned by
+[protocol-codecs.md](protocol-codecs.md).

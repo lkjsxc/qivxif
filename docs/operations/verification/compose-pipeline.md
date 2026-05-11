@@ -15,7 +15,7 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 
 ## Required Behavior
 
-- `verify` runs formatting, Clippy, tests, release build, docs topology, and line limits.
+- `verify` runs formatting, Clippy, nextest, doctests, optimized build, docs topology, and line limits.
 - `smoke` verifies connect, hello, join, chunk request, and ping.
 - `persist-place` mutates a block through the public path.
 - `persist-check` verifies the mutation after restart.

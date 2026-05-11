@@ -4,8 +4,9 @@
 
 - Rust formatting.
 - Clippy with warnings denied.
-- Workspace tests.
-- Release build.
+- Workspace tests through nextest.
+- Doctests.
+- Optimized build.
 - Docs topology.
 - Line limits.
 

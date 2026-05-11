@@ -20,6 +20,9 @@ The project is built for LLM-maintained development. Durable truth belongs in
 - Open frontier PvP outside protected sanctuary and starter spaces.
 - Permanent accepted terrain edits.
 - Player-crafted economy.
+- Zone-scaled death loss.
+- Activity-based claim decay.
+- Regional markets.
 
 ## Verification
 

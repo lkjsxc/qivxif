@@ -9,6 +9,21 @@ Bases give players durable identity, defense, storage, and crafting hubs.
 - Claims define permissions.
 - Claims do not make the whole world non-editable.
 - Claims can protect ownership, containers, doors, machines, and respawn anchors.
+- Claim strength depends on recent activity, not passive ownership alone.
+- Inactive claims decay through warning, vulnerable, and abandoned states.
+
+## Activity
+
+Valid activity includes member presence, repairs, crafting, harvesting,
+defense, logistics, and regional market use tied to the claim.
+
+## Decay
+
+- Sanctuary spaces do not allow durable private land claims.
+- Starter basin claims are limited and decay gently after onboarding.
+- Frontier claims decay faster when members stop using or maintaining them.
+- Decay reduces protection before deleting records.
+- Abandoned claims become salvageable through server-owned rules.
 
 ## Server Authority
 

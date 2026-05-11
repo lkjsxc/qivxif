@@ -17,7 +17,7 @@
 ## Wording
 
 - Use protocol epoch, build epoch, or schema epoch.
-- Avoid release-family labels and stale legacy aliases.
+- Avoid named product-line labels and stale old-path aliases.
 - Delete retired contracts instead of preserving parallel meanings.
 
 ## Protected Canon

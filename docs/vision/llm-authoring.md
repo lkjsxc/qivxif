@@ -20,4 +20,4 @@
 - Long prose blocks.
 - Hidden assumptions in code comments.
 - Multiple docs that define the same rule.
-- Release-family wording.
+- Named product-line wording.

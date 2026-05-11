@@ -13,3 +13,8 @@ qivxif uses a player-crafted economy.
 ## Market Direction
 
 Markets should reward transport, risk, specialization, and base infrastructure.
+
+## Canon Link
+
+Regional listing and settlement rules are owned by
+[../social/player-markets.md](../social/player-markets.md).

@@ -10,3 +10,4 @@ Use this subtree for acceptance gates.
 - [worldgen-goldens.md](worldgen-goldens.md): deterministic generation checks
 - [render-goldens.md](render-goldens.md): renderer checks
 - [soak-load.md](soak-load.md): long-running checks
+- [test-stack.md](test-stack.md): nextest, doctest, snapshot, property, and benchmark tools

@@ -6,7 +6,7 @@ Docker Compose is the acceptance boundary.
 
 ## Static Gate
 
-The `verify` service runs formatting, Clippy, tests, release build, docs
+The `verify` service runs formatting, Clippy, tests, optimized build, docs
 topology, and line limits.
 
 ## Live Probes

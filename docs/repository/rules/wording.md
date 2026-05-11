@@ -10,7 +10,7 @@
 
 ## Avoid
 
-- Release-family labels.
-- Compatibility aliases.
+- Named product-line labels.
+- Preserved old-path aliases.
 - Temporary parallel contracts.
 - Long speculative prose.
