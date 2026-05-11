@@ -6,8 +6,13 @@ license.workspace = true
 authors.workspace = true
 
 [dependencies]
+bevy_ecs = { workspace = true }
 qivxif-core = { workspace = true }
 qivxif-protocol = { workspace = true }
 qivxif-storage = { workspace = true }
 qivxif-world = { workspace = true }
 thiserror = { workspace = true }
+tokio = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

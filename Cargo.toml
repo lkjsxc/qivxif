@@ -21,7 +21,9 @@ authors = ["qivxif contributors"]
 
 [workspace.dependencies]
 anyhow = "1"
+bevy_ecs = "0.18"
 clap = { version = "4", features = ["derive"] }
+postcard = { version = "1", features = ["use-std"] }
 quinn = "0.11"
 rcgen = "0.13"
 redb = "4"

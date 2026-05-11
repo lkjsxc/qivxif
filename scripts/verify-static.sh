@@ -28,6 +28,7 @@ run_stage() {
 run_stage fmt cargo fmt -- --check
 run_stage clippy cargo clippy --workspace --all-targets -- -D warnings
 run_stage test cargo test --workspace
+run_stage doctest cargo test --doc --workspace
 run_stage build cargo build --release --workspace
 run_stage docs-topology cargo run --bin qivxifctl -- docs validate-topology
 run_stage line-limits cargo run --bin qivxifctl -- quality check-lines

@@ -4,16 +4,16 @@ use quinn::rustls::pki_types::{CertificateDer, PrivatePkcs8KeyDer, ServerName, U
 use serde::{Serialize, de::DeserializeOwned};
 use std::{net::SocketAddr, sync::Arc};
 
-pub async fn send_json<T: Serialize>(writer: &mut quinn::SendStream, value: &T) -> Result<()> {
-    let bytes = serde_json::to_vec(value)?;
+pub async fn send_wire<T: Serialize>(writer: &mut quinn::SendStream, value: &T) -> Result<()> {
+    let bytes = postcard::to_stdvec(value)?;
     writer.write_all(&bytes).await?;
     writer.finish()?;
     Ok(())
 }
 
-pub async fn recv_json<T: DeserializeOwned>(reader: &mut quinn::RecvStream) -> Result<T> {
+pub async fn recv_wire<T: DeserializeOwned>(reader: &mut quinn::RecvStream) -> Result<T> {
     let bytes = reader.read_to_end(1024 * 1024).await?;
-    Ok(serde_json::from_slice(&bytes)?)
+    Ok(postcard::from_bytes(&bytes)?)
 }
 
 pub fn server_config() -> Result<quinn::ServerConfig> {

@@ -31,6 +31,23 @@ pub struct ChunkCoord {
     pub z: i32,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct WorldMeta {
+    pub schema_epoch: u32,
+    pub world_seed: u64,
+    pub world_epoch: String,
+}
+
+impl WorldMeta {
+    pub fn new(world_seed: u64) -> Self {
+        Self {
+            schema_epoch: 1,
+            world_seed,
+            world_epoch: format!("world-{world_seed}"),
+        }
+    }
+}
+
 #[derive(Debug, Error)]
 pub enum CoreError {
     #[error(transparent)]

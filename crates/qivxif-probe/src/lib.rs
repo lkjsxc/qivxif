@@ -82,8 +82,8 @@ impl ProbeClient {
 
     async fn request(&self, msg: ClientMsg) -> Result<ServerMsg> {
         let (mut send, mut recv) = self.connection.open_bi().await?;
-        qivxif_net::send_json(&mut send, &msg).await?;
-        qivxif_net::recv_json(&mut recv).await
+        qivxif_net::send_wire(&mut send, &msg).await?;
+        qivxif_net::recv_wire(&mut recv).await
     }
 }
 
