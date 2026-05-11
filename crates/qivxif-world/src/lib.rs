@@ -101,6 +101,9 @@ mod tests {
             &[BlockCell { pos, block: STONE }],
         );
         assert_eq!(cells.iter().filter(|cell| cell.pos == pos).count(), 1);
-        assert_eq!(cells.iter().find(|cell| cell.pos == pos).unwrap().block, STONE);
+        assert_eq!(
+            cells.iter().find(|cell| cell.pos == pos).unwrap().block,
+            STONE
+        );
     }
 }

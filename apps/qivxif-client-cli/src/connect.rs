@@ -22,7 +22,10 @@ impl Client {
             .connect(remote, "localhost")?
             .await
             .map_err(|error| anyhow!("connect failed: {error}"))?;
-        Ok(Self { _endpoint: endpoint, connection })
+        Ok(Self {
+            _endpoint: endpoint,
+            connection,
+        })
     }
 
     pub async fn hello(&self) -> Result<HelloReceipt> {
@@ -33,7 +36,11 @@ impl Client {
             })
             .await?
         {
-            ServerMsg::HelloOk { session_id, world_epoch, caps } => Ok(HelloReceipt {
+            ServerMsg::HelloOk {
+                session_id,
+                world_epoch,
+                caps,
+            } => Ok(HelloReceipt {
                 session_id,
                 world_epoch,
                 _caps: caps,

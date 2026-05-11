@@ -17,11 +17,10 @@ pub async fn place_block(
         })
         .await?
     {
-        ServerMsg::MutationAck { request_id: actual, cell }
-            if actual == request_id && cell.pos == pos && cell.block == block =>
-        {
-            Ok(())
-        }
+        ServerMsg::MutationAck {
+            request_id: actual,
+            cell,
+        } if actual == request_id && cell.pos == pos && cell.block == block => Ok(()),
         other => bail!("unexpected place response: {other:?}"),
     }
 }

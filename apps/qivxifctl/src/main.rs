@@ -5,6 +5,11 @@ const CLI_COMMANDS: &str = r#"Commands:
   docs validate-topology
   quality check-lines
   probe smoke --addr <ADDR>
+  probe hello --addr <ADDR>
+  probe join-world --addr <ADDR>
+  probe chunk-request --addr <ADDR>
+  probe place-block --addr <ADDR>
+  probe flush-persistence --addr <ADDR>
   probe persist-place --addr <ADDR>
   probe request-replay --addr <ADDR>
   probe protocol-guards --addr <ADDR>
@@ -61,6 +66,26 @@ enum ProbeCommand {
         #[arg(long)]
         addr: String,
     },
+    Hello {
+        #[arg(long)]
+        addr: String,
+    },
+    JoinWorld {
+        #[arg(long)]
+        addr: String,
+    },
+    ChunkRequest {
+        #[arg(long)]
+        addr: String,
+    },
+    PlaceBlock {
+        #[arg(long)]
+        addr: String,
+    },
+    FlushPersistence {
+        #[arg(long)]
+        addr: String,
+    },
     PersistPlace {
         #[arg(long)]
         addr: String,
@@ -102,6 +127,26 @@ async fn run_probe(command: ProbeCommand) -> Result<()> {
         ProbeCommand::Smoke { addr } => {
             qivxif_probe::smoke(&addr).await?;
             "smoke"
+        }
+        ProbeCommand::Hello { addr } => {
+            qivxif_probe::hello(&addr).await?;
+            "hello"
+        }
+        ProbeCommand::JoinWorld { addr } => {
+            qivxif_probe::join_world(&addr).await?;
+            "join-world"
+        }
+        ProbeCommand::ChunkRequest { addr } => {
+            qivxif_probe::chunk_request(&addr).await?;
+            "chunk-request"
+        }
+        ProbeCommand::PlaceBlock { addr } => {
+            qivxif_probe::place_block(&addr).await?;
+            "place-block"
+        }
+        ProbeCommand::FlushPersistence { addr } => {
+            qivxif_probe::flush_persistence(&addr).await?;
+            "flush-persistence"
         }
         ProbeCommand::PersistPlace { addr } => {
             qivxif_probe::persist_place(&addr).await?;

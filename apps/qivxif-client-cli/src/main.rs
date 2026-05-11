@@ -38,7 +38,17 @@ async fn main() -> Result<()> {
             player,
             chunk_x,
             chunk_z,
-        } => connect_sequence(&addr, &player, ChunkCoord { x: chunk_x, z: chunk_z }).await?,
+        } => {
+            connect_sequence(
+                &addr,
+                &player,
+                ChunkCoord {
+                    x: chunk_x,
+                    z: chunk_z,
+                },
+            )
+            .await?
+        }
     }
     Ok(())
 }
@@ -46,12 +56,19 @@ async fn main() -> Result<()> {
 async fn connect_sequence(addr: &str, player: &str, coord: ChunkCoord) -> Result<()> {
     let client = connect::Client::connect(addr).await?;
     let hello = client.hello().await?;
-    println!("hello ok: session={} world={}", hello.session_id, hello.world_epoch);
+    println!(
+        "hello ok: session={} world={}",
+        hello.session_id, hello.world_epoch
+    );
     join::join_world(&client, player).await?;
     println!("joined: {player}");
     let cells = chunk::request_chunk(&client, coord).await?;
     println!("chunk ({}, {}) cells={}", coord.x, coord.z, cells.len());
-    let pos = BlockPos { x: coord.x * 16 + 1, y: 3, z: coord.z * 16 + 1 };
+    let pos = BlockPos {
+        x: coord.x * 16 + 1,
+        y: 3,
+        z: coord.z * 16 + 1,
+    };
     mutate::place_block(&client, 1, pos, 9).await?;
     println!("placed block at {},{},{}", pos.x, pos.y, pos.z);
     mutate::flush_persistence(&client, 2).await?;

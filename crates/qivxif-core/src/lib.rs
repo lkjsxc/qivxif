@@ -79,10 +79,8 @@ mod tests {
 
     #[test]
     fn server_config_loads_toml() {
-        let path = std::env::temp_dir().join(format!(
-            "qivxif-core-config-{}.toml",
-            std::process::id()
-        ));
+        let path =
+            std::env::temp_dir().join(format!("qivxif-core-config-{}.toml", std::process::id()));
         fs::write(
             &path,
             "bind_addr = \"127.0.0.1:3000\"\ndata_dir = \"/tmp/world\"\nworld_seed = 7\nbuild_epoch = \"test\"\nprotocol_epoch = 1\n",

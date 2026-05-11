@@ -86,6 +86,38 @@ services:
     depends_on:
       - server
 
+  client-cli:
+    build:
+      context: .
+      dockerfile: Dockerfile.verify
+    entrypoint:
+      [
+        "cargo",
+        "run",
+        "--locked",
+        "--bin",
+        "qivxif-client-cli",
+        "--",
+        "connect",
+        "--addr",
+        "server:4443",
+        "--player",
+        "compose-client-cli",
+        "--chunk-x",
+        "2",
+        "--chunk-z",
+        "3"
+      ]
+    environment:
+      CARGO_TARGET_DIR: /target
+      QIVXIF_ALLOW_LOCAL_COMPOSE_TLS: "1"
+    volumes:
+      - .:/workspace:ro
+      - cargo-registry:/usr/local/cargo/registry
+      - target-cache:/target
+    depends_on:
+      - server
+
   persist-check:
     build:
       context: .
