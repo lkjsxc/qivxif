@@ -1,9 +1,8 @@
 use crate::transport::ProbeClient;
 use anyhow::{Result, bail};
 use qivxif_core::{BlockPos, ChunkCoord};
-use qivxif_protocol::{BlockCell, ClientMsg, ServerMsg};
+use qivxif_protocol::{BlockCell, CURRENT_PROTOCOL_EPOCH, ClientMsg, ServerMsg};
 
-const PROTOCOL_EPOCH: u32 = 1;
 const PLAYER: &str = "probe";
 const REQUEST_ID: u64 = 1;
 const TEST_POS: BlockPos = BlockPos { x: 1, y: 3, z: 1 };
@@ -55,7 +54,7 @@ pub async fn persist_check(addr: &str) -> Result<()> {
 fn hello() -> ClientMsg {
     ClientMsg::Hello {
         build_epoch: "probe".to_string(),
-        protocol_epoch: PROTOCOL_EPOCH,
+        protocol_epoch: CURRENT_PROTOCOL_EPOCH,
     }
 }
 

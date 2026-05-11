@@ -1,9 +1,7 @@
 use crate::transport::ProbeClient;
 use anyhow::{Result, bail};
 use qivxif_core::{BlockPos, ChunkCoord};
-use qivxif_protocol::{ClientMsg, ErrorCode, ServerMsg};
-
-const PROTOCOL_EPOCH: u32 = 1;
+use qivxif_protocol::{CURRENT_PROTOCOL_EPOCH, ClientMsg, ErrorCode, ServerMsg};
 
 pub async fn protocol_guards(addr: &str) -> Result<()> {
     let client = ProbeClient::connect(addr).await?;
@@ -36,7 +34,9 @@ pub async fn protocol_guards(addr: &str) -> Result<()> {
 
     let missing_build = ProbeClient::connect(addr).await?;
     expect_error(
-        missing_build.request(hello("", PROTOCOL_EPOCH)).await?,
+        missing_build
+            .request(hello("", CURRENT_PROTOCOL_EPOCH))
+            .await?,
         ErrorCode::BuildEpochMissing,
         "missing build epoch",
     )?;
@@ -44,7 +44,7 @@ pub async fn protocol_guards(addr: &str) -> Result<()> {
     let wrong_protocol = ProbeClient::connect(addr).await?;
     expect_error(
         wrong_protocol
-            .request(hello("probe", PROTOCOL_EPOCH + 1))
+            .request(hello("probe", CURRENT_PROTOCOL_EPOCH + 1))
             .await?,
         ErrorCode::ProtocolEpochMismatch,
         "protocol epoch mismatch",

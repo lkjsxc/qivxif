@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 
 pub type RequestId = u64;
 
+pub const CURRENT_PROTOCOL_EPOCH: u32 = 1;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ServerCaps {
     pub reliable_streams: bool,
