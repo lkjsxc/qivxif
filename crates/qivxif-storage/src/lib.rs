@@ -117,6 +117,23 @@ mod tests {
     }
 
     #[test]
+    fn committed_chunk_overlay_survives_store_reopen() {
+        let root = tempfile::tempdir().unwrap();
+        let coord = ChunkCoord { x: 0, z: 0 };
+        let cell = BlockCell {
+            pos: BlockPos { x: 3, y: 1, z: 3 },
+            block: 8,
+        };
+        let store = WorldStore::open(root.path(), 55).unwrap();
+
+        store.put_chunk(coord, std::slice::from_ref(&cell)).unwrap();
+        drop(store);
+
+        let reopened = WorldStore::open(root.path(), 99).unwrap();
+        assert_eq!(reopened.load_chunk(coord).unwrap(), vec![cell]);
+    }
+
+    #[test]
     fn reloads_existing_meta() {
         let root = tempfile::tempdir().unwrap();
         assert_eq!(

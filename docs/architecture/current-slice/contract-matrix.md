@@ -25,9 +25,9 @@ checks. Implementation behavior outside these rows is not protected.
 | Tick policy | `architecture/simulation/tick-policy.md` | `crates/qivxif-sim` | simulation tick tests |
 | Coordinate model | `architecture/world/coordinate-model.md` | `crates/qivxif-world`, `crates/qivxif-core` | world tests |
 | Chunk streaming | `architecture/world/chunk-streaming.md` | `crates/qivxif-world`, `crates/qivxif-probe` | chunk probe path |
-| Hot state | `architecture/persistence/hot-state.md` | `crates/qivxif-storage` | storage tests and `persist-check` probe |
-| Storage schema | `architecture/persistence/schema-contracts.md` | `crates/qivxif-storage` | storage schema tests |
-| Cold archives | `architecture/persistence/object-archives.md` | `crates/qivxif-storage` | storage archive smoke tests |
+| Hot state | `architecture/persistence/hot-state.md` | `crates/qivxif-storage` | hot write/read/reopen storage tests and `persist-check` probe |
+| Storage schema | `architecture/persistence/schema-contracts.md` | `crates/qivxif-storage` | storage schema and commit-boundary tests |
+| Cold archives | `architecture/persistence/object-archives.md` | `crates/qivxif-storage` | object_store manifest smoke tests |
 | Compose acceptance | `operations/verification/compose-pipeline.md` | `scripts/verify-compose.sh`, Compose files | `scripts/verify-compose.sh` |
 | Static gates | `operations/verification/static-gates.md` | `scripts/verify-static.sh`, `crates/qivxif-quality` | `verify` Compose service |
 | Protocol probes | `operations/verification/protocol-probes.md` | `crates/qivxif-probe`, `apps/qivxifctl` | probe services in Compose |

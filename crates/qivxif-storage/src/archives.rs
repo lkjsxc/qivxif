@@ -88,6 +88,8 @@ mod tests {
             archives.list_manifests().await.unwrap(),
             vec!["manifests/smoke.json".to_string()]
         );
+        assert!(root.path().join("manifests/smoke.json").is_file());
+        assert!(!root.path().join(crate::tables::DB_FILE).exists());
     }
 
     #[tokio::test]
