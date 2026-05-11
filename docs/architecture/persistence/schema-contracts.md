@@ -21,6 +21,19 @@
 
 Each table has one owner crate and one owner doc.
 
+## Bootstrap
+
+- `qivxif-storage` opens every active table during database startup.
+- Hot-path reads and writes assume active tables already exist.
+- Adding a table requires updating this file, the storage table catalog, and the
+  startup bootstrap together.
+
+## Commit Boundary
+
+- Each public flush writes a complete chunk overlay in one redb transaction.
+- The transaction uses immediate durability before commit.
+- A committed transaction is the persistence boundary observed by restart probes.
+
 ## Section Migration
 
 The `sections` table currently uses keys shaped as
