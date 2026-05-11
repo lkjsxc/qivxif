@@ -51,6 +51,10 @@ enum ProbeCommand {
         #[arg(long)]
         addr: String,
     },
+    MalformedWire {
+        #[arg(long)]
+        addr: String,
+    },
     PersistCheck {
         #[arg(long)]
         addr: String,
@@ -77,6 +81,7 @@ async fn run_probe(command: ProbeCommand) -> Result<()> {
         ProbeCommand::PersistPlace { addr } => qivxif_probe::persist_place(&addr).await,
         ProbeCommand::RequestReplay { addr } => qivxif_probe::request_replay(&addr).await,
         ProbeCommand::ProtocolGuards { addr } => qivxif_probe::protocol_guards(&addr).await,
+        ProbeCommand::MalformedWire { addr } => qivxif_probe::malformed_wire(&addr).await,
         ProbeCommand::PersistCheck { addr } => qivxif_probe::persist_check(&addr).await,
     }
 }

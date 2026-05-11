@@ -27,6 +27,7 @@
 | Join before chunk | `ChunkRequest` is sent before accepted `JoinWorld` | `JoinRequired` |
 | Join before mutation | `PlaceBlock` is sent before accepted `JoinWorld` | `JoinRequired` |
 | Join before flush | `FlushPersistence` is sent before accepted `JoinWorld` | `JoinRequired` |
+| Decodable request | Malformed wire bytes are sent on a request stream | `BadRequest` |
 
 The public probe asserts codes only. Diagnostic `Error.message` text is not a
 durable compatibility surface.

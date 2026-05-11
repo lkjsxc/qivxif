@@ -59,7 +59,7 @@ This file owns public qivxif protocol messages for protocol epoch `1`.
 
 | Code | Meaning |
 | --- | --- |
-| `BadRequest` | Decode or request framing failed |
+| `BadRequest` | Decode or request framing failed before session mutation |
 | `BuildEpochMissing` | Client or server build epoch was empty |
 | `ProtocolEpochMismatch` | Client protocol epoch differs from server |
 | `HelloRequired` | Request requires hello first |
@@ -70,6 +70,9 @@ This file owns public qivxif protocol messages for protocol epoch `1`.
 
 Error codes are durable protocol outcomes. Error messages are diagnostic text
 for operators and probes must not assert exact message wording.
+
+Malformed wire bytes must return `BadRequest` through the public QUIC path and
+must not advance the session phase.
 
 ## Encoding Rules
 

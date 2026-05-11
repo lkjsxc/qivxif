@@ -18,6 +18,7 @@ compose run --rm --build -T verify
 compose up -d --build server
 compose run --rm -T smoke
 compose run --rm -T protocol-guards
+compose run --rm -T malformed-wire
 compose run --rm -T request-replay
 compose run --rm -T persist-place
 compose restart server

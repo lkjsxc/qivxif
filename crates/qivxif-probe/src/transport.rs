@@ -34,6 +34,13 @@ impl ProbeClient {
         qivxif_net::send_wire(&mut send, &msg).await?;
         qivxif_net::recv_wire(&mut recv).await
     }
+
+    pub(crate) async fn raw_request(&self, bytes: &[u8]) -> Result<ServerMsg> {
+        let (mut send, mut recv) = self.connection.open_bi().await?;
+        send.write_all(bytes).await?;
+        send.finish()?;
+        qivxif_net::recv_wire(&mut recv).await
+    }
 }
 
 async fn wait_for_addr(addr: &str) -> Result<SocketAddr> {

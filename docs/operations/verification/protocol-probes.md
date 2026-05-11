@@ -29,6 +29,13 @@
 - It sends hello requests with empty build epoch and mismatched protocol epoch.
 - It asserts only durable `Error.code` values.
 
+## Malformed Wire Probe
+
+- `malformed-wire` sends invalid bytes on a public QUIC request stream.
+- The server must return `BadRequest`.
+- The same connection must still reject `JoinWorld` with `HelloRequired`, proving
+  malformed bytes did not advance the session phase.
+
 ## Rule
 
 Probes use public protocol paths.

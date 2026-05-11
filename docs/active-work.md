@@ -13,6 +13,7 @@ Harden the documented authoritative server slice before client or gameplay work.
 - Deterministic chunk generation and chunk-scoped edit overlay persistence are
   complete for the initial slice.
 - Protocol guard docs now own the public session-phase rejection matrix.
+- Malformed-wire docs now own the public decode rejection contract.
 
 ## Near-Term Exit Criteria
 
