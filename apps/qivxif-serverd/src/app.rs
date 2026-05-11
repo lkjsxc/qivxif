@@ -70,6 +70,7 @@ async fn handle_streams(connection: quinn::Connection, state: Arc<AppState>) {
             }
         };
     }
+    tracing::info!(session_id = session.id, "connection closed");
 }
 
 async fn handle_request(

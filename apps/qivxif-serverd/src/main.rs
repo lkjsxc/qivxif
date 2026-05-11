@@ -23,11 +23,23 @@ enum Command {
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt()
-        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .with_env_filter(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info")),
+        )
         .init();
     match Cli::parse().command {
         Command::Serve { config } => {
             let cfg = qivxif_core::ServerConfig::load(&config)?;
+            tracing::info!(
+                config = %config.display(),
+                bind_addr = %cfg.bind_addr,
+                data_dir = %cfg.data_dir,
+                world_seed = cfg.world_seed,
+                build_epoch = %cfg.build_epoch,
+                protocol_epoch = cfg.protocol_epoch,
+                "server starting"
+            );
             app::serve(cfg).await?;
         }
     }

@@ -16,8 +16,18 @@ pub async fn respond(request: ClientMsg, state: &AppState, session: &mut Session
         ClientMsg::Ping { .. } => phase_error(ErrorCode::HelloRequired),
         ClientMsg::ChunkRequest { coord } if session.can_play() => {
             match state.region.chunk(coord).await {
-                Ok(cells) => ServerMsg::Chunk { coord, cells },
-                Err(error) => error_msg(ErrorCode::ChunkError, error),
+                Ok(cells) => {
+                    tracing::info!(
+                        session_id = session.id,
+                        cell_count = cells.len(),
+                        "chunk request completed"
+                    );
+                    ServerMsg::Chunk { coord, cells }
+                }
+                Err(error) => {
+                    tracing::warn!(session_id = session.id, code = ?ErrorCode::ChunkError, "chunk request rejected");
+                    error_msg(ErrorCode::ChunkError, error)
+                }
             }
         }
         ClientMsg::ChunkRequest { .. } => phase_error(ErrorCode::JoinRequired),
@@ -33,17 +43,33 @@ pub async fn respond(request: ClientMsg, state: &AppState, session: &mut Session
                 Ok(cell) => ServerMsg::MutationAck { request_id, cell },
                 Err(error) => error_msg(ErrorCode::MutationError, error),
             };
+            match &response {
+                ServerMsg::MutationAck { request_id, .. } => {
+                    tracing::info!(session_id = session.id, request_id, "mutation accepted")
+                }
+                ServerMsg::Error { code, .. } => {
+                    tracing::warn!(session_id = session.id, code = ?code, "mutation rejected");
+                }
+                _ => {}
+            }
             session.remember_response(request_id, &response);
             response
         }
-        ClientMsg::PlaceBlock { .. } => phase_error(ErrorCode::JoinRequired),
+        ClientMsg::PlaceBlock { .. } => {
+            tracing::warn!(
+                session_id = session.id,
+                code = ?ErrorCode::JoinRequired,
+                "mutation rejected"
+            );
+            phase_error(ErrorCode::JoinRequired)
+        }
         ClientMsg::FlushPersistence { request_id } if session.can_play() => {
             if let Some(response) = session.replayed_response(request_id) {
                 return response;
             }
             match state.region.flush().await {
                 Ok(()) => {
-                    tracing::info!(session_id = session.id, "persistence flushed");
+                    tracing::info!(session_id = session.id, request_id, "persistence flushed");
                     let response = ServerMsg::FlushAck { request_id };
                     session.remember_response(request_id, &response);
                     response
@@ -97,88 +123,5 @@ pub fn error_msg(code: ErrorCode, error: impl std::fmt::Display) -> ServerMsg {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use qivxif_sim::RegionHandle;
-    use qivxif_storage::WorldStore;
-    use std::sync::{Arc, atomic::AtomicU64};
-
-    fn test_state() -> (tempfile::TempDir, AppState) {
-        let root = tempfile::tempdir().unwrap();
-        let store = Arc::new(WorldStore::open(root.path(), 5).unwrap());
-        let world_epoch = store.meta().world_epoch.clone();
-        let state = AppState {
-            build_epoch: "test".to_string(),
-            protocol_epoch: 1,
-            world_epoch,
-            next_session: AtomicU64::new(1),
-            region: RegionHandle::spawn(5, store),
-        };
-        (root, state)
-    }
-
-    #[tokio::test]
-    async fn join_before_hello_is_rejected() {
-        let (_root, state) = test_state();
-        let mut session = Session::new(1);
-        let msg = respond(
-            ClientMsg::JoinWorld {
-                player: "probe".to_string(),
-            },
-            &state,
-            &mut session,
-        )
-        .await;
-        assert!(matches!(
-            msg,
-            ServerMsg::Error {
-                code: ErrorCode::HelloRequired,
-                ..
-            }
-        ));
-    }
-
-    #[tokio::test]
-    async fn protocol_epoch_mismatch_is_rejected() {
-        let (_root, state) = test_state();
-        let mut session = Session::new(1);
-        let msg = respond(
-            ClientMsg::Hello {
-                build_epoch: "test".to_string(),
-                protocol_epoch: 99,
-            },
-            &state,
-            &mut session,
-        )
-        .await;
-        assert!(matches!(
-            msg,
-            ServerMsg::Error {
-                code: ErrorCode::ProtocolEpochMismatch,
-                ..
-            }
-        ));
-    }
-
-    #[tokio::test]
-    async fn hello_reports_local_compose_capabilities() {
-        let (_root, state) = test_state();
-        let mut session = Session::new(1);
-        let msg = respond(
-            ClientMsg::Hello {
-                build_epoch: "test".to_string(),
-                protocol_epoch: 1,
-            },
-            &state,
-            &mut session,
-        )
-        .await;
-        assert!(matches!(
-            msg,
-            ServerMsg::HelloOk {
-                caps: LOCAL_COMPOSE_CAPS,
-                ..
-            }
-        ));
-    }
-}
+#[path = "request_tests.rs"]
+mod request_tests;
