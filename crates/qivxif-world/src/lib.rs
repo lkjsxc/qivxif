@@ -72,4 +72,23 @@ mod tests {
         let coord = ChunkCoord { x: 0, z: 0 };
         assert_eq!(chunk_cells(coord, 7, &[]), chunk_cells(coord, 7, &[]));
     }
+
+    #[test]
+    fn negative_positions_map_to_negative_chunks() {
+        assert_eq!(
+            chunk_coord(BlockPos { x: -1, y: 0, z: -1 }),
+            ChunkCoord { x: -1, z: -1 }
+        );
+    }
+
+    #[test]
+    fn air_edit_removes_generated_cell() {
+        let pos = BlockPos { x: 0, y: 0, z: 0 };
+        let cells = chunk_cells(
+            ChunkCoord { x: 0, z: 0 },
+            0,
+            &[BlockCell { pos, block: AIR }],
+        );
+        assert!(!cells.iter().any(|cell| cell.pos == pos));
+    }
 }

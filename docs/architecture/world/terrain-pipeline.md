@@ -13,3 +13,4 @@
 ## Rule
 
 Generated terrain is disposable. Persisted edits are authoritative.
+Persisted air cells are valid removal overrides for generated blocks.

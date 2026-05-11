@@ -10,3 +10,5 @@
 ## Rule
 
 Coordinates must be deterministic and serializable.
+Chunk ownership uses Euclidean division so negative world coordinates map
+deterministically to negative chunk coordinates.

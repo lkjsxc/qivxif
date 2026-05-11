@@ -150,6 +150,19 @@ mod tests {
     }
 
     #[test]
+    fn repeated_mutation_replaces_previous_value() {
+        let root = tempfile::tempdir().unwrap();
+        let store = WorldStore::open(root.path(), 55).unwrap();
+        let pos = BlockPos { x: 2, y: 0, z: 2 };
+        store.put_block(&BlockCell { pos, block: 4 }).unwrap();
+        store.put_block(&BlockCell { pos, block: 7 }).unwrap();
+        assert_eq!(
+            store.load_chunk(ChunkCoord { x: 0, z: 0 }).unwrap(),
+            vec![BlockCell { pos, block: 7 }]
+        );
+    }
+
+    #[test]
     fn reloads_existing_meta() {
         let root = tempfile::tempdir().unwrap();
         assert_eq!(
