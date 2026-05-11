@@ -11,7 +11,8 @@ verification.
 2. Implementation.
 3. Static gate.
 4. Live probes when behavior is runtime-visible.
-5. Commit.
+5. Evidence under `.sisyphus/evidence/`.
+6. Commit.
 
 ## Reproducibility
 

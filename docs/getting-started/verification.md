@@ -4,6 +4,10 @@
 
 Docker Compose is the acceptance boundary.
 
+```bash
+./scripts/verify-compose.sh
+```
+
 ## Static Gate
 
 The `verify` service runs formatting, Clippy, tests, optimized build, docs
@@ -16,6 +20,11 @@ Live probes own readiness. Docker health checks are not used for acceptance.
 ## Stop Rule
 
 No failing Compose gate may be ignored.
+
+## Agent Evidence
+
+Agents save verification output under `.sisyphus/evidence/` with task-scoped
+filenames.
 
 ## Reproducibility
 

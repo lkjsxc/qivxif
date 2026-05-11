@@ -2,6 +2,14 @@
 
 ## Canonical Commands
 
+Run the full acceptance pipeline through the repository wrapper:
+
+```bash
+./scripts/verify-compose.sh
+```
+
+The wrapper executes this Compose sequence:
+
 ```bash
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml down -v
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm --build -T verify
@@ -29,6 +37,12 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 - `persist-place` mutates a block through the public path.
 - `persist-check` verifies the mutation after restart.
 - Non-zero exit blocks acceptance.
+
+## Evidence
+
+- Agents save task verification logs under `.sisyphus/evidence/`.
+- Evidence files use task-scoped names such as `task-4-compose-docs.txt`.
+- A passing full run ends with `verify compose ... ok`.
 
 ## Safety Notes
 
