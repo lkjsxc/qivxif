@@ -27,7 +27,7 @@ checks. Implementation behavior outside these rows is not protected.
 | Chunk streaming | `architecture/world/chunk-streaming.md` | `crates/qivxif-world`, `crates/qivxif-probe` | chunk probe path |
 | Hot state | `architecture/persistence/hot-state.md` | `crates/qivxif-storage` | storage tests and `persist-check` probe |
 | Storage schema | `architecture/persistence/schema-contracts.md` | `crates/qivxif-storage` | storage schema tests |
-| Cold archives | `architecture/persistence/object-archives.md` | `crates/qivxif-storage` | archive smoke test when active |
+| Cold archives | `architecture/persistence/object-archives.md` | `crates/qivxif-storage` | storage archive smoke tests |
 | Compose acceptance | `operations/verification/compose-pipeline.md` | `scripts/verify-compose.sh`, Compose files | `scripts/verify-compose.sh` |
 | Static gates | `operations/verification/static-gates.md` | `scripts/verify-static.sh`, `crates/qivxif-quality` | `verify` Compose service |
 | Protocol probes | `operations/verification/protocol-probes.md` | `crates/qivxif-probe`, `apps/qivxifctl` | probe services in Compose |
@@ -41,7 +41,6 @@ checks. Implementation behavior outside these rows is not protected.
 | --- | --- | --- |
 | Native client shells | `architecture/client/` | Add workspace crates only after shell docs define public checks |
 | Renderer family | `architecture/client/renderer.md` | Add renderer code only after client shell boundary is active |
-| Object archives | `architecture/persistence/object-archives.md` | Add archive code after hot-state slice is stable |
 | Markets and claims | `product/gameplay/`, `product/social/` | Add gameplay code after server authority and persistence checks pass |
 
 ## Workspace Members
