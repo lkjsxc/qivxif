@@ -6,6 +6,7 @@ pub fn validate_docs_topology() -> Result<(), QualityError> {
     visit_dirs(Path::new("docs"), &mut |dir| {
         validate_dir(dir, &mut failures)
     })?;
+    validate_root_map(&mut failures)?;
     finish(failures, "docs topology ok")
 }
 
@@ -58,6 +59,39 @@ fn child_link_target(path: &Path) -> Option<String> {
         return Some(name.to_string());
     }
     None
+}
+
+fn validate_root_map(failures: &mut Vec<String>) -> Result<(), QualityError> {
+    let readme = Path::new("docs/README.md");
+    let contents = fs::read_to_string(readme)?;
+    visit_markdown(Path::new("docs"), &mut |path| {
+        if path == readme {
+            return Ok(());
+        }
+        let target = path
+            .strip_prefix("docs")
+            .expect("visited path is under docs");
+        let target = target.to_string_lossy();
+        if !contents.contains(target.as_ref()) {
+            failures.push(format!("root README missing docs link: {target}"));
+        }
+        Ok(())
+    })
+}
+
+fn visit_markdown(
+    dir: &Path,
+    action: &mut dyn FnMut(&Path) -> Result<(), QualityError>,
+) -> Result<(), QualityError> {
+    for entry in fs::read_dir(dir)? {
+        let path = entry?.path();
+        if path.is_dir() {
+            visit_markdown(&path, action)?;
+        } else if path.extension().and_then(|ext| ext.to_str()) == Some("md") {
+            action(&path)?;
+        }
+    }
+    Ok(())
 }
 
 fn visit_dirs(

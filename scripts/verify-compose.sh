@@ -15,7 +15,7 @@ trap cleanup EXIT HUP INT TERM
 
 cleanup
 compose config --quiet
-compose build verify server
+compose run --rm --build -T verify
 compose up -d --build server
 compose run --rm -T smoke
 compose run --rm -T protocol-guards
