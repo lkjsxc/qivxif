@@ -2,22 +2,24 @@
 
 ## Current Objective
 
-Harden the documented authoritative server slice before client or gameplay work.
+Improve documentation first, then implementation.
+
+Current state: the authoritative server slice is implemented; there is no client yet.
 
 ## Work Lanes
 
 - Documentation canon and repository rules are active.
 - Rust workspace and Docker Compose verification are active.
-- QUIC hello, join, chunk request, place, flush, restart, and persistence check
-  are complete for the initial slice.
-- Deterministic chunk generation and chunk-scoped edit overlay persistence are
-  complete for the initial slice.
-- Protocol guard docs now own the public session-phase rejection matrix.
-- Malformed-wire docs now own the public decode rejection contract.
+- QUIC hello, join, chunk, place, flush, restart, and persistence lanes are
+  complete.
+- Deterministic chunk generation and edit overlay persistence are complete.
+- Protocol guard docs own the public session-phase rejection matrix.
+- Malformed-wire docs own the public decode rejection contract.
 
 ## Near-Term Exit Criteria
 
+- Owner docs match implemented behavior for the current slice.
 - Protocol guard probes match the public wire catalog.
+- Malformed-wire probes match the public decode rejection contract.
 - Verification inputs are reproducible.
-- Storage, protocol, and probe crates stay below line limits.
 - Full `./scripts/verify-compose.sh` acceptance passes.
