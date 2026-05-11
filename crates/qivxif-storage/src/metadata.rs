@@ -3,14 +3,17 @@ use crate::{
     tables::{META, META_WORLD},
 };
 use qivxif_core::WorldMeta;
-use redb::{Database, ReadableDatabase};
+use redb::{Database, Durability, ReadableDatabase};
 
 pub(crate) fn load_or_create(db: &Database, seed: u64) -> Result<WorldMeta, StoreError> {
     if let Some(meta) = load(db)? {
         return Ok(meta);
     }
     let meta = WorldMeta::new(seed);
-    let write = db.begin_write().map_err(redb_error)?;
+    let mut write = db.begin_write().map_err(redb_error)?;
+    write
+        .set_durability(Durability::Immediate)
+        .map_err(redb_error)?;
     {
         let mut table = write.open_table(META).map_err(redb_error)?;
         let bytes = postcard::to_stdvec(&meta)?;

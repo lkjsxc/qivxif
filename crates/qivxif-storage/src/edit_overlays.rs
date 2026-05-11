@@ -4,7 +4,7 @@ use crate::{
 };
 use qivxif_core::ChunkCoord;
 use qivxif_protocol::BlockCell;
-use redb::{Database, ReadableDatabase};
+use redb::{Database, Durability, ReadableDatabase};
 
 pub(crate) fn load_chunk_overlay(
     db: &Database,
@@ -26,7 +26,10 @@ pub(crate) fn put_chunk_overlay(
     coord: ChunkCoord,
     cells: &[BlockCell],
 ) -> Result<(), StoreError> {
-    let write = db.begin_write().map_err(redb_error)?;
+    let mut write = db.begin_write().map_err(redb_error)?;
+    write
+        .set_durability(Durability::Immediate)
+        .map_err(redb_error)?;
     {
         let mut table = write.open_table(SECTIONS).map_err(redb_error)?;
         let bytes = postcard::to_stdvec(cells)?;

@@ -2,7 +2,7 @@ use crate::{
     errors::{StoreError, redb_error},
     tables::{DB_FILE, META, SECTIONS},
 };
-use redb::Database;
+use redb::{Database, Durability};
 use std::{fs, path::Path};
 
 pub(crate) fn open(root: &Path) -> Result<Database, StoreError> {
@@ -13,7 +13,10 @@ pub(crate) fn open(root: &Path) -> Result<Database, StoreError> {
 }
 
 fn init_tables(db: &Database) -> Result<(), StoreError> {
-    let write = db.begin_write().map_err(redb_error)?;
+    let mut write = db.begin_write().map_err(redb_error)?;
+    write
+        .set_durability(Durability::Immediate)
+        .map_err(redb_error)?;
     write.open_table(META).map_err(redb_error)?;
     write.open_table(SECTIONS).map_err(redb_error)?;
     write.commit().map_err(redb_error)?;
