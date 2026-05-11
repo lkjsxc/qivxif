@@ -18,6 +18,7 @@ services:
     entrypoint: ["cargo", "run", "--locked", "--bin", "qivxifctl", "--", "probe", "smoke", "--addr", "server:4443"]
     environment:
       CARGO_TARGET_DIR: /target
+      QIVXIF_ALLOW_LOCAL_COMPOSE_TLS: "1"
     volumes:
       - .:/workspace:ro
       - cargo-registry:/usr/local/cargo/registry
@@ -32,6 +33,7 @@ services:
     entrypoint: ["cargo", "run", "--locked", "--bin", "qivxifctl", "--", "probe", "persist-place", "--addr", "server:4443"]
     environment:
       CARGO_TARGET_DIR: /target
+      QIVXIF_ALLOW_LOCAL_COMPOSE_TLS: "1"
     volumes:
       - .:/workspace:ro
       - cargo-registry:/usr/local/cargo/registry
@@ -46,6 +48,7 @@ services:
     entrypoint: ["cargo", "run", "--locked", "--bin", "qivxifctl", "--", "probe", "request-replay", "--addr", "server:4443"]
     environment:
       CARGO_TARGET_DIR: /target
+      QIVXIF_ALLOW_LOCAL_COMPOSE_TLS: "1"
     volumes:
       - .:/workspace:ro
       - cargo-registry:/usr/local/cargo/registry
@@ -60,6 +63,7 @@ services:
     entrypoint: ["cargo", "run", "--locked", "--bin", "qivxifctl", "--", "probe", "protocol-guards", "--addr", "server:4443"]
     environment:
       CARGO_TARGET_DIR: /target
+      QIVXIF_ALLOW_LOCAL_COMPOSE_TLS: "1"
     volumes:
       - .:/workspace:ro
       - cargo-registry:/usr/local/cargo/registry
@@ -74,6 +78,7 @@ services:
     entrypoint: ["cargo", "run", "--locked", "--bin", "qivxifctl", "--", "probe", "malformed-wire", "--addr", "server:4443"]
     environment:
       CARGO_TARGET_DIR: /target
+      QIVXIF_ALLOW_LOCAL_COMPOSE_TLS: "1"
     volumes:
       - .:/workspace:ro
       - cargo-registry:/usr/local/cargo/registry
@@ -88,6 +93,7 @@ services:
     entrypoint: ["cargo", "run", "--locked", "--bin", "qivxifctl", "--", "probe", "persist-check", "--addr", "server:4443"]
     environment:
       CARGO_TARGET_DIR: /target
+      QIVXIF_ALLOW_LOCAL_COMPOSE_TLS: "1"
     volumes:
       - .:/workspace:ro
       - cargo-registry:/usr/local/cargo/registry

@@ -91,4 +91,16 @@ mod tests {
         );
         assert!(!cells.iter().any(|cell| cell.pos == pos));
     }
+
+    #[test]
+    fn overlay_replaces_generated_cell() {
+        let pos = BlockPos { x: 0, y: 0, z: 0 };
+        let cells = chunk_cells(
+            ChunkCoord { x: 0, z: 0 },
+            0,
+            &[BlockCell { pos, block: STONE }],
+        );
+        assert_eq!(cells.iter().filter(|cell| cell.pos == pos).count(), 1);
+        assert_eq!(cells.iter().find(|cell| cell.pos == pos).unwrap().block, STONE);
+    }
 }

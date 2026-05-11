@@ -12,3 +12,4 @@ quinn = { workspace = true }
 rcgen = { workspace = true }
 serde = { workspace = true }
 tokio = { workspace = true }
+webpki-roots = "0.26"

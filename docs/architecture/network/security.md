@@ -9,8 +9,8 @@
 
 - Quinn QUIC provides encrypted transport.
 - Local server certificates are generated with `rcgen`.
-- Probe clients use a custom verifier that accepts the local certificate.
-- The verifier bypass exists for local Compose probes.
+- Probe clients use platform CA verification by default.
+- Local Compose probes opt into a custom verifier with `QIVXIF_ALLOW_LOCAL_COMPOSE_TLS=1`.
 - Remote client addresses are logged at debug level only.
 
 ## Not Implemented

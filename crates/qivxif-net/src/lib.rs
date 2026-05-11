@@ -2,7 +2,9 @@ use anyhow::Result;
 use quinn::crypto::rustls::QuicClientConfig;
 use quinn::rustls::pki_types::{CertificateDer, PrivatePkcs8KeyDer, ServerName, UnixTime};
 use serde::{Serialize, de::DeserializeOwned};
-use std::{net::SocketAddr, sync::Arc};
+use std::{env, net::SocketAddr, sync::Arc};
+
+const LOCAL_COMPOSE_TLS_ENV: &str = "QIVXIF_ALLOW_LOCAL_COMPOSE_TLS";
 
 pub async fn send_wire<T: Serialize>(writer: &mut quinn::SendStream, value: &T) -> Result<()> {
     let bytes = postcard::to_stdvec(value)?;
@@ -30,10 +32,11 @@ pub fn server_config() -> Result<quinn::ServerConfig> {
 pub fn client_endpoint() -> Result<quinn::Endpoint> {
     let bind = SocketAddr::from(([0, 0, 0, 0], 0));
     let mut endpoint = quinn::Endpoint::client(bind)?;
-    let crypto = quinn::rustls::ClientConfig::builder()
-        .dangerous()
-        .with_custom_certificate_verifier(SkipServerVerification::new())
-        .with_no_client_auth();
+    let crypto = if allow_local_compose_tls() {
+        local_compose_crypto()
+    } else {
+        production_crypto()
+    }?;
     endpoint.set_default_client_config(quinn::ClientConfig::new(Arc::new(
         QuicClientConfig::try_from(crypto)?,
     )));
@@ -41,9 +44,9 @@ pub fn client_endpoint() -> Result<quinn::Endpoint> {
 }
 
 #[derive(Debug)]
-struct SkipServerVerification(Arc<quinn::rustls::crypto::CryptoProvider>);
+struct LocalComposeServerVerification(Arc<quinn::rustls::crypto::CryptoProvider>);
 
-impl SkipServerVerification {
+impl LocalComposeServerVerification {
     fn new() -> Arc<Self> {
         Arc::new(Self(Arc::new(
             quinn::rustls::crypto::ring::default_provider(),
@@ -51,7 +54,7 @@ impl SkipServerVerification {
     }
 }
 
-impl quinn::rustls::client::danger::ServerCertVerifier for SkipServerVerification {
+impl quinn::rustls::client::danger::ServerCertVerifier for LocalComposeServerVerification {
     fn verify_server_cert(
         &self,
         _end_entity: &CertificateDer<'_>,
@@ -94,4 +97,26 @@ impl quinn::rustls::client::danger::ServerCertVerifier for SkipServerVerificatio
     fn supported_verify_schemes(&self) -> Vec<quinn::rustls::SignatureScheme> {
         self.0.signature_verification_algorithms.supported_schemes()
     }
+}
+
+fn allow_local_compose_tls() -> bool {
+    matches!(
+        env::var(LOCAL_COMPOSE_TLS_ENV).as_deref(),
+        Ok("1") | Ok("true") | Ok("yes")
+    )
+}
+
+fn local_compose_crypto() -> Result<quinn::rustls::ClientConfig> {
+    Ok(quinn::rustls::ClientConfig::builder()
+        .dangerous()
+        .with_custom_certificate_verifier(LocalComposeServerVerification::new())
+        .with_no_client_auth())
+}
+
+fn production_crypto() -> Result<quinn::rustls::ClientConfig> {
+    let mut roots = quinn::rustls::RootCertStore::empty();
+    roots.extend(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
+    Ok(quinn::rustls::ClientConfig::builder()
+        .with_root_certificates(roots)
+        .with_no_client_auth())
 }
