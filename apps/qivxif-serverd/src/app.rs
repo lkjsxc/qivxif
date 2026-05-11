@@ -37,6 +37,7 @@ pub async fn serve(cfg: qivxif_core::ServerConfig) -> Result<()> {
             _ = tokio::signal::ctrl_c() => break,
         }
     }
+    tracing::info!("server shutdown");
     Ok(())
 }
 
@@ -51,7 +52,8 @@ pub(crate) struct AppState {
 async fn handle_connection(incoming: quinn::Incoming, state: Arc<AppState>) {
     match incoming.await {
         Ok(connection) => {
-            tracing::info!(remote = %connection.remote_address(), "connection accepted");
+            tracing::info!("connection accepted");
+            tracing::debug!(remote = %connection.remote_address(), "connection remote address");
             handle_streams(connection, state).await;
         }
         Err(error) => tracing::warn!(%error, "connection failed"),

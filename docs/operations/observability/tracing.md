@@ -10,8 +10,16 @@
 - Chunk request completed.
 - Mutation accepted.
 - Mutation rejected.
-- Mutation persisted.
-- Probe request.
+- Persistence flushed.
+- Persistence flush rejected.
+- Probe result.
+
+## Dormant Events
+
+- Archive manifest written.
+- Archive manifest listed.
+- Region tick completed.
+- Request replayed.
 
 ## Probe Output
 

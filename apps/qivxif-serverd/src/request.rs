@@ -75,6 +75,12 @@ pub async fn respond(request: ClientMsg, state: &AppState, session: &mut Session
                     response
                 }
                 Err(error) => {
+                    tracing::warn!(
+                        session_id = session.id,
+                        request_id,
+                        code = ?ErrorCode::FlushError,
+                        "persistence flush rejected"
+                    );
                     let response = error_msg(ErrorCode::FlushError, error);
                     session.remember_response(request_id, &response);
                     response

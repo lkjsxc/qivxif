@@ -35,7 +35,6 @@ async fn main() -> Result<()> {
                 config = %config.display(),
                 bind_addr = %cfg.bind_addr,
                 data_dir = %cfg.data_dir,
-                world_seed = cfg.world_seed,
                 build_epoch = %cfg.build_epoch,
                 protocol_epoch = cfg.protocol_epoch,
                 "server starting"
