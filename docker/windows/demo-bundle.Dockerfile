@@ -70,7 +70,7 @@ RUN printf '%s\n' \
     '  "entrypoints": ["start-server.cmd", "run-client-demo.cmd"]' \
     '}' \
     > manifest.json
-RUN find . -type f ! -name checksums.txt \
+RUN find . -type f ! -name checksums.txt ! -name checksums.tmp \
     | sed 's#^\./##' \
     | sort \
     | xargs sha256sum > checksums.tmp \

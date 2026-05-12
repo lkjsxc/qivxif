@@ -32,6 +32,10 @@ clean_windows_dist
 mkdir -p "$root_dir/dist/windows"
 
 cd "$root_dir"
+docker compose --ansi never --progress quiet \
+  -f docker-compose.windows.yml \
+  config --quiet
+
 QIVXIF_BUNDLE_UID="$(id -u)" \
 QIVXIF_BUNDLE_GID="$(id -g)" \
   docker compose --ansi never --progress quiet \
@@ -54,6 +58,8 @@ for file in \
 do
   grep -F "  $file" "$bundle_dir/checksums.txt" >/dev/null
 done
+
+(cd "$bundle_dir" && sha256sum -c checksums.txt >/dev/null)
 
 test -s "$zip_file"
 for file in $expected_files; do

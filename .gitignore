@@ -3,4 +3,5 @@
 /data/
 /dist/
 /tmp/
+/.sisyphus/evidence/
 *.redb
