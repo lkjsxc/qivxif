@@ -1494,6 +1494,7 @@ dependencies = [
  "clap",
  "qivxif-client-core",
  "qivxif-core",
+ "qivxif-protocol",
  "qivxif-render",
  "qivxif-ui",
  "tokio",

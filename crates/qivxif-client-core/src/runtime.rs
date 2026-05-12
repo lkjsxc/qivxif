@@ -1,4 +1,6 @@
-use crate::{Client, ClientConfig, HelloReceipt, RuntimeEvent, WorldCache, mutate_block};
+use crate::{
+    Client, ClientCommand, ClientConfig, HelloReceipt, RuntimeEvent, WorldCache, mutate_block,
+};
 use anyhow::Result;
 use qivxif_core::{BlockPos, ChunkCoord};
 use qivxif_protocol::RequestId;
@@ -49,6 +51,17 @@ impl ClientRuntime {
         self.cache.apply_cell(cell.clone());
         self.events.push(RuntimeEvent::MutationApplied { cell });
         Ok(())
+    }
+
+    pub async fn remove_block(&mut self, pos: BlockPos) -> Result<()> {
+        self.place_block(pos, qivxif_world::AIR).await
+    }
+
+    pub async fn apply_command(&mut self, command: ClientCommand) -> Result<()> {
+        match command {
+            ClientCommand::Place { pos, block } => self.place_block(pos, block).await,
+            ClientCommand::Remove { pos } => self.remove_block(pos).await,
+        }
     }
 
     pub fn cache(&self) -> &WorldCache {

@@ -39,6 +39,13 @@ impl SmokeFrame {
             .any(|pixel| *pixel != Color::new(0, 0, 0))
     }
 
+    pub fn nonzero_pixel_count(&self) -> usize {
+        self.pixels
+            .iter()
+            .filter(|pixel| **pixel != Color::new(0, 0, 0))
+            .count()
+    }
+
     fn blank(width: usize, height: usize) -> Self {
         Self {
             width,
@@ -112,5 +119,6 @@ mod tests {
             block: 2,
         }];
         assert!(SmokeFrame::render(&cells, 16, 16).is_nonblank());
+        assert_eq!(SmokeFrame::render(&cells, 16, 16).nonzero_pixel_count(), 1);
     }
 }
