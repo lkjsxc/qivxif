@@ -1,8 +1,9 @@
 services:
-  windows-client-cli:
+  windows-demo-bundle:
     build:
       context: .
-      dockerfile: docker/windows/client-cli.Dockerfile
+      dockerfile: docker/windows/demo-bundle.Dockerfile
       target: artifact
+    user: "${QIVXIF_BUNDLE_UID:-0}:${QIVXIF_BUNDLE_GID:-0}"
     volumes:
-      - ./dist/windows/client-cli:/dist
+      - ./dist/windows:/dist/windows

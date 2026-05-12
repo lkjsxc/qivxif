@@ -3,7 +3,7 @@ WORKDIR /workspace
 RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config ca-certificates && rm -rf /var/lib/apt/lists/*
 COPY . .
-RUN cargo build --release --bin qivxif-serverd
+RUN cargo build --locked --release --bin qivxif-serverd
 
 FROM debian:bookworm-slim
 WORKDIR /app

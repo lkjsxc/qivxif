@@ -1,7 +1,9 @@
 .git
 .gitignore
 target
+dist
 tmp
+.env
 **/*.redb
 **/*.redb-*
 data

@@ -20,9 +20,6 @@
 ./scripts/verify-windows-demo-bundle.sh
 ```
 
-The compatibility command `./scripts/verify-windows-client-cli.sh` delegates to
-the demo bundle gate.
-
 ## Destructive Output Behavior
 
 - The verification script removes `dist/windows/` before building.
