@@ -3,9 +3,8 @@
 ## Status
 
 - Status: implemented for server slice owners.
-- Desktop smoke client owners are active.
-- Interactive gameplay client, `wgpu` renderer, and mobile shell owners are
-  dormant.
+- Desktop smoke and native e2e client owners are active.
+- Mobile shell owners are dormant.
 
 ## Runtime Owners
 
@@ -22,9 +21,12 @@
 | Public probe scenarios | `crates/qivxif-probe` |
 | Headless protocol client | `crates/qivxif-client-core`, `apps/qivxif-client-cli` |
 | Desktop smoke client | `apps/qivxif-client-desktop`, `crates/qivxif-client-core` |
+| Native e2e client | `apps/qivxif-client-desktop`, `crates/qivxif-client-core` |
 | Desktop smoke world cache | `crates/qivxif-client-core::WorldCache` |
 | Deterministic smoke renderer | `crates/qivxif-render`, `crates/qivxif-assets` |
+| Native GPU renderer | `crates/qivxif-render`, `crates/qivxif-assets` |
 | GUI smoke status model | `crates/qivxif-ui` |
+| Native input model | `crates/qivxif-input` |
 | Static repository gates | `crates/qivxif-quality` |
 
 ## Doc Owners
@@ -40,6 +42,7 @@
 | Object archive manifests | [../persistence/object-archives.md](../persistence/object-archives.md) |
 | Headless protocol client | [../client/headless-client.md](../client/headless-client.md) |
 | Desktop smoke client | [../../operations/verification/desktop-smoke.md](../../operations/verification/desktop-smoke.md) |
+| Native e2e client | [../client/native-e2e-client.md](../client/native-e2e-client.md) |
 | GUI runtime | [../client/gui-runtime.md](../client/gui-runtime.md) |
 | Renderer boundary | [../client/renderer.md](../client/renderer.md) |
 

@@ -7,7 +7,7 @@ Use this subtree for implemented, active, and dormant client contracts.
 - `crates/qivxif-client-core` owns reusable headless client behavior.
 - `apps/qivxif-client-cli` is the implemented headless protocol client.
 - Desktop GUI runtime, shell, renderer, input, UI, and assets are implemented
-  for smoke output.
+  for smoke output and native e2e verification.
 - `apps/qivxifctl` is a probe CLI, not a game client.
 - `crates/qivxif-probe` is verification code, not gameplay client code.
 
@@ -15,6 +15,7 @@ Use this subtree for implemented, active, and dormant client contracts.
 
 - [headless-client.md](headless-client.md): implemented protocol client boundary.
 - [gui-runtime.md](gui-runtime.md): active desktop GUI runtime boundary.
+- [native-e2e-client.md](native-e2e-client.md): active native window client gate.
 - [platform-shells.md](platform-shells.md): platform shell boundary.
 - [renderer.md](renderer.md): renderer boundary.
 - [asset-streaming.md](asset-streaming.md): asset and fallback pack boundary.
@@ -23,5 +24,4 @@ Use this subtree for implemented, active, and dormant client contracts.
 
 ## Rule
 
-- Desktop GUI behavior is implemented only for the smoke path until richer
-  owner docs and gates exist.
+- Desktop GUI behavior is implemented through the smoke and native e2e gates.

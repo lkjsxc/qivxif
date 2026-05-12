@@ -2,9 +2,9 @@
 
 ## Status
 
-- Status: implemented for embedded fallback assets.
+- Status: implemented for embedded fallback palette and no streamed assets.
 - No asset pipeline exists.
-- No client asset cache exists.
+- No client asset cache exists beyond authoritative world cells.
 - `WorldCache` stores acknowledged block cells, not streamed assets.
 
 ## Current Codebase Facts

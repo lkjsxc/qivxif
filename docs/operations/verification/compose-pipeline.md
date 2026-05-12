@@ -30,6 +30,7 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T request-replay
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T client-cli
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T desktop-smoke
+docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T desktop-e2e
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T persist-place
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml restart server
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T persist-check
@@ -48,6 +49,7 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 | `request-replay` | Verifies duplicate mutating identifiers return the first response without applying or flushing again. |
 | `client-cli` | Verifies the headless protocol client through the public server path. |
 | `desktop-smoke` | Verifies the desktop client applies one mutation ack and renders a nonblank frame. |
+| `desktop-e2e` | Verifies the native window client renders GPU frames and applies place/remove acknowledgements. |
 | `persist-place` | Mutates a block through the public path. |
 | `persist-check` | Verifies the mutation after restart. |
 

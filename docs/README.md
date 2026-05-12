@@ -41,6 +41,7 @@
   - [README.md](architecture/client/README.md): native clients.
   - [headless-client.md](architecture/client/headless-client.md): implemented protocol client.
   - [gui-runtime.md](architecture/client/gui-runtime.md): desktop GUI runtime boundary.
+  - [native-e2e-client.md](architecture/client/native-e2e-client.md): native window client gate.
   - [platform-shells.md](architecture/client/platform-shells.md): desktop and mobile shell rules.
   - [renderer.md](architecture/client/renderer.md): `wgpu` renderer family.
   - [asset-streaming.md](architecture/client/asset-streaming.md): streaming and cache rules.
@@ -137,6 +138,7 @@
   - [protocol-probes.md](operations/verification/protocol-probes.md): live network probes.
   - [windows-demo-bundle.md](operations/verification/windows-demo-bundle.md): Windows server and client demo bundle.
   - [desktop-smoke.md](operations/verification/desktop-smoke.md): graphical client smoke gate.
+  - [native-client-e2e.md](operations/verification/native-client-e2e.md): native desktop client gate.
   - [worldgen-goldens.md](operations/verification/worldgen-goldens.md): deterministic generation checks.
   - [render-goldens.md](operations/verification/render-goldens.md): renderer checks.
   - [soak-load.md](operations/verification/soak-load.md): long-running checks.

@@ -2,7 +2,7 @@
 
 ## Status
 
-- Status: implemented for desktop smoke.
+- Status: implemented for desktop smoke and native e2e.
 - Owner: `crates/qivxif-client-core` for protocol runtime and cache.
 - Shell owner: `apps/qivxif-client-desktop`.
 
@@ -29,3 +29,5 @@
 - Headless client behavior stays covered by the `client-cli` Compose service.
 - Desktop runtime behavior is covered by
   [../../operations/verification/desktop-smoke.md](../../operations/verification/desktop-smoke.md).
+- Native window behavior is covered by
+  [../../operations/verification/native-client-e2e.md](../../operations/verification/native-client-e2e.md).

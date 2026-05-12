@@ -10,7 +10,8 @@ long-running checks.
 3. [protocol-probes.md](protocol-probes.md) for live public-path probes.
 4. [windows-demo-bundle.md](windows-demo-bundle.md) for the Windows demo bundle.
 5. [desktop-smoke.md](desktop-smoke.md) for the graphical client smoke gate.
-6. Golden and soak files for specialized regression areas.
+6. [native-client-e2e.md](native-client-e2e.md) for the native window gate.
+7. Golden and soak files for specialized regression areas.
 
 ## Boundary
 
@@ -24,6 +25,7 @@ behavior means.
 - [protocol-probes.md](protocol-probes.md): live network probes
 - [windows-demo-bundle.md](windows-demo-bundle.md): Windows server and client demo bundle
 - [desktop-smoke.md](desktop-smoke.md): graphical client smoke gate
+- [native-client-e2e.md](native-client-e2e.md): native desktop client gate
 - [worldgen-goldens.md](worldgen-goldens.md): deterministic generation checks
 - [render-goldens.md](render-goldens.md): renderer checks
 - [soak-load.md](soak-load.md): long-running checks

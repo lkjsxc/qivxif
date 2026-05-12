@@ -31,6 +31,7 @@
 | Headless client smoke | [../client/headless-client.md](../client/headless-client.md) | `crates/qivxif-client-core`, `apps/qivxif-client-cli` | `client-cli` Compose service |
 | Windows demo bundle | [../../operations/verification/windows-demo-bundle.md](../../operations/verification/windows-demo-bundle.md) | `docker/windows/demo-bundle.Dockerfile` | `scripts/verify-windows-demo-bundle.sh` |
 | Desktop GUI smoke | [../../operations/verification/desktop-smoke.md](../../operations/verification/desktop-smoke.md) | `apps/qivxif-client-desktop`, `crates/qivxif-render` | `desktop-smoke` Compose service |
+| Native client e2e | [../client/native-e2e-client.md](../client/native-e2e-client.md) | `apps/qivxif-client-desktop`, `crates/qivxif-client-core`, `crates/qivxif-input`, `crates/qivxif-render`, `crates/qivxif-ui` | `desktop-e2e` Compose service |
 | Docs topology | [../../operations/quality/documentation-topology.md](../../operations/quality/documentation-topology.md) | `crates/qivxif-quality` | `qivxifctl docs validate-topology` |
 | Line limits | [../../repository/rules/line-limits.md](../../repository/rules/line-limits.md) | `crates/qivxif-quality` | `qivxifctl quality check-lines` |
 
@@ -49,11 +50,11 @@
 | --- | --- |
 | `apps/qivxif-serverd` | Authoritative server process |
 | `apps/qivxif-client-cli` | Headless protocol client |
-| `apps/qivxif-client-desktop` | Desktop GUI smoke client |
+| `apps/qivxif-client-desktop` | Desktop GUI smoke and native client |
 | `apps/qivxifctl` | Agent-friendly quality and probe CLI |
 | `crates/qivxif-core` | Shared primitive types and config |
 | `crates/qivxif-client-core` | Reusable headless client session support |
-| `crates/qivxif-render` | Deterministic renderer and later GPU renderer boundary |
+| `crates/qivxif-render` | Deterministic renderer and GPU renderer boundary |
 | `crates/qivxif-input` | Camera and targeting helpers |
 | `crates/qivxif-ui` | GUI status model |
 | `crates/qivxif-assets` | Embedded fallback palette |
