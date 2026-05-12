@@ -76,6 +76,10 @@ impl ClientRuntime {
         }
     }
 
+    pub fn drain_events(&mut self) -> Vec<RuntimeEvent> {
+        self.events.drain(..).collect()
+    }
+
     fn from_joined(client: Client, hello: HelloReceipt, player: &str) -> Self {
         Self {
             client,

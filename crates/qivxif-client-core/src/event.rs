@@ -7,4 +7,6 @@ pub enum RuntimeEvent {
     Joined { player: String },
     ChunkLoaded { coord: ChunkCoord, cells: usize },
     MutationApplied { cell: BlockCell },
+    RuntimeStopped,
+    RuntimeError { message: String },
 }
