@@ -8,8 +8,9 @@
 ## Durable Findings
 
 - The current repository has a server, probe, and headless client slice.
-- The next credible Windows milestone is a headless/protocol client executable
-  built as a Windows artifact.
+- The raw Windows headless client executable was the first artifact shape.
+- The current Windows milestone is a portable demo bundle containing server,
+  headless client, local config, launchers, manifest, and checksums.
 - The longer delivery path is desktop shell, renderer shell, then mobile shells.
 - Use one shared Rust client core behind thin platform shells.
 - Use `winit` for native shell lifecycle and `wgpu` for the renderer family when

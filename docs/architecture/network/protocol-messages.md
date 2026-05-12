@@ -2,7 +2,7 @@
 
 ## Status
 
-- Status: implemented for protocol contract `1`.
+- Status: implemented for protocol contract `postcard-reliable-streams`.
 - Owner: `crates/qivxif-protocol`.
 - Encoding: postcard.
 

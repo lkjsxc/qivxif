@@ -10,6 +10,7 @@
 
 - Terrain mutation acknowledgements exist as `MutationAck`.
 - `MutationAck` echoes `request_id` and authoritative `BlockCell`.
+- Desktop GUI terrain edits must apply visible changes from `MutationAck`.
 
 ## Not Implemented
 

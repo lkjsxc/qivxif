@@ -7,10 +7,12 @@ architecture.
 
 Render goldens verify client output once rendering exists.
 
-## Deferred Scope
+## Active First Gate
 
-The initial server slice does not implement rendering.
+- [desktop-smoke.md](desktop-smoke.md) owns the first nonblank render artifact.
+- The first renderer output is deterministic and may be CPU-produced.
+- GPU goldens wait until `wgpu` code exists.
 
-## Future Gate
+## Later Gate
 
 Render checks must run in Compose and include a nonblank output assertion.

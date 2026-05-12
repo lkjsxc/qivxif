@@ -29,6 +29,8 @@
 | Storage schema | [../persistence/schema-contracts.md](../persistence/schema-contracts.md) | `crates/qivxif-storage` | storage tests |
 | Object archive manifests | [../persistence/object-archives.md](../persistence/object-archives.md) | `crates/qivxif-storage::ArchiveStore` | archive manifest tests |
 | Headless client smoke | [../client/headless-client.md](../client/headless-client.md) | `crates/qivxif-client-core`, `apps/qivxif-client-cli` | `client-cli` Compose service |
+| Windows demo bundle | [../../operations/verification/windows-demo-bundle.md](../../operations/verification/windows-demo-bundle.md) | `docker/windows/demo-bundle.Dockerfile` | `scripts/verify-windows-demo-bundle.sh` |
+| Desktop GUI smoke | [../../operations/verification/desktop-smoke.md](../../operations/verification/desktop-smoke.md) | `apps/qivxif-client-desktop`, `crates/qivxif-render` | `desktop-smoke` Compose service |
 | Docs topology | [../../operations/quality/documentation-topology.md](../../operations/quality/documentation-topology.md) | `crates/qivxif-quality` | `qivxifctl docs validate-topology` |
 | Line limits | [../../repository/rules/line-limits.md](../../repository/rules/line-limits.md) | `crates/qivxif-quality` | `qivxifctl quality check-lines` |
 
@@ -36,8 +38,8 @@
 
 | Contract | Owner doc | Current state |
 | --- | --- | --- |
-| Native client shells | [../client/platform-shells.md](../client/platform-shells.md) | No shell crate exists |
-| Renderer family | [../client/renderer.md](../client/renderer.md) | No renderer crate exists |
+| Mobile client shells | [../client/mobile-lifecycle.md](../client/mobile-lifecycle.md) | No mobile shell crate exists |
+| Movement prediction | [../client/prediction-reconciliation.md](../client/prediction-reconciliation.md) | No movement protocol exists |
 | Multi-region handoff | [../simulation/cross-region-handoff.md](../simulation/cross-region-handoff.md) | One region actor only |
 | Gameplay systems | `docs/product/gameplay/` | No server gameplay crates beyond terrain mutation |
 
@@ -47,9 +49,14 @@
 | --- | --- |
 | `apps/qivxif-serverd` | Authoritative server process |
 | `apps/qivxif-client-cli` | Headless protocol client |
+| `apps/qivxif-client-desktop` | Desktop GUI smoke client |
 | `apps/qivxifctl` | Agent-friendly quality and probe CLI |
 | `crates/qivxif-core` | Shared primitive types and config |
 | `crates/qivxif-client-core` | Reusable headless client session support |
+| `crates/qivxif-render` | Deterministic renderer and later GPU renderer boundary |
+| `crates/qivxif-input` | Camera and targeting helpers |
+| `crates/qivxif-ui` | GUI status model |
+| `crates/qivxif-assets` | Embedded fallback palette |
 | `crates/qivxif-protocol` | Public protocol catalog and postcard helpers |
 | `crates/qivxif-net` | QUIC and certificate helpers |
 | `crates/qivxif-world` | Chunk coordinates and generated cells |

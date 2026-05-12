@@ -15,7 +15,15 @@ The project is built for LLM-maintained development. Durable truth belongs in
 
 ## Current Shape
 
-- One authoritative world server.
+- One implemented authoritative world server.
+- One implemented headless protocol client.
+- Compose probes for smoke, protocol guards, malformed wire input, request
+  replay, client CLI behavior, and persistence restart behavior.
+- A portable unsigned Windows demo bundle for internal server and client smoke
+  runs.
+
+## Product Goals
+
 - Native full-parity clients for desktop, Android, and iOS.
 - Open frontier PvP outside protected sanctuary and starter spaces.
 - Permanent accepted terrain edits.
@@ -34,3 +42,9 @@ Use the full Docker Compose acceptance flow:
 
 The script runs the static gate, starts the server, runs smoke and persistence
 probes, restarts the server, and verifies the persisted mutation.
+
+Build the Windows demo bundle with:
+
+```bash
+./scripts/verify-windows-demo-bundle.sh
+```

@@ -2,7 +2,7 @@
 
 ## Status
 
-- Status: not implemented.
+- Status: active for embedded fallback assets.
 - No asset pipeline exists.
 - No client cache exists.
 
@@ -12,10 +12,15 @@
 - No asset manifest protocol exists.
 - `ArchiveStore` manifest tests are storage smoke tests, not client asset streaming.
 
-## Activation Requirements
+## First Activation
 
-- Define asset manifest messages or files.
-- Define cache ownership.
-- Define decompression task ownership.
-- Define eviction rules.
-- Add mobile and desktop verification.
+- Add `crates/qivxif-assets`.
+- Provide a tiny deterministic block palette for smoke rendering.
+- Do not add asset manifest protocol messages yet.
+- Keep desktop smoke independent of external asset downloads.
+
+## Later Requirements
+
+- Define asset manifest files or messages.
+- Define cache ownership, decompression task ownership, and eviction rules.
+- Add mobile and desktop verification after desktop smoke exists.

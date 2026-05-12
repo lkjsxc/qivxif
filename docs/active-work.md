@@ -5,7 +5,7 @@
 Improve documentation first, then implementation.
 
 Current state: the authoritative server slice and headless protocol client are
-implemented; there is no graphical client yet.
+implemented; desktop GUI contracts are active next.
 
 ## Work Lanes
 
@@ -15,6 +15,7 @@ implemented; there is no graphical client yet.
 - QUIC hello, join, chunk, place, flush, restart, and persistence lanes are
   complete.
 - `qivxif-client-cli` is part of Compose acceptance.
+- `qivxif-client-desktop` is the next graphical smoke client.
 - Deterministic chunk generation and edit overlay persistence are complete.
 - Protocol guard docs own the public session-phase rejection matrix.
 - Malformed-wire docs own the public decode rejection contract.
@@ -26,4 +27,6 @@ implemented; there is no graphical client yet.
 - Malformed-wire probes match the public decode rejection contract.
 - Verification inputs are reproducible.
 - Full `./scripts/verify-compose.sh` acceptance passes.
-- Windows headless client artifact verification passes through Docker Compose.
+- Windows demo bundle verification passes through Docker Compose.
+- Desktop smoke verification passes through Docker Compose once the client
+  workspace member exists.

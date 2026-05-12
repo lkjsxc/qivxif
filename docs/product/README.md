@@ -2,6 +2,14 @@
 
 Use this subtree for player-visible behavior.
 
+## Implementation Status
+
+- Implemented: headless connect, hello, join, chunk request, block place,
+  persistence flush, server restart, and persisted mutation check.
+- Activating now: desktop GUI first session for the implemented protocol loop.
+- Product intent only: combat, claims, chat, markets, onboarding travel,
+  progression, movement protocol, prediction, and mobile shells.
+
 ## Child Index
 
 - [playable-target.md](playable-target.md): first playable server target

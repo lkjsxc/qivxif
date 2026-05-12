@@ -1,26 +1,27 @@
 # Client Architecture
 
-Use this subtree for implemented and dormant client contracts.
+Use this subtree for implemented, active, and dormant client contracts.
 
 ## Current Implementation
 
 - `crates/qivxif-client-core` owns reusable headless client behavior.
 - `apps/qivxif-client-cli` is the implemented headless protocol client.
-- No renderer crate exists.
-- No platform shell exists.
+- Desktop GUI runtime, shell, renderer, input, UI, and assets are active next
+  contracts after the Windows demo bundle.
 - `apps/qivxifctl` is a probe CLI, not a game client.
 - `crates/qivxif-probe` is verification code, not gameplay client code.
 
 ## Child Index
 
 - [headless-client.md](headless-client.md): implemented protocol client boundary.
-- [platform-shells.md](platform-shells.md): dormant platform shell boundary.
-- [renderer.md](renderer.md): dormant renderer boundary.
-- [asset-streaming.md](asset-streaming.md): dormant asset streaming boundary.
+- [gui-runtime.md](gui-runtime.md): active desktop GUI runtime boundary.
+- [platform-shells.md](platform-shells.md): platform shell boundary.
+- [renderer.md](renderer.md): renderer boundary.
+- [asset-streaming.md](asset-streaming.md): asset and fallback pack boundary.
 - [prediction-reconciliation.md](prediction-reconciliation.md): dormant prediction boundary.
 - [mobile-lifecycle.md](mobile-lifecycle.md): dormant mobile lifecycle boundary.
 
 ## Rule
 
-- Describe only `qivxif-client-cli` behavior as implemented until shared client
-  core, shell, or renderer crates exist.
+- Do not describe desktop GUI behavior as implemented until the matching
+  workspace members and Compose smoke gate exist.

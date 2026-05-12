@@ -7,6 +7,7 @@ Use this subtree for player controls, identity, progression, and lifecycle.
 | File | Owns | Key Links |
 | --- | --- | --- |
 | [camera-controls.md](camera-controls.md) | Camera modes and movement authority. | Combat truth in [../gameplay/combat-abilities.md](../gameplay/combat-abilities.md). |
+| [gui-first-session.md](gui-first-session.md) | First graphical protocol loop. | GUI runtime in [../../architecture/client/gui-runtime.md](../../architecture/client/gui-runtime.md). |
 | [onboarding.md](onboarding.md) | First-session sanctuary-to-basin flow. | Basin rules in [../world/starter-basins.md](../world/starter-basins.md). |
 | [progression.md](progression.md) | Additive skill lattice shape. | Crafting dependency in [../gameplay/inventory-crafting.md](../gameplay/inventory-crafting.md). |
 | [death-respawn.md](death-respawn.md) | Death loss, recovery, and respawn. | Zone rules in [../world/zones.md](../world/zones.md). |

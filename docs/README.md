@@ -40,6 +40,7 @@
 - `client/`
   - [README.md](architecture/client/README.md): native clients.
   - [headless-client.md](architecture/client/headless-client.md): implemented protocol client.
+  - [gui-runtime.md](architecture/client/gui-runtime.md): desktop GUI runtime boundary.
   - [platform-shells.md](architecture/client/platform-shells.md): desktop and mobile shell rules.
   - [renderer.md](architecture/client/renderer.md): `wgpu` renderer family.
   - [asset-streaming.md](architecture/client/asset-streaming.md): streaming and cache rules.
@@ -96,6 +97,7 @@
 - `player/`
   - [README.md](product/player/README.md): player controls, identity, progression, lifecycle.
   - [camera-controls.md](product/player/camera-controls.md): dual camera contract.
+  - [gui-first-session.md](product/player/gui-first-session.md): first graphical protocol loop.
   - [onboarding.md](product/player/onboarding.md): first session flow.
   - [progression.md](product/player/progression.md): additive skill growth.
   - [death-respawn.md](product/player/death-respawn.md): death and recovery.
@@ -133,7 +135,8 @@
   - [compose-pipeline.md](operations/verification/compose-pipeline.md): canonical commands.
   - [static-gates.md](operations/verification/static-gates.md): static checks.
   - [protocol-probes.md](operations/verification/protocol-probes.md): live network probes.
-  - [windows-client-artifact.md](operations/verification/windows-client-artifact.md): Windows headless client build.
+  - [windows-demo-bundle.md](operations/verification/windows-demo-bundle.md): Windows server and client demo bundle.
+  - [desktop-smoke.md](operations/verification/desktop-smoke.md): graphical client smoke gate.
   - [worldgen-goldens.md](operations/verification/worldgen-goldens.md): deterministic generation checks.
   - [render-goldens.md](operations/verification/render-goldens.md): renderer checks.
   - [soak-load.md](operations/verification/soak-load.md): long-running checks.

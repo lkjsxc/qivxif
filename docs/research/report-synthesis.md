@@ -7,6 +7,7 @@
 - `tmp/deep-research-report (50).md`
 - `tmp/deep-research-report (51).md`
 - `tmp/deep-research-report (53).md`
+- `tmp/deep-research-report (55).md`
 
 ## Durable Findings
 
@@ -28,6 +29,12 @@
   already product canon.
 - Windows delivery should start with a headless/protocol client surface before a
   graphical desktop client.
+- The next graphical client step is desktop-first: shared client runtime,
+  desktop shell, renderer, input, UI, and deterministic smoke output.
+- The first graphical client should reuse the current public protocol path:
+  hello, join, chunk request, place block, and mutation acknowledgement.
+- The first renderer gate should prove nonblank output from server `BlockCell`
+  data before mobile shells, movement protocol, or advanced gameplay.
 - Linux Docker builds can produce repeatable `x86_64-pc-windows-gnu` artifacts;
   final user-facing Windows releases should use a Windows-native MSVC job.
 - Windows-container-first delivery is not the preferred path from a Linux host.
@@ -47,6 +54,8 @@
 | Cold archives | `architecture/persistence/object-archives.md` |
 | Compose acceptance | `operations/verification/compose-pipeline.md` |
 | Native client shell | `architecture/client/` |
+| GUI runtime | `architecture/client/gui-runtime.md` |
+| Desktop smoke | `operations/verification/desktop-smoke.md` |
 | LLM authoring rules | `vision/llm-authoring.md` |
 | Windows client delivery | `research/client-delivery-references.md` |
 | Verification discipline | `research/operations-references.md` |
@@ -61,7 +70,8 @@
 5. Persist active terrain edits in `redb` before adding archive workflows.
 6. Add `object_store` archive smoke paths only after hot-state behavior is stable.
 7. Keep renderer and native-shell work behind the client boundary docs.
-8. Prove a Windows headless client artifact before graphical clients.
+8. Prove a portable Windows demo bundle before graphical clients.
+9. Activate desktop GUI owner docs before adding shell or renderer crates.
 
 ## Stack Boundaries
 

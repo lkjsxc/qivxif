@@ -21,6 +21,7 @@ The wrapper executes this Compose sequence:
 
 ```bash
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml down -v
+docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml config --quiet
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm --build -T verify
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml up -d --build server
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T smoke
@@ -31,13 +32,14 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T persist-place
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml restart server
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T persist-check
-docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml down -v
+docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml down -v --remove-orphans
 ```
 
 ## Required Behavior
 
 | Step | Required behavior |
 | --- | --- |
+| `config` | Validates the merged Compose configuration before building. |
 | `verify` | Runs formatting, Clippy, nextest, doctests, optimized build, docs topology, and line limits. |
 | `smoke` | Verifies connect, hello, join, chunk request, and ping. |
 | `protocol-guards` | Verifies session-phase and hello rejection codes through public QUIC requests. |
@@ -57,6 +59,6 @@ Non-zero exit blocks acceptance.
 
 ## Safety Notes
 
-- The pipeline uses `down -v` and deletes Compose project volumes.
+- The pipeline uses `down -v --remove-orphans` and deletes Compose project volumes.
 - Do not use Docker Compose dry-run with `run` in this repository.
 - `tmp/` research files are not part of acceptance.

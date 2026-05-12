@@ -5,7 +5,7 @@ LLM retrieval scope: architecture contracts for the current qivxif codebase.
 ## Current Implementation
 
 - The implemented slice is server plus a headless protocol client.
-- No graphical native client crate exists.
+- Graphical desktop client contracts are active; no graphical client crate exists yet.
 - One authoritative server accepts QUIC requests.
 - Public messages are postcard-encoded Rust enums.
 - One region actor owns terrain mutation.
@@ -20,7 +20,7 @@ LLM retrieval scope: architecture contracts for the current qivxif codebase.
 - [simulation/README.md](simulation/README.md): region actor and authority rules.
 - [world/README.md](world/README.md): coordinates and deterministic chunk cells.
 - [persistence/README.md](persistence/README.md): redb hot state and archive manifests.
-- [client/README.md](client/README.md): headless client and dormant client architecture notes.
+- [client/README.md](client/README.md): headless client and desktop GUI contracts.
 
 ## Reading Order
 
