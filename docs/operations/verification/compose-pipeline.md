@@ -20,7 +20,7 @@ Run the full acceptance pipeline through the repository wrapper:
 The wrapper executes this Compose sequence:
 
 ```bash
-docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml down -v
+docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml down -v --remove-orphans
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml config --quiet
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm --build -T verify
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml up -d --build server
@@ -41,13 +41,13 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 | Step | Required behavior |
 | --- | --- |
 | `config` | Validates the merged Compose configuration before building. |
-| `verify` | Runs formatting, Clippy, nextest, doctests, optimized build, docs topology, and line limits. |
+| `verify` | Runs formatting, Clippy, nextest, doctests, optimized build, docs topology, line limits, and wording. |
 | `smoke` | Verifies connect, hello, join, chunk request, and ping. |
 | `protocol-guards` | Verifies session-phase and hello rejection codes through public QUIC requests. |
 | `malformed-wire` | Verifies decode failures return `BadRequest` and do not advance session phase. |
 | `request-replay` | Verifies duplicate mutating identifiers return the first response without applying or flushing again. |
 | `client-cli` | Verifies the headless protocol client through the public server path. |
-| `desktop-smoke` | Verifies the desktop client can render a nonblank frame from public chunk data. |
+| `desktop-smoke` | Verifies the desktop client applies one mutation ack and renders a nonblank frame. |
 | `persist-place` | Mutates a block through the public path. |
 | `persist-check` | Verifies the mutation after restart. |
 

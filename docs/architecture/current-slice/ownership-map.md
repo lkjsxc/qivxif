@@ -3,7 +3,9 @@
 ## Status
 
 - Status: implemented for server slice owners.
-- Graphical client owners are dormant because no shell or renderer crate exists.
+- Desktop smoke client owners are active.
+- Interactive gameplay client, `wgpu` renderer, and mobile shell owners are
+  dormant.
 
 ## Runtime Owners
 
@@ -19,6 +21,10 @@
 | Hot edit overlays | `crates/qivxif-storage` |
 | Public probe scenarios | `crates/qivxif-probe` |
 | Headless protocol client | `crates/qivxif-client-core`, `apps/qivxif-client-cli` |
+| Desktop smoke client | `apps/qivxif-client-desktop`, `crates/qivxif-client-core` |
+| Desktop smoke world cache | `crates/qivxif-client-core::WorldCache` |
+| Deterministic smoke renderer | `crates/qivxif-render`, `crates/qivxif-assets` |
+| GUI smoke status model | `crates/qivxif-ui` |
 | Static repository gates | `crates/qivxif-quality` |
 
 ## Doc Owners
@@ -33,6 +39,9 @@
 | redb schema | [../persistence/schema-contracts.md](../persistence/schema-contracts.md) |
 | Object archive manifests | [../persistence/object-archives.md](../persistence/object-archives.md) |
 | Headless protocol client | [../client/headless-client.md](../client/headless-client.md) |
+| Desktop smoke client | [../../operations/verification/desktop-smoke.md](../../operations/verification/desktop-smoke.md) |
+| GUI runtime | [../client/gui-runtime.md](../client/gui-runtime.md) |
+| Renderer boundary | [../client/renderer.md](../client/renderer.md) |
 
 ## Change Rule
 

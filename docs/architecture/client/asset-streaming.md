@@ -4,7 +4,8 @@
 
 - Status: implemented for embedded fallback assets.
 - No asset pipeline exists.
-- No client cache exists.
+- No client asset cache exists.
+- `WorldCache` stores acknowledged block cells, not streamed assets.
 
 ## Current Codebase Facts
 

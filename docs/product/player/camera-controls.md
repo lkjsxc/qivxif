@@ -12,7 +12,8 @@ This file owns camera modes and player movement responsibility.
 
 ## Current Implementation
 
-- No graphical client exists yet.
+- Desktop smoke exists without interactive camera controls.
+- No interactive graphical gameplay client exists yet.
 - No movement protocol exists yet.
 - The desktop GUI first session may move a local camera without claiming player
   movement authority.

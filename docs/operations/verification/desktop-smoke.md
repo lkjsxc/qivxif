@@ -11,8 +11,11 @@
 - Connect to the local server through QUIC.
 - Send hello and join.
 - Request the origin chunk neighborhood.
-- Render one deterministic frame artifact from returned chunk cells.
+- Place block `9` at `{ x: 1, y: 3, z: 1 }` through the authoritative path.
+- Assert the mutation acknowledgement is present in `WorldCache`.
+- Render one deterministic frame artifact after the acknowledgement.
 - Assert the artifact exists and is nonblank.
+- Print deterministic frame byte and nonzero-pixel counts.
 
 ## Output
 

@@ -3,7 +3,8 @@
 ## Status
 
 - Status: not implemented.
-- No renderer crate exists.
+- `qivxif-render` exists for deterministic desktop smoke output.
+- No `wgpu` renderer exists.
 - No mesh or summary storage exists.
 
 ## Current Facts
@@ -13,7 +14,7 @@
 
 ## Activation Requirements
 
-- Define a client renderer crate.
+- Define mesh and summary ownership in the renderer boundary.
 - Define mesh or summary payloads.
 - Define cache ownership.
 - Add verification for near-field correctness.
