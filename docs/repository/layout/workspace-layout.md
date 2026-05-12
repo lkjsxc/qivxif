@@ -14,7 +14,7 @@ after their owner docs are active.
 |---|---|
 | `qivxif-serverd` | Authoritative server. |
 | `qivxif-client-cli` | Headless protocol client. |
-| `qivxif-client-desktop` | Desktop GUI smoke client. |
+| `qivxif-client-desktop` | Desktop GUI smoke and native client. |
 | `qivxifctl` | Quality and probe command. |
 
 ## Crates
@@ -23,7 +23,7 @@ after their owner docs are active.
 |---|---|
 | `qivxif-core` | Shared core types. |
 | `qivxif-client-core` | Reusable headless client session support. |
-| `qivxif-render` | Deterministic renderer and later GPU renderer boundary. |
+| `qivxif-render` | Deterministic renderer and native GPU renderer boundary. |
 | `qivxif-input` | Camera and targeting input helpers. |
 | `qivxif-ui` | GUI status model and labels. |
 | `qivxif-assets` | Embedded fallback asset palette. |

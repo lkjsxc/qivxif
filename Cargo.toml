@@ -44,6 +44,8 @@ tokio = { version = "1", features = ["full"] }
 toml = "0.8"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+wgpu = "29.0.1"
+winit = "0.30.13"
 
 qivxif-core = { path = "crates/qivxif-core" }
 qivxif-client-core = { path = "crates/qivxif-client-core" }

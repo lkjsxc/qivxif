@@ -29,8 +29,8 @@
   already product canon.
 - Windows delivery should start with a headless/protocol client surface before a
   graphical desktop client.
-- The next graphical client step is desktop-first: shared client runtime,
-  desktop shell, renderer, input, UI, and deterministic smoke output.
+- The graphical client path is desktop-first: shared client runtime, desktop
+  shell, renderer, input, UI, deterministic smoke output, and native e2e output.
 - The first graphical client should reuse the current public protocol path:
   hello, join, chunk request, place block, and mutation acknowledgement.
 - The first renderer gate should prove nonblank output from server `BlockCell`

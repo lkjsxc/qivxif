@@ -6,6 +6,8 @@ license.workspace = true
 authors.workspace = true
 
 [dependencies]
+anyhow = { workspace = true }
 qivxif-assets = { workspace = true }
 qivxif-core = { workspace = true }
 qivxif-protocol = { workspace = true }
+wgpu = { workspace = true }

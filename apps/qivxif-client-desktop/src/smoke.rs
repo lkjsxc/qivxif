@@ -45,6 +45,10 @@ pub async fn run(args: SmokeFrameArgs) -> Result<()> {
         world_id: summary.world_id,
         chunks: summary.chunks,
         cells: summary.cells,
+        selected_block: SMOKE_EDIT_BLOCK,
+        target: Some(SMOKE_EDIT_POS),
+        last_ack: Some(smoke_cell),
+        last_error: None,
     };
     println!("desktop smoke ... ok");
     println!("{}", status.line());

@@ -13,7 +13,8 @@ RUN rustup target add --toolchain 1.91.0 x86_64-pc-windows-gnu
 RUN cargo build --locked --release \
     --target x86_64-pc-windows-gnu \
     --bin qivxif-serverd \
-    --bin qivxif-client-cli
+    --bin qivxif-client-cli \
+    --bin qivxif-client-desktop
 
 FROM debian:bookworm-slim AS artifact
 
@@ -29,6 +30,9 @@ COPY --from=build \
 COPY --from=build \
     /workspace/target/x86_64-pc-windows-gnu/release/qivxif-client-cli.exe \
     /bundle/qivxif-client-cli.exe
+COPY --from=build \
+    /workspace/target/x86_64-pc-windows-gnu/release/qivxif-client-desktop.exe \
+    /bundle/qivxif-client-desktop.exe
 
 RUN mkdir -p config data
 RUN printf '%s\n' \
@@ -51,6 +55,12 @@ RUN printf '%s\r\n' \
     'qivxif-client-cli.exe connect --addr 127.0.0.1:4443 --server-name localhost --tls local-compose --player demo --chunk-x 0 --chunk-z 0' \
     'pause' \
     > run-client-demo.cmd
+RUN printf '%s\r\n' \
+    '@echo off' \
+    'cd /d "%~dp0"' \
+    'qivxif-client-desktop.exe run --addr 127.0.0.1:4443 --server-name localhost --tls local-compose --player desktop-demo' \
+    'pause' \
+    > run-desktop-client.cmd
 RUN printf '%s\n' \
     '# qivxif Windows Demo Bundle' \
     '' \
@@ -58,6 +68,7 @@ RUN printf '%s\n' \
     '' \
     '1. Run `start-server.cmd` and leave the server window open.' \
     '2. Run `run-client-demo.cmd` from a second window.' \
+    '3. Run `run-desktop-client.cmd` to open the native client.' \
     '' \
     'The server binds to `127.0.0.1:4443` and stores local state under `data/`.' \
     > README.md
@@ -67,7 +78,7 @@ RUN printf '%s\n' \
     '  "target": "x86_64-pc-windows-gnu",' \
     '  "signed": false,' \
     '  "release_class": "internal-demo",' \
-    '  "entrypoints": ["start-server.cmd", "run-client-demo.cmd"]' \
+    '  "entrypoints": ["start-server.cmd", "run-client-demo.cmd", "run-desktop-client.cmd"]' \
     '}' \
     > manifest.json
 RUN find . -type f ! -name checksums.txt ! -name checksums.tmp \

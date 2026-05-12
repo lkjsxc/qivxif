@@ -23,6 +23,7 @@ compose run --rm -T malformed-wire
 compose run --rm -T request-replay
 compose run --rm -T client-cli
 compose run --rm -T desktop-smoke
+compose run --rm --build -T desktop-e2e
 compose run --rm -T persist-place
 compose restart server
 compose run --rm -T persist-check

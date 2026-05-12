@@ -2,7 +2,7 @@
 
 ## Status
 
-- Status: implemented for desktop smoke.
+- Status: implemented for desktop smoke and native e2e.
 - Owner: desktop GUI client over the implemented protocol loop.
 
 ## Player Flow
@@ -17,7 +17,7 @@ Implemented desktop smoke flow:
 5. Place one deterministic block through the authoritative server path.
 6. Render one deterministic frame from acknowledged `BlockCell` data.
 
-Later interactive flow:
+Implemented native e2e flow:
 
 1. Move a local camera for inspection and targeting.
 2. Place or remove blocks through the authoritative server path.
@@ -28,7 +28,6 @@ Later interactive flow:
 - Account login.
 - Inventory.
 - Combat.
-- Interactive camera controls.
 - Player movement authority.
 - Mobile lifecycle.
 - Remote asset streaming.

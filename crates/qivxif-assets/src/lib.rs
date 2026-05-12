@@ -1,3 +1,6 @@
+//! Embedded fallback visual assets for deterministic smoke and native
+//! renderer paths.
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Color {
     pub r: u8,

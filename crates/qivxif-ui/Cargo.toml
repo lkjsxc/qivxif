@@ -6,3 +6,5 @@ license.workspace = true
 authors.workspace = true
 
 [dependencies]
+qivxif-core = { workspace = true }
+qivxif-protocol = { workspace = true }

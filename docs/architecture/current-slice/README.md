@@ -6,8 +6,8 @@ This directory owns the implemented authoritative server slice.
 
 - Status: implemented.
 - Runtime: one server process.
-- Client: headless protocol client, desktop smoke client, and probe CLI.
-- No interactive graphical gameplay client exists.
+- Client: headless protocol client, desktop smoke client, native e2e client,
+  and probe CLI.
 - Persistence: redb hot database plus local archive manifest smoke path.
 
 ## Child Index
@@ -27,12 +27,12 @@ This directory owns the implemented authoritative server slice.
 - redb-backed chunk edit overlays.
 - Local object archive manifest write/read/list tests.
 - Compose probes for smoke, protocol guards, malformed wire, request replay,
-  headless client smoke, desktop smoke, and restart persistence.
+  headless client smoke, desktop smoke, native e2e, and restart persistence.
 
 ## Not Implemented In Current Slice
 
-- Interactive desktop gameplay shell.
-- `wgpu` renderer.
+- Production gameplay shell.
+- Mesh renderer.
 - Mobile shell.
 - Movement protocol.
 - Asset cache.

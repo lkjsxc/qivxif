@@ -8,10 +8,12 @@ zip_file="$root_dir/dist/windows/qivxif-demo-windows-x86_64.zip"
 expected_files="
 qivxif-serverd.exe
 qivxif-client-cli.exe
+qivxif-client-desktop.exe
 config/server.toml
 data/.keep
 start-server.cmd
 run-client-demo.cmd
+run-desktop-client.cmd
 README.md
 manifest.json
 checksums.txt
@@ -44,6 +46,7 @@ QIVXIF_BUNDLE_GID="$(id -g)" \
 
 test -s "$bundle_dir/qivxif-serverd.exe"
 test -s "$bundle_dir/qivxif-client-cli.exe"
+test -s "$bundle_dir/qivxif-client-desktop.exe"
 
 for file in $expected_files; do
   test -e "$bundle_dir/$file"
@@ -52,9 +55,11 @@ done
 for file in \
   qivxif-serverd.exe \
   qivxif-client-cli.exe \
+  qivxif-client-desktop.exe \
   config/server.toml \
   start-server.cmd \
-  run-client-demo.cmd
+  run-client-demo.cmd \
+  run-desktop-client.cmd
 do
   grep -F "  $file" "$bundle_dir/checksums.txt" >/dev/null
 done

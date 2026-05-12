@@ -30,7 +30,7 @@ docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-com
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T request-replay
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T client-cli
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T desktop-smoke
-docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T desktop-e2e
+docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm --build -T desktop-e2e
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T persist-place
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml restart server
 docker compose --ansi never --progress quiet -f docker-compose.yml -f docker-compose.verify.yml run --rm -T persist-check

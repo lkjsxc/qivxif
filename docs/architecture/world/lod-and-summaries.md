@@ -3,8 +3,7 @@
 ## Status
 
 - Status: not implemented.
-- `qivxif-render` exists for deterministic desktop smoke output.
-- No `wgpu` renderer exists.
+- `qivxif-render` exists for deterministic smoke output and native GPU frames.
 - No mesh or summary storage exists.
 
 ## Current Facts
