@@ -2,8 +2,8 @@
 
 ## Status
 
-- Status: active for desktop; dormant for mobile.
-- No desktop shell exists.
+- Status: implemented for desktop smoke; dormant for mobile.
+- `apps/qivxif-client-desktop` exists for smoke-frame execution.
 - No Android shell exists.
 - No iOS shell exists.
 
@@ -13,9 +13,8 @@
 - Probe transport uses `crates/qivxif-probe`.
 - Neither crate owns gameplay presentation.
 
-## Desktop Activation
+## Desktop Contract
 
-- Add `apps/qivxif-client-desktop`.
 - Keep shell code thin: arguments, runtime start, smoke entrypoint, and exit.
 - Delegate protocol state to `qivxif-client-core`.
 - Delegate image or renderer output to `qivxif-render`.

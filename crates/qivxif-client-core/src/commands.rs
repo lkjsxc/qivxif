@@ -31,6 +31,17 @@ pub async fn place_block(
     pos: BlockPos,
     block: u16,
 ) -> Result<()> {
+    mutate_block(client, request_id, pos, block)
+        .await
+        .map(|_| ())
+}
+
+pub async fn mutate_block(
+    client: &Client,
+    request_id: RequestId,
+    pos: BlockPos,
+    block: u16,
+) -> Result<BlockCell> {
     match client
         .request(ClientMsg::PlaceBlock {
             request_id,
@@ -42,7 +53,7 @@ pub async fn place_block(
         ServerMsg::MutationAck {
             request_id: actual,
             cell,
-        } if actual == request_id && cell.pos == pos && cell.block == block => Ok(()),
+        } if actual == request_id && cell.pos == pos && cell.block == block => Ok(cell),
         other => bail!("unexpected place response: {other:?}"),
     }
 }

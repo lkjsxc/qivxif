@@ -2,11 +2,16 @@
 members = [
   "apps/qivxif-serverd",
   "apps/qivxif-client-cli",
+  "apps/qivxif-client-desktop",
   "apps/qivxifctl",
   "crates/qivxif-client-core",
+  "crates/qivxif-assets",
   "crates/qivxif-core",
+  "crates/qivxif-input",
   "crates/qivxif-protocol",
+  "crates/qivxif-render",
   "crates/qivxif-net",
+  "crates/qivxif-ui",
   "crates/qivxif-world",
   "crates/qivxif-sim",
   "crates/qivxif-storage",
@@ -42,8 +47,12 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 qivxif-core = { path = "crates/qivxif-core" }
 qivxif-client-core = { path = "crates/qivxif-client-core" }
+qivxif-assets = { path = "crates/qivxif-assets" }
 qivxif-protocol = { path = "crates/qivxif-protocol" }
+qivxif-input = { path = "crates/qivxif-input" }
+qivxif-render = { path = "crates/qivxif-render" }
 qivxif-net = { path = "crates/qivxif-net" }
+qivxif-ui = { path = "crates/qivxif-ui" }
 qivxif-world = { path = "crates/qivxif-world" }
 qivxif-sim = { path = "crates/qivxif-sim" }
 qivxif-storage = { path = "crates/qivxif-storage" }

@@ -17,8 +17,10 @@ The project is built for LLM-maintained development. Durable truth belongs in
 
 - One implemented authoritative world server.
 - One implemented headless protocol client.
+- One implemented desktop smoke client that renders a deterministic frame from
+  public chunk data.
 - Compose probes for smoke, protocol guards, malformed wire input, request
-  replay, client CLI behavior, and persistence restart behavior.
+  replay, client CLI behavior, desktop smoke, and persistence restart behavior.
 - A portable unsigned Windows demo bundle for internal server and client smoke
   runs.
 

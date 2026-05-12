@@ -2,7 +2,7 @@
 
 ## Status
 
-- Status: active next product slice.
+- Status: implemented for desktop smoke.
 - Owner: desktop GUI client over the implemented protocol loop.
 
 ## Player Flow

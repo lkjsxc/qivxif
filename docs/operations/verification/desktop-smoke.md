@@ -2,7 +2,7 @@
 
 ## Status
 
-- Status: active once `qivxif-client-desktop` exists.
+- Status: implemented.
 - Owner: `apps/qivxif-client-desktop --smoke-frame`.
 
 ## Contract
@@ -22,5 +22,4 @@
 
 ## Current Gate
 
-- Until the desktop client exists, renderer checks remain dormant in
-  [render-goldens.md](render-goldens.md).
+- The `desktop-smoke` Compose service runs inside `./scripts/verify-compose.sh`.

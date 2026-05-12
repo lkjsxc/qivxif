@@ -2,9 +2,9 @@
 
 ## Status
 
-- Status: active next contract.
+- Status: implemented for desktop smoke.
 - Owner: `crates/qivxif-client-core` for protocol runtime and cache.
-- Shell owner: `apps/qivxif-client-desktop` after workspace activation.
+- Shell owner: `apps/qivxif-client-desktop`.
 
 ## First Runtime Loop
 

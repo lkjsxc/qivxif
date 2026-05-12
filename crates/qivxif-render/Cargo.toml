@@ -1,0 +1,11 @@
+[package]
+name = "qivxif-render"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+qivxif-assets = { workspace = true }
+qivxif-core = { workspace = true }
+qivxif-protocol = { workspace = true }

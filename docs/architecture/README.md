@@ -5,7 +5,7 @@ LLM retrieval scope: architecture contracts for the current qivxif codebase.
 ## Current Implementation
 
 - The implemented slice is server plus a headless protocol client.
-- Graphical desktop client contracts are active; no graphical client crate exists yet.
+- Graphical desktop smoke client crates exist.
 - One authoritative server accepts QUIC requests.
 - Public messages are postcard-encoded Rust enums.
 - One region actor owns terrain mutation.

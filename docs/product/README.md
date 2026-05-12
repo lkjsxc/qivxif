@@ -6,7 +6,7 @@ Use this subtree for player-visible behavior.
 
 - Implemented: headless connect, hello, join, chunk request, block place,
   persistence flush, server restart, and persisted mutation check.
-- Activating now: desktop GUI first session for the implemented protocol loop.
+- Implemented: desktop GUI smoke first session for the implemented protocol loop.
 - Product intent only: combat, claims, chat, markets, onboarding travel,
   progression, movement protocol, prediction, and mobile shells.
 

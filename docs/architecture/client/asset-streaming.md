@@ -2,7 +2,7 @@
 
 ## Status
 
-- Status: active for embedded fallback assets.
+- Status: implemented for embedded fallback assets.
 - No asset pipeline exists.
 - No client cache exists.
 
@@ -12,9 +12,8 @@
 - No asset manifest protocol exists.
 - `ArchiveStore` manifest tests are storage smoke tests, not client asset streaming.
 
-## First Activation
+## Implemented Contract
 
-- Add `crates/qivxif-assets`.
 - Provide a tiny deterministic block palette for smoke rendering.
 - Do not add asset manifest protocol messages yet.
 - Keep desktop smoke independent of external asset downloads.

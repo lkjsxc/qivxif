@@ -121,6 +121,25 @@ services:
     depends_on:
       - server
 
+  desktop-smoke:
+    build:
+      context: .
+      dockerfile: Dockerfile.verify
+    entrypoint:
+      [
+        "sh",
+        "-c",
+        "cargo run --locked --bin qivxif-client-desktop -- smoke-frame --addr server:4443 --server-name localhost --tls local-compose --player compose-desktop --output /tmp/qivxif-desktop-smoke.ppm && test -s /tmp/qivxif-desktop-smoke.ppm && grep -q '^P3' /tmp/qivxif-desktop-smoke.ppm"
+      ]
+    environment:
+      CARGO_TARGET_DIR: /target
+    volumes:
+      - .:/workspace:ro
+      - cargo-registry:/usr/local/cargo/registry
+      - target-cache:/target
+    depends_on:
+      - server
+
   persist-check:
     build:
       context: .

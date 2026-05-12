@@ -6,8 +6,8 @@ Use this subtree for implemented, active, and dormant client contracts.
 
 - `crates/qivxif-client-core` owns reusable headless client behavior.
 - `apps/qivxif-client-cli` is the implemented headless protocol client.
-- Desktop GUI runtime, shell, renderer, input, UI, and assets are active next
-  contracts after the Windows demo bundle.
+- Desktop GUI runtime, shell, renderer, input, UI, and assets are implemented
+  for smoke output.
 - `apps/qivxifctl` is a probe CLI, not a game client.
 - `crates/qivxif-probe` is verification code, not gameplay client code.
 
@@ -23,5 +23,5 @@ Use this subtree for implemented, active, and dormant client contracts.
 
 ## Rule
 
-- Do not describe desktop GUI behavior as implemented until the matching
-  workspace members and Compose smoke gate exist.
+- Desktop GUI behavior is implemented only for the smoke path until richer
+  owner docs and gates exist.
