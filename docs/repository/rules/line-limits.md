@@ -8,6 +8,7 @@ Owner doc for hard repository file-size limits.
 |---|---:|
 | Markdown under `docs/` | `<=300` lines |
 | Authored source under `apps/`, `crates/`, and `scripts/` | `<=200` lines |
+| Authored build/config files under `docker/`, `config/`, and root build files | `<=200` lines |
 
 ## Split Rules
 

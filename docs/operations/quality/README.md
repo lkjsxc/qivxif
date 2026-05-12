@@ -7,6 +7,7 @@ acceptance rules.
 
 - Repository documentation shape.
 - File line budgets.
+- Wording constraints.
 - Acceptance gate order.
 
 ## Boundary

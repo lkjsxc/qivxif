@@ -24,6 +24,9 @@ pub fn check_lines() -> Result<(), QualityError> {
     check_tree(Path::new("apps"), SRC_LIMIT, false, &mut report)?;
     check_tree(Path::new("crates"), SRC_LIMIT, false, &mut report)?;
     check_tree(Path::new("scripts"), SRC_LIMIT, false, &mut report)?;
+    check_tree(Path::new("docker"), SRC_LIMIT, false, &mut report)?;
+    check_tree(Path::new("config"), SRC_LIMIT, false, &mut report)?;
+    check_root_support_files(SRC_LIMIT, &mut report)?;
     if !report.violations.is_empty() {
         report.status = "fail";
     }
@@ -77,5 +80,27 @@ fn should_check(path: &Path, docs: bool) -> bool {
     if docs {
         return ext == Some("md");
     }
-    matches!(ext, Some("rs") | Some("sh"))
+    matches!(
+        ext,
+        Some("rs") | Some("sh") | Some("toml") | Some("yml") | Some("yaml")
+    ) || path.file_name().and_then(|name| name.to_str()) == Some("Dockerfile")
+        || ext == Some("Dockerfile")
+}
+
+fn check_root_support_files(limit: usize, report: &mut LineReport) -> Result<(), QualityError> {
+    for name in [
+        "Cargo.toml",
+        "Dockerfile",
+        "Dockerfile.verify",
+        "docker-compose.yml",
+        "docker-compose.verify.yml",
+        "docker-compose.windows.yml",
+        "rust-toolchain.toml",
+    ] {
+        let path = Path::new(name);
+        if path.exists() {
+            check_file(path, limit, false, report)?;
+        }
+    }
+    Ok(())
 }

@@ -18,6 +18,7 @@ is owned by [compose-pipeline.md](compose-pipeline.md).
 | `cargo build --locked --release --workspace` | Builds optimized artifacts. |
 | `cargo run --locked --bin qivxifctl -- docs validate-topology` | Checks docs topology. |
 | `cargo run --locked --bin qivxifctl -- quality check-lines` | Checks line limits. |
+| `cargo run --locked --bin qivxifctl -- quality check-wording` | Checks banned wording. |
 
 All Cargo inputs are locked.
 

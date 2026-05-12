@@ -17,6 +17,7 @@ Owner doc for repository wording constraints.
 | Wording | Reason |
 |---|---|
 | Named product-line labels | They become stale. |
+| Letter-plus-number release labels and spelled-out release labels | They imply parallel old contracts. |
 | Preserved old-path aliases | They create parallel meanings. |
 | Temporary parallel contracts | They obscure the owner doc. |
 | Long speculative prose | It is hard to retrieve and verify. |
@@ -25,3 +26,5 @@ Owner doc for repository wording constraints.
 
 - Prefer short declarative facts.
 - Use exact names from owner docs.
+- `qivxifctl quality check-wording` enforces banned release-label wording in
+  docs and root-facing Markdown.

@@ -4,6 +4,7 @@ use clap::{Parser, Subcommand};
 const CLI_COMMANDS: &str = r#"Commands:
   docs validate-topology
   quality check-lines
+  quality check-wording
   probe smoke --addr <ADDR>
   probe hello --addr <ADDR>
   probe join-world --addr <ADDR>
@@ -56,6 +57,7 @@ enum DocsCommand {
 #[command(rename_all = "kebab-case")]
 enum QualityCommand {
     CheckLines,
+    CheckWording,
 }
 
 #[derive(Subcommand)]
@@ -116,6 +118,9 @@ async fn main() -> Result<()> {
         Command::Quality {
             command: QualityCommand::CheckLines,
         } => qivxif_quality::check_lines()?,
+        Command::Quality {
+            command: QualityCommand::CheckWording,
+        } => qivxif_quality::check_wording()?,
         Command::Probe { command } => run_probe(command).await?,
     }
     Ok(())

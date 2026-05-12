@@ -32,5 +32,6 @@ run_stage doctest cargo test --locked --doc --workspace
 run_stage build cargo build --locked --release --workspace
 run_stage docs-topology cargo run --locked --bin qivxifctl -- docs validate-topology
 run_stage line-limits cargo run --locked --bin qivxifctl -- quality check-lines
+run_stage wording cargo run --locked --bin qivxifctl -- quality check-wording
 
 printf 'verify pass\n'
