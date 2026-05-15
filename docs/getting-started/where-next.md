@@ -1,24 +1,21 @@
 # Where Next
 
-## Rule
+Owner doc for follow-up reading.
 
-Choose the owner doc closest to the behavior. Do not widen scope by following a
-research report directly.
+## For Product Work
 
-## Product Work
+- `docs/product/workspace/tile-layout.md`
+- `docs/product/editor/buffers.md`
+- `docs/product/panes/browser.md`
 
-Read [../product/README.md](../product/README.md).
+## For Architecture Work
 
-## Server Work
+- `docs/architecture/shell/event-loop.md`
+- `docs/architecture/editor/buffer-core.md`
+- `docs/architecture/workspace/session-state.md`
 
-Read [../architecture/runtime/process-model.md](../architecture/runtime/process-model.md)
-and [../architecture/simulation/region-ownership.md](../architecture/simulation/region-ownership.md).
+## For Quality Work
 
-## Verification Work
-
-Read [../operations/verification/compose-pipeline.md](../operations/verification/compose-pipeline.md).
-
-## Research Work
-
-Read [../research/README.md](../research/README.md), then copy only durable
-findings into the relevant owner doc.
+- `docs/operations/quality/documentation-topology.md`
+- `docs/operations/verification/static-gates.md`
+- `docs/repository/workflow/docs-first-change-sequence.md`

@@ -1,27 +1,15 @@
 # Orientation
 
-## Current Repository
+qivxif is a docs-first Rust-native tile workspace.
 
-The repository now has a docs-first canon and an initial server/probe slice. The
-docs canon is the source of truth for implementation.
+## First Reads
 
-## Primary Paths
+1. `docs/vision/purpose.md`
+2. `docs/product/workspace/tile-layout.md`
+3. `docs/product/editor/buffers.md`
+4. `docs/architecture/shell/event-loop.md`
+5. `docs/operations/verification/compose-pipeline.md`
 
-- `docs/`: authoritative behavior and architecture.
-- `apps/`: executable binaries.
-- `crates/`: reusable Rust crates.
-- `config/`: runtime and verification config.
-- `scripts/`: Compose-run verification helpers.
-- `tmp/`: input material, not canon.
+## Rule
 
-## First Reading Order
-
-1. `docs/README.md` for the global documentation map.
-2. `docs/vision/README.md` for project intent.
-3. This directory for local workflow.
-4. The owner doc for the behavior being changed.
-
-## Research Boundary
-
-Deep research reports in `tmp/` may contain useful synthesis. Copy only durable,
-non-speculative findings into owner docs before using them for implementation.
+If code and docs disagree, update docs first or treat the implementation as stale.

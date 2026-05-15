@@ -1,21 +1,15 @@
 # Decision Records
 
-Owner doc for where repository-level durable decisions are tracked.
+Owner doc for decision tracking.
 
-## Location
+## Files
 
-Use [../../decisions/README.md](../../decisions/README.md) as the decision
-subtree entrypoint.
+- `decisions/accepted.md` lists active choices.
+- `decisions/rejected.md` lists paths not used.
+- `decisions/open-questions.md` lists unresolved choices.
 
 ## Rules
 
-| Decision State | Required Content |
-|---|---|
-| Accepted | State the chosen path. |
-| Rejected | State why the path is not active. |
-| Open question | Identify the owner area. |
-
-## LLM Notes
-
-- Link decisions instead of copying them into workflow docs.
-- Do not record speculative repository rules as accepted decisions.
+- Keep records short.
+- Move resolved questions to accepted or rejected.
+- Do not keep stale alternatives in product or architecture docs.

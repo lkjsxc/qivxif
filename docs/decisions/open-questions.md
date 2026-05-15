@@ -1,23 +1,17 @@
 # Open Questions
 
-## Rule
+Owner doc for unresolved choices.
 
-Open questions are not implementation permission. Resolve them in an owner doc
-before writing behavior that depends on them.
+## Browser Embedding
 
-## Product
+- Which Linux fallback is most reliable: detached native window or external browser command?
+- Which permission prompts need persistent decisions beyond downloads?
 
-- Guild governance model.
-- Market tax formulas.
-- Frontier event cadence.
-- Market discovery rules between regions.
-- Destructibility boundaries inside and outside claims.
+## Editor Depth
 
-## Architecture
+- When should syntax highlighting enter the core path?
+- Which tree-sitter crates fit the line-limit and dependency policy best?
 
-- Renderer quality tier budgets.
-- Far-field visual style.
-- Physics helper ownership.
-- Windows artifact release policy after the headless/protocol client milestone.
-- Schema contract for deeper `SectionCoord { x, y, z }` storage.
-- Archive retention and restore-drill cadence.
+## Packaging
+
+- Which installer formats are worth supporting after portable artifacts work?

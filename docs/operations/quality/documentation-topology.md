@@ -1,14 +1,19 @@
 # Documentation Topology
 
-LLM purpose: define the tree shape that keeps documentation retrieval
-predictable.
+Owner doc for docs tree shape.
 
-## Rules
+## Directory Rule
 
-- Every docs directory has exactly one `README.md`.
-- Every docs directory has at least two children.
-- Parent indexes link immediate child files and directories.
+Every directory under `docs/` must contain:
 
-## Purpose
+- exactly one `README.md`
+- at least two child entries besides `README.md`
+- links in `README.md` to each immediate Markdown file and child directory
 
-The tree shape keeps LLM retrieval predictable.
+## Root Rule
+
+`docs/README.md` must include a compact recursive map that mentions every Markdown file under `docs/`.
+
+## Reason
+
+LLM agents need deterministic entry points and short owner files.

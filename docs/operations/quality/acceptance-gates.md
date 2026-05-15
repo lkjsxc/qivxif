@@ -1,24 +1,18 @@
 # Acceptance Gates
 
-LLM purpose: define the minimum acceptance order for behavior changes.
+Owner doc for quality acceptance.
 
-## Rule
+## Required Gates
 
-No behavior change is accepted without matching docs, implementation, and
-verification.
+- Docs topology passes.
+- Line limits pass.
+- Wording check passes.
+- Rust formatting passes.
+- Clippy passes with warnings denied.
+- Tests pass through the Compose path when available.
 
-## Gate Order
+## Rules
 
-1. Owner docs.
-2. Implementation.
-3. Static gate.
-4. Live probes when behavior is runtime-visible.
-5. Evidence under `.sisyphus/evidence/`.
-6. Commit.
-
-## Reproducibility
-
-- `.dockerignore` excludes repository history, local temp data, build output,
-  and local redb files from verification builds.
-- Cargo verification commands use `--locked`.
-- The verify image pins `cargo-nextest`.
+- Host-only checks are diagnostics.
+- Compose is the acceptance boundary.
+- A failing gate must be reported with exact command and failure scope.

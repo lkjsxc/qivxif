@@ -1,26 +1,17 @@
 # Test Stack
 
-LLM purpose: identify test tools and where they fit in acceptance.
+Owner doc for test tools.
 
-## Canon
+## Layers
 
-Use a small Rust-native test stack that separates fast acceptance from deeper
-regression evidence.
+| Layer | Scope |
+|---|---|
+| Unit tests | Buffer edits, layout tree, policy logic. |
+| Property tests | Undo round trips and layout invariants. |
+| Snapshot tests | Markdown render models and workspace JSON. |
+| Integration tests | File IO, recovery, session restore. |
+| Smoke tests | Desktop startup and minimal workflows. |
 
-## Tools
+## Rule
 
-| Tool | Use |
-| --- | --- |
-| `cargo nextest run` | Workspace test execution. |
-| `cargo test --doc` | Doctest execution. |
-| `insta` | Snapshot expectations for protocols, worldgen, and rendered output. |
-| `proptest` | Property coverage for protocol, world, inventory, and persistence invariants. |
-| `Criterion.rs` | Benchmark evidence for hot paths and regression budgets. |
-
-## Rules
-
-- Fast tests run in the `verify` gate.
-- Doctests run as their own stage.
-- Snapshot updates require owner-doc review.
-- Benchmarks inform thresholds but do not replace functional gates.
-- Live probes stay in Compose verification docs.
+Tests should verify behavior described in owner docs, not historical behavior.

@@ -1,23 +1,18 @@
 # Docs Layout
 
-Owner doc for `docs/` topology rules.
+Owner doc for the docs tree.
 
-## Directory Rules
+## Shape
 
-| Rule | Meaning |
-|---|---|
-| Every docs directory has one `README.md`. | Each subtree has a local navigation entrypoint. |
-| Every docs directory has multiple children. | Avoid one-file subtrees that add navigation cost. |
-| Parent `README.md` files index immediate children. | Do not skip levels in indexes. |
-| Owner docs define behavior once. | Related docs may link but must not redefine contracts. |
+- Each directory has one `README.md`.
+- Each directory has at least two child entries besides `README.md`.
+- Parent indexes link immediate child Markdown files and child directory `README.md` files.
+- Root docs index includes a compact recursive map.
 
-## File Size
+## Ownership
 
-- Markdown files under `docs/` stay at 300 lines or fewer.
-- Split by responsibility before removing useful names.
-- Update parent indexes when a split creates, moves, or deletes files.
-
-## LLM Notes
-
-- Prefer compact tables for indexes.
-- Treat `tmp/` material as source input, not durable canon.
+- `vision/` owns why.
+- `product/` owns visible behavior.
+- `architecture/` owns internal contracts.
+- `operations/` owns verification and running work.
+- `repository/` owns project structure.

@@ -6,7 +6,7 @@
 2. Update that owner doc first.
 3. Update parent `README.md` links when files move.
 4. Keep each Markdown file under 300 lines.
-5. Run the docs topology and line-limit gates.
+5. Run topology, line-limit, and wording gates.
 
 ## Canon Rules
 

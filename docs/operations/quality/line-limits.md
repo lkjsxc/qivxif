@@ -1,13 +1,18 @@
 # Line Limits
 
-LLM purpose: link to the repository owner for file-size limits.
+Owner doc for file length gates.
 
-## Owner
+## Limits
 
-The durable line-limit contract is
-[../../repository/rules/line-limits.md](../../repository/rules/line-limits.md).
+| Area | Limit |
+|---|---:|
+| Markdown under `docs/` | 300 lines |
+| Rust under `apps/` and `crates/` | 200 lines |
+| Shell scripts under `scripts/` | 200 lines |
+| Checked root config files | 200 lines |
 
-## Quality Gate
+## Rules
 
-- `qivxifctl quality check-lines` enforces the owner contract.
-- This file exists so operations quality readers can find the gate.
+- Split files by owner boundary before shortening names.
+- Do not minify prose or code to pass.
+- Generated or external artifacts should stay out of checked paths.

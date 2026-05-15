@@ -5,7 +5,7 @@
 1. Read `docs/README.md` before changing behavior.
 2. Update the owner doc before implementation.
 3. Keep parent `README.md` indexes current.
-4. Verify with Docker Compose before claiming completion.
+4. Verify through Docker Compose when possible.
 5. Commit small coherent batches.
 
 ## Hard Limits
@@ -16,8 +16,8 @@
 
 ## Wording
 
-- Use protocol contract, build contract, or schema contract.
-- Avoid named product-line labels and stale old-path aliases.
+- Use `schema_contract`, `layout_contract`, or `build_contract` for durable formats.
+- Avoid stale product-line labels and old-path aliases.
 - Delete retired contracts instead of preserving parallel meanings.
 
 ## Protected Canon

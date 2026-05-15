@@ -1,39 +1,17 @@
 # Tracing
 
-LLM purpose: list stable runtime events that agents can search in logs.
+Owner doc for structured logs.
 
-## Owner Scope
+## Signals
 
-This file owns required and dormant event names. Probe behavior is owned by
-[../verification/protocol-probes.md](../verification/protocol-probes.md).
+- Startup and shutdown phases.
+- Settings and workspace load results.
+- File operation failures.
+- Recovery replay results.
+- Browser policy decisions.
 
-## Required Events
+## Rules
 
-- `server starting`.
-- `server listening`.
-- `server shutdown`.
-- `connection accepted`.
-- `connection closed`.
-- `request handled`.
-- `chunk request completed`.
-- `mutation accepted`.
-- `mutation rejected`.
-- `persistence flushed`.
-- `persistence flush rejected`.
-- `probe <name> ... ok`.
-
-## Dormant Events
-
-- `archive manifest written`.
-- `archive manifest listed`.
-- `region tick completed`.
-- `request replayed`.
-
-## Probe Output
-
-- `qivxifctl` emits `probe <name> ... ok` after successful probes.
-- Probe output is part of the observability surface for Compose acceptance.
-
-## Rule
-
-Routine acceptance logs stay compact.
+- Do not log document contents.
+- Include pane and buffer identities when useful.
+- Use compact spans around background tasks.

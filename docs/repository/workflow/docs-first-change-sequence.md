@@ -1,24 +1,16 @@
 # Docs-First Change Sequence
 
-Owner doc for the required order of behavior-changing work.
+Owner doc for change order.
 
-## Sequence
+## Required Order
 
-| Step | Action |
-|---:|---|
-| 1 | Read existing owner docs. |
-| 2 | Change owner docs to the desired behavior. |
-| 3 | Update affected indexes. |
-| 4 | Implement the behavior. |
-| 5 | Add verification. |
-| 6 | Run Docker Compose gates. |
-| 7 | Commit the coherent batch. |
+1. Read the current owner docs.
+2. Update or create owner docs for intended behavior.
+3. Update parent indexes.
+4. Implement the behavior.
+5. Run relevant checks.
+6. Commit the coherent batch.
 
 ## Rule
 
-Missing docs are missing requirements, not permission to guess silently.
-
-## LLM Notes
-
-- For documentation-only work, complete the docs and index steps, then verify line limits.
-- For implementation work, do not skip the Docker Compose gates when they apply.
+Implementation without matching owner docs is incomplete.

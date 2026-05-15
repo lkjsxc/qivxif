@@ -1,14 +1,17 @@
 # Incident Runbook
 
-LLM purpose: provide the first operational checks before risky recovery.
+Owner doc for local failure handling.
 
-## First Checks
+## Startup Failure
 
-- Confirm server process status.
-- Capture recent logs.
-- Preserve data directory before risky recovery.
-- Run the relevant probe.
+1. Capture command and platform.
+2. Check settings and workspace state parsing.
+3. Move corrupt state aside.
+4. Re-run static gates.
 
-## Recovery
+## Data Loss Report
 
-Restore drills must prove section edits and player state survive.
+1. Preserve document, workspace state, and recovery records.
+2. Avoid opening the app against the same state until copied.
+3. Reproduce with a temporary directory.
+4. Add a regression test before fixing.

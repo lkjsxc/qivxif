@@ -1,25 +1,17 @@
 # Commit Policy
 
-Owner doc for repository commit cadence and batch shape.
+Owner doc for commit cadence.
 
 ## Rules
 
-| Rule | Meaning |
-|---|---|
-| Commit frequently. | Keep review units small. |
-| Keep commits coherent. | One commit should describe one related change set. |
-| Do not mix unrelated behavior. | Split independent work into separate commits. |
-| Do not commit `tmp/` research files. | `tmp/` is source material, not canon. |
-| Include docs with behavior changes. | Docs and implementation must move together. |
+- Commit coherent batches frequently.
+- Do not mix unrelated behavior in one commit.
+- Do not revert work from other agents unless explicitly instructed.
+- Include verification notes in the commit message when useful.
 
-## Suggested Batch Order
+## Good Batches
 
-1. Docs canon.
-2. Workspace and static verification.
-3. Server smoke path.
-4. Persistence probes.
-
-## LLM Notes
-
-- This file describes commit policy only; it is not permission to commit without request.
-- Keep repository-doc-only changes separate from implementation changes.
+- Documentation canon pivot.
+- Quality gate update.
+- One crate or app slice with tests.
+- Verification script adjustment with passing check.

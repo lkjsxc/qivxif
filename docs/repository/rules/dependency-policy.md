@@ -1,26 +1,18 @@
 # Dependency Policy
 
-Owner doc for repository-level dependency direction.
+Owner doc for dependency choices.
 
-## Defaults
+## Rules
 
-| Default | Constraint |
-|---|---|
-| Rust-native dependencies. | Prefer crates that fit the Rust workspace. |
-| Boring stable crates for the initial slice. | Avoid dependency novelty for core paths. |
-| Renderer and mobile dependencies need owner docs and verification. | Do not add them as incidental dependencies. |
+- Prefer crates that directly support the documented architecture.
+- Keep browser embedding behind a feature boundary.
+- Avoid adding dependencies for behavior that the standard library covers cleanly.
+- Document high-risk platform dependencies in operations docs.
 
-## Current Direction
+## Selected Stack
 
-| Dependency | Use |
-|---|---|
-| Tokio | Async runtime. |
-| Quinn | QUIC transport. |
-| redb | Hot state. |
-| `postcard` | Compact schema-bound protocol payloads. |
-| serde JSON | Diagnostics or tool output that is not protocol traffic. |
-
-## LLM Notes
-
-- This file records existing dependency direction only.
-- Do not add new dependency recommendations without an owner doc and verification path.
+- `winit`, `wgpu`, and `egui` for native shell and chrome.
+- `egui_tiles` for docking layout.
+- `cosmic-text` for text shaping and layout.
+- `pulldown-cmark` for Markdown parsing.
+- `wry` for browser embedding behind policy.

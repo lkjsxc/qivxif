@@ -1,32 +1,24 @@
 # LLM Authoring
 
-## Intent
+Owner doc for agent-friendly project shape.
 
-Optimize the repository for future agents that need fast, accurate context.
-Prefer explicit ownership, short files, stable headings, and verifiable claims.
+## File Shape
 
-## Format
+- Keep docs below 300 lines.
+- Keep source and scripts below 200 lines.
+- Split by owner boundary before a file becomes dense.
+- Name files after contracts, not implementation guesses.
 
-- Start each directory with `README.md`.
-- Keep each Markdown file under 300 lines.
-- Keep files short and focused on one owner topic.
-- Use stable headings that match the directory purpose.
-- Link nearby owner docs instead of duplicating contracts.
-- Use tables for indexes and decision matrices.
-- Mark research-derived content by its durable owner, not by raw report wording.
+## Writing Style
 
-## Change Behavior
+- Use compact declarative bullets.
+- Link owner docs instead of redefining contracts.
+- Prefer tables for state and command catalogs.
+- Avoid historical explanations unless they affect current work.
 
-1. Read the owner doc.
-2. Update docs to the desired behavior.
-3. Implement the smallest coherent batch.
-4. Add or update verification.
-5. Commit after the gate passes.
+## Change Style
 
-## Avoid
-
-- Long prose blocks.
-- Hidden assumptions in code comments.
-- Multiple docs that define the same rule.
-- Named product-line wording.
-- Speculative content copied from reports without an owner-doc decision.
+- Update docs first.
+- Keep indexes current.
+- Run the narrowest useful check before committing.
+- Commit each coherent batch.

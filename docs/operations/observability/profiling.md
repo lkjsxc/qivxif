@@ -1,15 +1,18 @@
 # Profiling
 
-LLM purpose: state allowed profiling direction without blocking runtime work.
+Owner doc for performance investigation.
 
-## Server
+## Focus Areas
 
-Use tracing and task-aware profiling for async stalls and tick pressure.
+- Startup latency.
+- Redraw cadence.
+- Text shaping cost.
+- Markdown parse cost.
+- Filesystem scan cost.
+- Browser embed overhead.
 
-## Client
+## Rules
 
-Use CPU and GPU frame profiling once rendering exists.
-
-## Rule
-
-Profiling hooks must not block authoritative work.
+- Profile before optimizing.
+- Keep profiling hooks off by default.
+- Record fixture size and platform when sharing results.

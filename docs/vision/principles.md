@@ -1,31 +1,24 @@
 # Principles
 
-## Reader Model
-
-Use this file as a compact checklist. Detailed contracts live in product,
-architecture, operations, or decisions owner docs.
+Owner doc for durable product and engineering rules.
 
 ## Product
 
-- Make the world persistent and consequential.
-- Protect onboarding spaces, then allow dangerous frontier play.
-- Make crafting, logistics, and player trade matter.
-- Support dual camera play: social third-person and precision first-person.
+- Start in the working surface, not a marketing page.
+- Make panes predictable, rectangular, and recoverable.
+- Keep text editing and local files central.
+- Treat browser behavior as policy-bound and optional when a platform cannot embed it safely.
 
 ## Engineering
 
-- One authoritative server owns truth.
-- Region actors own world mutation.
-- Clients send intent and render prediction.
-- Keep the initial architecture narrow: one server authority, one protocol
-  library, one persistence boundary, and one renderer family.
-- Persist accepted edits as authoritative hot state; treat generated terrain as
-  disposable input.
-- Verification runs through Docker Compose.
+- Use Rust for application logic and UI shell.
+- Keep pane implementations behind small boundaries.
+- Use typed commands instead of ad hoc callbacks.
+- Prefer simple data files for settings and workspace state.
 
 ## Maintenance
 
-- Docs are requirements.
-- Small files are navigation aids, not style ornament.
-- Prefer explicit contracts over inferred behavior.
-- Translate research into owner docs before implementation.
+- Docs first, then implementation.
+- One owner doc per durable contract.
+- Delete retired contracts.
+- Keep files small and directly named.

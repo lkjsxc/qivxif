@@ -1,32 +1,31 @@
 # Product Shape
 
-## LLM Summary
+Owner doc for the canonical qivxif product.
 
-This file states the target product shape only. It does not define protocol,
-persistence, rendering, or gameplay algorithms.
+## Primary Surface
 
-## Canonical Shape
+The app opens to a native desktop workspace made of dockable tiles.
 
-qivxif is a native-client voxel MMORPG survival sandbox.
+Each tile hosts one pane kind:
 
-## Core Properties
+- editor
+- explorer
+- Markdown preview
+- browser
+- settings
 
-- Persistent world with permanent accepted terrain edits.
-- Authoritative server process.
-- Full-parity desktop, Android, and iOS clients.
-- Protected sanctuary and starter spaces.
-- Open PvP frontier outside protected spaces.
-- Player-crafted economy with basic NPC seeding only.
-- Zone-scaled death loss.
-- Activity-based claim decay.
-- Regional player markets.
+## Core Loop
 
-## First Playable Target
+1. Open a folder or file.
+2. Edit text in one or more panes.
+3. Split or tab panes as work changes.
+4. Preview Markdown beside its source.
+5. Browse reference pages under explicit policy.
+6. Restore the same workspace after restart.
 
-The initial playable server slice proves login, join, chunk read, block
-mutation, restart, and persistence.
+## Quality Bar
 
-## Delivery Bias
-
-Research synthesis favors server authority first, then protocol-visible behavior,
-hot persistence, archive workflows, client shell, renderer, and wider gameplay.
+- Startup must be deterministic enough for smoke checks.
+- Text data must survive crashes through recovery state.
+- Layout state must round trip through readable JSON.
+- Settings must be readable TOML.

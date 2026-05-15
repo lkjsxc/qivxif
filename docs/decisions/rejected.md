@@ -1,22 +1,17 @@
 # Rejected Decisions
 
-## Scope
-
-Rejected items are inactive paths. Do not reintroduce them through research
-wording or implementation shortcuts.
+Owner doc for inactive paths.
 
 ## Product
 
-- First-person-only camera is rejected because social MMORPG readability matters.
-- Third-person-only camera is rejected because voxel precision matters.
-- Claims-only editing is rejected because the frontier should be a real sandbox.
-- NPC-driven economy is rejected because player industry is central.
+- Game, terrain, combat, server, and simulation behavior are not qivxif canon.
+- Browser-first shell is rejected.
+- Plugin marketplace is rejected for the initial architecture.
+- Remote account service is rejected.
 
 ## Architecture
 
-- Browser-first client is rejected.
-- Separate renderer engines are rejected.
-- Host-only verification is rejected.
-- Windows-container-first delivery from a Linux host is rejected.
-- Client-trusted gameplay truth is rejected.
-- Generated terrain as durable truth is rejected.
+- Web UI as primary shell is rejected.
+- Direct pane-to-pane mutation is rejected.
+- Opaque binary workspace state is rejected.
+- Blocking filesystem work on the UI thread is rejected.

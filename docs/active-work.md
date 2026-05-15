@@ -1,31 +1,23 @@
 # Active Work
 
-## Current Objective
+Owner doc for the current implementation lane.
 
-Improve documentation first, then implementation.
+## Focus
 
-Current state: the authoritative server slice and headless protocol client are
-implemented; desktop smoke client is implemented.
+- Replace the retired voxel canon with the Rust-native tile workspace canon.
+- Make the super app the default implemented path.
+- Keep the quality gate small, strict, and easy for agents to run.
 
-## Work Lanes
+## Near Work
 
-- Documentation canon and repository rules are active.
-- Rust workspace and Docker Compose verification are active.
-- Shared headless client core is active.
-- QUIC hello, join, chunk, place, flush, restart, and persistence lanes are
-  complete.
-- `qivxif-client-cli` is part of Compose acceptance.
-- `qivxif-client-desktop` is part of Compose acceptance.
-- Deterministic chunk generation and edit overlay persistence are complete.
-- Protocol guard docs own the public session-phase rejection matrix.
-- Malformed-wire docs own the public decode rejection contract.
+1. Land the documentation pivot.
+2. Update topology and wording checks to match the stricter docs tree.
+3. Add the super app entry crate and shell crates.
+4. Add tiles, command routing, editor buffer, and editor view.
+5. Add workspace state, persistence, explorer, Markdown preview, and browser policy.
 
-## Near-Term Exit Criteria
+## Acceptance
 
-- Owner docs match implemented behavior for the current slice.
-- Protocol guard probes match the public wire catalog.
-- Malformed-wire probes match the public decode rejection contract.
-- Verification inputs are reproducible.
-- Full `./scripts/verify-compose.sh` acceptance passes.
-- Windows demo bundle verification passes through Docker Compose.
-- Desktop smoke verification passes through Docker Compose.
+- Docs describe only the tile super app direction.
+- No game, server, terrain, protocol, or world behavior remains as canon.
+- Compose remains the acceptance boundary.

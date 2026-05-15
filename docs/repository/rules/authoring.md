@@ -1,25 +1,17 @@
 # Authoring
 
-Owner doc for documentation authoring rules.
+Owner doc for writing rules.
 
-## Rules
+## Docs
 
-| Rule | Reason |
-|---|---|
-| Write docs before behavior code. | Missing docs are missing requirements. |
-| Keep owner docs short. | Short files are easier for agents to retrieve. |
-| Prefer exact names over broad prose. | Exact names reduce ambiguity. |
-| Link owner docs instead of duplicating contracts. | One owner prevents parallel meanings. |
-| Keep command examples executable. | Examples must remain verifiable. |
+- Update owner docs before implementation.
+- Use direct declarative bullets.
+- Link rather than duplicate contracts.
+- Keep examples small and executable where possible.
 
-## Update Checklist
+## Code
 
-1. Find the owner doc for the contract.
-2. Change the owner doc first.
-3. Update parent `README.md` indexes when files move or split.
-4. Keep every Markdown file under 300 lines.
-
-## LLM Notes
-
-- Preserve useful names; split files instead of minifying.
-- Do not treat absent docs as permission to guess behavior.
+- Prefer small modules by ownership boundary.
+- Use typed interfaces for cross-crate communication.
+- Avoid placeholders when real behavior is practical.
+- Add tests proportional to behavior risk.

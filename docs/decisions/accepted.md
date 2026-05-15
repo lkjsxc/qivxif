@@ -1,35 +1,23 @@
 # Accepted Decisions
 
-## Scope
-
-These decisions are durable unless a later owner doc explicitly changes them.
+Owner doc for active choices.
 
 ## Product
 
-- Native full-parity clients.
-- Dual camera.
-- Open frontier PvP.
-- Permanent accepted terrain edits.
-- Player-crafted economy.
-- Zone-scaled death loss.
-- Activity-based claim decay.
-- Regional player markets.
-- Protected sanctuary and starter spaces.
+- qivxif is a Rust-native tile workspace.
+- Text editing, Markdown preview, explorer, and browser pane are the core surface.
+- Docs are the durable source of truth.
 
 ## Architecture
 
-- Rust workspace.
-- One authoritative server process.
-- QUIC transport.
-- Region-owned mutation.
-- `bevy_ecs` inside region actors.
-- redb hot state.
-- `object_store` cold artifacts.
-- `postcard` protocol messages.
-- `rkyv` read-mostly archives and caches.
-- Layered security with QUIC/TLS, Argon2id, Ed25519, rcgen for local certificates, and rustls for HTTPS endpoints.
-- nextest, doctests, insta, proptest, and Criterion for the test stack.
-- Docker Compose acceptance.
-- Docs-first change order with recursive README navigation and line limits.
-- Client delivery sequence: headless/protocol client surface, shared client core,
-  desktop shell, renderer shell, then mobile shells.
+- Use `winit`, `wgpu`, and `egui` for the native shell.
+- Use `egui_tiles` for tile layout.
+- Use rope-backed buffers for text.
+- Use `cosmic-text` for text layout and shaping.
+- Use `pulldown-cmark` for Markdown parsing.
+- Use `wry` behind a browser controller and policy boundary.
+- Use TOML for settings and JSON for workspace state.
+
+## Process
+
+- Retired voxel and server contracts are deleted rather than carried as aliases.
