@@ -1,3 +1,3 @@
 mod session;
 
-pub use session::{BufferState, WorkspaceSession};
+pub use session::{BufferState, PaneBinding, PaneState, WorkspaceSession};

@@ -6,6 +6,8 @@ license.workspace = true
 authors.workspace = true
 
 [dependencies]
+eframe = { workspace = true }
+egui = { workspace = true }
 qivxif-action = { workspace = true }
 qivxif-browser = { workspace = true }
 qivxif-editor-buffer = { workspace = true }

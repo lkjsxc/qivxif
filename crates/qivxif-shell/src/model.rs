@@ -4,7 +4,7 @@ use qivxif_editor_buffer::TextBuffer;
 use qivxif_editor_view::EditorView;
 use qivxif_explorer::ExplorerModel;
 use qivxif_markdown::{MarkdownDocument, parse_markdown};
-use qivxif_tiles::{PaneKind, SplitAxis};
+use qivxif_tiles::SplitAxis;
 use qivxif_workspace::WorkspaceSession;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
@@ -62,31 +62,27 @@ impl ShellModel {
                 Err(error) => self.events.push(ShellEvent::Error(error.to_string())),
             },
             AppCommand::CloseFocusedPane => {
-                self.session.layout.close(self.session.focused_pane);
+                self.session.close(self.session.focused_pane);
                 self.events.push(ShellEvent::PaneChanged);
             }
             AppCommand::SplitFocused(direction) => self.split_focused(direction),
             AppCommand::FocusNextPane => self.focus_next(),
             AppCommand::ToggleExplorer => {
-                let pane = self.session.add_pane(PaneKind::Explorer, "Explorer");
-                self.session
-                    .layout
-                    .split_focused(pane, SplitAxis::Vertical, 0.35);
+                let root = self.explorer.roots.first().cloned();
+                let pane = self.session.add_explorer(root);
+                self.session.split_focused(pane, SplitAxis::Vertical, 0.35);
                 self.events.push(ShellEvent::PaneChanged);
             }
             AppCommand::ToggleMarkdownPreview => {
-                let pane = self.session.add_pane(PaneKind::Markdown, "Markdown");
-                self.session
-                    .layout
-                    .split_focused(pane, SplitAxis::Vertical, 0.5);
+                let source = self.session.focused_editor_buffer();
+                let pane = self.session.add_markdown(source);
+                self.session.split_focused(pane, SplitAxis::Vertical, 0.5);
                 self.events.push(ShellEvent::PaneChanged);
             }
             AppCommand::OpenBrowser(url) => {
                 self.browser_state = Some(BrowserState::new(url.clone()));
-                let pane = self.session.add_pane(PaneKind::Browser, "Browser");
-                self.session
-                    .layout
-                    .split_focused(pane, SplitAxis::Vertical, 0.5);
+                let pane = self.session.add_browser(1);
+                self.session.split_focused(pane, SplitAxis::Vertical, 0.5);
                 self.events.push(ShellEvent::BrowserOpened(url));
             }
         }
@@ -107,21 +103,21 @@ impl ShellModel {
         }
         self.buffers.push(TextBuffer::with_id(buffer, ""));
         self.editor_views.push(EditorView::new(buffer));
-        let pane = self.session.add_pane(PaneKind::Editor, label);
-        self.session
-            .layout
-            .split_focused(pane, SplitAxis::Vertical, 0.5);
+        let pane = self.session.add_editor(buffer, label);
+        self.session.split_focused(pane, SplitAxis::Vertical, 0.5);
         self.events.push(ShellEvent::PaneChanged);
     }
 
     fn split_focused(&mut self, direction: SplitDirection) {
-        let pane = self.session.add_pane(PaneKind::Editor, "split");
+        let Some(buffer_id) = self.session.focused_editor_buffer() else {
+            return;
+        };
+        let pane = self.session.add_editor(buffer_id, "split");
         let axis = match direction {
             SplitDirection::Right => SplitAxis::Vertical,
             SplitDirection::Down => SplitAxis::Horizontal,
         };
-        self.session.layout.split_focused(pane, axis, 0.5);
-        self.session.focused_pane = pane;
+        self.session.split_focused(pane, axis, 0.5);
         self.events.push(ShellEvent::PaneChanged);
     }
 
@@ -136,8 +132,7 @@ impl ShellModel {
         };
         let next = (index + 1) % self.session.panes.len();
         let next_id = self.session.panes[next].id;
-        self.session.focused_pane = next_id;
-        self.session.layout.focus(next_id);
+        self.session.focus(next_id);
         self.events.push(ShellEvent::PaneChanged);
     }
 }

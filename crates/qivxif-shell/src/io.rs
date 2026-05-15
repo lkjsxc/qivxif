@@ -1,7 +1,7 @@
 use crate::{ShellEvent, ShellModel};
 use qivxif_editor_buffer::TextBuffer;
 use qivxif_editor_view::EditorView;
-use qivxif_tiles::{PaneKind, SplitAxis};
+use qivxif_tiles::SplitAxis;
 use std::{fs, path::PathBuf};
 use thiserror::Error;
 
@@ -26,12 +26,8 @@ impl ShellModel {
         let id = self.session.add_file_buffer(path.clone());
         self.buffers.push(TextBuffer::with_id(id, text));
         self.editor_views.push(EditorView::new(id));
-        let pane = self
-            .session
-            .add_pane(PaneKind::Editor, label_for_path(&path));
-        self.session
-            .layout
-            .split_focused(pane, SplitAxis::Vertical, 0.5);
+        let pane = self.session.add_editor(id, label_for_path(&path));
+        self.session.split_focused(pane, SplitAxis::Vertical, 0.5);
         self.events.push(ShellEvent::OpenedPath(path));
         Ok(())
     }
