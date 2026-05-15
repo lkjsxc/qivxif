@@ -64,7 +64,7 @@ pub fn activate_node(node: &mut TileNode, target: PaneId) -> bool {
 pub fn remove_pane(node: TileNode, pane: PaneId) -> (Option<TileNode>, bool) {
     match node {
         TileNode::Leaf { mut panes, active } => {
-            let removed = panes.iter().any(|candidate| *candidate == pane);
+            let removed = panes.contains(&pane);
             panes.retain(|candidate| *candidate != pane);
             let active = active.min(panes.len().saturating_sub(1));
             match panes.is_empty() {
