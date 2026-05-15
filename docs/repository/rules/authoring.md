@@ -12,6 +12,7 @@ Owner doc for writing rules.
 ## Code
 
 - Prefer small modules by ownership boundary.
+- Authored application logic and UI source are Rust-only.
 - Use typed interfaces for cross-crate communication.
 - Avoid placeholders when real behavior is practical.
 - Add tests proportional to behavior risk.

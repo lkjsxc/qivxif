@@ -7,8 +7,8 @@ Owner doc for desktop stack findings.
 - `winit` for window and event loop.
 - `wgpu` for graphics surface.
 - `egui` for shell chrome and controls.
-- `egui_tiles` for docking layout.
+- Custom qivxif tile engine for docking layout.
 
 ## Reason
 
-This stack keeps the app native Rust, gives fast UI iteration, and supports custom editor rendering without making the whole product a web app.
+This stack keeps the app native Rust, gives fast UI iteration, and keeps tile behavior owned by qivxif instead of a docking crate.

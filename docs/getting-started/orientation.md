@@ -1,6 +1,6 @@
 # Orientation
 
-qivxif is a docs-first Rust-native tile workspace.
+qivxif is a docs-first Rust-native tile super app.
 
 ## First Reads
 

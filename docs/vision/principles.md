@@ -7,11 +7,12 @@ Owner doc for durable product and engineering rules.
 - Start in the working surface, not a marketing page.
 - Make panes predictable, rectangular, and recoverable.
 - Keep text editing and local files central.
-- Treat browser behavior as policy-bound and optional when a platform cannot embed it safely.
+- Apply browser policy before any embedded, detached, or external route.
 
 ## Engineering
 
-- Use Rust for application logic and UI shell.
+- Authored application logic and UI source are Rust-only.
+- Use the custom qivxif tile engine for pane layout behavior.
 - Keep pane implementations behind small boundaries.
 - Use typed commands instead of ad hoc callbacks.
 - Prefer simple data files for settings and workspace state.

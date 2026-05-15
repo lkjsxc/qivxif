@@ -12,6 +12,7 @@ Owner doc for inactive paths.
 ## Architecture
 
 - Web UI as primary shell is rejected.
+- Third-party docking crates as the canonical tile engine are rejected.
 - Direct pane-to-pane mutation is rejected.
 - Opaque binary workspace state is rejected.
 - Blocking filesystem work on the UI thread is rejected.

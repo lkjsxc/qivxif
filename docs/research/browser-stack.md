@@ -4,9 +4,9 @@ Owner doc for browser stack findings.
 
 ## Selected Stack
 
-- `wry` for platform webview embedding.
+- `wry` for optional platform webview embedding.
 - Browser controller trait for shell integration.
-- Policy layer for permissions, downloads, and external links.
+- Policy layer before embedding for permissions, downloads, and external links.
 - Detached or external fallback for weak embed paths.
 
 ## Risk

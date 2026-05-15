@@ -4,7 +4,9 @@ Owner doc for the canonical qivxif product.
 
 ## Primary Surface
 
-The app opens to a native desktop workspace made of dockable tiles.
+The app opens to a native desktop tile super app made of dockable tiles.
+
+The custom qivxif tile engine owns split, tab, focus, and restore behavior.
 
 Each tile hosts one pane kind:
 
@@ -20,7 +22,7 @@ Each tile hosts one pane kind:
 2. Edit text in one or more panes.
 3. Split or tab panes as work changes.
 4. Preview Markdown beside its source.
-5. Browse reference pages under explicit policy.
+5. Browse reference pages only after explicit browser policy allows the route.
 6. Restore the same workspace after restart.
 
 ## Quality Bar

@@ -4,7 +4,8 @@ Owner doc for visible tile behavior.
 
 ## Structure
 
-- The workspace is a tree of splits and tab stacks.
+- The tile super app layout is a tree of splits and tab stacks.
+- The custom qivxif tile engine owns split, tab, drag, focus, and serialization rules.
 - Each tab owns a stable pane identity.
 - A leaf may contain one or more pane tabs.
 - Split ratios persist across restart.

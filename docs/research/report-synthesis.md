@@ -12,6 +12,6 @@ Owner doc for the pivot research summary.
 ## Direction
 
 - Replace product and architecture canon.
-- Build a super app shell with editor-first behavior.
+- Build a tile super app shell with editor-first behavior.
 - Treat browser embedding as a contained risk.
 - Keep source and docs small for LLM maintenance.

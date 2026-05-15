@@ -6,6 +6,7 @@ Owner doc for render architecture.
 
 - `wgpu` owns the surface and GPU device.
 - `egui` owns chrome, menus, tabs, dialogs, and light controls.
+- The custom qivxif tile engine owns pane rectangles and dock interactions.
 - Editor text rendering uses a dedicated layout cache.
 - Browser content is embedded or detached through the browser adapter.
 

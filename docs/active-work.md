@@ -4,7 +4,7 @@ Owner doc for the current implementation lane.
 
 ## Focus
 
-- Replace the retired voxel canon with the Rust-native tile workspace canon.
+- Replace the retired voxel canon with the Rust-native tile super app canon.
 - Make the super app the default implemented path.
 - Keep the quality gate small, strict, and easy for agents to run.
 

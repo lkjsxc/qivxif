@@ -6,7 +6,8 @@ Owner doc for browser adapter internals.
 
 - `BrowserController` is the only shell-facing browser control surface.
 - The controller owns navigation, title updates, loading state, and policy prompts.
-- Platform embedding is hidden behind adapter modules.
+- The controller applies policy before selecting embedded, detached, or external routing.
+- Platform embedding is hidden behind adapter modules and never bypasses policy.
 - Fallback mode is a first-class controller state.
 
 ## Security
@@ -15,6 +16,7 @@ Owner doc for browser adapter internals.
 - No arbitrary page-to-Rust bridge.
 - Downloads are confirmed and path checked.
 - External links can be forced to the system browser.
+- A denied or unsupported embed path must fall back without crashing the shell.
 
 ## Platform Risk
 

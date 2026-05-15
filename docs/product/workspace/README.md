@@ -1,6 +1,6 @@
-# Workspace Product
+# Tile Super App Product
 
-Owner index for tile workspace behavior.
+Owner index for tile super app workspace behavior.
 
 ## Children
 

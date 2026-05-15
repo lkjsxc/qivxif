@@ -6,6 +6,7 @@ Owner doc for wording constraints.
 
 | Term | Use |
 |---|---|
+| Tile super app | Product category for the current qivxif canon. |
 | Initial slice | Current limited implementation scope. |
 | Build contract | Build identity marker. |
 | Schema contract | Storage or payload schema marker in prose. |
@@ -16,6 +17,7 @@ Owner doc for wording constraints.
 
 | Wording | Reason |
 |---|---|
+| Workspace as product category | Use tile super app for the product category. |
 | Named product-line labels | They become stale. |
 | Letter-plus-number labels | They imply parallel old contracts. |
 | Preserved old-path aliases | They create parallel meanings. |
