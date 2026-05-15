@@ -1,5 +1,5 @@
 use crate::PaneId;
-use crate::ops::{remove_pane, split_node, tab_node};
+use crate::ops::{activate_node, remove_pane, split_node, tab_node};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -67,6 +67,7 @@ impl TileLayout {
     pub fn focus(&mut self, pane: PaneId) -> bool {
         if self.root.contains(pane) {
             self.focused = pane;
+            activate_node(&mut self.root, pane);
             true
         } else {
             false

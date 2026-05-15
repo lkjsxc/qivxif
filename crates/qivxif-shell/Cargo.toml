@@ -14,8 +14,10 @@ qivxif-editor-buffer = { workspace = true }
 qivxif-editor-view = { workspace = true }
 qivxif-explorer = { workspace = true }
 qivxif-markdown = { workspace = true }
+qivxif-persistence = { workspace = true }
 qivxif-tiles = { workspace = true }
 qivxif-workspace = { workspace = true }
 serde = { workspace = true }
+serde_json = { workspace = true }
 thiserror = { workspace = true }
 winit = { workspace = true }

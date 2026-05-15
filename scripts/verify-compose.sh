@@ -17,6 +17,7 @@ cleanup
 compose config --quiet
 compose run --rm --build -T verify
 compose run --rm --build -T superapp-smoke
+compose run --rm --build -T superapp-native-smoke
 cleanup
 
 printf 'verify compose ... ok\n'

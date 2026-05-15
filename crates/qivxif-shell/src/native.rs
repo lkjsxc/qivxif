@@ -1,34 +1,55 @@
-use std::error::Error;
-use winit::{
-    application::ApplicationHandler,
-    event::WindowEvent,
-    event_loop::{ActiveEventLoop, EventLoop},
-    window::{Window, WindowId},
-};
+use crate::{ShellModel, ui::ShellApp};
+use eframe::{NativeOptions, egui};
+use qivxif_browser::BrowserPolicy;
+use std::{error::Error, path::PathBuf};
 
-#[derive(Default)]
-struct NativeApp {
-    window: Option<Window>,
+#[derive(Debug, Clone)]
+pub struct NativeRunConfig {
+    pub title: String,
+    pub initial_window_size: [f32; 2],
+    pub close_after_frames: Option<u32>,
+    pub state_path: Option<PathBuf>,
+}
+
+impl Default for NativeRunConfig {
+    fn default() -> Self {
+        Self {
+            title: "qivxif".to_owned(),
+            initial_window_size: [1200.0, 780.0],
+            close_after_frames: None,
+            state_path: None,
+        }
+    }
 }
 
 pub fn run_native() -> Result<(), Box<dyn Error>> {
-    let event_loop = EventLoop::new()?;
-    let mut app = NativeApp::default();
-    event_loop.run_app(&mut app)?;
-    Ok(())
+    let policy = BrowserPolicy::locked_down(PathBuf::from("downloads"));
+    run_native_with_model(ShellModel::new(policy), NativeRunConfig::default())
 }
 
-impl ApplicationHandler for NativeApp {
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        if self.window.is_none() {
-            let attrs = Window::default_attributes().with_title("qivxif");
-            self.window = Some(event_loop.create_window(attrs).expect("create window"));
-        }
-    }
-
-    fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
-        if matches!(event, WindowEvent::CloseRequested) {
-            event_loop.exit();
-        }
-    }
+pub fn run_native_with_model(
+    model: ShellModel,
+    config: NativeRunConfig,
+) -> Result<(), Box<dyn Error>> {
+    let viewport = egui::ViewportBuilder::default()
+        .with_title(config.title.clone())
+        .with_inner_size(config.initial_window_size);
+    let options = NativeOptions {
+        viewport,
+        renderer: eframe::Renderer::Wgpu,
+        ..NativeOptions::default()
+    };
+    eframe::run_native(
+        &config.title,
+        options,
+        Box::new(|cc| {
+            Ok(Box::new(ShellApp::new(
+                cc,
+                model,
+                config.close_after_frames,
+                config.state_path,
+            )))
+        }),
+    )?;
+    Ok(())
 }

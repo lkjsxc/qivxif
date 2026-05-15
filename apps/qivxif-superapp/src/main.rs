@@ -6,12 +6,12 @@ use qivxif_editor_buffer::{TextEdit, TextRange};
 use qivxif_explorer::ExplorerModel;
 use qivxif_persistence::{JsonStore, TomlStore};
 use qivxif_platform::StatePaths;
-use qivxif_shell::{ShellModel, run_native};
+use qivxif_shell::{NativeRunConfig, ShellModel, ShellSnapshot, run_native_with_model};
 use serde::{Deserialize, Serialize};
 use std::fs;
 
 #[derive(Parser)]
-#[command(name = "qivxif-superapp", about = "Rust-native tile workspace")]
+#[command(name = "qivxif-superapp", about = "Rust-native tile super app")]
 struct Cli {
     #[command(subcommand)]
     command: Option<Command>,
@@ -22,20 +22,37 @@ struct Cli {
 enum Command {
     Run,
     Smoke,
+    SmokeNative,
 }
 
 fn main() -> Result<()> {
-    match Cli::parse().command.unwrap_or(Command::Smoke) {
+    match Cli::parse().command.unwrap_or(Command::Run) {
         Command::Run => run_app(),
         Command::Smoke => smoke(),
+        Command::SmokeNative => smoke_native(),
     }
 }
 
 fn run_app() -> Result<()> {
     let paths = StatePaths::resolve()?;
+    let shell = load_shell(&paths);
+    ShellSnapshot::from_shell(&shell).save(paths.workspace_json.clone())?;
+    let config = NativeRunConfig {
+        state_path: Some(paths.workspace_json),
+        ..NativeRunConfig::default()
+    };
+    run_native_with_model(shell, config)
+        .map_err(|error| anyhow::anyhow!("native window failed: {error}"))
+}
+
+fn smoke_native() -> Result<()> {
+    let paths = StatePaths::resolve()?;
     let shell = new_shell(&paths);
-    JsonStore::new(paths.workspace_json).save(&RunSnapshot::from_shell(&shell))?;
-    run_native().map_err(|error| anyhow::anyhow!("native window failed: {error}"))
+    let config = NativeRunConfig {
+        close_after_frames: Some(1),
+        ..NativeRunConfig::default()
+    };
+    run_native_with_model(shell, config).map_err(|error| anyhow::anyhow!("{error}"))
 }
 
 fn smoke() -> Result<()> {
@@ -64,12 +81,13 @@ fn smoke() -> Result<()> {
     shell.explorer = ExplorerModel::with_root(paths.root.clone());
     shell.explorer.refresh_root(0)?;
 
-    JsonStore::new(paths.workspace_json.clone()).save(&RunSnapshot::from_shell(&shell))?;
-    let saved: RunSnapshot = JsonStore::new(paths.workspace_json).load()?;
+    ShellSnapshot::from_shell(&shell).save(paths.workspace_json.clone())?;
+    let saved = ShellSnapshot::load(paths.workspace_json)?;
+    let summary = saved.summary();
     TomlStore::new(paths.settings_toml).save(&AppSettings::default())?;
     println!(
         "qivxif smoke ok panes={} buffers={} markdown={} explorer={}",
-        saved.panes, saved.buffers, saved.markdown_blocks, saved.explorer_entries
+        summary.panes, summary.buffers, summary.markdown_blocks, summary.explorer_entries
     );
     Ok(())
 }
@@ -79,26 +97,11 @@ fn new_shell(paths: &StatePaths) -> ShellModel {
     ShellModel::new(policy)
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct RunSnapshot {
-    panes: usize,
-    buffers: usize,
-    events: usize,
-    markdown_blocks: usize,
-    explorer_entries: usize,
-    browser_open: bool,
-}
-
-impl RunSnapshot {
-    fn from_shell(shell: &ShellModel) -> Self {
-        Self {
-            panes: shell.session.panes.len(),
-            buffers: shell.buffers.len(),
-            events: shell.events.len(),
-            markdown_blocks: shell.markdown.blocks.len(),
-            explorer_entries: shell.explorer.entries.len(),
-            browser_open: shell.browser_state.is_some(),
-        }
+fn load_shell(paths: &StatePaths) -> ShellModel {
+    let policy = BrowserPolicy::locked_down(paths.root.join("downloads"));
+    match JsonStore::new(paths.workspace_json.clone()).load::<ShellSnapshot>() {
+        Ok(snapshot) => snapshot.into_shell(policy),
+        Err(_) => ShellModel::new(policy),
     }
 }
 

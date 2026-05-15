@@ -46,6 +46,21 @@ pub fn tab_node(node: &mut TileNode, target: PaneId, pane: PaneId) -> bool {
     }
 }
 
+pub fn activate_node(node: &mut TileNode, target: PaneId) -> bool {
+    match node {
+        TileNode::Leaf { panes, active } => match panes.iter().position(|pane| *pane == target) {
+            Some(index) => {
+                *active = index;
+                true
+            }
+            None => false,
+        },
+        TileNode::Split { first, second, .. } => {
+            activate_node(first, target) || activate_node(second, target)
+        }
+    }
+}
+
 pub fn remove_pane(node: TileNode, pane: PaneId) -> (Option<TileNode>, bool) {
     match node {
         TileNode::Leaf { mut panes, active } => {

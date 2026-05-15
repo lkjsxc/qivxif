@@ -12,6 +12,19 @@ services:
       - cargo-registry:/usr/local/cargo/registry
       - target-cache:/target
 
+  superapp-native-smoke:
+    build:
+      context: .
+      dockerfile: Dockerfile.verify
+    entrypoint: ["timeout", "180s", "xvfb-run", "-a", "cargo", "run", "--locked", "-p", "qivxif-superapp", "--", "smoke-native"]
+    environment:
+      CARGO_TARGET_DIR: /target
+      QIVXIF_STATE_DIR: /tmp/qivxif-state
+    volumes:
+      - .:/workspace:ro
+      - cargo-registry:/usr/local/cargo/registry
+      - target-cache:/target
+
 volumes:
   cargo-registry:
   target-cache:
