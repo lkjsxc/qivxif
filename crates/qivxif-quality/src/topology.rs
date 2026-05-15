@@ -16,12 +16,25 @@ fn validate_dir(dir: &Path, failures: &mut Vec<String>) -> Result<(), QualityErr
         failures.push(format!("missing README.md: {}", dir.display()));
         return Ok(());
     }
-    let child_count = fs::read_dir(dir)?
-        .filter_map(Result::ok)
-        .filter(|entry| entry.file_name() != "README.md")
-        .count();
-    if child_count < 2 {
-        failures.push(format!("needs >=2 children: {}", dir.display()));
+    let mut child_dirs = 0;
+    let mut child_docs = 0;
+    for entry in fs::read_dir(dir)? {
+        let entry = entry?;
+        let path = entry.path();
+        if entry.file_name() == "README.md" {
+            continue;
+        }
+        if path.is_dir() {
+            child_dirs += 1;
+        } else if path.extension().and_then(|ext| ext.to_str()) == Some("md") {
+            child_docs += 1;
+        }
+    }
+    if child_dirs < 2 && child_docs < 2 {
+        failures.push(format!(
+            "needs >=2 child dirs or >=2 child docs: {}",
+            dir.display()
+        ));
     }
     validate_readme_index(dir, &readme, failures)
 }

@@ -1,9 +1,0 @@
-services:
-  windows-demo-bundle:
-    build:
-      context: .
-      dockerfile: docker/windows/demo-bundle.Dockerfile
-      target: artifact
-    user: "${QIVXIF_BUNDLE_UID:-0}:${QIVXIF_BUNDLE_GID:-0}"
-    volumes:
-      - ./dist/windows:/dist/windows

@@ -1,5 +1,0 @@
-bind_addr = "0.0.0.0:4443"
-data_dir = "/app/data"
-world_seed = 1001
-build_contract = "local"
-protocol_contract = "postcard-reliable-streams"

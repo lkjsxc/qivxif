@@ -1,22 +1,24 @@
 [workspace]
 members = [
-  "apps/qivxif-serverd",
-  "apps/qivxif-client-cli",
-  "apps/qivxif-client-desktop",
+  "apps/qivxif-superapp",
   "apps/qivxifctl",
-  "crates/qivxif-client-core",
-  "crates/qivxif-assets",
-  "crates/qivxif-core",
-  "crates/qivxif-input",
-  "crates/qivxif-protocol",
-  "crates/qivxif-render",
-  "crates/qivxif-net",
-  "crates/qivxif-ui",
-  "crates/qivxif-world",
-  "crates/qivxif-sim",
-  "crates/qivxif-storage",
+  "crates/qivxif-action",
+  "crates/qivxif-browser",
+  "crates/qivxif-editor-buffer",
+  "crates/qivxif-editor-view",
+  "crates/qivxif-explorer",
+  "crates/qivxif-markdown",
+  "crates/qivxif-persistence",
+  "crates/qivxif-platform",
   "crates/qivxif-quality",
-  "crates/qivxif-probe",
+  "crates/qivxif-shell",
+  "crates/qivxif-tiles",
+  "crates/qivxif-workspace",
+]
+default-members = [
+  "apps/qivxif-superapp",
+  "apps/qivxifctl",
+  "crates/qivxif-quality",
 ]
 resolver = "3"
 
@@ -28,14 +30,14 @@ authors = ["qivxif contributors"]
 
 [workspace.dependencies]
 anyhow = "1"
-bevy_ecs = "0.18"
 clap = { version = "4", features = ["derive"] }
-object_store = { version = "0.12", features = ["fs"] }
-postcard = { version = "1", features = ["use-std"] }
-quinn = "0.11"
-rcgen = "0.13"
-redb = "4"
-rustls = "0.23"
+cosmic-text = "0.19.0"
+egui = "0.33.3"
+egui-wgpu = { version = "0.33.3", features = ["winit"] }
+egui-winit = { version = "0.33.3", features = ["accesskit"] }
+egui_tiles = "0.14.1"
+pulldown-cmark = "0.13.3"
+ropey = "1.6.1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tempfile = "3"
@@ -44,19 +46,20 @@ tokio = { version = "1", features = ["full"] }
 toml = "0.8"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1.23.1", features = ["serde", "v4"] }
 wgpu = "29.0.1"
 winit = "0.30.13"
+wry = { version = "0.55.1", default-features = false, features = ["protocol"] }
 
-qivxif-core = { path = "crates/qivxif-core" }
-qivxif-client-core = { path = "crates/qivxif-client-core" }
-qivxif-assets = { path = "crates/qivxif-assets" }
-qivxif-protocol = { path = "crates/qivxif-protocol" }
-qivxif-input = { path = "crates/qivxif-input" }
-qivxif-render = { path = "crates/qivxif-render" }
-qivxif-net = { path = "crates/qivxif-net" }
-qivxif-ui = { path = "crates/qivxif-ui" }
-qivxif-world = { path = "crates/qivxif-world" }
-qivxif-sim = { path = "crates/qivxif-sim" }
-qivxif-storage = { path = "crates/qivxif-storage" }
+qivxif-action = { path = "crates/qivxif-action" }
+qivxif-browser = { path = "crates/qivxif-browser" }
+qivxif-editor-buffer = { path = "crates/qivxif-editor-buffer" }
+qivxif-editor-view = { path = "crates/qivxif-editor-view" }
+qivxif-explorer = { path = "crates/qivxif-explorer" }
+qivxif-markdown = { path = "crates/qivxif-markdown" }
+qivxif-persistence = { path = "crates/qivxif-persistence" }
+qivxif-platform = { path = "crates/qivxif-platform" }
 qivxif-quality = { path = "crates/qivxif-quality" }
-qivxif-probe = { path = "crates/qivxif-probe" }
+qivxif-shell = { path = "crates/qivxif-shell" }
+qivxif-tiles = { path = "crates/qivxif-tiles" }
+qivxif-workspace = { path = "crates/qivxif-workspace" }

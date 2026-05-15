@@ -10,7 +10,7 @@ Owner doc for root paths.
 | `apps/` | Runnable binaries. |
 | `crates/` | Reusable Rust crates. |
 | `scripts/` | Verification and packaging helpers. |
-| `config/` | Checked sample config. |
+| `docker-compose.yml` | Compose smoke services. |
 | `tmp/` | Research input, not canon. |
 
 ## Rule

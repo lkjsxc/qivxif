@@ -1,11 +1,10 @@
 [package]
-name = "qivxifctl"
+name = "qivxif-markdown"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
 
 [dependencies]
-anyhow = { workspace = true }
-clap = { workspace = true }
-qivxif-quality = { workspace = true }
+pulldown-cmark = { workspace = true }
+serde = { workspace = true }

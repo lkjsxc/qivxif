@@ -1,0 +1,19 @@
+[package]
+name = "qivxif-shell"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+qivxif-action = { workspace = true }
+qivxif-browser = { workspace = true }
+qivxif-editor-buffer = { workspace = true }
+qivxif-editor-view = { workspace = true }
+qivxif-explorer = { workspace = true }
+qivxif-markdown = { workspace = true }
+qivxif-tiles = { workspace = true }
+qivxif-workspace = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+winit = { workspace = true }

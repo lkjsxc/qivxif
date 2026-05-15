@@ -16,17 +16,7 @@ trap cleanup EXIT HUP INT TERM
 cleanup
 compose config --quiet
 compose run --rm --build -T verify
-compose up -d --build server
-compose run --rm -T smoke
-compose run --rm -T protocol-guards
-compose run --rm -T malformed-wire
-compose run --rm -T request-replay
-compose run --rm -T client-cli
-compose run --rm -T desktop-smoke
-compose run --rm --build -T desktop-e2e
-compose run --rm -T persist-place
-compose restart server
-compose run --rm -T persist-check
+compose run --rm --build -T superapp-smoke
 cleanup
 
 printf 'verify compose ... ok\n'

@@ -1,14 +1,17 @@
 services:
-  server:
+  superapp-smoke:
     build:
       context: .
-      dockerfile: Dockerfile
-    command: ["serve", "--config", "/app/config/server.toml"]
+      dockerfile: Dockerfile.verify
+    entrypoint: ["cargo", "run", "--locked", "-p", "qivxif-superapp", "--", "smoke"]
+    environment:
+      CARGO_TARGET_DIR: /target
+      QIVXIF_STATE_DIR: /tmp/qivxif-state
     volumes:
-      - ./config/verify/basic-server.toml:/app/config/server.toml:ro
-      - server-data:/app/data
-    ports:
-      - "4443:4443/udp"
+      - .:/workspace:ro
+      - cargo-registry:/usr/local/cargo/registry
+      - target-cache:/target
 
 volumes:
-  server-data:
+  cargo-registry:
+  target-cache:

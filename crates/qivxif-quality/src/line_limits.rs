@@ -94,7 +94,6 @@ fn check_root_support_files(limit: usize, report: &mut LineReport) -> Result<(),
         "Dockerfile.verify",
         "docker-compose.yml",
         "docker-compose.verify.yml",
-        "docker-compose.windows.yml",
         "rust-toolchain.toml",
     ] {
         let path = Path::new(name);
