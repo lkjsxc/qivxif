@@ -8,6 +8,17 @@ Owner doc for packaged desktop output.
 - macOS app bundle.
 - Linux portable archive.
 
+## Linux Command
+
+```bash
+./scripts/package-linux.sh
+```
+
+Output:
+
+- `dist/linux/qivxif-superapp-linux-x86_64/`
+- `dist/linux/qivxif-superapp-linux-x86_64.tar.gz`
+
 ## Rules
 
 - Packaging must not hide build failures.
