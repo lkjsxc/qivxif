@@ -1,0 +1,19 @@
+services:
+  package-windows:
+    build:
+      context: .
+      dockerfile: Dockerfile.package
+    working_dir: /workspace
+    environment:
+      CARGO_TARGET_DIR: /target
+    volumes:
+      - .:/workspace
+      - ./dist:/workspace/dist
+      - cargo-registry:/usr/local/cargo/registry
+      - cargo-git:/usr/local/cargo/git
+      - target-cache:/target
+
+volumes:
+  cargo-registry:
+  cargo-git:
+  target-cache:
