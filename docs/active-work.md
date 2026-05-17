@@ -4,20 +4,20 @@ Owner doc for the current implementation lane.
 
 ## Focus
 
-- Replace the retired voxel canon with the Rust-native tile super app canon.
-- Make the super app the default implemented path.
-- Keep the quality gate small, strict, and easy for agents to run.
+- Keep the Rust-native tile super app as the default implemented path.
+- Ship portable desktop artifacts before installer polish.
+- Keep Compose as the shared build and verification boundary.
 
 ## Near Work
 
-1. Land the documentation pivot.
-2. Update topology and wording checks to match the stricter docs tree.
-3. Add the super app entry crate and shell crates.
-4. Add tiles, command routing, editor buffer, and editor view.
-5. Add workspace state, persistence, explorer, Markdown preview, and browser policy.
+1. Add the portable Windows package lane.
+2. Verify Windows archive shape from Docker Compose.
+3. Keep Linux packaging intact.
+4. Add Windows launch smoke on a Windows runner.
+5. Continue state, tracing, and recovery alignment.
 
 ## Acceptance
 
 - Docs describe only the tile super app direction.
-- No game, server, terrain, protocol, or world behavior remains as canon.
+- Portable artifacts include the executable, license, and launch notes.
 - Compose remains the acceptance boundary.

@@ -19,6 +19,25 @@ Output:
 - `dist/linux/qivxif-superapp-linux-x86_64/`
 - `dist/linux/qivxif-superapp-linux-x86_64.tar.gz`
 
+## Windows Command
+
+```bash
+docker compose -f docker-compose.package.yml run --rm --build package-windows
+```
+
+Output:
+
+- `dist/windows/qivxif-superapp-windows-x86_64/`
+- `dist/windows/qivxif-superapp-windows-x86_64.zip`
+
+## Windows Contents
+
+- `qivxif-superapp.exe`
+- `run.bat`
+- `LICENSE`
+- `README.md`
+- Runtime DLLs required by the Windows GNU build.
+
 ## Rules
 
 - Packaging must not hide build failures.
