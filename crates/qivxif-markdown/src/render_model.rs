@@ -22,9 +22,15 @@ pub enum MarkdownBlock {
         code: String,
     },
     Rule,
+    ListItem {
+        text: String,
+        checked: Option<bool>,
+    },
+    TableRow(Vec<String>),
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MarkdownDocument {
     pub blocks: Vec<MarkdownBlock>,
+    pub source_revision: Option<u64>,
 }

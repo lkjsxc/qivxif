@@ -23,12 +23,20 @@ pub fn parse_markdown(source: &str) -> MarkdownDocument {
                     code: String::new(),
                 };
             }
+            Event::Start(Tag::Item) => {
+                current = CurrentBlock::ListItem {
+                    text: String::new(),
+                    checked: None,
+                };
+            }
+            Event::TaskListMarker(checked) => current.set_checked(checked),
             Event::Text(text) | Event::Code(text) => current.push_text(&text),
             Event::SoftBreak | Event::HardBreak => current.push_text("\n"),
             Event::Rule => blocks.push(MarkdownBlock::Rule),
             Event::End(TagEnd::Heading(_))
             | Event::End(TagEnd::Paragraph)
-            | Event::End(TagEnd::CodeBlock) => {
+            | Event::End(TagEnd::CodeBlock)
+            | Event::End(TagEnd::Item) => {
                 if let Some(block) = current.take() {
                     blocks.push(block);
                 }
@@ -37,7 +45,10 @@ pub fn parse_markdown(source: &str) -> MarkdownDocument {
         }
     }
 
-    MarkdownDocument { blocks }
+    MarkdownDocument {
+        blocks,
+        source_revision: None,
+    }
 }
 
 enum CurrentBlock {
@@ -51,6 +62,10 @@ enum CurrentBlock {
         language: Option<String>,
         code: String,
     },
+    ListItem {
+        text: String,
+        checked: Option<bool>,
+    },
 }
 
 impl CurrentBlock {
@@ -58,8 +73,18 @@ impl CurrentBlock {
         match self {
             CurrentBlock::Heading { text: target, .. }
             | CurrentBlock::Paragraph(target)
-            | CurrentBlock::Code { code: target, .. } => target.push_str(text),
+            | CurrentBlock::Code { code: target, .. }
+            | CurrentBlock::ListItem { text: target, .. } => target.push_str(text),
             CurrentBlock::None => {}
+        }
+    }
+
+    fn set_checked(&mut self, checked: bool) {
+        if let CurrentBlock::ListItem {
+            checked: target, ..
+        } = self
+        {
+            *target = Some(checked);
         }
     }
 
@@ -70,6 +95,9 @@ impl CurrentBlock {
             CurrentBlock::Paragraph(text) => Some(MarkdownBlock::Paragraph(text)),
             CurrentBlock::Code { language, code } => {
                 Some(MarkdownBlock::CodeBlock { language, code })
+            }
+            CurrentBlock::ListItem { text, checked } => {
+                Some(MarkdownBlock::ListItem { text, checked })
             }
         }
     }

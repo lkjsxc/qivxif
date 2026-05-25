@@ -9,6 +9,9 @@ Owner doc for browser adapter internals.
 - The controller applies policy before selecting embedded, detached, or external routing.
 - Platform embedding is hidden behind adapter modules and never bypasses policy.
 - Fallback mode is a first-class controller state.
+- URL navigation normalizes missing schemes to `https://`.
+- Invalid URLs produce visible errors and do not mutate history.
+- Portable Windows executes `OpenExternalUrl` instead of embedding a webview.
 
 ## Security
 
@@ -20,4 +23,4 @@ Owner doc for browser adapter internals.
 
 ## Platform Risk
 
-Linux embedding may fail on some compositor or toolkit combinations. The product remains valid with detached or external fallback.
+Linux embedding may fail on some compositor or toolkit combinations. The product remains valid with detached or external fallback. Embedded webview support must not be claimed unless rendered content is verified.

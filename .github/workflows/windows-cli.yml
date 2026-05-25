@@ -1,0 +1,15 @@
+name: Windows CLI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  smoke:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Smoke
+        run: cargo run --locked -p qivxif-superapp -- smoke

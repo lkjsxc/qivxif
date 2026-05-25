@@ -100,8 +100,34 @@ fn write_string(path: &PathBuf, text: String) -> Result<(), PersistenceError> {
             source,
         })?;
     }
-    fs::write(path, text).map_err(|source| PersistenceError::Io {
+    let tmp = path.with_extension("tmp");
+    fs::write(&tmp, text).map_err(|source| PersistenceError::Io {
+        path: tmp.clone(),
+        source,
+    })?;
+    fs::rename(&tmp, path).map_err(|source| PersistenceError::Io {
         path: path.clone(),
         source,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Debug, PartialEq, Serialize, Deserialize)]
+    struct Settings {
+        name: String,
+    }
+
+    #[test]
+    fn toml_store_round_trips_readable_file() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.toml");
+        let store = TomlStore::new(path.clone());
+        store.save(&Settings { name: "q".into() }).unwrap();
+        assert!(std::fs::read_to_string(&path).unwrap().contains("name"));
+        assert_eq!(store.load::<Settings>().unwrap().name, "q");
+    }
 }

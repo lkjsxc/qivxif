@@ -57,9 +57,14 @@ State is stored in `.qivxif-state` under the current working directory unless
 EOF
 
 if command -v x86_64-w64-mingw32-objdump >/dev/null 2>&1; then
+  dll_list="$(mktemp)"
   x86_64-w64-mingw32-objdump -p "$binary" \
-    | awk -F': ' '/DLL Name:/ {print $2}' \
-    | while IFS= read -r dll; do
+    | awk -F': ' '/DLL Name:/ {print $2}' >"$dll_list"
+  if [ ! -s "$dll_list" ]; then
+    printf 'DLL discovery found no imports\n' >&2
+    exit 1
+  fi
+  while IFS= read -r dll; do
         case "$(printf '%s' "$dll" | tr '[:upper:]' '[:lower:]')" in
           api-ms-*.dll|ext-ms-*.dll)
             continue
@@ -92,13 +97,19 @@ if command -v x86_64-w64-mingw32-objdump >/dev/null 2>&1; then
           exit 1
         fi
         cp "$found" "$bundle/$dll"
-      done
+  done <"$dll_list"
+  rm -f "$dll_list"
+elif [ -f /.dockerenv ]; then
+  printf 'x86_64-w64-mingw32-objdump is required in Docker packaging\n' >&2
+  exit 1
 fi
 
 (
   cd "$artifact_root"
   zip -qr "$(basename "$zip_path")" "$(basename "$bundle")"
 )
+
+"$root/scripts/verify-package-windows.sh" "$bundle" "$zip_path"
 
 printf '%s\n' "$bundle"
 printf '%s\n' "$zip_path"

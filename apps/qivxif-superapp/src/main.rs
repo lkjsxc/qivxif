@@ -11,9 +11,10 @@ use qivxif_editor_buffer::{TextEdit, TextRange};
 use qivxif_explorer::ExplorerModel;
 use qivxif_persistence::{JsonStore, TomlStore};
 use qivxif_platform::StatePaths;
-use qivxif_shell::{NativeRunConfig, ShellModel, ShellSnapshot, run_native_with_model};
-use serde::{Deserialize, Serialize};
-use std::fs;
+use qivxif_shell::{
+    AppSettings, NativeRunConfig, ShellModel, ShellSnapshot, run_native_with_model,
+};
+use std::{env, fs, path::PathBuf};
 
 #[derive(Parser)]
 #[command(name = "qivxif-superapp", about = "Rust-native tile super app")]
@@ -25,22 +26,24 @@ struct Cli {
 #[derive(Subcommand)]
 #[command(rename_all = "kebab-case")]
 enum Command {
-    Run,
+    Run { path: Option<PathBuf> },
     Smoke,
     SmokeNative,
 }
 
 fn main() -> Result<()> {
-    match Cli::parse().command.unwrap_or(Command::Run) {
-        Command::Run => run_app(),
+    init_tracing();
+    match Cli::parse().command.unwrap_or(Command::Run { path: None }) {
+        Command::Run { path } => run_app(path),
         Command::Smoke => smoke(),
         Command::SmokeNative => smoke_native(),
     }
 }
 
-fn run_app() -> Result<()> {
+fn run_app(path: Option<PathBuf>) -> Result<()> {
     let paths = StatePaths::resolve()?;
-    let shell = load_shell(&paths);
+    let mut shell = load_shell(&paths);
+    apply_start_path(&mut shell, path)?;
     ShellSnapshot::from_shell(&shell).save(paths.workspace_json.clone())?;
     let config = NativeRunConfig {
         state_path: Some(paths.workspace_json),
@@ -61,7 +64,7 @@ fn smoke_native() -> Result<()> {
 }
 
 fn smoke() -> Result<()> {
-    let paths = StatePaths::resolve()?;
+    let paths = smoke_paths()?;
     fs::create_dir_all(&paths.root)?;
     let sample = paths.root.join("sample.md");
     fs::write(&sample, "# qivxif\n\nsource")?;
@@ -87,12 +90,17 @@ fn smoke() -> Result<()> {
     shell.explorer.refresh_root(0)?;
 
     ShellSnapshot::from_shell(&shell).save(paths.workspace_json.clone())?;
-    let saved = ShellSnapshot::load(paths.workspace_json)?;
+    let saved = ShellSnapshot::load(paths.workspace_json.clone())?;
     let summary = saved.summary();
-    TomlStore::new(paths.settings_toml).save(&AppSettings::default())?;
+    TomlStore::new(paths.settings_toml.clone()).save(&AppSettings::default())?;
     println!(
-        "qivxif smoke ok panes={} buffers={} markdown={} explorer={}",
-        summary.panes, summary.buffers, summary.markdown_blocks, summary.explorer_entries
+        "qivxif smoke ok panes={} buffers={} markdown={} explorer={} state={} settings={}",
+        summary.panes,
+        summary.buffers,
+        summary.markdown_blocks,
+        summary.explorer_entries,
+        paths.workspace_json.display(),
+        paths.settings_toml.display()
     );
     Ok(())
 }
@@ -102,25 +110,46 @@ fn new_shell(paths: &StatePaths) -> ShellModel {
     ShellModel::new(policy)
 }
 
+fn smoke_paths() -> Result<StatePaths> {
+    if env::var_os("QIVXIF_STATE_DIR").is_some() {
+        return Ok(StatePaths::resolve()?);
+    }
+    let root = env::temp_dir().join("qivxif-smoke-state");
+    Ok(StatePaths {
+        settings_toml: root.join("settings.toml"),
+        workspace_json: root.join("workspace.json"),
+        recovery_dir: root.join("recovery"),
+        root,
+    })
+}
+
 fn load_shell(paths: &StatePaths) -> ShellModel {
     let policy = BrowserPolicy::locked_down(paths.root.join("downloads"));
-    match JsonStore::new(paths.workspace_json.clone()).load::<ShellSnapshot>() {
+    let mut shell = match JsonStore::new(paths.workspace_json.clone()).load::<ShellSnapshot>() {
         Ok(snapshot) => snapshot.into_shell(policy),
         Err(_) => ShellModel::new(policy),
+    };
+    if let Ok(settings) = TomlStore::new(paths.settings_toml.clone()).load::<AppSettings>() {
+        shell.session.settings = settings;
     }
+    shell
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct AppSettings {
-    theme: String,
-    font_size: u16,
+fn apply_start_path(shell: &mut ShellModel, path: Option<PathBuf>) -> Result<()> {
+    let Some(path) = path else {
+        return Ok(());
+    };
+    if path.is_dir() {
+        shell.explorer = ExplorerModel::with_root(path);
+        shell.explorer.refresh_root(0)?;
+    } else {
+        shell.open_file(path)?;
+    }
+    Ok(())
 }
 
-impl Default for AppSettings {
-    fn default() -> Self {
-        Self {
-            theme: "dark".to_owned(),
-            font_size: 14,
-        }
-    }
+fn init_tracing() {
+    let _ = tracing_subscriber::fmt()
+        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .try_init();
 }

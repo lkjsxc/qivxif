@@ -37,6 +37,16 @@ Output:
 - `LICENSE`
 - `README.md`
 - Runtime DLLs required by the Windows GNU build.
+- Browser fallback opens external URLs in the system browser.
+- Embedded webview support is not claimed for portable Windows unless rendered content is verified.
+
+## Windows Acceptance
+
+- `scripts/verify-package-windows.sh` validates the bundle directory and zip.
+- Docker packaging fails when DLL import discovery cannot run or returns no imports.
+- Copied runtime DLL count may be zero when all imports are Windows system DLLs.
+- Windows CI runs `qivxif-superapp.exe smoke`.
+- Native GUI launch is a manual Windows check unless the runner has a stable display path.
 
 ## Rules
 

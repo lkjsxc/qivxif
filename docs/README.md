@@ -17,6 +17,7 @@
 
 - [AGENTS.md](AGENTS.md): docs-specific agent rules.
 - [active-work.md](active-work.md): current work lanes.
+- [current-state.md](current-state.md): implementation snapshot matrix.
 - [architecture/README.md](architecture/README.md): system contracts.
 - [decisions/README.md](decisions/README.md): durable choices.
 - [getting-started/README.md](getting-started/README.md): agent orientation.
@@ -31,7 +32,7 @@
 ### architecture
 
 - [architecture/README.md](architecture/README.md)
-- [architecture/shell/README.md](architecture/shell/README.md), [architecture/shell/event-loop.md](architecture/shell/event-loop.md), [architecture/shell/rendering.md](architecture/shell/rendering.md), [architecture/shell/accessibility.md](architecture/shell/accessibility.md), [architecture/shell/command-routing.md](architecture/shell/command-routing.md)
+- [architecture/shell/README.md](architecture/shell/README.md), [architecture/shell/event-loop.md](architecture/shell/event-loop.md), [architecture/shell/rendering.md](architecture/shell/rendering.md), [architecture/shell/accessibility.md](architecture/shell/accessibility.md), [architecture/shell/command-routing.md](architecture/shell/command-routing.md), [architecture/shell/state-transitions.md](architecture/shell/state-transitions.md)
 - [architecture/editor/README.md](architecture/editor/README.md), [architecture/editor/buffer-core.md](architecture/editor/buffer-core.md), [architecture/editor/view-rendering.md](architecture/editor/view-rendering.md), [architecture/editor/recovery.md](architecture/editor/recovery.md)
 - [architecture/panes/README.md](architecture/panes/README.md), [architecture/panes/pane-host.md](architecture/panes/pane-host.md), [architecture/panes/explorer.md](architecture/panes/explorer.md), [architecture/panes/markdown.md](architecture/panes/markdown.md), [architecture/panes/browser.md](architecture/panes/browser.md)
 - [architecture/workspace/README.md](architecture/workspace/README.md), [architecture/workspace/layout-state.md](architecture/workspace/layout-state.md), [architecture/workspace/session-state.md](architecture/workspace/session-state.md), [architecture/workspace/settings-state.md](architecture/workspace/settings-state.md)
@@ -40,8 +41,8 @@
 ### product
 
 - [product/README.md](product/README.md)
-- [product/editor/README.md](product/editor/README.md), [product/editor/buffers.md](product/editor/buffers.md), [product/editor/cursor-selection.md](product/editor/cursor-selection.md), [product/editor/undo-redo.md](product/editor/undo-redo.md), [product/editor/file-io.md](product/editor/file-io.md)
-- [product/workspace/README.md](product/workspace/README.md), [product/workspace/tile-layout.md](product/workspace/tile-layout.md), [product/workspace/commands.md](product/workspace/commands.md), [product/workspace/sessions.md](product/workspace/sessions.md), [product/workspace/focus-shortcuts.md](product/workspace/focus-shortcuts.md)
+- [product/editor/README.md](product/editor/README.md), [product/editor/buffers.md](product/editor/buffers.md), [product/editor/cursor-selection.md](product/editor/cursor-selection.md), [product/editor/undo-redo.md](product/editor/undo-redo.md), [product/editor/file-io.md](product/editor/file-io.md), [product/editor/editing-contract.md](product/editor/editing-contract.md)
+- [product/workspace/README.md](product/workspace/README.md), [product/workspace/tile-layout.md](product/workspace/tile-layout.md), [product/workspace/commands.md](product/workspace/commands.md), [product/workspace/sessions.md](product/workspace/sessions.md), [product/workspace/focus-shortcuts.md](product/workspace/focus-shortcuts.md), [product/workspace/visual-style.md](product/workspace/visual-style.md)
 - [product/panes/README.md](product/panes/README.md), [product/panes/explorer.md](product/panes/explorer.md), [product/panes/markdown-preview.md](product/panes/markdown-preview.md), [product/panes/browser.md](product/panes/browser.md), [product/panes/settings.md](product/panes/settings.md)
 
 ### operations
@@ -61,6 +62,7 @@
 
 ### decisions, research, vision, getting-started
 
+- [current-state.md](current-state.md)
 - [decisions/README.md](decisions/README.md), [decisions/accepted.md](decisions/accepted.md), [decisions/rejected.md](decisions/rejected.md), [decisions/open-questions.md](decisions/open-questions.md)
 - [research/README.md](research/README.md), [research/report-synthesis.md](research/report-synthesis.md), [research/desktop-stack.md](research/desktop-stack.md), [research/editor-stack.md](research/editor-stack.md), [research/browser-stack.md](research/browser-stack.md), [research/quality-stack.md](research/quality-stack.md)
 - [vision/README.md](vision/README.md), [vision/purpose.md](vision/purpose.md), [vision/principles.md](vision/principles.md), [vision/product-shape.md](vision/product-shape.md), [vision/llm-authoring.md](vision/llm-authoring.md)

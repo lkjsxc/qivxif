@@ -1,3 +1,4 @@
+use crate::AppSettings;
 use qivxif_editor_buffer::BufferId;
 use qivxif_tiles::{PaneId, PaneKind, SplitAxis, TileLayout};
 use serde::{Deserialize, Serialize};
@@ -34,6 +35,7 @@ pub struct WorkspaceSession {
     pub layout: TileLayout,
     pub buffers: Vec<BufferState>,
     pub focused_pane: PaneId,
+    pub settings: AppSettings,
 }
 
 impl WorkspaceSession {
@@ -46,6 +48,7 @@ impl WorkspaceSession {
             layout: TileLayout::single(focused_pane),
             buffers: vec![buffer],
             focused_pane,
+            settings: AppSettings::default(),
         }
     }
 
@@ -97,6 +100,15 @@ impl WorkspaceSession {
         self.focused_pane = self.layout.focused;
     }
 
+    pub fn tab_focused(&mut self, pane: PaneId) {
+        self.layout.tab_focused(pane);
+        self.focused_pane = self.layout.focused;
+    }
+
+    pub fn toggle_maximize(&mut self) {
+        self.layout.toggle_maximize();
+    }
+
     pub fn focus(&mut self, pane: PaneId) -> bool {
         let changed = self.layout.focus(pane);
         if changed {
@@ -131,51 +143,28 @@ impl WorkspaceSession {
         self.panes.iter().find(|pane| pane.id == id)
     }
 
+    pub fn reserve_restored_ids(&self) {
+        let max_pane = self
+            .panes
+            .iter()
+            .map(|pane| pane.id.raw())
+            .max()
+            .unwrap_or(0);
+        let max_buffer = self
+            .buffers
+            .iter()
+            .map(|buffer| buffer.id.raw())
+            .max()
+            .unwrap_or(0);
+        PaneId::reserve_next_after(max_pane);
+        BufferId::reserve_next_after(max_buffer);
+    }
+
     fn add_bound_pane(&mut self, pane: PaneState) -> PaneId {
         let id = pane.id;
         self.panes.push(pane);
         self.focused_pane = id;
         id
-    }
-}
-
-impl BufferState {
-    fn scratch(label: impl Into<String>) -> Self {
-        Self {
-            id: BufferId::fresh(),
-            path: None,
-            label: label.into(),
-            dirty: false,
-        }
-    }
-
-    fn file(path: PathBuf) -> Self {
-        let label = path
-            .file_name()
-            .and_then(|name| name.to_str())
-            .unwrap_or("untitled")
-            .to_owned();
-        Self {
-            id: BufferId::fresh(),
-            path: Some(path),
-            label,
-            dirty: false,
-        }
-    }
-}
-
-impl PaneState {
-    fn editor(buffer_id: BufferId, title: impl Into<String>) -> Self {
-        Self::new(PaneKind::Editor, title, PaneBinding::Editor { buffer_id })
-    }
-
-    fn new(kind: PaneKind, title: impl Into<String>, binding: PaneBinding) -> Self {
-        Self {
-            id: PaneId::fresh(),
-            kind,
-            title: title.into(),
-            binding,
-        }
     }
 }
 

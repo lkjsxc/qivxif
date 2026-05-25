@@ -19,11 +19,21 @@ pub struct ExplorerEntry {
     pub is_dir: bool,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ExplorerScanResult {
+    pub root: PathBuf,
+    pub entries: Vec<ExplorerEntry>,
+    pub error: Option<String>,
+}
+
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ExplorerModel {
     pub roots: Vec<PathBuf>,
     pub entries: Vec<ExplorerEntry>,
     pub show_hidden: bool,
+    pub expanded_dirs: Vec<PathBuf>,
+    pub selected_path: Option<PathBuf>,
+    pub error: Option<String>,
 }
 
 impl ExplorerModel {
@@ -32,6 +42,9 @@ impl ExplorerModel {
             roots: vec![root],
             entries: Vec::new(),
             show_hidden: false,
+            expanded_dirs: Vec::new(),
+            selected_path: None,
+            error: None,
         }
     }
 
@@ -60,9 +73,43 @@ impl ExplorerModel {
                 name,
             });
         }
-        entries.sort_by(|a, b| a.name.cmp(&b.name));
-        self.entries = entries;
+        self.apply_scan(ExplorerScanResult {
+            root,
+            entries,
+            error: None,
+        });
         Ok(())
+    }
+
+    pub fn apply_scan(&mut self, result: ExplorerScanResult) {
+        if !self.roots.contains(&result.root) {
+            self.roots.push(result.root);
+        }
+        let mut entries: Vec<_> = result
+            .entries
+            .into_iter()
+            .filter(|entry| self.show_hidden || !entry.name.starts_with('.'))
+            .collect();
+        entries.sort_by(|a, b| {
+            b.is_dir
+                .cmp(&a.is_dir)
+                .then_with(|| a.name.to_lowercase().cmp(&b.name.to_lowercase()))
+        });
+        self.entries = entries;
+        self.error = result.error;
+    }
+
+    pub fn select(&mut self, path: PathBuf) {
+        self.selected_path = Some(path);
+    }
+
+    pub fn toggle_expanded(&mut self, path: PathBuf) {
+        match self.expanded_dirs.iter().position(|item| item == &path) {
+            Some(index) => {
+                self.expanded_dirs.remove(index);
+            }
+            None => self.expanded_dirs.push(path),
+        }
     }
 }
 
@@ -79,5 +126,28 @@ mod tests {
         model.refresh_root(0).unwrap();
         assert_eq!(model.entries.len(), 1);
         assert_eq!(model.entries[0].name, "b.txt");
+    }
+
+    #[test]
+    fn scan_applies_directory_first_sort() {
+        let root = PathBuf::from("/tmp/root");
+        let mut model = ExplorerModel::with_root(root.clone());
+        model.apply_scan(ExplorerScanResult {
+            root,
+            error: None,
+            entries: vec![
+                ExplorerEntry {
+                    path: "z.txt".into(),
+                    name: "z.txt".into(),
+                    is_dir: false,
+                },
+                ExplorerEntry {
+                    path: "a".into(),
+                    name: "a".into(),
+                    is_dir: true,
+                },
+            ],
+        });
+        assert!(model.entries[0].is_dir);
     }
 }

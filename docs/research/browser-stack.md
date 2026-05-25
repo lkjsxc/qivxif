@@ -8,7 +8,8 @@ Owner doc for browser stack findings.
 - Browser controller trait for shell integration.
 - Policy layer before embedding for permissions, downloads, and external links.
 - Detached or external fallback for weak embed paths.
+- External browser fallback is the portable Windows baseline.
 
 ## Risk
 
-Linux webview composition can vary by toolkit and compositor. The adapter boundary keeps that risk isolated.
+Linux webview composition can vary by toolkit and compositor. The adapter boundary keeps that risk isolated. Embedded webview claims require verified rendered content, not only a linked dependency.

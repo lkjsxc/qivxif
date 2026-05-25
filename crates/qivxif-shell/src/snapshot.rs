@@ -1,6 +1,6 @@
-use crate::{ShellEvent, ShellModel};
+use crate::{EditorHistory, ShellEvent, ShellModel};
 use qivxif_browser::{BrowserPolicy, BrowserState};
-use qivxif_editor_buffer::{BufferId, TextBuffer};
+use qivxif_editor_buffer::{BufferId, TextBuffer, UndoHistory};
 use qivxif_editor_view::EditorView;
 use qivxif_explorer::ExplorerModel;
 use qivxif_markdown::MarkdownDocument;
@@ -61,14 +61,24 @@ impl ShellSnapshot {
     }
 
     pub fn into_shell(self, policy: BrowserPolicy) -> ShellModel {
+        self.session.reserve_restored_ids();
+        let buffers: Vec<_> = self
+            .buffers
+            .into_iter()
+            .map(|buffer| TextBuffer::with_id(buffer.id, buffer.text))
+            .collect();
+        let histories = buffers
+            .iter()
+            .map(|buffer| EditorHistory {
+                buffer_id: buffer.id(),
+                history: UndoHistory::default(),
+            })
+            .collect();
         ShellModel {
             editor_views: editor_views(&self.session),
             session: self.session,
-            buffers: self
-                .buffers
-                .into_iter()
-                .map(|buffer| TextBuffer::with_id(buffer.id, buffer.text))
-                .collect(),
+            buffers,
+            histories,
             explorer: self.explorer,
             browser_policy: policy,
             browser_state: self.browser_state,

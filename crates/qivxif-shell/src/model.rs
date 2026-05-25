@@ -1,24 +1,32 @@
-use qivxif_action::{AppCommand, CommandEnvelope, SplitDirection};
+use crate::reducer::reduce_shell;
+use qivxif_action::{CommandEnvelope, PanePlacement, SplitDirection};
 use qivxif_browser::{BrowserPolicy, BrowserState};
-use qivxif_editor_buffer::TextBuffer;
+use qivxif_editor_buffer::{BufferId, TextBuffer, UndoHistory};
 use qivxif_editor_view::EditorView;
 use qivxif_explorer::ExplorerModel;
 use qivxif_markdown::{MarkdownDocument, parse_markdown};
 use qivxif_tiles::SplitAxis;
-use qivxif_workspace::WorkspaceSession;
+use qivxif_workspace::{PaneState, WorkspaceSession};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ShellModel {
     pub session: WorkspaceSession,
     pub buffers: Vec<TextBuffer>,
+    pub histories: Vec<EditorHistory>,
     pub editor_views: Vec<EditorView>,
     pub explorer: ExplorerModel,
     pub browser_policy: BrowserPolicy,
     pub browser_state: Option<BrowserState>,
     pub markdown: MarkdownDocument,
     pub events: Vec<ShellEvent>,
+}
+
+#[derive(Debug, Clone)]
+pub struct EditorHistory {
+    pub buffer_id: BufferId,
+    pub history: UndoHistory,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -33,11 +41,15 @@ pub enum ShellEvent {
 
 impl ShellModel {
     pub fn new(browser_policy: BrowserPolicy) -> Self {
-        let session = WorkspaceSession::new_editor("scratch");
+        let session = WorkspaceSession::default_workspace(None);
         let buffer_id = session.buffers[0].id;
         Self {
             session,
             buffers: vec![TextBuffer::with_id(buffer_id, "")],
+            histories: vec![EditorHistory {
+                buffer_id,
+                history: UndoHistory::default(),
+            }],
             editor_views: vec![EditorView::new(buffer_id)],
             explorer: ExplorerModel::default(),
             browser_policy,
@@ -48,43 +60,11 @@ impl ShellModel {
     }
 
     pub fn dispatch(&mut self, envelope: CommandEnvelope) {
-        match envelope.command {
-            AppCommand::NewScratchBuffer => {
-                self.new_scratch("scratch");
-            }
-            AppCommand::OpenPath(path) => {
-                if let Err(error) = self.open_file(path) {
-                    self.events.push(ShellEvent::Error(error.to_string()));
-                }
-            }
-            AppCommand::SaveFocused => match self.save_focused() {
-                Ok(()) => self.events.push(ShellEvent::SavedFocused),
-                Err(error) => self.events.push(ShellEvent::Error(error.to_string())),
-            },
-            AppCommand::CloseFocusedPane => {
-                self.session.close(self.session.focused_pane);
-                self.events.push(ShellEvent::PaneChanged);
-            }
-            AppCommand::SplitFocused(direction) => self.split_focused(direction),
-            AppCommand::FocusNextPane => self.focus_next(),
-            AppCommand::ToggleExplorer => {
-                let root = self.explorer.roots.first().cloned();
-                let pane = self.session.add_explorer(root);
-                self.session.split_focused(pane, SplitAxis::Vertical, 0.35);
-                self.events.push(ShellEvent::PaneChanged);
-            }
-            AppCommand::ToggleMarkdownPreview => {
-                let source = self.session.focused_editor_buffer();
-                let pane = self.session.add_markdown(source);
-                self.session.split_focused(pane, SplitAxis::Vertical, 0.5);
-                self.events.push(ShellEvent::PaneChanged);
-            }
-            AppCommand::OpenBrowser(url) => {
-                self.browser_state = Some(BrowserState::new(url.clone()));
-                let pane = self.session.add_browser(1);
-                self.session.split_focused(pane, SplitAxis::Vertical, 0.5);
-                self.events.push(ShellEvent::BrowserOpened(url));
-            }
+        let transition = reduce_shell(self, envelope);
+        *self = transition.state;
+        self.events.extend(transition.events);
+        for effect in transition.effects {
+            self.execute_effect(effect);
         }
     }
 
@@ -102,13 +82,17 @@ impl ShellModel {
             state.label = label.clone();
         }
         self.buffers.push(TextBuffer::with_id(buffer, ""));
+        self.histories.push(EditorHistory {
+            buffer_id: buffer,
+            history: UndoHistory::default(),
+        });
         self.editor_views.push(EditorView::new(buffer));
         let pane = self.session.add_editor(buffer, label);
         self.session.split_focused(pane, SplitAxis::Vertical, 0.5);
         self.events.push(ShellEvent::PaneChanged);
     }
 
-    fn split_focused(&mut self, direction: SplitDirection) {
+    pub(crate) fn split_focused(&mut self, direction: SplitDirection) {
         let Some(buffer_id) = self.session.focused_editor_buffer() else {
             return;
         };
@@ -121,7 +105,7 @@ impl ShellModel {
         self.events.push(ShellEvent::PaneChanged);
     }
 
-    fn focus_next(&mut self) {
+    pub(crate) fn focus_next(&mut self) {
         let Some(index) = self
             .session
             .panes
@@ -135,12 +119,57 @@ impl ShellModel {
         self.session.focus(next_id);
         self.events.push(ShellEvent::PaneChanged);
     }
+
+    pub(crate) fn place_pane(&mut self, pane: PaneState, placement: PanePlacement) {
+        let id = pane.id;
+        self.session.panes.push(pane);
+        match placement {
+            PanePlacement::SplitRight => self.session.split_focused(id, SplitAxis::Vertical, 0.5),
+            PanePlacement::SplitDown => self.session.split_focused(id, SplitAxis::Horizontal, 0.5),
+            PanePlacement::TabFocused => self.session.tab_focused(id),
+        }
+        self.events.push(ShellEvent::PaneChanged);
+    }
+
+    pub(crate) fn undo_focused(&mut self) {
+        let Some(id) = self.session.focused_editor_buffer() else {
+            return;
+        };
+        let Some(buffer) = self.buffers.iter_mut().find(|buffer| buffer.id() == id) else {
+            return;
+        };
+        let Some(history) = self.histories.iter_mut().find(|item| item.buffer_id == id) else {
+            return;
+        };
+        if history.history.undo(buffer)
+            && let Some(state) = self.session.buffer_mut(id)
+        {
+            state.dirty = buffer.is_dirty();
+        }
+    }
+
+    pub(crate) fn redo_focused(&mut self) {
+        let Some(id) = self.session.focused_editor_buffer() else {
+            return;
+        };
+        let Some(buffer) = self.buffers.iter_mut().find(|buffer| buffer.id() == id) else {
+            return;
+        };
+        let Some(history) = self.histories.iter_mut().find(|item| item.buffer_id == id) else {
+            return;
+        };
+        if history.history.redo(buffer)
+            && let Some(state) = self.session.buffer_mut(id)
+        {
+            state.dirty = buffer.is_dirty();
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use qivxif_action::{CommandEnvelope, CommandSource};
+    use qivxif_action::{AppCommand, CommandEnvelope, CommandSource};
 
     #[test]
     fn commands_open_browser_and_render_markdown() {

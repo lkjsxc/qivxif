@@ -1,5 +1,5 @@
-use crate::{ShellEvent, ShellModel};
-use qivxif_editor_buffer::TextBuffer;
+use crate::{EditorHistory, ShellEvent, ShellModel};
+use qivxif_editor_buffer::{TextBuffer, UndoHistory};
 use qivxif_editor_view::EditorView;
 use qivxif_tiles::SplitAxis;
 use std::{fs, path::PathBuf};
@@ -25,6 +25,10 @@ impl ShellModel {
         })?;
         let id = self.session.add_file_buffer(path.clone());
         self.buffers.push(TextBuffer::with_id(id, text));
+        self.histories.push(EditorHistory {
+            buffer_id: id,
+            history: UndoHistory::default(),
+        });
         self.editor_views.push(EditorView::new(id));
         let pane = self.session.add_editor(id, label_for_path(&path));
         self.session.split_focused(pane, SplitAxis::Vertical, 0.5);

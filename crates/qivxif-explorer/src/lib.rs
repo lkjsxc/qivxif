@@ -1,3 +1,3 @@
 mod model;
 
-pub use model::{ExplorerEntry, ExplorerError, ExplorerModel};
+pub use model::{ExplorerEntry, ExplorerError, ExplorerModel, ExplorerScanResult};
