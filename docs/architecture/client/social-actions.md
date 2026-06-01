@@ -21,11 +21,21 @@ The entry stores:
 - route path.
 - dirty status.
 
-## Profile Inputs
+## Profile Context
 
-Follow, mute, and block forms accept a target profile node id. The current user's `profile_node_id` supplies the source profile and is never typed by the user.
+Follow, mute, and block commands use the current session user's `profile_node_id`
+as the source profile. The source profile is displayed for inspection and is
+never typed by the user.
 
-Unfollow, unmute, and unblock forms accept the edge id to tombstone.
+The normal Social pane lists target profile candidates discovered from local
+graph state. It does not expose a raw source profile field.
+
+Unfollow, unmute, and unblock commands are shown beside existing relationship
+edges. The user chooses a relationship row; the edge id is not typed into a
+form.
+
+If no target profiles or relationship edges are available, the pane shows the
+real disabled reason instead of fake sample actions.
 
 ## Local Projection
 

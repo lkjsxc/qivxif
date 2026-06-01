@@ -73,6 +73,10 @@ try {
 
   await context.setOffline(true);
   await openShellTab(page, "Social");
+  await waitForText(page, "Current profile:", browserEvents);
+  await waitForText(page, "No discovered profile targets.", browserEvents);
+  assert((await page.getByLabel("Target profile node").count()) === 0, "raw target profile input is visible");
+  assert((await page.getByLabel("Relationship edge").count()) === 0, "raw relationship edge input is visible");
   await page.getByLabel("Short post").fill("offline social post");
   await page.getByRole("button", { name: "Create short post" }).click();
   await waitForQueuedAtLeast(page, 1, browserEvents);

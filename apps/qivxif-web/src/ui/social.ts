@@ -2,46 +2,48 @@ export function renderSocialPane(state, actions) {
   const section = document.createElement("section");
   section.className = "social";
   section.append(subheading("Feed"));
+  section.append(profileContext(state));
   section.append(postForm(actions));
-  section.append(relationshipForm(actions));
-  section.append(clearRelationshipForm(actions));
-  section.append(edgeList(state));
+  section.append(profileTargets(state, actions));
+  section.append(relationshipEdges(state, actions));
   for (const item of state.feedItems ?? []) {
     section.append(feedRow(item.item ?? item));
   }
   return section;
 }
 
-function relationshipForm(actions) {
-  const form = document.createElement("form");
-  const label = document.createElement("label");
-  label.textContent = "Target profile node";
-  const input = document.createElement("input");
-  label.append(input);
-  form.append(
-    label,
-    command("Follow", () => actions.followProfile?.(input.value)),
-    command("Mute", () => actions.muteProfile?.(input.value)),
-    command("Block", () => actions.blockProfile?.(input.value)),
-  );
-  form.addEventListener("submit", (event) => event.preventDefault());
-  return form;
+function profileContext(state) {
+  const box = document.createElement("div");
+  box.className = "social-context";
+  box.append(text(`Current profile: ${state.auth?.user?.profile_node_id ?? "signed out"}`));
+  return box;
 }
 
-function clearRelationshipForm(actions) {
-  const form = document.createElement("form");
-  const label = document.createElement("label");
-  label.textContent = "Relationship edge";
-  const input = document.createElement("input");
-  label.append(input);
-  form.append(
-    label,
-    command("Unfollow", () => actions.clearSocialEdge?.(input.value, "social.unfollow")),
-    command("Unmute", () => actions.clearSocialEdge?.(input.value, "social.unmute")),
-    command("Unblock", () => actions.clearSocialEdge?.(input.value, "social.unblock")),
-  );
-  form.addEventListener("submit", (event) => event.preventDefault());
-  return form;
+function profileTargets(state, actions) {
+  const box = document.createElement("div");
+  box.className = "social-targets";
+  box.append(subheading("Profile targets"));
+  const targets = targetProfiles(state);
+  if (!state.auth?.user?.profile_node_id) {
+    box.append(text("Sign in with a profile to manage relationships."));
+    return box;
+  }
+  if (targets.length === 0) {
+    box.append(text("No discovered profile targets."));
+    return box;
+  }
+  for (const target of targets) {
+    const row = document.createElement("div");
+    row.className = "relationship-row";
+    row.append(
+      text(profileLabel(target)),
+      command("Follow", () => actions.followProfile?.(target.id)),
+      command("Mute", () => actions.muteProfile?.(target.id)),
+      command("Block", () => actions.blockProfile?.(target.id)),
+    );
+    box.append(row);
+  }
+  return box;
 }
 
 function postForm(actions) {
@@ -70,15 +72,55 @@ function feedRow(item) {
   return row;
 }
 
-function edgeList(state) {
+function relationshipEdges(state, actions) {
   const list = document.createElement("div");
   list.className = "social-edges";
-  for (const edge of state.edges ?? []) {
-    if (["follows", "mutes", "blocks"].includes(edge.kind)) {
-      list.append(text(`${edge.kind}: ${edge.id}${edge.dirty ? " (dirty)" : ""}`));
-    }
+  list.append(subheading("Relationship edges"));
+  const edges = activeSocialEdges(state);
+  if (edges.length === 0) {
+    list.append(text("No local relationship edges."));
+    return list;
+  }
+  for (const edge of edges) {
+    const row = document.createElement("div");
+    row.className = "relationship-row";
+    row.append(text(`${edge.kind}: ${edge.to_node}${edge.dirty ? " (dirty)" : ""}`));
+    row.append(command(clearLabel(edge.kind), () => actions.clearSocialEdge?.(edge.id, clearKind(edge.kind))));
+    list.append(row);
   }
   return list;
+}
+
+function targetProfiles(state) {
+  const current = state.auth?.user?.profile_node_id;
+  return (state.nodes ?? []).filter((node) => node.kind === "profile" && node.id !== current);
+}
+
+function activeSocialEdges(state) {
+  const current = state.auth?.user?.profile_node_id;
+  return (state.edges ?? []).filter((edge) => {
+    return edge.from_node === current && ["follows", "mutes", "blocks"].includes(edge.kind) && !edge.tombstone;
+  });
+}
+
+function clearKind(kind) {
+  return {
+    blocks: "social.unblock",
+    follows: "social.unfollow",
+    mutes: "social.unmute",
+  }[kind];
+}
+
+function clearLabel(kind) {
+  return {
+    blocks: "Unblock",
+    follows: "Unfollow",
+    mutes: "Unmute",
+  }[kind];
+}
+
+function profileLabel(node) {
+  return node.metadata_map?.display_name ?? node.metadata_map?.name ?? node.id;
 }
 
 function command(label, handler) {
