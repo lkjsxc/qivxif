@@ -100,3 +100,6 @@ fn op_id(op: &GraphOp) -> &OperationId {
         | GraphOp::TombstoneEdge { op_id, .. } => op_id,
     }
 }
+
+#[cfg(test)]
+mod tests;
