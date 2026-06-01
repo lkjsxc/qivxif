@@ -40,6 +40,14 @@ Effect adapters:
 - Register the service worker.
 - Load and save tab snapshots.
 
+## Browser Action Table
+
+`AppShellActor` bootstraps state and rendering. `AppActions` binds UI callbacks
+to actor messages, effect adapters, local persistence, and re-rendering.
+
+Render modules receive this action table. They do not import HTTP clients,
+IndexedDB stores, or durable event constructors.
+
 ## Authority
 
 Server reducers are the durable authority. Browser reducers are optimistic

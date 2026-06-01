@@ -8,6 +8,7 @@
 - Initialize IndexedDB.
 - Start sync actor.
 - Render sync status as a tab.
+- Install the app action table that connects UI commands to actors.
 
 ## Rule
 
@@ -22,7 +23,8 @@ The first visible surface is the app shell: one top header and a tile grid. Setu
 5. Open IndexedDB.
 6. Register `/service-worker.js`.
 7. Start sync actor when setup or login state allows it.
-8. Render sync status as a tab.
+8. Install keyboard shortcuts against the app action table.
+9. Render sync status as a tab.
 
 ## Offline Rule
 
