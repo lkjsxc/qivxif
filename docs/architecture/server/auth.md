@@ -22,6 +22,27 @@
 | `POST /api/auth/logout` | csrf token | deleted session and cleared cookie | `auth.session_missing`, `auth.csrf_missing` |
 | `GET /api/me` | session cookie | user summary, profile node id, roles | `auth.session_missing` |
 
+## Payloads
+
+`user summary` contains:
+
+- `user_id`
+- `actor_id`
+- `name`
+- `roles`
+- `profile_node_id`
+
+`POST /api/auth/login` returns:
+
+- `user`
+- `csrf_token`
+
+`POST /api/auth/logout` returns:
+
+- `logged_out`
+
+`profile_node_id` is null until a profile graph node is created for that user.
+
 ## Cookie Rules
 
 - Session cookies are `HttpOnly`.

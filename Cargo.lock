@@ -793,6 +793,7 @@ name = "qivxif-auth"
 version = "0.1.0"
 dependencies = [
  "argon2",
+ "blake3",
  "qivxif-core",
  "qivxif-graph",
  "rand",
@@ -856,9 +857,13 @@ dependencies = [
  "anyhow",
  "axum",
  "qivxif-api",
+ "qivxif-auth",
  "qivxif-core",
  "qivxif-store-redb",
+ "serde",
+ "serde_json",
  "tokio",
+ "tower",
  "tower-http",
  "tracing",
  "tracing-subscriber",

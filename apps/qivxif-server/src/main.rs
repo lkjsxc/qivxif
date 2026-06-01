@@ -1,11 +1,6 @@
-mod config;
-mod routes;
-mod state;
-
 use anyhow::Result;
-use config::ServerConfig;
+use qivxif_server::{config::ServerConfig, routes, state::AppState};
 use qivxif_store_redb::{StoreConfig, open_or_create};
-use state::AppState;
 use tokio::net::TcpListener;
 use tracing_subscriber::{EnvFilter, fmt};
 

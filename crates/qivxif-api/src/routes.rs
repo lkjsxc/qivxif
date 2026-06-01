@@ -1,5 +1,5 @@
 use crate::ServerCapabilities;
-use qivxif_core::UserId;
+use qivxif_core::{ActorId, NodeId, UserId};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -21,7 +21,26 @@ pub struct LoginRequest {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct MePayload {
+pub struct UserSummary {
     pub user_id: UserId,
+    pub actor_id: ActorId,
     pub name: String,
+    pub roles: Vec<String>,
+    pub profile_node_id: Option<NodeId>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct LoginPayload {
+    pub user: UserSummary,
+    pub csrf_token: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct LogoutPayload {
+    pub logged_out: bool,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct MePayload {
+    pub user: UserSummary,
 }

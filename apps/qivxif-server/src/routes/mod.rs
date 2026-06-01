@@ -1,6 +1,8 @@
+mod auth;
 mod health;
 mod server_info;
 mod static_files;
+mod support;
 
 use crate::state::AppState;
 use axum::Router;
@@ -8,6 +10,7 @@ use tower_http::trace::TraceLayer;
 
 pub fn router(state: AppState) -> Router {
     Router::new()
+        .merge(auth::routes())
         .merge(health::routes())
         .merge(server_info::routes())
         .fallback_service(static_files::service(&state.config.static_dir))
