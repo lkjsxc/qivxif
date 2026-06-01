@@ -67,6 +67,7 @@
 }
 
 .tile {
+  position: relative;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   min-width: 0;
@@ -75,6 +76,35 @@
   border: 1px solid var(--q-border);
   border-radius: 8px;
   background: var(--q-surface);
+}
+
+.tile[data-drop-zone] {
+  outline: 2px solid var(--q-accent);
+  outline-offset: -3px;
+}
+
+.tile[data-drop-zone]::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--q-accent) 14%, transparent);
+  content: "";
+}
+
+.tile[data-drop-zone="top"]::after {
+  inset: 0 0 70% 0;
+}
+
+.tile[data-drop-zone="bottom"]::after {
+  inset: 70% 0 0 0;
+}
+
+.tile[data-drop-zone="left"]::after {
+  inset: 0 70% 0 0;
+}
+
+.tile[data-drop-zone="right"]::after {
+  inset: 0 0 0 70%;
 }
 
 .tile-header {

@@ -15,6 +15,7 @@ import {
 import { loadLocalState, refreshCurrentNode } from "./state-loader.ts";
 import { flushQueue, refreshQueueState } from "./sync.ts";
 import { createTextNode, openNode, saveText, selectNode } from "./text-actions.ts";
+import { movePane } from "./tile-move-actions.ts";
 import {
   closePane,
   focusPane,
@@ -98,6 +99,7 @@ function actionsFor(root, store, state) {
     login: (name, password) => run(root, store, state, () => loginUser(store, state, name, password)),
     maximizePane: (paneId) => run(root, store, state, () => maximizePane(store, state, paneId)),
     moveBoardItem: () => run(root, store, state, () => moveBoardItem(store, state)),
+    movePane: (source, target, zone) => run(root, store, state, () => movePane(store, state, source, target, zone)),
     openNode: (nodeId) => run(root, store, state, () => openNode(store, state, nodeId)),
     openTab: (tabId, paneId) => openTab(root, store, state, tabId, paneId),
     publishBlogPost: (slug, summary) => run(root, store, state, () => publishBlogPost(store, state, slug, summary)),

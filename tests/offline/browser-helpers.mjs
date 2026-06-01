@@ -17,6 +17,30 @@ export async function waitForText(page, value, events = [], timeout = 5000) {
   }
 }
 
+export async function dragSecondTileTabToFirstCenter(page) {
+  await page.evaluate(() => {
+    const tiles = document.querySelectorAll("article.tile");
+    const sourceTab = tiles[1]?.querySelector('[role="tab"]');
+    const targetTile = tiles[0];
+    if (!sourceTab || !targetTile) {
+      throw new Error("drag test needs two tiles");
+    }
+    const dataTransfer = new DataTransfer();
+    sourceTab.dispatchEvent(new DragEvent("dragstart", { bubbles: true, dataTransfer }));
+    const box = targetTile.getBoundingClientRect();
+    const eventInit = {
+      bubbles: true,
+      cancelable: true,
+      clientX: box.left + box.width / 2,
+      clientY: box.top + box.height / 2,
+      dataTransfer,
+    };
+    targetTile.dispatchEvent(new DragEvent("dragover", eventInit));
+    targetTile.dispatchEvent(new DragEvent("drop", eventInit));
+  });
+  await page.waitForFunction(() => document.querySelectorAll("article.tile").length === 1);
+}
+
 export async function openShellTab(page, name) {
   const tile = page.locator("article.tile").first();
   await tile.waitFor();

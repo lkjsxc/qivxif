@@ -1,4 +1,5 @@
 import { actionButton } from "./dom.ts";
+import { markDraggableTab } from "./tab-drag.ts";
 
 export function renderTabRail(state, actions) {
   const rail = document.createElement("div");
@@ -21,6 +22,7 @@ export function renderStackTabRail(stack, actions) {
   stack.tabs.forEach((tab, index) => {
     const button = actionButton(tabLabel(tab), tabFocus(tab, actions), "tab");
     button.dataset.paneId = tab.pane_node_id;
+    markDraggableTab(button, tab.pane_node_id);
     button.setAttribute("role", "tab");
     button.setAttribute("aria-selected", String(index === stack.active));
     if (index === stack.active) {

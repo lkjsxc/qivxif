@@ -1,5 +1,5 @@
 import { createRequire } from "node:module";
-import { captureBrowserEvents, openServerNode, openShellTab, waitForText } from "./browser-helpers.mjs";
+import { captureBrowserEvents, dragSecondTileTabToFirstCenter, openServerNode, openShellTab, waitForText } from "./browser-helpers.mjs";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright-core");
@@ -32,6 +32,8 @@ try {
   await waitForText(page, "Queued: 2", browserEvents);
   await page.getByText("Sync: offline").first().waitFor();
   await page.getByRole("button", { name: "Split pane" }).first().click();
+  await waitForText(page, "Layout panes: 2", browserEvents);
+  await dragSecondTileTabToFirstCenter(page);
   await waitForText(page, "Layout panes: 2", browserEvents);
   await page.getByRole("button", { name: "Stack tab" }).first().click();
   await waitForText(page, "Layout panes: 3", browserEvents);

@@ -1,5 +1,6 @@
 import { activePaneId, visibleRoot } from "../domain/tile-tree.ts";
 import { actionButton, text } from "./dom.ts";
+import { installDropLayer } from "./drop-layer.ts";
 import { renderTabContent } from "./tab-content.ts";
 import { renderStackTabRail, tabsFor } from "./tab-rail.ts";
 
@@ -24,6 +25,7 @@ function renderTile(tile, state, actions) {
   if (activeTab?.pane_node_id) {
     article.dataset.paneId = activeTab.pane_node_id;
   }
+  installDropLayer(article, activeTab?.pane_node_id, actions);
   article.append(tileHeader(tile, state, actions, activeTab), tabBody(state, actions, activeTab));
   return article;
 }
