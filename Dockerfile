@@ -1,24 +1,28 @@
-FROM rust:1.91-slim
+FROM rust:1.91-slim AS build
 
 WORKDIR /workspace
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    pkg-config \
     ca-certificates \
-    libx11-dev \
-    libxi-dev \
-    libxcursor-dev \
-    libxrandr-dev \
-    libxinerama-dev \
-    libxkbcommon-dev \
-    libxkbcommon-x11-0 \
-    libwayland-dev \
-    libvulkan-dev \
-    mesa-vulkan-drivers \
-    libgl1-mesa-dri \
-    xvfb \
-    xauth \
+    pkg-config \
+    libssl-dev \
+    nodejs \
+    npm \
     && rm -rf /var/lib/apt/lists/*
-
 COPY . .
-RUN cargo build --locked --release -p qivxif-superapp
-ENTRYPOINT ["./target/release/qivxif-superapp"]
+RUN npm --prefix apps/qivxif-web run build
+RUN cargo build --locked --release -p qivxif-server
+
+FROM debian:bookworm-slim
+
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=build /workspace/target/release/qivxif-server /app/qivxif-server
+COPY --from=build /workspace/apps/qivxif-web/dist /app/static
+ENV QIVXIF_BIND=0.0.0.0:8080
+ENV QIVXIF_DATA_DIR=/data
+ENV QIVXIF_DATABASE_FILE=/data/qivxif.redb
+ENV QIVXIF_STATIC_DIR=/app/static
+EXPOSE 8080
+ENTRYPOINT ["/app/qivxif-server"]

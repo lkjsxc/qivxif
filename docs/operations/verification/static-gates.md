@@ -10,5 +10,5 @@
 - Docs topology.
 - Docs and source line limits.
 - Wording rules.
-- No retired native desktop canon.
-- No placeholder markers.
+- No retired GUI canon.
+- No non-real implementation markers.

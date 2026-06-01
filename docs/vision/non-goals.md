@@ -2,7 +2,7 @@
 
 ## Retired
 
-- Native desktop shell as the primary product.
+- Local GUI shell as the primary product.
 - File tree as the primary data structure.
 - Durable state hidden in opaque layout blobs.
 - Unreliable datagrams for durable writes.

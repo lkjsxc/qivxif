@@ -4,19 +4,10 @@ WORKDIR /workspace
 RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     ca-certificates \
-    libx11-dev \
-    libxi-dev \
-    libxcursor-dev \
-    libxrandr-dev \
-    libxinerama-dev \
-    libxkbcommon-dev \
-    libxkbcommon-x11-0 \
-    libwayland-dev \
-    libvulkan-dev \
-    mesa-vulkan-drivers \
-    libgl1-mesa-dri \
-    xvfb \
-    xauth \
+    curl \
+    libssl-dev \
+    nodejs \
+    npm \
     && rm -rf /var/lib/apt/lists/*
 RUN rustup component add rustfmt clippy
 RUN cargo install cargo-nextest --version 0.9.133 --locked

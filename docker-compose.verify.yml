@@ -10,3 +10,7 @@ services:
       - .:/workspace:ro
       - cargo-registry:/usr/local/cargo/registry
       - target-cache:/target
+
+volumes:
+  cargo-registry:
+  target-cache:

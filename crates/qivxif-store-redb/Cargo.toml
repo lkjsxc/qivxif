@@ -1,0 +1,16 @@
+[package]
+name = "qivxif-store-redb"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+bincode.workspace = true
+qivxif-auth.workspace = true
+qivxif-core.workspace = true
+qivxif-graph.workspace = true
+qivxif-history.workspace = true
+redb.workspace = true
+serde.workspace = true
+thiserror.workspace = true

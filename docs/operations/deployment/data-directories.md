@@ -7,5 +7,5 @@
 
 ## Tests
 
-- Tests use `tmp/` or container-local temporary directories.
+- Tests use `tmp/` or container-local scratch directories.
 - Test data is not durable canon.

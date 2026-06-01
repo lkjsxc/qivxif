@@ -14,7 +14,7 @@
 - Pure reducers own domain behavior.
 - Effectful code stays at boundaries.
 - The server core requires no external database.
-- Tests prove real behavior; mocks and placeholders do not count as progress.
+- Tests prove real behavior; fake stand-ins do not count as progress.
 
 ## Agent Readability
 

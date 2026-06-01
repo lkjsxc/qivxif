@@ -5,6 +5,6 @@
 - Update docs before implementation.
 - Keep files retrieval-friendly.
 - Prefer deletion and existing utilities before adding layers.
-- Avoid placeholders.
+- Avoid non-real implementation markers.
 - Tests must prove real behavior.
 - Use pure reducers for domain behavior.

@@ -25,6 +25,7 @@ run_stage() {
   exit "$status"
 }
 
+run_stage web-build npm --prefix apps/qivxif-web run build
 run_stage fmt cargo fmt -- --check
 run_stage clippy cargo clippy --locked --workspace --all-targets -- -D warnings
 run_stage test cargo nextest run --locked --workspace
@@ -33,5 +34,8 @@ run_stage build cargo build --locked --release --workspace
 run_stage docs-topology cargo run --locked --bin qivxifctl -- docs validate-topology
 run_stage line-limits cargo run --locked --bin qivxifctl -- quality check-lines
 run_stage wording cargo run --locked --bin qivxifctl -- quality check-wording
+run_stage retired-canon cargo run --locked --bin qivxifctl -- quality check-retired-canon
+run_stage implementation-markers cargo run --locked --bin qivxifctl -- quality check-placeholders
+run_stage workspace-match cargo run --locked --bin qivxifctl -- quality check-workspace
 
 printf 'verify pass\n'

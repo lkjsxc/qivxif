@@ -45,6 +45,9 @@ fn check_tree(
     }
     for entry in fs::read_dir(dir)? {
         let path = entry?.path();
+        if should_skip_dir(&path) {
+            continue;
+        }
         if path.is_dir() {
             check_tree(&path, limit, docs, report)?;
         } else if should_check(&path, docs) {
@@ -82,9 +85,29 @@ fn should_check(path: &Path, docs: bool) -> bool {
     }
     matches!(
         ext,
-        Some("rs") | Some("sh") | Some("toml") | Some("yml") | Some("yaml")
+        Some("rs")
+            | Some("sh")
+            | Some("toml")
+            | Some("yml")
+            | Some("yaml")
+            | Some("ts")
+            | Some("js")
+            | Some("mjs")
+            | Some("css")
+            | Some("html")
+            | Some("json")
     ) || path.file_name().and_then(|name| name.to_str()) == Some("Dockerfile")
         || ext == Some("Dockerfile")
+}
+
+fn should_skip_dir(path: &Path) -> bool {
+    if !path.is_dir() {
+        return false;
+    }
+    matches!(
+        path.file_name().and_then(|name| name.to_str()),
+        Some("target") | Some("dist") | Some("node_modules")
+    )
 }
 
 fn check_root_support_files(limit: usize, report: &mut LineReport) -> Result<(), QualityError> {

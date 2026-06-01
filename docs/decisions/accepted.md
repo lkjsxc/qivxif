@@ -7,7 +7,7 @@
 - The browser workspace is tiled and tabbed.
 - `kjxlkj` is the graph composition workspace.
 - The server supports multiple users in one instance.
-- No native desktop shell canon remains.
+- No retired local GUI shell canon remains.
 - No backward compatibility is preserved during the reset.
 
 ## Architecture

@@ -1,0 +1,17 @@
+[package]
+name = "qivxif-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+axum.workspace = true
+qivxif-api.workspace = true
+qivxif-core.workspace = true
+qivxif-store-redb.workspace = true
+tokio.workspace = true
+tower-http.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
