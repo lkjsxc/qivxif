@@ -2,6 +2,7 @@ use crate::OperationAcceptance;
 use crate::ServerCapabilities;
 use qivxif_core::{ActorId, EdgeId, MetadataMap, NodeId, OperationId, UserId, Visibility};
 use qivxif_graph::{EdgeKind, EdgeRecord, NodeKind, NodeProjection, NodeRecord};
+use qivxif_history::text::{TextDocState, TextOperation};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -89,4 +90,21 @@ pub struct EdgeCreatePayload {
 pub struct EdgeListPayload {
     pub outgoing: Vec<EdgeRecord>,
     pub incoming: Vec<EdgeRecord>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct TextOperationRequest {
+    pub actor_seq: u64,
+    pub operation: TextOperation,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct TextPayload {
+    pub state: TextDocState,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct TextOperationPayload {
+    pub state: TextDocState,
+    pub operation: OperationAcceptance,
 }

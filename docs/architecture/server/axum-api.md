@@ -21,7 +21,7 @@ Every `/api` response uses [../schema/api-envelope.md](../schema/api-envelope.md
 | `POST` | `/api/sync/push` | session | yes | operation batch | accepted and rejected operation results | appends accepted operations | queued while offline |
 | `GET` | `/api/sync/pull` | session | no | cursor, scope, limit query | operation batch and cursor | none | resumes after reconnect |
 | `GET` | `/api/text/{node_id}` | viewer | no | none | text document projection | none | IndexedDB may satisfy stale read |
-| `POST` | `/api/text/{node_id}/ops` | session | yes | text operation envelope | operation acceptance and text projection | appends text op | local op queues first |
+| `POST` | `/api/text/{node_id}/ops` | session | yes | text operation request | operation acceptance and text projection | appends text op | local op queues first |
 | `GET` | `/api/feed/home` | session | no | cursor and limit query | feed items | none | cached feed window may render |
 | `POST` | `/api/publish/{node_id}` | session | yes | publish request | publication state | appends publish op | queued pending server validation |
 | `POST` | `/api/unpublish/{node_id}` | session | yes | unpublish request | publication state | appends unpublish op | queued pending server validation |
@@ -61,6 +61,15 @@ The server supplies owner, actor, receive time, operation payload hash, and curr
 - `metadata_map`
 
 The server requires write access on `from_node` and read access on `to_node`. Repeating the same `op_id` returns the prior acceptance.
+
+## Text Operation Payloads
+
+`POST /api/text/{node_id}/ops` requires:
+
+- `actor_seq`
+- `operation`
+
+`operation` is the ordered character-id text operation from [../text/crdt.md](../text/crdt.md). The server wraps it in the durable operation envelope, stores the text projection, and returns the operation acceptance.
 
 ## Handler Rules
 
