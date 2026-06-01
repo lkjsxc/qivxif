@@ -4,7 +4,8 @@
 
 - Keyboard focus is always visible.
 - Tab traversal follows visible pane order.
-- Command palette opens from a stable shortcut.
+- Command palette opens from `Control+K` and `Meta+K`.
+- `Escape` closes the command palette.
 - Pane-level shortcuts stay scoped to the active pane.
 - Global shortcuts must not intercept text editing input.
 

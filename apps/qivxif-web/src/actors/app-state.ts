@@ -1,9 +1,11 @@
 export function initialState() {
   return {
     activeBoardId: "",
+    activePaneId: "",
     activeTabId: "home",
     auth: null,
     capabilities: [],
+    commandPaletteOpen: false,
     currentBlogPost: null,
     currentBlogPostId: "",
     currentNodeId: "",

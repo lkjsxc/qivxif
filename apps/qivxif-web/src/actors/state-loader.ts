@@ -1,4 +1,5 @@
 import { neighborhood, node, nodeHistory, text } from "../http/client.ts";
+import { activePaneId, containsPane } from "../domain/tile-tree.ts";
 
 export async function loadLocalState(store, state) {
   const auth = await store.get("sync_cursors", "auth");
@@ -20,6 +21,9 @@ export async function loadLocalState(store, state) {
   state.layout = layout?.layout ?? state.layout;
   state.layoutDirty = layout?.dirty ?? false;
   state.layoutNodeId = layout?.layout_node_id ?? state.layoutNodeId;
+  if (state.layout && !containsPane(state.layout.root, state.activePaneId)) {
+    state.activePaneId = activePaneId(state.layout.root);
+  }
   const textState = state.currentNodeId
     ? await store.get("text_snapshots", state.currentNodeId)
     : null;

@@ -22,7 +22,9 @@ try {
   const browserEvents = captureBrowserEvents(page);
   await loadShell(page);
   await login(page, browserEvents);
-  await openShellTab(page, "Settings");
+  await page.keyboard.press("Control+K");
+  await waitForText(page, "Command palette", browserEvents);
+  await page.getByRole("button", { name: "Open settings" }).click();
   await waitForText(page, "Account: admin", browserEvents);
 
   await context.setOffline(true);

@@ -12,7 +12,9 @@ import { edgeCreateEntry, nodeCreateEntry, tileLayoutSetEntry } from "./local-ev
 export async function focusPane(store, state, paneId) {
   requireAuth(state);
   const model = await ensureLayout(store, state);
-  await queueLayout(store, state, model.layout_node_id, focusPaneInLayout(model.layout, paneId));
+  const target = targetPane(model.layout.root, paneId);
+  state.activePaneId = target;
+  await queueLayout(store, state, model.layout_node_id, focusPaneInLayout(model.layout, target));
 }
 
 export async function splitPane(store, state, paneId) {
@@ -22,6 +24,7 @@ export async function splitPane(store, state, paneId) {
   const pane = await createPane(store, state, state.currentNodeId, "Split pane", "text_editor");
   const tab = tabFor(pane.node.id, state.currentNodeId, "Split pane", "text_editor");
   const next = splitPaneInLayout(model.layout, target, tab, "right");
+  state.activePaneId = pane.node.id;
   await queueLayout(store, state, model.layout_node_id, next);
 }
 
@@ -32,6 +35,7 @@ export async function stackTab(store, state, paneId) {
   const pane = await createPane(store, state, state.currentNodeId, "Stacked pane", "text_editor");
   const tab = tabFor(pane.node.id, state.currentNodeId, "Stacked pane", "text_editor");
   const next = stackTabInLayout(model.layout, target, tab);
+  state.activePaneId = pane.node.id;
   await queueLayout(store, state, model.layout_node_id, next);
 }
 
@@ -47,6 +51,7 @@ export async function openProductTab(store, state, paneId, tabId) {
   const pane = await createPane(store, state, spec.targetNodeId, spec.title, spec.paneKind);
   const tab = tabFor(pane.node.id, spec.targetNodeId, spec.title, spec.paneKind);
   const next = stackTabInLayout(model.layout, target, tab);
+  state.activePaneId = pane.node.id;
   state.tabChooserOpen = false;
   state.tabChooserPaneId = "";
   await queueLayout(store, state, model.layout_node_id, next);
@@ -60,6 +65,7 @@ export async function maximizePane(store, state, paneId) {
     model.layout.maximized_pane_id === target
       ? { ...model.layout, maximized_pane_id: null }
       : maximizePaneInLayout(model.layout, target);
+  state.activePaneId = target;
   await queueLayout(store, state, model.layout_node_id, next);
 }
 
@@ -68,6 +74,7 @@ export async function closePane(store, state, paneId) {
   const model = await ensureLayout(store, state);
   const target = targetPane(model.layout.root, paneId);
   const next = closePaneInLayout(model.layout, target);
+  state.activePaneId = target === state.activePaneId ? activePaneId(next.root) : state.activePaneId;
   await queueLayout(store, state, model.layout_node_id, next);
 }
 
@@ -95,6 +102,7 @@ export async function ensureLayout(store, state) {
   await store.put("tile_layout", record);
   state.layout = initial;
   state.layoutNodeId = layout.node.id;
+  state.activePaneId = pane.node.id;
   return record;
 }
 

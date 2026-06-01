@@ -4,6 +4,7 @@ import { renderShell } from "../ui/shell.ts";
 import { initialState } from "./app-state.ts";
 import { storeAuthPayload } from "./auth-state.ts";
 import { addCurrentNodeToBoard, createBoard, linkBoardNodes, moveBoardItem } from "./board-actions.ts";
+import { installKeyboardShortcuts } from "./keyboard-shortcuts.ts";
 import { withPaneContext } from "./pane-context.ts";
 import { createBlogDraft, publishBlogPost, unpublishBlogPost } from "./publish-actions.ts";
 import {
@@ -34,6 +35,7 @@ export async function startAppShell(root) {
   renderShell(root, state, {});
   await refreshSetupStatus(state);
   const store = await openLocalStore();
+  installKeyboardShortcuts(() => actionsFor(root, store, state), state);
   await loadLocalState(store, state);
   await refreshQueueState(store, state);
   selectInitialTab(state);
@@ -112,6 +114,7 @@ function actionsFor(root, store, state) {
     stackTab: (paneId, context) =>
       run(root, store, state, () => stackTab(store, withPaneContext(state, context), paneId)),
     sync: () => run(root, store, state, () => flushQueue(store, state)),
+    toggleCommandPalette: (open) => toggleCommandPalette(root, store, state, open),
     toggleTabChooser: (paneId) => toggleTabChooser(root, store, state, paneId),
     unpublishBlogPost: () => run(root, store, state, () => unpublishBlogPost(store, state)),
   };
@@ -178,5 +181,10 @@ function toggleTabChooser(root, store, state, paneId = "") {
   const samePane = state.tabChooserOpen && state.tabChooserPaneId === paneId;
   state.tabChooserOpen = !samePane;
   state.tabChooserPaneId = state.tabChooserOpen ? paneId : "";
+  renderShell(root, state, actionsFor(root, store, state));
+}
+
+function toggleCommandPalette(root, store, state, open) {
+  state.commandPaletteOpen = typeof open === "boolean" ? open : !state.commandPaletteOpen;
   renderShell(root, state, actionsFor(root, store, state));
 }

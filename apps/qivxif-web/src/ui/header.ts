@@ -30,7 +30,10 @@ function statusGroup(state) {
 function commandGroup(state, actions) {
   const group = document.createElement("div");
   group.className = "header-actions";
-  group.append(actionButton("New tab", () => actions.toggleTabChooser?.(), "header-button"));
+  group.append(
+    actionButton("Commands", () => actions.toggleCommandPalette?.(), "header-button"),
+    actionButton("New tab", () => actions.toggleTabChooser?.(), "header-button"),
+  );
   if (state.auth) {
     group.append(actionButton("Sync", () => actions.sync?.(), "header-button"));
   }

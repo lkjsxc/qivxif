@@ -22,11 +22,17 @@ The command palette exposes tile and graph actions without requiring hidden UI g
 - Commands declare required capability and offline behavior.
 - Commands that mutate durable state create events.
 - Unavailable commands explain the missing capability.
+- The palette opens from the header command button.
+- The palette opens with `Control+K` or `Meta+K`.
+- `Escape` closes the palette.
+- Palette commands route through the same app action boundary as visible pane
+  buttons.
+- Pane-sensitive commands use the active pane context.
 
-## Initial Command Routing
+## Current Command Routing
 
-The first browser shell may expose command buttons instead of a palette surface.
-Those buttons still use the command contracts:
+The browser shell exposes both command buttons and a palette surface. Both use
+the same command contracts:
 
 | Command | Durable events | Offline |
 | --- | --- | --- |
