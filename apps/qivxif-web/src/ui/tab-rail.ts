@@ -4,21 +4,25 @@ import { markDraggableTab } from "./tab-drag.ts";
 export function renderTabRail(state, actions) {
   const rail = document.createElement("div");
   rail.className = "tab-rail";
+  let activeButton = null;
   for (const tab of tabsFor(state)) {
     const button = actionButton(tab.label, () => actions.openTab?.(tab.id), "tab");
     button.setAttribute("role", "tab");
     button.setAttribute("aria-selected", String(tab.id === state.activeTabId));
     if (tab.id === state.activeTabId) {
       button.classList.add("active");
+      activeButton = button;
     }
     rail.append(button);
   }
+  finalizeRail(rail, activeButton);
   return rail;
 }
 
 export function renderStackTabRail(stack, actions) {
   const rail = document.createElement("div");
   rail.className = "tab-rail";
+  let activeButton = null;
   stack.tabs.forEach((tab, index) => {
     const button = actionButton(tabLabel(tab), tabFocus(tab, actions), "tab");
     button.dataset.paneId = tab.pane_node_id;
@@ -27,9 +31,11 @@ export function renderStackTabRail(stack, actions) {
     button.setAttribute("aria-selected", String(index === stack.active));
     if (index === stack.active) {
       button.classList.add("active");
+      activeButton = button;
     }
     rail.append(button);
   });
+  finalizeRail(rail, activeButton);
   return rail;
 }
 
@@ -47,6 +53,13 @@ function tabLabel(tab) {
     text_editor: "Editor",
   };
   return labels[tab.pane_kind] ?? tab.title ?? tab.pane_kind;
+}
+
+function finalizeRail(rail, activeButton) {
+  requestAnimationFrame(() => {
+    activeButton?.scrollIntoView({ block: "nearest", inline: "nearest" });
+    rail.dataset.overflow = String(rail.scrollWidth > rail.clientWidth + 1);
+  });
 }
 
 export function tabsFor(state) {
