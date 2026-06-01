@@ -1,6 +1,7 @@
 use crate::{
     StoreError, StoreResult,
     codec::{decode, encode},
+    feed_audience::audience_users,
     feed_support::{
         ensure_reply_target, ensure_session_actor, feed_item, feed_order, feed_user_key,
         short_post_record, social_post_operation, validate_body,
@@ -76,11 +77,14 @@ impl QivxifStore {
             nodes.insert(post.id.as_str(), encode(&post)?.as_slice())?;
             let mut items = tx.open_table(tables::FEED_ITEMS)?;
             items.insert(input.op_id.as_str(), encode(&feed_item)?.as_slice())?;
+            let audience = audience_users(&tx, &input.author_user_id)?;
             let mut by_user = tx.open_table(tables::FEED_ITEMS_BY_USER)?;
-            by_user.insert(
-                feed_user_key(&input.author_user_id, &input.op_id).as_str(),
-                ([] as [u8; 0]).as_slice(),
-            )?;
+            for user_id in audience {
+                by_user.insert(
+                    feed_user_key(&user_id, &input.op_id).as_str(),
+                    ([] as [u8; 0]).as_slice(),
+                )?;
+            }
         }
         tx.commit()?;
         Ok(ShortPostResult {

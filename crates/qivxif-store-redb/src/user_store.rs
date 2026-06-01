@@ -6,7 +6,8 @@ use crate::{
     tables,
 };
 use qivxif_auth::{AuthRole, PasswordHashString};
-use qivxif_core::{ActorId, SessionId, UserId};
+use qivxif_core::{ActorId, MetadataMap, NodeId, ServerTime, SessionId, UserId, Visibility};
+use qivxif_graph::{NodeKind, NodeRecord};
 use redb::ReadableTable;
 
 impl QivxifStore {
@@ -98,6 +99,7 @@ fn user_record(
     StoredUser {
         id: UserId::generate(),
         actor_id: ActorId::generate(),
+        profile_node_id: NodeId::generate(),
         name,
         password_hash,
         roles,
@@ -112,5 +114,32 @@ fn insert_user(tx: &redb::WriteTransaction, user: &StoredUser) -> StoreResult<()
     let mut users = tx.open_table(tables::USERS)?;
     users.insert(user.id.as_str(), encode(user)?.as_slice())?;
     names.insert(user.name.as_str(), encode(&user.id)?.as_slice())?;
+    let profile = profile_node(user);
+    let mut nodes = tx.open_table(tables::NODES)?;
+    if nodes.get(profile.id.as_str())?.is_some() {
+        return Err(StoreError::NodeExists);
+    }
+    nodes.insert(profile.id.as_str(), encode(&profile)?.as_slice())?;
     Ok(())
+}
+
+fn profile_node(user: &StoredUser) -> NodeRecord {
+    let now = ServerTime::now();
+    let mut metadata = MetadataMap::empty();
+    metadata.insert("name", user.name.clone());
+    metadata.insert("profile_state", "active");
+    NodeRecord {
+        id: user.profile_node_id.clone(),
+        kind: NodeKind::Profile,
+        owner_user_id: user.id.clone(),
+        created_by: user.actor_id.clone(),
+        created_at: now,
+        updated_at: now,
+        visibility: Visibility::Public,
+        acl_ref: None,
+        current_commit_group: None,
+        current_text_ref: None,
+        metadata_map: metadata,
+        tombstone: None,
+    }
 }

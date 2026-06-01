@@ -45,7 +45,7 @@
 
 - `logged_out`
 
-`profile_node_id` is null until a profile graph node is created for that user.
+`profile_node_id` points at the durable public profile node created with the user.
 
 ## Cookie Rules
 

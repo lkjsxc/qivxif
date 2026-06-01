@@ -10,7 +10,7 @@ use axum::{
 };
 use qivxif_api::{ApiEnvelope, LoginPayload};
 use qivxif_auth::hash_password;
-use qivxif_core::{ActorId, UserId};
+use qivxif_core::{ActorId, NodeId, UserId};
 use qivxif_server::{config::ServerConfig, state::AppState};
 use qivxif_store_redb::{StoreConfig, open_or_create};
 use std::{
@@ -27,6 +27,7 @@ pub struct TestLogin {
     pub next_actor_seq: u64,
     pub user_id: UserId,
     pub actor_id: ActorId,
+    pub profile_node_id: NodeId,
 }
 
 #[allow(dead_code)]
@@ -64,6 +65,7 @@ pub async fn login_named(app: &Router, name: &str, password: &str) -> TestLogin 
         next_actor_seq: payload.next_actor_seq,
         user_id: payload.user.user_id,
         actor_id: payload.user.actor_id,
+        profile_node_id: payload.user.profile_node_id.unwrap(),
     }
 }
 

@@ -101,7 +101,7 @@ fn user_summary(user: &StoredUser) -> UserSummary {
         actor_id: user.actor_id.clone(),
         name: user.name.clone(),
         roles: role_names(&user.roles),
-        profile_node_id: None,
+        profile_node_id: Some(user.profile_node_id.clone()),
     }
 }
 

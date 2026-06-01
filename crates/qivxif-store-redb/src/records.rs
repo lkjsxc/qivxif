@@ -1,11 +1,12 @@
 use qivxif_auth::{AuthRole, PasswordHashString};
-use qivxif_core::{ActorId, CursorId, OperationId, SessionId, UserId};
+use qivxif_core::{ActorId, CursorId, NodeId, OperationId, SessionId, UserId};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct StoredUser {
     pub id: UserId,
     pub actor_id: ActorId,
+    pub profile_node_id: NodeId,
     pub name: String,
     pub password_hash: PasswordHashString,
     pub roles: Vec<AuthRole>,

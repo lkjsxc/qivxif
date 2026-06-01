@@ -1,4 +1,5 @@
 mod auth;
+mod follow;
 mod graph;
 mod health;
 mod history;
@@ -20,6 +21,7 @@ use tower_http::trace::TraceLayer;
 pub fn router(state: AppState) -> Router {
     Router::new()
         .merge(auth::routes())
+        .merge(follow::routes())
         .merge(graph::routes())
         .merge(history::routes())
         .merge(health::routes())

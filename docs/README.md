@@ -79,6 +79,8 @@
 - [architecture/server/public-serving.md](architecture/server/public-serving.md)
 - [architecture/social/README.md](architecture/social/README.md)
 - [architecture/social/feed-indexes.md](architecture/social/feed-indexes.md)
+- [architecture/social/follows.md](architecture/social/follows.md)
+- [architecture/social/profiles.md](architecture/social/profiles.md)
 - [architecture/social/short-posts.md](architecture/social/short-posts.md)
 - [architecture/storage/README.md](architecture/storage/README.md)
 - [architecture/storage/compaction.md](architecture/storage/compaction.md)

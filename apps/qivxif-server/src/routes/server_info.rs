@@ -30,6 +30,7 @@ fn capabilities() -> Vec<Capability> {
         "graph.neighborhood",
         "publish.blog",
         "social.short_post",
+        "social.follow",
         "feed.home",
         "sync.http_push_pull",
         "client.offline_shell",

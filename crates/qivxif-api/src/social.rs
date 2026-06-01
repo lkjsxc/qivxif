@@ -1,6 +1,6 @@
 use crate::OperationAcceptance;
-use qivxif_core::{NodeId, OperationId, ServerTime, UserId, Visibility};
-use qivxif_graph::NodeRecord;
+use qivxif_core::{EdgeId, NodeId, OperationId, ServerTime, UserId, Visibility};
+use qivxif_graph::{EdgeRecord, NodeRecord};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -17,6 +17,27 @@ pub struct ShortPostRequest {
 pub struct ShortPostPayload {
     pub post: NodeRecord,
     pub feed_item: FeedItemPayload,
+    pub operation: OperationAcceptance,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct FollowRequest {
+    pub op_id: OperationId,
+    pub actor_seq: u64,
+    pub edge_id: EdgeId,
+    pub target_profile_node_id: NodeId,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct UnfollowRequest {
+    pub op_id: OperationId,
+    pub actor_seq: u64,
+    pub edge_id: EdgeId,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct FollowPayload {
+    pub edge: EdgeRecord,
     pub operation: OperationAcceptance,
 }
 

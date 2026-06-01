@@ -26,6 +26,8 @@ Every `/api` response uses [../schema/api-envelope.md](../schema/api-envelope.md
 | `POST` | `/api/text/{node_id}/ops` | session | yes | text operation request | operation acceptance and text projection | appends text op | local op queues first |
 | `GET` | `/api/feed/home` | session | no | cursor and limit query | feed items | none | cached feed window may render |
 | `POST` | `/api/social/short-posts` | session | yes | short post create request | post node, feed item, operation acceptance | appends operation, writes node and feed index | local op queues first |
+| `POST` | `/api/social/follow` | session | yes | follow request | follow edge and operation acceptance | appends operation and writes edge | local op queues first |
+| `POST` | `/api/social/unfollow` | session | yes | unfollow request | tombstoned follow edge and operation acceptance | appends operation, tombstones edge and removes feed markers | local op queues first |
 | `POST` | `/api/publish/{node_id}` | session | yes | publish request | publication state | appends publish op | queued pending server validation |
 | `POST` | `/api/unpublish/{node_id}` | session | yes | unpublish request | publication state | appends unpublish op | queued pending server validation |
 | `GET` | `/@{author}/{slug}` | public | no | none | rendered blog post | none | cached public page may render |

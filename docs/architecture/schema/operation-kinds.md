@@ -23,7 +23,7 @@ Every durable mutation uses one of these operation kinds. Unknown kinds are reje
 | `publish.unpublish` | publish | blog post | reason code | publication reducer | op id | already private is no-op | queued | yes |
 | `social.short_post_create` | write | short post | body, visibility, optional reply target | graph plus feed reducer | node id | duplicate returns prior acceptance | yes | yes |
 | `social.follow` | write | profiles | target profile | edge create | edge id | duplicate active edge is no-op | yes | yes |
-| `social.unfollow` | write | follow edge | edge id | edge tombstone | op id | missing active edge is no-op | yes | yes |
+| `social.unfollow` | write | follow edge | edge id | edge tombstone | op id | missing active edge rejects unless op was already accepted | yes | yes |
 
 ## Workspace Payload Contract
 
