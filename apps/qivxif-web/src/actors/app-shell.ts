@@ -6,7 +6,13 @@ import { addCurrentNodeToBoard, createBoard, linkBoardNodes, moveBoardItem } fro
 import { reserveActorSeq } from "./actor-seq.ts";
 import { textNodeCreateEntry, textRestoreEntry } from "./local-operations.ts";
 import { createBlogDraft, publishBlogPost, unpublishBlogPost } from "./publish-actions.ts";
-import { createShortPost } from "./social-actions.ts";
+import {
+  blockProfile,
+  clearSocialEdge,
+  createShortPost,
+  followProfile,
+  muteProfile,
+} from "./social-actions.ts";
 import { loadLocalState, refreshCurrentNode } from "./state-loader.ts";
 import { flushQueue, refreshQueueState } from "./sync.ts";
 import { closePane, maximizePane, splitPane, stackTab } from "./workspace-actions.ts";
@@ -71,6 +77,10 @@ function actionsFor(root, store, state) {
     openNode: (nodeId) => run(root, store, state, () => openNode(store, state, nodeId)),
     createBlogDraft: (title) => run(root, store, state, () => createBlogDraft(store, state, title)),
     createShortPost: (body) => run(root, store, state, () => createShortPost(store, state, body)),
+    followProfile: (target) => run(root, store, state, () => followProfile(store, state, target)),
+    muteProfile: (target) => run(root, store, state, () => muteProfile(store, state, target)),
+    blockProfile: (target) => run(root, store, state, () => blockProfile(store, state, target)),
+    clearSocialEdge: (edge, kind) => run(root, store, state, () => clearSocialEdge(store, state, edge, kind)),
     publishBlogPost: (slug, summary) => run(root, store, state, () => publishBlogPost(store, state, slug, summary)),
     saveText: (content) => run(root, store, state, () => saveText(store, state, content)),
     selectNode: (nodeId) => run(root, store, state, () => selectNode(store, state, nodeId)),

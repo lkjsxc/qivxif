@@ -53,6 +53,7 @@
 - [architecture/client/app-shell.md](architecture/client/app-shell.md)
 - [architecture/client/local-first.md](architecture/client/local-first.md)
 - [architecture/client/rendering.md](architecture/client/rendering.md)
+- [architecture/client/social-actions.md](architecture/client/social-actions.md)
 - [architecture/client/state.md](architecture/client/state.md)
 - [architecture/graph/README.md](architecture/graph/README.md)
 - [architecture/graph/acl-projection.md](architecture/graph/acl-projection.md)

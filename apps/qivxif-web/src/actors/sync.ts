@@ -108,6 +108,9 @@ async function acceptEntry(store, state, entry, payload) {
       item: payload.feed_item,
     });
   }
+  if (entry.kind.startsWith("social.") && payload.edge) {
+    await store.put("edges", { ...payload.edge, dirty: false });
+  }
   state.online = true;
   state.lastError = "";
 }
