@@ -1,6 +1,5 @@
 import { draggedPaneId } from "./tab-drag.ts";
-
-const EDGE_FRACTION = 0.22;
+import { tileDropZone } from "./drop-resolver.ts";
 
 export function installDropLayer(tile, targetPaneId, actions) {
   if (!targetPaneId?.startsWith("nod_")) {
@@ -13,7 +12,7 @@ export function installDropLayer(tile, targetPaneId, actions) {
     }
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
-    tile.dataset.dropZone = dropZone(tile, event);
+    tile.dataset.dropZone = tileDropZone(tile, event);
   });
   tile.addEventListener("dragleave", (event) => {
     if (!tile.contains(event.relatedTarget)) {
@@ -22,7 +21,7 @@ export function installDropLayer(tile, targetPaneId, actions) {
   });
   tile.addEventListener("drop", (event) => {
     const sourcePaneId = draggedPaneId(event);
-    const zone = dropZone(tile, event);
+    const zone = tileDropZone(tile, event);
     delete tile.dataset.dropZone;
     if (!sourcePaneId) {
       return;
@@ -30,23 +29,4 @@ export function installDropLayer(tile, targetPaneId, actions) {
     event.preventDefault();
     actions.movePane?.(sourcePaneId, targetPaneId, zone);
   });
-}
-
-function dropZone(tile, event) {
-  const box = tile.getBoundingClientRect();
-  const edgeX = Math.min(80, Math.max(32, box.width * EDGE_FRACTION));
-  const edgeY = Math.min(80, Math.max(32, box.height * EDGE_FRACTION));
-  if (event.clientY - box.top < edgeY) {
-    return "top";
-  }
-  if (box.bottom - event.clientY < edgeY) {
-    return "bottom";
-  }
-  if (event.clientX - box.left < edgeX) {
-    return "left";
-  }
-  if (box.right - event.clientX < edgeX) {
-    return "right";
-  }
-  return "center";
 }

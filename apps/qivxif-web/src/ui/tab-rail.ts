@@ -22,7 +22,7 @@ export function renderStackTabRail(stack, actions) {
   stack.tabs.forEach((tab, index) => {
     const button = actionButton(tabLabel(tab), tabFocus(tab, actions), "tab");
     button.dataset.paneId = tab.pane_node_id;
-    markDraggableTab(button, tab.pane_node_id);
+    markDraggableTab(button, tab.pane_node_id, actions);
     button.setAttribute("role", "tab");
     button.setAttribute("aria-selected", String(index === stack.active));
     if (index === stack.active) {

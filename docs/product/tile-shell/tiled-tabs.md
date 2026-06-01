@@ -71,7 +71,7 @@
 
 ## Command Slice
 
-Before drag gestures exist, command buttons create the same durable records:
+Command buttons create the same durable records as direct manipulation:
 
 - Split creates a pane node, links it to the layout, and appends `tile.layout_set`.
 - Stack creates a pane node inside the active tab stack and appends `tile.layout_set`.

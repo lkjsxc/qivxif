@@ -1,5 +1,6 @@
 import { createRequire } from "node:module";
-import { captureBrowserEvents, dragSecondTileTabToFirstCenter, openServerNode, openShellTab, waitForText } from "./browser-helpers.mjs";
+import { captureBrowserEvents, openServerNode, openShellTab, waitForText } from "./browser-helpers.mjs";
+import { dragSecondTileTabToFirstCenter, longPressFirstTabAfterSecond, reorderSecondTabBeforeFirst, shortTouchDoesNotArmTabDrag } from "./drag-helpers.mjs";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright-core");
@@ -35,6 +36,9 @@ try {
   await waitForText(page, "Layout panes: 2", browserEvents);
   await dragSecondTileTabToFirstCenter(page);
   await waitForText(page, "Layout panes: 2", browserEvents);
+  await reorderSecondTabBeforeFirst(page);
+  await shortTouchDoesNotArmTabDrag(page);
+  await longPressFirstTabAfterSecond(page);
   await page.getByRole("button", { name: "Stack tab" }).first().click();
   await waitForText(page, "Layout panes: 3", browserEvents);
   await page.getByRole("button", { name: "Maximize pane" }).first().click();
