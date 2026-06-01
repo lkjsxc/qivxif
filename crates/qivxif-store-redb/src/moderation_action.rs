@@ -1,6 +1,6 @@
 use crate::moderation::ModerationAction;
 use qivxif_graph::EdgeKind;
-use qivxif_history::OperationKind;
+use qivxif_history::EventKind;
 
 impl ModerationAction {
     pub(crate) fn edge_kind(self) -> EdgeKind {
@@ -10,17 +10,17 @@ impl ModerationAction {
         }
     }
 
-    pub(crate) fn create_op(self) -> OperationKind {
+    pub(crate) fn create_event(self) -> EventKind {
         match self {
-            Self::Mute => OperationKind::SocialMute,
-            Self::Block => OperationKind::SocialBlock,
+            Self::Mute => EventKind::SocialMute,
+            Self::Block => EventKind::SocialBlock,
         }
     }
 
-    pub(crate) fn clear_op(self) -> OperationKind {
+    pub(crate) fn clear_event(self) -> EventKind {
         match self {
-            Self::Mute => OperationKind::SocialUnmute,
-            Self::Block => OperationKind::SocialUnblock,
+            Self::Mute => EventKind::SocialUnmute,
+            Self::Block => EventKind::SocialUnblock,
         }
     }
 

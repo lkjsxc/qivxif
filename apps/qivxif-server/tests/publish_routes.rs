@@ -7,9 +7,9 @@ use axum::{
 use qivxif_api::{
     ApiEnvelope, NodeCreatePayload, NodeCreateRequest, PublishPayload, PublishRequest,
 };
-use qivxif_core::{MetadataMap, NodeId, OperationId, TextDocId, Visibility};
+use qivxif_core::{EventId, MetadataMap, NodeId, TextDocId, Visibility};
 use qivxif_graph::NodeKind;
-use qivxif_history::text::{TextEdit, TextOperation, TextRestore};
+use qivxif_history::text::{TextEdit, TextEvent, TextRestore};
 use qivxif_server::routes;
 use support::{get, login_full, post_json, read_json, seeded_state};
 use tower::ServiceExt;
@@ -40,7 +40,7 @@ async fn publishes_and_unpublishes_blog_post() {
     assert!(html.contains("Body &lt;safe&gt;"));
 
     let unpublish = serde_json::json!({
-        "op_id": OperationId::generate(),
+        "event_id": EventId::generate(),
         "actor_seq": 5_u64,
         "reason": "draft correction"
     });
@@ -86,8 +86,8 @@ async fn create_text_body(
     let node_id = create_node(app, login, actor_seq, NodeKind::Text, MetadataMap::empty()).await;
     let request = serde_json::json!({
         "actor_seq": actor_seq + 1,
-        "operation": TextOperation {
-            op_id: OperationId::generate(),
+        "event": TextEvent {
+            event_id: EventId::generate(),
             doc_id: TextDocId::generate(),
             edit: TextEdit::Restore(TextRestore {
                 content: content.to_owned(),
@@ -99,7 +99,7 @@ async fn create_text_body(
     let response = app
         .clone()
         .oneshot(post_json(
-            &format!("/api/text/{node_id}/ops"),
+            &format!("/api/text/{node_id}/events"),
             &request,
             Some(&login.cookie),
             Some(&login.csrf),
@@ -133,7 +133,7 @@ async fn create_node(
 ) -> NodeId {
     let node_id = NodeId::generate();
     let request = NodeCreateRequest {
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         actor_seq,
         node_id: node_id.clone(),
         kind,
@@ -163,7 +163,7 @@ async fn publish(
     slug: &str,
 ) -> Response<axum::body::Body> {
     let request = PublishRequest {
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         actor_seq,
         slug: slug.to_owned(),
         summary: "summary".to_owned(),

@@ -2,25 +2,25 @@ mod support;
 
 use axum::http::StatusCode;
 use qivxif_api::{ApiEnvelope, PullResponse, PushRequest, PushResponse};
-use qivxif_core::{MetadataMap, NodeId, OperationId, ServerTime, TextDocId, Visibility};
+use qivxif_core::{EventId, MetadataMap, NodeId, ServerTime, TextDocId, Visibility};
 use qivxif_graph::{NodeKind, NodeRecord};
 use qivxif_history::{
-    OperationEnvelope, OperationKind, OperationPayload, OperationScope, hash_payload,
-    text::{TextEdit, TextOperation, TextRestore},
+    EventEnvelope, EventKind, EventPayload, EventScope, hash_payload,
+    text::{TextEdit, TextEvent, TextRestore},
 };
 use qivxif_server::routes;
 use support::{get, login_full, post_json, read_json, seeded_state};
 use tower::ServiceExt;
 
 #[tokio::test]
-async fn pushes_duplicate_and_pulls_graph_operation() {
+async fn pushes_duplicate_and_pulls_graph_event() {
     let app = routes::router(seeded_state("sync"));
     let login = login_full(&app).await;
-    let (op, _) = node_create_op(&login, 1);
+    let (event, _) = node_create_event(&login, 1);
     let request = PushRequest {
         client_id: "client-a".to_owned(),
         actor_id: login.actor_id.clone(),
-        operations: vec![op.clone()],
+        events: vec![event.clone()],
         cursor_summary: None,
     };
 
@@ -62,19 +62,19 @@ async fn pushes_duplicate_and_pulls_graph_operation() {
         .unwrap();
     assert_eq!(response.status(), StatusCode::OK);
     let envelope: ApiEnvelope<PullResponse> = read_json(response).await;
-    assert_eq!(envelope.payload.unwrap().operations, [op]);
+    assert_eq!(envelope.payload.unwrap().events, [event]);
 }
 
 #[tokio::test]
-async fn pushes_text_operation_after_graph_node() {
+async fn pushes_text_event_after_graph_node() {
     let app = routes::router(seeded_state("sync-text"));
     let login = login_full(&app).await;
-    let (node_op, node_id) = node_create_op(&login, 1);
-    let text_op = text_restore_op(&login, &node_id, 2);
+    let (node_event, node_id) = node_create_event(&login, 1);
+    let text_event = text_restore_event(&login, &node_id, 2);
     let request = PushRequest {
         client_id: "client-text".to_owned(),
         actor_id: login.actor_id.clone(),
-        operations: vec![node_op, text_op],
+        events: vec![node_event, text_event],
         cursor_summary: None,
     };
 
@@ -94,7 +94,7 @@ async fn pushes_text_operation_after_graph_node() {
     assert_eq!(pushed.accepted.len(), 2);
 }
 
-fn node_create_op(login: &support::TestLogin, actor_seq: u64) -> (OperationEnvelope, NodeId) {
+fn node_create_event(login: &support::TestLogin, actor_seq: u64) -> (EventEnvelope, NodeId) {
     let now = ServerTime::now();
     let node = NodeRecord {
         id: NodeId::generate(),
@@ -112,15 +112,17 @@ fn node_create_op(login: &support::TestLogin, actor_seq: u64) -> (OperationEnvel
     };
     let node_id = node.id.clone();
     let bytes = bincode::serialize(&node).unwrap();
-    let envelope = OperationEnvelope {
-        op_id: OperationId::generate(),
+    let envelope = EventEnvelope {
+        event_id: EventId::generate(),
         actor_id: login.actor_id.clone(),
         actor_seq,
         parents: Vec::new(),
-        scope: OperationScope::Graph,
-        kind: OperationKind::NodeCreate,
+        scope: EventScope::Graph,
+        kind: EventKind::NodeCreate,
         target_node_ids: vec![node_id.clone()],
-        payload: OperationPayload {
+        target_edge_ids: Vec::new(),
+        target_event_ids: Vec::new(),
+        payload: EventPayload {
             bytes: bytes.clone(),
         },
         payload_hash: hash_payload(&bytes),
@@ -131,13 +133,13 @@ fn node_create_op(login: &support::TestLogin, actor_seq: u64) -> (OperationEnvel
     (envelope, node_id)
 }
 
-fn text_restore_op(
+fn text_restore_event(
     login: &support::TestLogin,
     node_id: &NodeId,
     actor_seq: u64,
-) -> OperationEnvelope {
-    let operation = TextOperation {
-        op_id: OperationId::generate(),
+) -> EventEnvelope {
+    let event = TextEvent {
+        event_id: EventId::generate(),
         doc_id: TextDocId::generate(),
         edit: TextEdit::Restore(TextRestore {
             content: "sync text".to_owned(),
@@ -145,16 +147,18 @@ fn text_restore_op(
             first_seq: actor_seq * 1000000,
         }),
     };
-    let bytes = serde_json::to_vec(&operation).unwrap();
-    OperationEnvelope {
-        op_id: operation.op_id.clone(),
+    let bytes = serde_json::to_vec(&event).unwrap();
+    EventEnvelope {
+        event_id: event.event_id.clone(),
         actor_id: login.actor_id.clone(),
         actor_seq,
         parents: Vec::new(),
-        scope: OperationScope::Text,
-        kind: OperationKind::TextRestore,
+        scope: EventScope::Text,
+        kind: EventKind::TextRestore,
         target_node_ids: vec![node_id.clone()],
-        payload: OperationPayload {
+        target_edge_ids: Vec::new(),
+        target_event_ids: Vec::new(),
+        payload: EventPayload {
             bytes: bytes.clone(),
         },
         payload_hash: hash_payload(&bytes),

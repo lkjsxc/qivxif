@@ -1,13 +1,13 @@
 import { generateId } from "../ids.ts";
 import { refreshCurrentNode } from "./state-loader.ts";
 import { reserveActorSeq } from "./actor-seq.ts";
-import { textNodeCreateEntry, textRestoreEntry } from "./local-operations.ts";
+import { textNodeCreateEntry, textRestoreEntry } from "./local-events.ts";
 
 export async function createTextNode(store, state) {
   requireAuth(state);
   const actorSeq = await reserveActorSeq(store);
   const created = textNodeCreateEntry(actorSeq);
-  await store.put("ops", created.entry);
+  await store.put("events", created.entry);
   await store.put("nodes", created.node);
   await store.put("tile_layout", { id: "current_node", node_id: created.node.id });
   state.currentNodeId = created.node.id;
@@ -28,7 +28,7 @@ export async function saveText(store, state, content) {
     state.auth.user.actor_id,
     content,
   );
-  await store.put("ops", restored.entry);
+  await store.put("events", restored.entry);
   await store.put("text_snapshots", {
     dirty: true,
     doc_id: docId,

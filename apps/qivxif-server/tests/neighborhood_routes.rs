@@ -5,7 +5,7 @@ use qivxif_api::{
     ApiEnvelope, EdgeCreatePayload, EdgeCreateRequest, NeighborhoodPayload, NodeCreatePayload,
     NodeCreateRequest,
 };
-use qivxif_core::{EdgeId, MetadataMap, NodeId, OperationId, Visibility};
+use qivxif_core::{EdgeId, EventId, MetadataMap, NodeId, Visibility};
 use qivxif_graph::{EdgeKind, NodeKind};
 use qivxif_server::routes;
 use support::{get, login, post_json, read_json, seeded_state};
@@ -43,7 +43,7 @@ async fn returns_acl_filtered_neighborhood() {
 async fn create_node(app: &axum::Router, cookie: &str, csrf: &str, seq: u64) -> NodeId {
     let node_id = NodeId::generate();
     let body = NodeCreateRequest {
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         actor_seq: seq,
         node_id: node_id.clone(),
         kind: NodeKind::Text,
@@ -62,7 +62,7 @@ async fn create_node(app: &axum::Router, cookie: &str, csrf: &str, seq: u64) -> 
 
 async fn create_edge(app: &axum::Router, cookie: &str, csrf: &str, from: &NodeId, to: &NodeId) {
     let body = EdgeCreateRequest {
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         actor_seq: 3,
         edge_id: EdgeId::generate(),
         from_node: from.clone(),

@@ -1,13 +1,10 @@
-use crate::OperationAcceptance;
-use crate::ServerCapabilities;
-use qivxif_core::{
-    ActorId, EdgeId, MetadataMap, NodeId, OperationId, ServerTime, UserId, Visibility,
-};
+use crate::{EventAcceptance, ServerCapabilities};
+use qivxif_core::{ActorId, EdgeId, EventId, MetadataMap, NodeId, ServerTime, UserId, Visibility};
 use qivxif_graph::TileLayout;
 use qivxif_graph::{EdgeKind, EdgeRecord, GraphProjection, NodeKind, NodeProjection, NodeRecord};
 use qivxif_history::{
-    OperationEnvelope, OperationKind, OperationScope, PayloadHash,
-    text::{TextDocState, TextOperation},
+    EventEnvelope, EventKind, EventScope, PayloadHash,
+    text::{TextDocState, TextEvent},
 };
 use serde::{Deserialize, Serialize};
 
@@ -57,7 +54,7 @@ pub struct MePayload {
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct NodeCreateRequest {
-    pub op_id: OperationId,
+    pub event_id: EventId,
     pub actor_seq: u64,
     pub node_id: NodeId,
     pub kind: NodeKind,
@@ -68,7 +65,7 @@ pub struct NodeCreateRequest {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct NodeCreatePayload {
     pub node: NodeRecord,
-    pub operation: OperationAcceptance,
+    pub event: EventAcceptance,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -79,24 +76,26 @@ pub struct NodePayload {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct NodeHistoryPayload {
     pub node_id: NodeId,
-    pub operations: Vec<OperationSummary>,
+    pub events: Vec<EventSummary>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct OperationSummary {
-    pub op_id: OperationId,
+pub struct EventSummary {
+    pub event_id: EventId,
     pub actor_id: ActorId,
     pub actor_seq: u64,
-    pub scope: OperationScope,
-    pub kind: OperationKind,
+    pub scope: EventScope,
+    pub kind: EventKind,
     pub target_node_ids: Vec<NodeId>,
+    pub target_edge_ids: Vec<EdgeId>,
+    pub target_event_ids: Vec<EventId>,
     pub payload_hash: PayloadHash,
     pub received_at_server: Option<ServerTime>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct EdgeCreateRequest {
-    pub op_id: OperationId,
+    pub event_id: EventId,
     pub actor_seq: u64,
     pub edge_id: EdgeId,
     pub from_node: NodeId,
@@ -108,7 +107,7 @@ pub struct EdgeCreateRequest {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct EdgeCreatePayload {
     pub edge: EdgeRecord,
-    pub operation: OperationAcceptance,
+    pub event: EventAcceptance,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -123,9 +122,9 @@ pub struct NeighborhoodPayload {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct TextOperationRequest {
+pub struct TextEventRequest {
     pub actor_seq: u64,
-    pub operation: TextOperation,
+    pub event: TextEvent,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -134,14 +133,14 @@ pub struct TextPayload {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct TextOperationPayload {
+pub struct TextEventPayload {
     pub state: TextDocState,
-    pub operation: OperationAcceptance,
+    pub event: EventAcceptance,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct TileLayoutSetRequest {
-    pub op_id: OperationId,
+    pub event_id: EventId,
     pub actor_seq: u64,
     pub layout_node_id: NodeId,
     pub layout: TileLayout,
@@ -150,12 +149,12 @@ pub struct TileLayoutSetRequest {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct TileLayoutPayload {
     pub layout_node: NodeRecord,
-    pub operation: OperationAcceptance,
+    pub event: EventAcceptance,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct PublishRequest {
-    pub op_id: OperationId,
+    pub event_id: EventId,
     pub actor_seq: u64,
     pub slug: String,
     pub summary: String,
@@ -164,12 +163,12 @@ pub struct PublishRequest {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct PublishPayload {
     pub post: NodeRecord,
-    pub operation: OperationAcceptance,
+    pub event: EventAcceptance,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct UnpublishRequest {
-    pub op_id: OperationId,
+    pub event_id: EventId,
     pub actor_seq: u64,
     pub reason: String,
 }
@@ -183,17 +182,19 @@ pub struct PublicBlogPostPayload {
     pub html: String,
 }
 
-impl OperationSummary {
-    pub fn from_envelope(op: OperationEnvelope) -> Self {
+impl EventSummary {
+    pub fn from_envelope(event: EventEnvelope) -> Self {
         Self {
-            op_id: op.op_id,
-            actor_id: op.actor_id,
-            actor_seq: op.actor_seq,
-            scope: op.scope,
-            kind: op.kind,
-            target_node_ids: op.target_node_ids,
-            payload_hash: op.payload_hash,
-            received_at_server: op.received_at_server,
+            event_id: event.event_id,
+            actor_id: event.actor_id,
+            actor_seq: event.actor_seq,
+            scope: event.scope,
+            kind: event.kind,
+            target_node_ids: event.target_node_ids,
+            target_edge_ids: event.target_edge_ids,
+            target_event_ids: event.target_event_ids,
+            payload_hash: event.payload_hash,
+            received_at_server: event.received_at_server,
         }
     }
 }

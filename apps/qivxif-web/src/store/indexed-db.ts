@@ -1,7 +1,7 @@
 const STORE_NAMES = [
   "nodes",
   "edges",
-  "ops",
+  "events",
   "text_snapshots",
   "sync_cursors",
   "cache_entries",

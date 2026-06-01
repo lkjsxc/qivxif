@@ -1,26 +1,26 @@
 use crate::{
     StoreError, StoreResult,
     codec::{decode, encode},
+    event_log::insert_event,
     feed_audience::audience_users,
     feed_support::{
         ensure_reply_target, ensure_session_actor, feed_item, feed_order, feed_user_key,
-        short_post_record, social_post_operation, validate_body,
+        short_post_record, social_post_event, validate_body,
     },
     moderation_query::feed_item_visible,
-    operation_log::insert_operation,
-    records::OperationReceipt,
+    records::EventReceipt,
     store::QivxifStore,
     tables,
 };
 use qivxif_auth::{AuthContext, can_read};
-use qivxif_core::{ActorId, NodeId, OperationId, ServerTime, UserId, Visibility};
+use qivxif_core::{ActorId, EventId, NodeId, ServerTime, UserId, Visibility};
 use qivxif_graph::NodeRecord;
 use redb::ReadableTable;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct FeedItem {
-    pub operation_id: OperationId,
+    pub event_id: EventId,
     pub post_node_id: NodeId,
     pub author_user_id: UserId,
     pub author_name: String,
@@ -32,7 +32,7 @@ pub struct FeedItem {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ShortPostInput {
-    pub op_id: OperationId,
+    pub event_id: EventId,
     pub actor_seq: u64,
     pub node_id: NodeId,
     pub actor_id: ActorId,
@@ -47,7 +47,7 @@ pub struct ShortPostInput {
 pub struct ShortPostResult {
     pub post: NodeRecord,
     pub feed_item: FeedItem,
-    pub receipt: OperationReceipt,
+    pub receipt: EventReceipt,
 }
 
 impl QivxifStore {
@@ -56,8 +56,8 @@ impl QivxifStore {
         auth: &AuthContext,
         input: ShortPostInput,
     ) -> StoreResult<ShortPostResult> {
-        if self.get_operation(&input.op_id)?.is_some() {
-            return self.replay_short_post(&input.op_id, &input.node_id);
+        if self.get_event(&input.event_id)?.is_some() {
+            return self.replay_short_post(&input.event_id, &input.node_id);
         }
         ensure_session_actor(auth, &input.actor_id, &input.author_user_id)?;
         validate_body(&input.body)?;
@@ -67,9 +67,9 @@ impl QivxifStore {
         let now = ServerTime::now();
         let post = short_post_record(&input, now);
         let feed_item = feed_item(&input, now);
-        let op = social_post_operation(&input, &post)?;
+        let event = social_post_event(&input, &post)?;
         let tx = self.database.begin_write()?;
-        let receipt = insert_operation(&tx, &op)?;
+        let receipt = insert_event(&tx, &event)?;
         {
             let mut nodes = tx.open_table(tables::NODES)?;
             if nodes.get(post.id.as_str())?.is_some() {
@@ -77,12 +77,12 @@ impl QivxifStore {
             }
             nodes.insert(post.id.as_str(), encode(&post)?.as_slice())?;
             let mut items = tx.open_table(tables::FEED_ITEMS)?;
-            items.insert(input.op_id.as_str(), encode(&feed_item)?.as_slice())?;
+            items.insert(input.event_id.as_str(), encode(&feed_item)?.as_slice())?;
             let audience = audience_users(&tx, &input.author_user_id)?;
             let mut by_user = tx.open_table(tables::FEED_ITEMS_BY_USER)?;
             for user_id in audience {
                 by_user.insert(
-                    feed_user_key(&user_id, &input.op_id).as_str(),
+                    feed_user_key(&user_id, &input.event_id).as_str(),
                     ([] as [u8; 0]).as_slice(),
                 )?;
             }
@@ -99,7 +99,7 @@ impl QivxifStore {
         &self,
         auth: &AuthContext,
         limit: usize,
-    ) -> StoreResult<(Vec<FeedItem>, Option<OperationId>, bool)> {
+    ) -> StoreResult<(Vec<FeedItem>, Option<EventId>, bool)> {
         let Some(user_id) = auth.user_id() else {
             return Err(StoreError::Forbidden);
         };
@@ -111,10 +111,10 @@ impl QivxifStore {
         let mut out = Vec::new();
         for item in index.iter()? {
             let (key, _) = item?;
-            let Some(op_id_text) = key.value().strip_prefix(&prefix) else {
+            let Some(event_id_text) = key.value().strip_prefix(&prefix) else {
                 continue;
             };
-            if let Some(bytes) = items.get(op_id_text)? {
+            if let Some(bytes) = items.get(event_id_text)? {
                 let feed_item = decode::<FeedItem>(bytes.value())?;
                 if let Some(node_bytes) = nodes.get(feed_item.post_node_id.as_str())? {
                     let node: NodeRecord = decode(node_bytes.value())?;
@@ -130,24 +130,22 @@ impl QivxifStore {
         let limit = limit.clamp(1, 100);
         let has_more = out.len() > limit;
         out.truncate(limit);
-        let cursor = out.last().map(|item| item.operation_id.clone());
+        let cursor = out.last().map(|item| item.event_id.clone());
         Ok((out, cursor, has_more))
     }
 
     fn replay_short_post(
         &self,
-        op_id: &OperationId,
+        event_id: &EventId,
         node_id: &NodeId,
     ) -> StoreResult<ShortPostResult> {
-        let post = self
-            .get_node(node_id)?
-            .ok_or(StoreError::OperationConflict)?;
+        let post = self.get_node(node_id)?.ok_or(StoreError::EventConflict)?;
         let feed_item = self
-            .get_feed_item(op_id)?
-            .ok_or(StoreError::OperationConflict)?;
+            .get_feed_item(event_id)?
+            .ok_or(StoreError::EventConflict)?;
         let receipt = self
-            .operation_receipt(op_id)?
-            .ok_or(StoreError::OperationConflict)?;
+            .event_receipt(event_id)?
+            .ok_or(StoreError::EventConflict)?;
         Ok(ShortPostResult {
             post,
             feed_item,
@@ -155,11 +153,11 @@ impl QivxifStore {
         })
     }
 
-    fn get_feed_item(&self, op_id: &OperationId) -> StoreResult<Option<FeedItem>> {
+    fn get_feed_item(&self, event_id: &EventId) -> StoreResult<Option<FeedItem>> {
         let tx = self.database.begin_read()?;
         let items = tx.open_table(tables::FEED_ITEMS)?;
         items
-            .get(op_id.as_str())?
+            .get(event_id.as_str())?
             .map(|bytes| decode(bytes.value()))
             .transpose()
     }

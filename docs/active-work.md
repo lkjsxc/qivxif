@@ -15,7 +15,8 @@ UI shell parity with lkjstr plus event-graph reset.
   and pane-local tab behavior.
 - Keep each visible tab independent while sharing graph, text, feed, and cache
   resources by ID.
-- Replace operation-first durable language with event-first durable language.
+- Keep durable mutation language event-first across docs, Rust, API, and browser
+  queues.
 - Make edge events first-class enough to support tree and network projections.
 - Keep board composition under qivxif-native wording.
 - Add publishing, social feed, moderation, and transport slices on top of the graph model.

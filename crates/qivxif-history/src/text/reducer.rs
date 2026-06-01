@@ -1,21 +1,21 @@
 use super::{
-    TextAtom, TextCharId, TextDelete, TextDocState, TextEdit, TextInsert, TextOperation,
-    TextRestore, TextSnapshot,
+    TextAtom, TextCharId, TextDelete, TextDocState, TextEdit, TextEvent, TextInsert, TextRestore,
+    TextSnapshot,
 };
 use crate::{HistoryError, HistoryResult};
-use qivxif_core::{ActorId, OperationId, TextDocId};
+use qivxif_core::{ActorId, EventId, TextDocId};
 use std::collections::BTreeMap;
 
-pub fn apply_text_op(mut state: TextDocState, op: TextOperation) -> HistoryResult<TextDocState> {
-    if state.applied_operations.contains(&op.op_id) {
+pub fn apply_text_event(mut state: TextDocState, event: TextEvent) -> HistoryResult<TextDocState> {
+    if state.applied_events.contains(&event.event_id) {
         return Ok(state);
     }
-    match op.edit {
+    match event.edit {
         TextEdit::Insert(insert) => apply_insert(&mut state, insert)?,
         TextEdit::Delete(delete) => apply_delete(&mut state, delete)?,
         TextEdit::Restore(restore) => apply_restore(&mut state, restore),
     }
-    state.applied_operations.push(op.op_id);
+    state.applied_events.push(event.event_id);
     state.content = render_atoms(&state.atoms);
     Ok(state)
 }
@@ -23,22 +23,18 @@ pub fn apply_text_op(mut state: TextDocState, op: TextOperation) -> HistoryResul
 pub fn snapshot_text(
     state: &TextDocState,
     doc_id: TextDocId,
-    after_operation: OperationId,
+    after_event: EventId,
 ) -> TextSnapshot {
     TextSnapshot {
         doc_id,
-        after_operation,
+        after_event,
         content: state.content.clone(),
     }
 }
 
-pub fn restore_text(
-    snapshot: TextSnapshot,
-    op_id: OperationId,
-    actor_id: ActorId,
-) -> TextOperation {
-    TextOperation {
-        op_id,
+pub fn restore_text(snapshot: TextSnapshot, event_id: EventId, actor_id: ActorId) -> TextEvent {
+    TextEvent {
+        event_id,
         doc_id: snapshot.doc_id,
         edit: TextEdit::Restore(TextRestore {
             content: snapshot.content,
@@ -142,9 +138,9 @@ mod tests {
         }
     }
 
-    fn insert(actor: &ActorId, seq: u64, text: &str) -> TextOperation {
-        TextOperation {
-            op_id: OperationId::generate(),
+    fn insert(actor: &ActorId, seq: u64, text: &str) -> TextEvent {
+        TextEvent {
+            event_id: EventId::generate(),
             doc_id: TextDocId::generate(),
             edit: TextEdit::Insert(TextInsert {
                 after: None,
@@ -163,36 +159,36 @@ mod tests {
     #[test]
     fn inserts_and_deduplicates() {
         let actor = ActorId::generate();
-        let op = insert(&actor, 1, "hi");
-        let state = apply_text_op(TextDocState::default(), op.clone()).unwrap();
+        let event = insert(&actor, 1, "hi");
+        let state = apply_text_event(TextDocState::default(), event.clone()).unwrap();
         assert_eq!(state.content, "hi");
-        assert_eq!(apply_text_op(state.clone(), op).unwrap(), state);
+        assert_eq!(apply_text_event(state.clone(), event).unwrap(), state);
     }
 
     #[test]
     fn deletes_known_characters() {
         let actor = ActorId::generate();
-        let state = apply_text_op(TextDocState::default(), insert(&actor, 1, "hi")).unwrap();
-        let op = TextOperation {
-            op_id: OperationId::generate(),
+        let state = apply_text_event(TextDocState::default(), insert(&actor, 1, "hi")).unwrap();
+        let event = TextEvent {
+            event_id: EventId::generate(),
             doc_id: TextDocId::generate(),
             edit: TextEdit::Delete(TextDelete {
                 ids: vec![cid(&actor, 1)],
             }),
         };
-        assert_eq!(apply_text_op(state, op).unwrap().content, "i");
+        assert_eq!(apply_text_event(state, event).unwrap().content, "i");
     }
 
     #[test]
     fn restore_creates_new_visible_content() {
         let actor = ActorId::generate();
-        let state = apply_text_op(TextDocState::default(), insert(&actor, 1, "old")).unwrap();
+        let state = apply_text_event(TextDocState::default(), insert(&actor, 1, "old")).unwrap();
         let snapshot = TextSnapshot {
             doc_id: TextDocId::generate(),
-            after_operation: OperationId::generate(),
+            after_event: EventId::generate(),
             content: "new".to_owned(),
         };
-        let op = restore_text(snapshot, OperationId::generate(), actor);
-        assert_eq!(apply_text_op(state, op).unwrap().content, "new");
+        let event = restore_text(snapshot, EventId::generate(), actor);
+        assert_eq!(apply_text_event(state, event).unwrap().content, "new");
     }
 }

@@ -1,5 +1,5 @@
 import { reserveActorSeq } from "./actor-seq.ts";
-import { edgeCreateEntry, nodeCreateEntry, tileLayoutSetEntry } from "./local-operations.ts";
+import { edgeCreateEntry, nodeCreateEntry, tileLayoutSetEntry } from "./local-events.ts";
 
 export async function splitPane(store, state) {
   requireAuth(state);
@@ -91,21 +91,21 @@ async function createPane(store, state, targetNodeId, title) {
 
 async function createNode(store, kind, metadata) {
   const created = nodeCreateEntry(await reserveActorSeq(store), kind, metadata);
-  await store.put("ops", created.entry);
+  await store.put("events", created.entry);
   await store.put("nodes", created.node);
   return created;
 }
 
 async function link(store, fromNode, toNode, kind, metadata) {
   const created = edgeCreateEntry(await reserveActorSeq(store), fromNode, toNode, kind, metadata);
-  await store.put("ops", created.entry);
+  await store.put("events", created.entry);
   await store.put("edges", created.edge);
   return created;
 }
 
 async function queueLayout(store, state, layoutNodeId, layout) {
   const created = tileLayoutSetEntry(await reserveActorSeq(store), layoutNodeId, layout);
-  await store.put("ops", created.entry);
+  await store.put("events", created.entry);
   await store.put("tile_layout", created.layoutRecord);
   state.layout = layout;
   state.layoutNodeId = layoutNodeId;

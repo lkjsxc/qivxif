@@ -10,17 +10,15 @@ use axum::{
     response::{IntoResponse, Response},
     routing::{get, post},
 };
-use qivxif_api::{
-    ApiErrorCode, OperationAcceptance, TextOperationPayload, TextOperationRequest, TextPayload,
-};
+use qivxif_api::{ApiErrorCode, EventAcceptance, TextEventPayload, TextEventRequest, TextPayload};
 use qivxif_auth::AuthContext;
 use qivxif_core::NodeId;
-use qivxif_store_redb::{OperationReceipt, StoreError, TextApplyInput};
+use qivxif_store_redb::{EventReceipt, StoreError, TextApplyInput};
 
 pub fn routes() -> Router<AppState> {
     Router::new()
         .route("/api/text/{node_id}", get(get_text))
-        .route("/api/text/{node_id}/ops", post(apply_text))
+        .route("/api/text/{node_id}/events", post(apply_text))
 }
 
 async fn get_text(
@@ -44,38 +42,38 @@ async fn apply_text(
     State(state): State<AppState>,
     headers: HeaderMap,
     Path(node_id): Path<String>,
-    Json(request): Json<TextOperationRequest>,
+    Json(request): Json<TextEventRequest>,
 ) -> Response {
     let caps = text_capabilities();
     let Ok(node_id) = node_id.parse::<NodeId>() else {
-        return invalid_id::<TextOperationPayload>(caps).into_response();
+        return invalid_id::<TextEventPayload>(caps).into_response();
     };
     let Some(session_user) = load_session_user(&state, &headers) else {
-        return auth_missing::<TextOperationPayload>(caps).into_response();
+        return auth_missing::<TextEventPayload>(caps).into_response();
     };
     if !csrf_matches(&headers, &session_user.session) {
-        return csrf_missing::<TextOperationPayload>(caps).into_response();
+        return csrf_missing::<TextEventPayload>(caps).into_response();
     }
     let auth = auth_context(&session_user);
-    let result = state.store.apply_text_operation(
+    let result = state.store.apply_text_event(
         &auth,
         TextApplyInput {
             actor_id: session_user.user.actor_id,
             actor_seq: request.actor_seq,
             node_id,
-            operation: request.operation,
+            event: request.event,
         },
     );
     match result {
         Ok(result) => ok(
-            TextOperationPayload {
+            TextEventPayload {
                 state: result.state,
-                operation: acceptance(result.receipt),
+                event: acceptance(result.receipt),
             },
             caps,
         )
         .into_response(),
-        Err(error) => text_error::<TextOperationPayload>(error, caps).into_response(),
+        Err(error) => text_error::<TextEventPayload>(error, caps).into_response(),
     }
 }
 
@@ -85,9 +83,9 @@ fn viewer_context(state: &AppState, headers: &HeaderMap) -> AuthContext {
         .unwrap_or_else(AuthContext::public)
 }
 
-fn acceptance(receipt: OperationReceipt) -> OperationAcceptance {
-    OperationAcceptance {
-        op_id: receipt.op_id,
+fn acceptance(receipt: EventReceipt) -> EventAcceptance {
+    EventAcceptance {
+        event_id: receipt.event_id,
         server_cursor: receipt.server_cursor,
     }
 }
@@ -110,10 +108,10 @@ fn text_error<T>(error: StoreError, caps: Vec<qivxif_core::Capability>) -> ApiRe
             caps,
         ),
         StoreError::NodeMissing => graph_not_found(caps),
-        StoreError::InvalidOperation => fail(
+        StoreError::InvalidEvent => fail(
             StatusCode::BAD_REQUEST,
             ApiErrorCode::TextInvalidRange,
-            "text operation is invalid",
+            "text event is invalid",
             caps,
         ),
         _ => fail(

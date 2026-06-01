@@ -1,20 +1,20 @@
 use crate::{
     StoreError, StoreResult,
-    operation_log::insert_operation,
+    event_log::insert_event,
     publish_support::{
         actor_matches, body_node_id, ensure_slug_free, ensure_text_body, public_blog_post,
         publish_envelope, publishable_post, unpublish_envelope, write_post,
     },
-    records::OperationReceipt,
+    records::EventReceipt,
     store::QivxifStore,
 };
 use qivxif_auth::AuthContext;
-use qivxif_core::{ActorId, NodeId, OperationId, ServerTime, Visibility};
+use qivxif_core::{ActorId, EventId, NodeId, ServerTime, Visibility};
 use qivxif_graph::NodeRecord;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PublishPostInput {
-    pub op_id: OperationId,
+    pub event_id: EventId,
     pub actor_seq: u64,
     pub actor_id: ActorId,
     pub post_node_id: NodeId,
@@ -25,7 +25,7 @@ pub struct PublishPostInput {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UnpublishPostInput {
-    pub op_id: OperationId,
+    pub event_id: EventId,
     pub actor_seq: u64,
     pub actor_id: ActorId,
     pub post_node_id: NodeId,
@@ -35,7 +35,7 @@ pub struct UnpublishPostInput {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PublishPostResult {
     pub post: NodeRecord,
-    pub receipt: OperationReceipt,
+    pub receipt: EventReceipt,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -53,19 +53,19 @@ impl QivxifStore {
         auth: &AuthContext,
         input: PublishPostInput,
     ) -> StoreResult<PublishPostResult> {
-        if self.get_operation(&input.op_id)?.is_some() {
-            return self.replay_publish(&input.op_id, &input.post_node_id);
+        if self.get_event(&input.event_id)?.is_some() {
+            return self.replay_publish(&input.event_id, &input.post_node_id);
         }
         if !actor_matches(auth, &input.actor_id) {
             return Err(StoreError::Forbidden);
         }
-        let op = publish_envelope(&input)?;
+        let event = publish_envelope(&input)?;
         let tx = self.database.begin_write()?;
         let mut post = publishable_post(&tx, auth, &input.post_node_id)?;
         let body_id = body_node_id(&post)?;
         ensure_text_body(&tx, &body_id)?;
         ensure_slug_free(&tx, &input.author_name, &input.slug, &input.post_node_id)?;
-        let receipt = insert_operation(&tx, &op)?;
+        let receipt = insert_event(&tx, &event)?;
         post.visibility = Visibility::Public;
         post.updated_at = ServerTime::now();
         post.metadata_map.insert("slug", input.slug);
@@ -84,16 +84,16 @@ impl QivxifStore {
         auth: &AuthContext,
         input: UnpublishPostInput,
     ) -> StoreResult<PublishPostResult> {
-        if self.get_operation(&input.op_id)?.is_some() {
-            return self.replay_publish(&input.op_id, &input.post_node_id);
+        if self.get_event(&input.event_id)?.is_some() {
+            return self.replay_publish(&input.event_id, &input.post_node_id);
         }
         if !actor_matches(auth, &input.actor_id) {
             return Err(StoreError::Forbidden);
         }
-        let op = unpublish_envelope(&input)?;
+        let event = unpublish_envelope(&input)?;
         let tx = self.database.begin_write()?;
         let mut post = publishable_post(&tx, auth, &input.post_node_id)?;
-        let receipt = insert_operation(&tx, &op)?;
+        let receipt = insert_event(&tx, &event)?;
         post.visibility = Visibility::Private;
         post.updated_at = ServerTime::now();
         post.metadata_map.insert("publication_state", "unpublished");
@@ -113,15 +113,15 @@ impl QivxifStore {
 
     fn replay_publish(
         &self,
-        op_id: &OperationId,
+        event_id: &EventId,
         post_node_id: &NodeId,
     ) -> StoreResult<PublishPostResult> {
         let post = self
             .get_node(post_node_id)?
-            .ok_or(StoreError::OperationConflict)?;
+            .ok_or(StoreError::EventConflict)?;
         let receipt = self
-            .operation_receipt(op_id)?
-            .ok_or(StoreError::OperationConflict)?;
+            .event_receipt(event_id)?
+            .ok_or(StoreError::EventConflict)?;
         Ok(PublishPostResult { post, receipt })
     }
 }

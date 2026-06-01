@@ -14,12 +14,12 @@ use axum::{
     routing::{get, post},
 };
 use qivxif_api::{
-    EdgeCreatePayload, EdgeCreateRequest, EdgeListPayload, NodeCreatePayload, NodeCreateRequest,
-    NodePayload, OperationAcceptance,
+    EdgeCreatePayload, EdgeCreateRequest, EdgeListPayload, EventAcceptance, NodeCreatePayload,
+    NodeCreateRequest, NodePayload,
 };
 use qivxif_auth::AuthContext;
 use qivxif_core::NodeId;
-use qivxif_store_redb::{EdgeCreateInput, NodeCreateInput, OperationReceipt};
+use qivxif_store_redb::{EdgeCreateInput, EventReceipt, NodeCreateInput};
 
 pub fn routes() -> Router<AppState> {
     Router::new()
@@ -42,7 +42,7 @@ async fn create_node(
         return csrf_missing::<NodeCreatePayload>(caps).into_response();
     }
     let result = state.store.create_node(NodeCreateInput {
-        op_id: request.op_id,
+        event_id: request.event_id,
         actor_seq: request.actor_seq,
         node_id: request.node_id,
         owner_user_id: session_user.user.id,
@@ -55,7 +55,7 @@ async fn create_node(
         Ok(result) => ok(
             NodeCreatePayload {
                 node: result.node,
-                operation: acceptance(result.receipt),
+                event: acceptance(result.receipt),
             },
             caps,
         )
@@ -80,7 +80,7 @@ async fn create_edge(
     let result = state.store.create_edge(
         &auth,
         EdgeCreateInput {
-            op_id: request.op_id,
+            event_id: request.event_id,
             actor_seq: request.actor_seq,
             edge_id: request.edge_id,
             from_node: request.from_node,
@@ -94,7 +94,7 @@ async fn create_edge(
         Ok(result) => ok(
             EdgeCreatePayload {
                 edge: result.edge,
-                operation: acceptance(result.receipt),
+                event: acceptance(result.receipt),
             },
             caps,
         )
@@ -149,9 +149,9 @@ fn viewer_context(state: &AppState, headers: &HeaderMap) -> AuthContext {
         .unwrap_or_else(AuthContext::public)
 }
 
-fn acceptance(receipt: OperationReceipt) -> OperationAcceptance {
-    OperationAcceptance {
-        op_id: receipt.op_id,
+fn acceptance(receipt: EventReceipt) -> EventAcceptance {
+    EventAcceptance {
+        event_id: receipt.event_id,
         server_cursor: receipt.server_cursor,
     }
 }

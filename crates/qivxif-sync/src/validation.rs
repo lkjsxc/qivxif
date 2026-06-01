@@ -1,20 +1,20 @@
 use qivxif_api::{PullRequest, PushRequest};
-use qivxif_history::validate_operation_envelope;
+use qivxif_history::validate_event_envelope;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct SyncLimits {
-    pub max_push_ops: usize,
-    pub max_pull_ops: usize,
+    pub max_push_events: usize,
+    pub max_pull_events: usize,
 }
 
 #[derive(Debug, Error, PartialEq, Eq)]
 pub enum SyncError {
     #[error("batch too large")]
     BatchTooLarge,
-    #[error("invalid operation")]
-    InvalidOperation,
+    #[error("invalid event")]
+    InvalidEvent,
     #[error("cursor invalid")]
     CursorInvalid,
 }
@@ -22,17 +22,17 @@ pub enum SyncError {
 pub type SyncResult<T> = Result<T, SyncError>;
 
 pub fn validate_push(request: PushRequest, limits: SyncLimits) -> SyncResult<PushRequest> {
-    if request.operations.len() > limits.max_push_ops {
+    if request.events.len() > limits.max_push_events {
         return Err(SyncError::BatchTooLarge);
     }
-    for op in request.operations.iter().cloned() {
-        validate_operation_envelope(op).map_err(|_| SyncError::InvalidOperation)?;
+    for event in request.events.iter().cloned() {
+        validate_event_envelope(event).map_err(|_| SyncError::InvalidEvent)?;
     }
     Ok(request)
 }
 
 pub fn validate_pull(request: PullRequest, limits: SyncLimits) -> SyncResult<PullRequest> {
-    if request.limit > limits.max_pull_ops {
+    if request.limit > limits.max_pull_events {
         return Err(SyncError::BatchTooLarge);
     }
     if request.scope.trim().is_empty() {

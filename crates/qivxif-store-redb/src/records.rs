@@ -1,5 +1,5 @@
 use qivxif_auth::{AuthRole, PasswordHashString};
-use qivxif_core::{ActorId, CursorId, NodeId, OperationId, SessionId, UserId};
+use qivxif_core::{ActorId, CursorId, EventId, NodeId, SessionId, UserId};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -21,7 +21,7 @@ pub struct StoredSession {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct OperationReceipt {
-    pub op_id: OperationId,
+pub struct EventReceipt {
+    pub event_id: EventId,
     pub server_cursor: CursorId,
 }

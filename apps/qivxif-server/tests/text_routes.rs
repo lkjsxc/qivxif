@@ -2,24 +2,24 @@ mod support;
 
 use axum::http::StatusCode;
 use qivxif_api::{
-    ApiEnvelope, NodeCreatePayload, NodeCreateRequest, TextOperationPayload, TextOperationRequest,
+    ApiEnvelope, NodeCreatePayload, NodeCreateRequest, TextEventPayload, TextEventRequest,
     TextPayload,
 };
-use qivxif_core::{MetadataMap, NodeId, OperationId, TextDocId, Visibility};
+use qivxif_core::{EventId, MetadataMap, NodeId, TextDocId, Visibility};
 use qivxif_graph::NodeKind;
-use qivxif_history::text::{TextCharId, TextEdit, TextInsert, TextInsertedChar, TextOperation};
+use qivxif_history::text::{TextCharId, TextEdit, TextEvent, TextInsert, TextInsertedChar};
 use qivxif_server::routes;
 use serde_json::json;
 use support::{get, login_full, post_json, read_json, seeded_state};
 use tower::ServiceExt;
 
 #[tokio::test]
-async fn applies_and_reads_text_operation() {
+async fn applies_and_reads_text_event() {
     let app = routes::router(seeded_state("text"));
     let login = login_full(&app).await;
     let node_id = NodeId::generate();
     let node = NodeCreateRequest {
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         actor_seq: 1,
         node_id: node_id.clone(),
         kind: NodeKind::Text,
@@ -39,11 +39,11 @@ async fn applies_and_reads_text_operation() {
     assert_eq!(response.status(), StatusCode::OK);
     read_json::<ApiEnvelope<NodeCreatePayload>>(response).await;
 
-    let request = TextOperationRequest {
+    let request = TextEventRequest {
         actor_seq: 2,
-        operation: insert_op(&login, "hi"),
+        event: insert_event(&login, "hi"),
     };
-    let path = format!("/api/text/{node_id}/ops");
+    let path = format!("/api/text/{node_id}/events");
     let response = app
         .clone()
         .oneshot(post_json(
@@ -55,7 +55,7 @@ async fn applies_and_reads_text_operation() {
         .await
         .unwrap();
     assert_eq!(response.status(), StatusCode::OK);
-    let envelope: ApiEnvelope<TextOperationPayload> = read_json(response).await;
+    let envelope: ApiEnvelope<TextEventPayload> = read_json(response).await;
     let accepted = envelope.payload.unwrap();
     assert_eq!(accepted.state.content, "hi");
 
@@ -69,8 +69,8 @@ async fn applies_and_reads_text_operation() {
         ))
         .await
         .unwrap();
-    let envelope: ApiEnvelope<TextOperationPayload> = read_json(duplicate).await;
-    assert_eq!(envelope.payload.unwrap().operation, accepted.operation);
+    let envelope: ApiEnvelope<TextEventPayload> = read_json(duplicate).await;
+    assert_eq!(envelope.payload.unwrap().event, accepted.event);
 
     let response = app
         .oneshot(get(&format!("/api/text/{node_id}"), Some(&login.cookie)))
@@ -89,8 +89,8 @@ async fn accepts_browser_restore_text_shape() {
 
     let request = json!({
         "actor_seq": 2,
-        "operation": {
-            "op_id": OperationId::generate().to_string(),
+        "event": {
+            "event_id": EventId::generate().to_string(),
             "doc_id": TextDocId::generate().to_string(),
             "edit": {
                 "kind": "restore",
@@ -102,7 +102,7 @@ async fn accepts_browser_restore_text_shape() {
     });
     let response = app
         .oneshot(post_json(
-            &format!("/api/text/{node_id}/ops"),
+            &format!("/api/text/{node_id}/events"),
             &request,
             Some(&login.cookie),
             Some(&login.csrf),
@@ -110,13 +110,13 @@ async fn accepts_browser_restore_text_shape() {
         .await
         .unwrap();
     assert_eq!(response.status(), StatusCode::OK);
-    let envelope: ApiEnvelope<TextOperationPayload> = read_json(response).await;
+    let envelope: ApiEnvelope<TextEventPayload> = read_json(response).await;
     assert_eq!(envelope.payload.unwrap().state.content, "browser text");
 }
 
 async fn create_text_node(app: &axum::Router, login: &support::TestLogin, node_id: &NodeId) {
     let node = NodeCreateRequest {
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         actor_seq: 1,
         node_id: node_id.clone(),
         kind: NodeKind::Text,
@@ -136,9 +136,9 @@ async fn create_text_node(app: &axum::Router, login: &support::TestLogin, node_i
     assert_eq!(response.status(), StatusCode::OK);
 }
 
-fn insert_op(login: &support::TestLogin, text: &str) -> TextOperation {
-    TextOperation {
-        op_id: OperationId::generate(),
+fn insert_event(login: &support::TestLogin, text: &str) -> TextEvent {
+    TextEvent {
+        event_id: EventId::generate(),
         doc_id: TextDocId::generate(),
         edit: TextEdit::Insert(TextInsert {
             after: None,

@@ -11,9 +11,9 @@ use axum::{
     routing::{get, post},
 };
 use qivxif_api::{
-    FeedHomePayload, FeedItemPayload, OperationAcceptance, ShortPostPayload, ShortPostRequest,
+    EventAcceptance, FeedHomePayload, FeedItemPayload, ShortPostPayload, ShortPostRequest,
 };
-use qivxif_store_redb::{FeedItem, OperationReceipt, ShortPostInput, StoreError};
+use qivxif_store_redb::{EventReceipt, FeedItem, ShortPostInput, StoreError};
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -42,7 +42,7 @@ async fn create_short_post(
     let result = state.store.create_short_post(
         &auth_context(&session_user),
         ShortPostInput {
-            op_id: request.op_id,
+            event_id: request.event_id,
             actor_seq: request.actor_seq,
             node_id: request.node_id,
             actor_id: session_user.user.actor_id,
@@ -90,11 +90,11 @@ fn short_post_response(
             ShortPostPayload {
                 post: result.post,
                 feed_item: feed_payload(result.feed_item),
-                operation: acceptance(result.receipt),
+                event: acceptance(result.receipt),
             },
             caps,
         ),
-        Err(StoreError::InvalidOperation) => fail(
+        Err(StoreError::InvalidEvent) => fail(
             StatusCode::BAD_REQUEST,
             qivxif_api::ApiErrorCode::StoreConflict,
             "short post body or reply target is invalid",
@@ -106,7 +106,7 @@ fn short_post_response(
 
 fn feed_payload(item: FeedItem) -> FeedItemPayload {
     FeedItemPayload {
-        operation_id: item.operation_id,
+        event_id: item.event_id,
         post_node_id: item.post_node_id,
         author_user_id: item.author_user_id,
         author_name: item.author_name,
@@ -117,9 +117,9 @@ fn feed_payload(item: FeedItem) -> FeedItemPayload {
     }
 }
 
-fn acceptance(receipt: OperationReceipt) -> OperationAcceptance {
-    OperationAcceptance {
-        op_id: receipt.op_id,
+fn acceptance(receipt: EventReceipt) -> EventAcceptance {
+    EventAcceptance {
+        event_id: receipt.event_id,
         server_cursor: receipt.server_cursor,
     }
 }

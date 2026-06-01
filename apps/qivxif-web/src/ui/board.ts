@@ -49,7 +49,7 @@ function layoutSummary(state) {
   section.append(text(`Layout panes: ${paneCount(state.layout?.root)}`));
   section.append(text(`Maximized: ${state.layout?.maximized_pane_id ?? "none"}`));
   if (state.layoutDirty) {
-    section.append(text("Layout has a dirty local operation."));
+    section.append(text("Layout has a dirty local event."));
   }
   return section;
 }

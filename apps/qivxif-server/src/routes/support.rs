@@ -114,11 +114,11 @@ pub fn graph_store_error<T>(error: StoreError, caps: Vec<Capability>) -> ApiResp
         StoreError::NodeMissing => graph_not_found(caps),
         StoreError::DuplicateActorSeq => fail(
             StatusCode::CONFLICT,
-            ApiErrorCode::OperationDuplicateActorSeq,
-            "actor sequence already belongs to another operation",
+            ApiErrorCode::EventDuplicateActorSeq,
+            "actor sequence already belongs to another event",
             caps,
         ),
-        StoreError::NodeExists | StoreError::EdgeExists | StoreError::OperationConflict => fail(
+        StoreError::NodeExists | StoreError::EdgeExists | StoreError::EventConflict => fail(
             StatusCode::CONFLICT,
             ApiErrorCode::StoreConflict,
             "durable graph write conflicts with existing data",

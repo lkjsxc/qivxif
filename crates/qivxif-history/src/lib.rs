@@ -1,11 +1,11 @@
 mod commit;
 mod error;
-mod operation;
+mod event;
 pub mod text;
 
 pub use commit::{CommitGroup, CommitGroupKind};
 pub use error::{HistoryError, HistoryResult};
-pub use operation::{
-    OperationEnvelope, OperationKind, OperationPayload, OperationScope, PayloadHash, ReplayCursor,
-    TargetSet, ValidatedOperation, hash_payload, operation_targets, validate_operation_envelope,
+pub use event::{
+    EventEnvelope, EventKind, EventPayload, EventScope, PayloadHash, ReplayCursor, TargetSet,
+    ValidatedEvent, event_targets, hash_payload, validate_event_envelope,
 };

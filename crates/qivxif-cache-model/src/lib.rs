@@ -19,7 +19,7 @@ pub enum CacheEntryKind {
     GraphNeighborProjection,
     TextSnapshot,
     PublicNodeBody,
-    DirtyOperation,
+    DirtyEvent,
     LocalOnlyNode,
     CurrentTileLayout,
     CacheManifest,
@@ -106,7 +106,7 @@ fn protected(entry: &CacheEntry) -> bool {
         || entry.local_only_node.is_some()
         || matches!(
             entry.kind,
-            CacheEntryKind::DirtyOperation
+            CacheEntryKind::DirtyEvent
                 | CacheEntryKind::LocalOnlyNode
                 | CacheEntryKind::CurrentTileLayout
                 | CacheEntryKind::CacheManifest

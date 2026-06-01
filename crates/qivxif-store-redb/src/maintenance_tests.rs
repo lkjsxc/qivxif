@@ -1,6 +1,6 @@
 use crate::{FollowInput, ShortPostInput, StoreConfig, StoreResult, open_or_create, tables};
 use qivxif_auth::{AuthContext, AuthRole, Viewer, hash_password};
-use qivxif_core::{EdgeId, NodeId, OperationId, SessionId, Visibility};
+use qivxif_core::{EdgeId, EventId, NodeId, SessionId, Visibility};
 use redb::ReadableTable;
 use std::{
     fs,
@@ -14,7 +14,7 @@ fn repair_check_reports_missing_edge_index() -> StoreResult<()> {
     let result = store.follow_profile(
         &auth(&admin),
         FollowInput {
-            op_id: OperationId::generate(),
+            event_id: EventId::generate(),
             actor_seq: 1,
             edge_id: EdgeId::generate(),
             actor_id: admin.actor_id.clone(),
@@ -53,7 +53,7 @@ fn rebuild_feed_indexes_recreates_follow_audience() -> StoreResult<()> {
     store.follow_profile(
         &auth(&admin),
         FollowInput {
-            op_id: OperationId::generate(),
+            event_id: EventId::generate(),
             actor_seq: 1,
             edge_id: EdgeId::generate(),
             actor_id: admin.actor_id.clone(),
@@ -65,7 +65,7 @@ fn rebuild_feed_indexes_recreates_follow_audience() -> StoreResult<()> {
     store.create_short_post(
         &auth(&member),
         ShortPostInput {
-            op_id: OperationId::generate(),
+            event_id: EventId::generate(),
             actor_seq: 1,
             node_id: NodeId::generate(),
             actor_id: member.actor_id.clone(),
@@ -112,7 +112,7 @@ fn insert_stale_marker(store: &crate::QivxifStore) -> StoreResult<()> {
     let tx = store.database.begin_write()?;
     {
         let mut by_user = tx.open_table(tables::FEED_ITEMS_BY_USER)?;
-        by_user.insert("usr_stale:op_stale", ([] as [u8; 0]).as_slice())?;
+        by_user.insert("usr_stale:evt_stale", ([] as [u8; 0]).as_slice())?;
     }
     tx.commit()?;
     Ok(())

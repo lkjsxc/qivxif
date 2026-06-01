@@ -5,7 +5,7 @@ use qivxif_api::{
     ApiEnvelope, FeedHomePayload, FollowPayload, FollowRequest, ShortPostRequest, UnfollowRequest,
 };
 use qivxif_auth::{AuthRole, hash_password};
-use qivxif_core::{EdgeId, NodeId, OperationId, Visibility};
+use qivxif_core::{EdgeId, EventId, NodeId, Visibility};
 use qivxif_graph::EdgeKind;
 use qivxif_server::routes;
 use support::{get, login_full, login_named, post_json, read_json, seeded_state};
@@ -60,7 +60,7 @@ async fn profile_follows_drive_home_feed_markers() {
     assert_eq!(feed.items[0].author_user_id, member.user_id);
 
     let unfollow = UnfollowRequest {
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         actor_seq: admin.next_actor_seq + 1,
         edge_id: followed.id,
     };
@@ -124,7 +124,7 @@ async fn home_feed(app: &axum::Router, cookie: &str) -> FeedHomePayload {
 
 fn follow_request(actor_seq: u64, target_profile_node_id: NodeId) -> FollowRequest {
     FollowRequest {
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         actor_seq,
         edge_id: EdgeId::generate(),
         target_profile_node_id,
@@ -136,7 +136,7 @@ fn short_post(actor_seq: u64, body: &str) -> ShortPostRequest {
         actor_seq,
         body: body.to_owned(),
         node_id: NodeId::generate(),
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         reply_to: None,
         visibility: Visibility::Public,
     }

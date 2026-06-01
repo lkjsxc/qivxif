@@ -2,7 +2,7 @@ mod support;
 
 use axum::http::StatusCode;
 use qivxif_api::{ApiEnvelope, FeedHomePayload, ShortPostPayload, ShortPostRequest};
-use qivxif_core::{NodeId, OperationId, Visibility};
+use qivxif_core::{EventId, NodeId, Visibility};
 use qivxif_server::routes;
 use support::{get, login_full, post_json, read_json, seeded_state};
 use tower::ServiceExt;
@@ -38,7 +38,7 @@ async fn creates_short_posts_and_indexes_home_feed() {
         .await
         .unwrap();
     let envelope: ApiEnvelope<ShortPostPayload> = read_json(duplicate).await;
-    assert_eq!(envelope.payload.unwrap().operation, accepted.operation);
+    assert_eq!(envelope.payload.unwrap().event, accepted.event);
 
     let reply = short_post(2, "reply body", Some(first.node_id.clone()));
     let response = app
@@ -86,7 +86,7 @@ fn short_post(actor_seq: u64, body: &str, reply_to: Option<NodeId>) -> ShortPost
         actor_seq,
         body: body.to_owned(),
         node_id: NodeId::generate(),
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         reply_to,
         visibility: Visibility::Public,
     }

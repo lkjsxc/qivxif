@@ -57,10 +57,10 @@ pub(crate) fn remove_feed_markers_for_author(
         for item in by_user.iter()? {
             let (key, _) = item?;
             let key_text = key.value();
-            let Some(op_id) = key_text.strip_prefix(&prefix) else {
+            let Some(event_id) = key_text.strip_prefix(&prefix) else {
                 continue;
             };
-            if let Some(feed_bytes) = items.get(op_id)? {
+            if let Some(feed_bytes) = items.get(event_id)? {
                 let feed_item: FeedItem = decode(feed_bytes.value())?;
                 if &feed_item.author_user_id == author_user_id {
                     keys.push(key_text.to_owned());

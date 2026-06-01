@@ -10,8 +10,8 @@ use axum::{
     response::{IntoResponse, Response},
     routing::post,
 };
-use qivxif_api::{OperationAcceptance, TileLayoutPayload, TileLayoutSetRequest};
-use qivxif_store_redb::{OperationReceipt, TileLayoutSetInput};
+use qivxif_api::{EventAcceptance, TileLayoutPayload, TileLayoutSetRequest};
+use qivxif_store_redb::{EventReceipt, TileLayoutSetInput};
 
 pub fn routes() -> Router<AppState> {
     Router::new().route("/api/tile-layout", post(set_layout))
@@ -33,7 +33,7 @@ async fn set_layout(
     let result = state.store.set_tile_layout(
         &auth,
         TileLayoutSetInput {
-            op_id: request.op_id,
+            event_id: request.event_id,
             actor_seq: request.actor_seq,
             actor_id: session_user.user.actor_id,
             layout_node_id: request.layout_node_id,
@@ -44,7 +44,7 @@ async fn set_layout(
         Ok(result) => ok(
             TileLayoutPayload {
                 layout_node: result.layout_node,
-                operation: acceptance(result.receipt),
+                event: acceptance(result.receipt),
             },
             caps,
         )
@@ -53,9 +53,9 @@ async fn set_layout(
     }
 }
 
-fn acceptance(receipt: OperationReceipt) -> OperationAcceptance {
-    OperationAcceptance {
-        op_id: receipt.op_id,
+fn acceptance(receipt: EventReceipt) -> EventAcceptance {
+    EventAcceptance {
+        event_id: receipt.event_id,
         server_cursor: receipt.server_cursor,
     }
 }

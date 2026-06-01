@@ -1,7 +1,7 @@
 import { sendQueued } from "../http/client.ts";
 
 export async function refreshQueueState(store, state) {
-  const entries = await store.all("ops");
+  const entries = await store.all("events");
   state.queued = entries.filter((entry) => entry.status !== "accepted").length;
   state.rejected = entries.filter((entry) => entry.status === "rejected").length;
   return entries;
@@ -26,28 +26,28 @@ export async function flushQueue(store, state) {
 }
 
 async function flushEntry(store, state, entry) {
-  await store.put("ops", { ...entry, status: "pending_validation" });
+  await store.put("events", { ...entry, status: "pending_validation" });
   try {
     const payload = await sendQueued(entry, state.auth.csrf_token);
-    if (payload.operation?.op_id !== entry.id) {
-      await store.put("ops", {
+    if (payload.event?.event_id !== entry.id) {
+      await store.put("events", {
         ...entry,
         status: "dirty",
-        last_error: "operation acceptance mismatch",
+        last_error: "event acceptance mismatch",
       });
-      state.lastError = "operation acceptance mismatch";
+      state.lastError = "event acceptance mismatch";
       return "network_failed";
     }
     await acceptEntry(store, state, entry, payload);
     return "accepted";
   } catch (error) {
     if (!error.api) {
-      await store.put("ops", { ...entry, status: "dirty", last_error: String(error) });
+      await store.put("events", { ...entry, status: "dirty", last_error: String(error) });
       state.online = false;
       state.lastError = String(error);
       return "network_failed";
     }
-    await store.put("ops", {
+    await store.put("events", {
       ...entry,
       status: "rejected",
       last_error: error.api.code,
@@ -58,7 +58,7 @@ async function flushEntry(store, state, entry) {
 }
 
 async function acceptEntry(store, state, entry, payload) {
-  await store.delete("ops", entry.id);
+  await store.delete("events", entry.id);
   if (entry.kind === "node.create") {
     await store.put("nodes", { ...payload.node, dirty: false });
     if (payload.node.kind === "text") {
@@ -104,7 +104,7 @@ async function acceptEntry(store, state, entry, payload) {
     await store.put("nodes", { ...payload.post, dirty: false });
     await store.put("feed_windows", {
       dirty: false,
-      id: payload.feed_item.operation_id,
+      id: payload.feed_item.event_id,
       item: payload.feed_item,
     });
   }

@@ -70,7 +70,7 @@ export async function refreshCurrentNode(store, state) {
     });
   }
   const historyPayload = await nodeHistory(state.currentNodeId);
-  state.history = historyPayload.operations;
+  state.history = historyPayload.events;
 }
 
 async function refreshNeighborhood(store, nodeId) {

@@ -22,7 +22,7 @@ impl QivxifStore {
             let mut by_user = tx.open_table(tables::FEED_ITEMS_BY_USER)?;
             for user_id in audience {
                 by_user.insert(
-                    feed_user_key(&user_id, &item.operation_id).as_str(),
+                    feed_user_key(&user_id, &item.event_id).as_str(),
                     ([] as [u8; 0]).as_slice(),
                 )?;
                 markers += 1;

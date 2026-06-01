@@ -2,7 +2,7 @@ mod support;
 
 use axum::http::StatusCode;
 use qivxif_api::{ApiEnvelope, LoginPayload, NodeCreateRequest};
-use qivxif_core::{MetadataMap, NodeId, OperationId, Visibility};
+use qivxif_core::{EventId, MetadataMap, NodeId, Visibility};
 use qivxif_graph::NodeKind;
 use qivxif_server::routes;
 use support::{login_full, post_json, read_json, seeded_state};
@@ -19,7 +19,7 @@ async fn login_returns_next_server_safe_actor_sequence() {
         kind: NodeKind::Text,
         metadata_map: MetadataMap::empty(),
         node_id: NodeId::generate(),
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         visibility: Visibility::Private,
     };
     let response = app

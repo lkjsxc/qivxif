@@ -1,17 +1,15 @@
 use crate::{
-    StoreError, StoreResult, codec::encode, operation_log::insert_operation,
-    records::OperationReceipt, store::QivxifStore, tables,
+    StoreError, StoreResult, codec::encode, event_log::insert_event, records::EventReceipt,
+    store::QivxifStore, tables,
 };
 use qivxif_auth::{AuthContext, Viewer, can_write};
-use qivxif_core::{ActorId, NodeId, OperationId, ServerTime};
+use qivxif_core::{ActorId, EventId, NodeId, ServerTime};
 use qivxif_graph::{NodeKind, NodeRecord, TileLayout};
-use qivxif_history::{
-    OperationEnvelope, OperationKind, OperationPayload, OperationScope, hash_payload,
-};
+use qivxif_history::{EventEnvelope, EventKind, EventPayload, EventScope, hash_payload};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct TileLayoutSetInput {
-    pub op_id: OperationId,
+    pub event_id: EventId,
     pub actor_seq: u64,
     pub actor_id: ActorId,
     pub layout_node_id: NodeId,
@@ -21,7 +19,7 @@ pub struct TileLayoutSetInput {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct TileLayoutSetResult {
     pub layout_node: NodeRecord,
-    pub receipt: OperationReceipt,
+    pub receipt: EventReceipt,
 }
 
 impl QivxifStore {
@@ -30,23 +28,23 @@ impl QivxifStore {
         auth: &AuthContext,
         input: TileLayoutSetInput,
     ) -> StoreResult<TileLayoutSetResult> {
-        let op = tile_envelope(&input)?;
-        self.accept_tile_layout_op(auth, op, input.layout)
+        let event = tile_envelope(&input)?;
+        self.accept_tile_layout_event(auth, event, input.layout)
     }
 
-    pub(crate) fn accept_tile_layout_op(
+    pub(crate) fn accept_tile_layout_event(
         &self,
         auth: &AuthContext,
-        op: OperationEnvelope,
+        event: EventEnvelope,
         layout: TileLayout,
     ) -> StoreResult<TileLayoutSetResult> {
-        if self.get_operation(&op.op_id)?.is_some() {
-            return self.tile_layout_replay(&op);
+        if self.get_event(&event.event_id)?.is_some() {
+            return self.tile_layout_replay(&event);
         }
-        let Some(layout_node_id) = op.target_node_ids.first().cloned() else {
-            return Err(StoreError::InvalidOperation);
+        let Some(layout_node_id) = event.target_node_ids.first().cloned() else {
+            return Err(StoreError::InvalidEvent);
         };
-        if !actor_matches(auth, &op) {
+        if !actor_matches(auth, &event) {
             return Err(StoreError::Forbidden);
         }
         let mut node = self
@@ -55,10 +53,9 @@ impl QivxifStore {
         if node.kind != NodeKind::TileLayout || !can_write(auth, &node) {
             return Err(StoreError::Forbidden);
         }
-        let layout_json =
-            serde_json::to_string(&layout).map_err(|_| StoreError::InvalidOperation)?;
+        let layout_json = serde_json::to_string(&layout).map_err(|_| StoreError::InvalidEvent)?;
         let tx = self.database.begin_write()?;
-        let receipt = insert_operation(&tx, &op)?;
+        let receipt = insert_event(&tx, &event)?;
         {
             node.updated_at = ServerTime::now();
             node.metadata_map.insert("layout_json", layout_json);
@@ -72,17 +69,17 @@ impl QivxifStore {
         })
     }
 
-    fn tile_layout_replay(&self, op: &OperationEnvelope) -> StoreResult<TileLayoutSetResult> {
-        let layout_node_id = op
+    fn tile_layout_replay(&self, event: &EventEnvelope) -> StoreResult<TileLayoutSetResult> {
+        let layout_node_id = event
             .target_node_ids
             .first()
-            .ok_or(StoreError::InvalidOperation)?;
+            .ok_or(StoreError::InvalidEvent)?;
         let layout_node = self
             .get_node(layout_node_id)?
-            .ok_or(StoreError::OperationConflict)?;
+            .ok_or(StoreError::EventConflict)?;
         let receipt = self
-            .operation_receipt(&op.op_id)?
-            .ok_or(StoreError::OperationConflict)?;
+            .event_receipt(&event.event_id)?
+            .ok_or(StoreError::EventConflict)?;
         Ok(TileLayoutSetResult {
             layout_node,
             receipt,
@@ -90,17 +87,19 @@ impl QivxifStore {
     }
 }
 
-fn tile_envelope(input: &TileLayoutSetInput) -> StoreResult<OperationEnvelope> {
-    let bytes = serde_json::to_vec(&input.layout).map_err(|_| StoreError::InvalidOperation)?;
-    Ok(OperationEnvelope {
-        op_id: input.op_id.clone(),
+fn tile_envelope(input: &TileLayoutSetInput) -> StoreResult<EventEnvelope> {
+    let bytes = serde_json::to_vec(&input.layout).map_err(|_| StoreError::InvalidEvent)?;
+    Ok(EventEnvelope {
+        event_id: input.event_id.clone(),
         actor_id: input.actor_id.clone(),
         actor_seq: input.actor_seq,
         parents: Vec::new(),
-        scope: OperationScope::Tile,
-        kind: OperationKind::TileLayoutSet,
+        scope: EventScope::Tile,
+        kind: EventKind::TileLayoutSet,
         target_node_ids: vec![input.layout_node_id.clone()],
-        payload: OperationPayload {
+        target_edge_ids: Vec::new(),
+        target_event_ids: Vec::new(),
+        payload: EventPayload {
             bytes: bytes.clone(),
         },
         payload_hash: hash_payload(&bytes),
@@ -110,9 +109,9 @@ fn tile_envelope(input: &TileLayoutSetInput) -> StoreResult<OperationEnvelope> {
     })
 }
 
-fn actor_matches(auth: &AuthContext, op: &OperationEnvelope) -> bool {
+fn actor_matches(auth: &AuthContext, event: &EventEnvelope) -> bool {
     matches!(
         &auth.viewer,
-        Viewer::Session { actor_id, .. } if actor_id == &op.actor_id
+        Viewer::Session { actor_id, .. } if actor_id == &event.actor_id
     )
 }

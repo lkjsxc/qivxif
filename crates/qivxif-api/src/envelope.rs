@@ -40,14 +40,14 @@ pub enum ApiErrorCode {
     SchemaUnknownNodeKind,
     #[serde(rename = "schema.unknown_edge_kind")]
     SchemaUnknownEdgeKind,
-    #[serde(rename = "schema.unknown_operation_kind")]
-    SchemaUnknownOperationKind,
-    #[serde(rename = "operation.duplicate_actor_seq")]
-    OperationDuplicateActorSeq,
-    #[serde(rename = "operation.payload_hash_mismatch")]
-    OperationPayloadHashMismatch,
-    #[serde(rename = "operation.missing_parent")]
-    OperationMissingParent,
+    #[serde(rename = "schema.unknown_event_kind")]
+    SchemaUnknownEventKind,
+    #[serde(rename = "event.duplicate_actor_seq")]
+    EventDuplicateActorSeq,
+    #[serde(rename = "event.payload_hash_mismatch")]
+    EventPayloadHashMismatch,
+    #[serde(rename = "event.missing_parent")]
+    EventMissingParent,
     #[serde(rename = "store.conflict")]
     StoreConflict,
     #[serde(rename = "store.unavailable")]

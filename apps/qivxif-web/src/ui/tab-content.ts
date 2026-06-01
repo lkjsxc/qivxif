@@ -78,12 +78,12 @@ function editorPanel(state, actions) {
   }
   section.append(text(state.currentNodeId));
   if (state.textDirty) {
-    section.append(text("Text has a dirty local operation."));
+    section.append(text("Text has a dirty local event."));
   }
   const editor = document.createElement("textarea");
   editor.className = "editor";
   editor.value = state.text ?? "";
-  section.append(editor, actionButton("Save text operation", () => actions.saveText?.(editor.value)));
+  section.append(editor, actionButton("Save text event", () => actions.saveText?.(editor.value)));
   section.append(actionButton("Create board", () => actions.createBoard?.()));
   section.append(layoutSummary(state), historyList(state));
   return section;
@@ -131,20 +131,20 @@ function layoutSummary(state) {
   section.append(text(`Layout panes: ${count}`));
   section.append(text(`Maximized: ${state.layout?.maximized_pane_id ?? "none"}`));
   if (state.layoutDirty) {
-    section.append(text("Layout has a dirty local operation."));
+    section.append(text("Layout has a dirty local event."));
   }
   return section;
 }
 
 function historyList(state) {
   const history = panel("tab-panel history", heading("History", 2));
-  const operations = state.history ?? [];
-  if (operations.length === 0) {
-    history.append(text("No accepted operations loaded."));
+  const events = state.history ?? [];
+  if (events.length === 0) {
+    history.append(text("No accepted events loaded."));
     return history;
   }
-  for (const operation of operations) {
-    history.append(text(`${operation.kind} #${operation.actor_seq}`));
+  for (const event of events) {
+    history.append(text(`${event.kind} #${event.actor_seq}`));
   }
   return history;
 }

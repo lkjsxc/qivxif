@@ -1,31 +1,31 @@
-use qivxif_core::{ActorId, CursorId, OperationId};
-use qivxif_history::OperationEnvelope;
+use qivxif_core::{ActorId, CursorId, EventId};
+use qivxif_history::EventEnvelope;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct PushRequest {
     pub client_id: String,
     pub actor_id: ActorId,
-    pub operations: Vec<OperationEnvelope>,
+    pub events: Vec<EventEnvelope>,
     pub cursor_summary: Option<CursorId>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct PushResponse {
-    pub accepted: Vec<OperationAcceptance>,
-    pub rejected: Vec<OperationRejection>,
+    pub accepted: Vec<EventAcceptance>,
+    pub rejected: Vec<EventRejection>,
     pub server_cursor: Option<CursorId>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct OperationAcceptance {
-    pub op_id: OperationId,
+pub struct EventAcceptance {
+    pub event_id: EventId,
     pub server_cursor: CursorId,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct OperationRejection {
-    pub op_id: OperationId,
+pub struct EventRejection {
+    pub event_id: EventId,
     pub code: String,
     pub message: String,
 }
@@ -39,7 +39,7 @@ pub struct PullRequest {
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct PullResponse {
-    pub operations: Vec<OperationEnvelope>,
+    pub events: Vec<EventEnvelope>,
     pub server_cursor: Option<CursorId>,
     pub has_more: bool,
 }

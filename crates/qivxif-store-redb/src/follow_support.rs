@@ -3,11 +3,9 @@ use crate::{
     codec::{decode, encode},
     tables,
 };
-use qivxif_core::{ActorId, EdgeId, MetadataMap, NodeId, OperationId, ServerTime, UserId};
+use qivxif_core::{ActorId, EdgeId, EventId, MetadataMap, NodeId, ServerTime, UserId};
 use qivxif_graph::{EdgeKind, EdgeRecord};
-use qivxif_history::{
-    OperationEnvelope, OperationKind, OperationPayload, OperationScope, hash_payload,
-};
+use qivxif_history::{EventEnvelope, EventKind, EventPayload, EventScope, hash_payload};
 use redb::ReadableTable;
 
 pub(crate) fn active_follow(
@@ -103,24 +101,26 @@ pub(crate) fn update_edge(tx: &redb::WriteTransaction, edge: &EdgeRecord) -> Sto
     Ok(())
 }
 
-pub(crate) fn social_edge_operation(
-    op_id: &OperationId,
+pub(crate) fn social_edge_event(
+    event_id: &EventId,
     actor_seq: u64,
     actor_id: &ActorId,
     actor_user_id: &UserId,
-    kind: OperationKind,
+    kind: EventKind,
     edge: &EdgeRecord,
-) -> StoreResult<OperationEnvelope> {
+) -> StoreResult<EventEnvelope> {
     let bytes = encode(edge)?;
-    Ok(OperationEnvelope {
-        op_id: op_id.clone(),
+    Ok(EventEnvelope {
+        event_id: event_id.clone(),
         actor_id: actor_id.clone(),
         actor_seq,
         parents: Vec::new(),
-        scope: OperationScope::Social,
+        scope: EventScope::Social,
         kind,
         target_node_ids: vec![edge.from_node.clone(), edge.to_node.clone()],
-        payload: OperationPayload {
+        target_edge_ids: vec![edge.id.clone()],
+        target_event_ids: Vec::new(),
+        payload: EventPayload {
             bytes: bytes.clone(),
         },
         payload_hash: hash_payload(&bytes),

@@ -1,8 +1,8 @@
 use crate::{
     StoreError, StoreResult,
     codec::{decode, encode},
-    graph::{EdgeCreateInput, EdgeCreateResult, edge_operation},
-    operation_log::insert_operation,
+    event_log::insert_event,
+    graph::{EdgeCreateInput, EdgeCreateResult, edge_event},
     store::QivxifStore,
     tables,
 };
@@ -17,13 +17,13 @@ impl QivxifStore {
         auth: &AuthContext,
         input: EdgeCreateInput,
     ) -> StoreResult<EdgeCreateResult> {
-        if self.get_operation(&input.op_id)?.is_some() {
+        if self.get_event(&input.event_id)?.is_some() {
             let edge = self
                 .get_edge(&input.edge_id)?
-                .ok_or(StoreError::OperationConflict)?;
+                .ok_or(StoreError::EventConflict)?;
             let receipt = self
-                .operation_receipt(&input.op_id)?
-                .ok_or(StoreError::OperationConflict)?;
+                .event_receipt(&input.event_id)?
+                .ok_or(StoreError::EventConflict)?;
             return Ok(EdgeCreateResult { edge, receipt });
         }
         let Some(from) = self.get_node(&input.from_node)? else {
@@ -45,9 +45,9 @@ impl QivxifStore {
             metadata_map: input.metadata_map,
             tombstone: None,
         };
-        let op = edge_operation(&input.op_id, input.actor_seq, &input.actor_id, &edge)?;
+        let event = edge_event(&input.event_id, input.actor_seq, &input.actor_id, &edge)?;
         let tx = self.database.begin_write()?;
-        let receipt = insert_operation(&tx, &op)?;
+        let receipt = insert_event(&tx, &event)?;
         {
             let mut edges = tx.open_table(tables::EDGES)?;
             if let Some(existing) = edges.get(edge.id.as_str())? {

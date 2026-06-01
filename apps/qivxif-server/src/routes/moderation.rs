@@ -11,10 +11,10 @@ use axum::{
     routing::post,
 };
 use qivxif_api::{
-    ApiErrorCode, ModerationClearRequest, ModerationPayload, ModerationRequest, OperationAcceptance,
+    ApiErrorCode, EventAcceptance, ModerationClearRequest, ModerationPayload, ModerationRequest,
 };
 use qivxif_store_redb::{
-    ModerationAction, ModerationClearInput, ModerationInput, ModerationResult, OperationReceipt,
+    EventReceipt, ModerationAction, ModerationClearInput, ModerationInput, ModerationResult,
     StoreError,
 };
 
@@ -74,7 +74,7 @@ async fn create_response(
     let result = state.store.create_moderation_edge(
         &auth_context(&session_user),
         ModerationInput {
-            op_id: request.op_id,
+            event_id: request.event_id,
             actor_seq: request.actor_seq,
             edge_id: request.edge_id,
             actor_id: session_user.user.actor_id,
@@ -103,7 +103,7 @@ async fn clear_response(
     let result = state.store.clear_moderation_edge(
         &auth_context(&session_user),
         ModerationClearInput {
-            op_id: request.op_id,
+            event_id: request.event_id,
             actor_seq: request.actor_seq,
             edge_id: request.edge_id,
             actor_id: session_user.user.actor_id,
@@ -123,11 +123,11 @@ fn moderation_response(
         Ok(result) => ok(
             ModerationPayload {
                 edge: result.edge,
-                operation: acceptance(result.receipt),
+                event: acceptance(result.receipt),
             },
             caps,
         ),
-        Err(StoreError::InvalidOperation) => fail(
+        Err(StoreError::InvalidEvent) => fail(
             StatusCode::BAD_REQUEST,
             ApiErrorCode::StoreConflict,
             "moderation target is invalid",
@@ -137,9 +137,9 @@ fn moderation_response(
     }
 }
 
-fn acceptance(receipt: OperationReceipt) -> OperationAcceptance {
-    OperationAcceptance {
-        op_id: receipt.op_id,
+fn acceptance(receipt: EventReceipt) -> EventAcceptance {
+    EventAcceptance {
+        event_id: receipt.event_id,
         server_cursor: receipt.server_cursor,
     }
 }

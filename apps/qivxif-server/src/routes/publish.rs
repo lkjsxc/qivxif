@@ -10,11 +10,9 @@ use axum::{
     response::{Html, IntoResponse, Response},
     routing::{get, post},
 };
-use qivxif_api::{
-    ApiErrorCode, OperationAcceptance, PublishPayload, PublishRequest, UnpublishRequest,
-};
+use qivxif_api::{ApiErrorCode, EventAcceptance, PublishPayload, PublishRequest, UnpublishRequest};
 use qivxif_core::NodeId;
-use qivxif_store_redb::{OperationReceipt, PublishPostInput, StoreError, UnpublishPostInput};
+use qivxif_store_redb::{EventReceipt, PublishPostInput, StoreError, UnpublishPostInput};
 
 pub fn routes() -> Router<AppState> {
     Router::new()
@@ -42,7 +40,7 @@ async fn publish_post(
     let result = state.store.publish_post(
         &auth_context(&session_user),
         PublishPostInput {
-            op_id: request.op_id,
+            event_id: request.event_id,
             actor_seq: request.actor_seq,
             actor_id: session_user.user.actor_id,
             post_node_id,
@@ -73,7 +71,7 @@ async fn unpublish_post(
     let result = state.store.unpublish_post(
         &auth_context(&session_user),
         UnpublishPostInput {
-            op_id: request.op_id,
+            event_id: request.event_id,
             actor_seq: request.actor_seq,
             actor_id: session_user.user.actor_id,
             post_node_id,
@@ -107,7 +105,7 @@ fn publish_response(
         Ok(result) => ok(
             PublishPayload {
                 post: result.post,
-                operation: acceptance(result.receipt),
+                event: acceptance(result.receipt),
             },
             caps,
         ),
@@ -115,9 +113,9 @@ fn publish_response(
     }
 }
 
-fn acceptance(receipt: OperationReceipt) -> OperationAcceptance {
-    OperationAcceptance {
-        op_id: receipt.op_id,
+fn acceptance(receipt: EventReceipt) -> EventAcceptance {
+    EventAcceptance {
+        event_id: receipt.event_id,
         server_cursor: receipt.server_cursor,
     }
 }
@@ -140,7 +138,7 @@ fn publish_error(
             caps,
         ),
         StoreError::NodeMissing => graph_not_found(caps),
-        StoreError::InvalidOperation => fail(
+        StoreError::InvalidEvent => fail(
             StatusCode::BAD_REQUEST,
             ApiErrorCode::StoreConflict,
             "publish request does not match post shape",

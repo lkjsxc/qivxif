@@ -10,10 +10,8 @@ use axum::{
     response::{IntoResponse, Response},
     routing::post,
 };
-use qivxif_api::{
-    ApiErrorCode, FollowPayload, FollowRequest, OperationAcceptance, UnfollowRequest,
-};
-use qivxif_store_redb::{FollowInput, FollowResult, OperationReceipt, StoreError, UnfollowInput};
+use qivxif_api::{ApiErrorCode, EventAcceptance, FollowPayload, FollowRequest, UnfollowRequest};
+use qivxif_store_redb::{EventReceipt, FollowInput, FollowResult, StoreError, UnfollowInput};
 
 pub fn routes() -> Router<AppState> {
     Router::new()
@@ -36,7 +34,7 @@ async fn follow_profile(
     let result = state.store.follow_profile(
         &auth_context(&session_user),
         FollowInput {
-            op_id: request.op_id,
+            event_id: request.event_id,
             actor_seq: request.actor_seq,
             edge_id: request.edge_id,
             actor_id: session_user.user.actor_id,
@@ -63,7 +61,7 @@ async fn unfollow_profile(
     let result = state.store.unfollow_profile(
         &auth_context(&session_user),
         UnfollowInput {
-            op_id: request.op_id,
+            event_id: request.event_id,
             actor_seq: request.actor_seq,
             edge_id: request.edge_id,
             actor_id: session_user.user.actor_id,
@@ -82,11 +80,11 @@ fn follow_response(
         Ok(result) => ok(
             FollowPayload {
                 edge: result.edge,
-                operation: acceptance(result.receipt),
+                event: acceptance(result.receipt),
             },
             caps,
         ),
-        Err(StoreError::InvalidOperation) => fail(
+        Err(StoreError::InvalidEvent) => fail(
             StatusCode::BAD_REQUEST,
             ApiErrorCode::StoreConflict,
             "follow target is invalid",
@@ -96,9 +94,9 @@ fn follow_response(
     }
 }
 
-fn acceptance(receipt: OperationReceipt) -> OperationAcceptance {
-    OperationAcceptance {
-        op_id: receipt.op_id,
+fn acceptance(receipt: EventReceipt) -> EventAcceptance {
+    EventAcceptance {
+        event_id: receipt.event_id,
         server_cursor: receipt.server_cursor,
     }
 }

@@ -1,11 +1,9 @@
 use crate::moderation_query::interaction_blocked;
 use crate::{FeedItem, ShortPostInput, StoreError, StoreResult, codec::encode, store::QivxifStore};
 use qivxif_auth::{AuthContext, Viewer, can_read};
-use qivxif_core::{MetadataMap, NodeId, OperationId, ServerTime, UserId};
+use qivxif_core::{EventId, MetadataMap, NodeId, ServerTime, UserId};
 use qivxif_graph::{NodeKind, NodeRecord};
-use qivxif_history::{
-    OperationEnvelope, OperationKind, OperationPayload, OperationScope, hash_payload,
-};
+use qivxif_history::{EventEnvelope, EventKind, EventPayload, EventScope, hash_payload};
 
 pub(crate) fn ensure_session_actor(
     auth: &AuthContext,
@@ -23,7 +21,7 @@ pub(crate) fn ensure_session_actor(
 pub(crate) fn validate_body(body: &str) -> StoreResult<()> {
     let count = body.chars().count();
     if count == 0 || count > 512 {
-        Err(StoreError::InvalidOperation)
+        Err(StoreError::InvalidEvent)
     } else {
         Ok(())
     }
@@ -76,7 +74,7 @@ pub(crate) fn short_post_record(input: &ShortPostInput, now: ServerTime) -> Node
 
 pub(crate) fn feed_item(input: &ShortPostInput, now: ServerTime) -> FeedItem {
     FeedItem {
-        operation_id: input.op_id.clone(),
+        event_id: input.event_id.clone(),
         post_node_id: input.node_id.clone(),
         author_user_id: input.author_user_id.clone(),
         author_name: input.author_name.clone(),
@@ -87,20 +85,22 @@ pub(crate) fn feed_item(input: &ShortPostInput, now: ServerTime) -> FeedItem {
     }
 }
 
-pub(crate) fn social_post_operation(
+pub(crate) fn social_post_event(
     input: &ShortPostInput,
     post: &NodeRecord,
-) -> StoreResult<OperationEnvelope> {
+) -> StoreResult<EventEnvelope> {
     let bytes = encode(post)?;
-    Ok(OperationEnvelope {
-        op_id: input.op_id.clone(),
+    Ok(EventEnvelope {
+        event_id: input.event_id.clone(),
         actor_id: input.actor_id.clone(),
         actor_seq: input.actor_seq,
         parents: Vec::new(),
-        scope: OperationScope::Social,
-        kind: OperationKind::SocialShortPostCreate,
+        scope: EventScope::Social,
+        kind: EventKind::SocialShortPostCreate,
         target_node_ids: target_nodes(&input.node_id, input.reply_to.as_ref()),
-        payload: OperationPayload {
+        target_edge_ids: Vec::new(),
+        target_event_ids: Vec::new(),
+        payload: EventPayload {
             bytes: bytes.clone(),
         },
         payload_hash: hash_payload(&bytes),
@@ -110,8 +110,8 @@ pub(crate) fn social_post_operation(
     })
 }
 
-pub(crate) fn feed_user_key(user_id: &UserId, op_id: &OperationId) -> String {
-    format!("{}:{}", user_id.as_str(), op_id.as_str())
+pub(crate) fn feed_user_key(user_id: &UserId, event_id: &EventId) -> String {
+    format!("{}:{}", user_id.as_str(), event_id.as_str())
 }
 
 pub(crate) fn feed_order(left: &FeedItem, right: &FeedItem) -> std::cmp::Ordering {
@@ -119,7 +119,7 @@ pub(crate) fn feed_order(left: &FeedItem, right: &FeedItem) -> std::cmp::Orderin
         .created_at
         .to_string()
         .cmp(&left.created_at.to_string())
-        .then_with(|| right.operation_id.as_str().cmp(left.operation_id.as_str()))
+        .then_with(|| right.event_id.as_str().cmp(left.event_id.as_str()))
 }
 
 fn target_nodes(node_id: &NodeId, reply_to: Option<&NodeId>) -> Vec<NodeId> {

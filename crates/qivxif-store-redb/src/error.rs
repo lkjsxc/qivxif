@@ -22,9 +22,9 @@ pub enum StoreError {
     AdminExists,
     #[error("duplicate user name")]
     DuplicateUserName,
-    #[error("operation conflicts with existing durable record")]
-    OperationConflict,
-    #[error("actor sequence already belongs to another operation")]
+    #[error("event conflicts with existing durable record")]
+    EventConflict,
+    #[error("actor sequence already belongs to another event")]
     DuplicateActorSeq,
     #[error("node already exists")]
     NodeExists,
@@ -38,10 +38,10 @@ pub enum StoreError {
     Forbidden,
     #[error("cursor invalid")]
     CursorInvalid,
-    #[error("operation envelope invalid")]
-    InvalidOperation,
-    #[error("operation kind is not accepted by this store path")]
-    UnknownOperationKind,
+    #[error("event envelope invalid")]
+    InvalidEvent,
+    #[error("event kind is not accepted by this store path")]
+    UnknownEventKind,
 }
 
 impl From<redb::DatabaseError> for StoreError {

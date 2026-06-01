@@ -26,8 +26,8 @@ try {
   await context.setOffline(true);
   await page.getByRole("button", { name: "Create text node" }).click();
   await page.locator(".editor").fill(proofText);
-  await page.getByRole("button", { name: "Save text operation" }).click();
-  await waitForLocalOps(page, 2);
+  await page.getByRole("button", { name: "Save text event" }).click();
+  await waitForLocalEvents(page, 2);
   await waitForText(page, "Queued: 2", browserEvents);
   await page.getByText("Sync: offline").waitFor();
   await page.getByRole("button", { name: "Split pane" }).click();
@@ -45,7 +45,7 @@ try {
   await page.getByRole("button", { name: "Move board item" }).click();
   await page.getByText("@ 160,144").waitFor();
   const localBefore = await localState(page);
-  assert(localBefore.ops.length > 10, "workspace and board operations were not queued");
+  assert(localBefore.events.length > 10, "workspace and board events were not queued");
   const nodeId = localBefore.nodes.find((item) => item.kind === "text")?.id;
   const boardId = localBefore.layoutRecords.find((item) => item.id === "active_board")?.node_id;
   const layoutId = localBefore.layoutRecords.find((item) => item.id === "tile_model")?.layout_node_id;
@@ -146,14 +146,14 @@ async function localState(page) {
     return {
       nodes: await read("nodes"),
       edges: await read("edges"),
-      ops: await read("ops"),
+      events: await read("events"),
       text: await read("text_snapshots"),
       layoutRecords: await read("tile_layout"),
     };
   });
 }
 
-async function waitForLocalOps(page, count) {
+async function waitForLocalEvents(page, count) {
   await page.waitForFunction(async (expected) => {
     const db = await new Promise((resolve, reject) => {
       const request = indexedDB.open("qivxif", 2);
@@ -161,7 +161,7 @@ async function waitForLocalOps(page, count) {
       request.onsuccess = () => resolve(request.result);
     });
     return new Promise((resolve, reject) => {
-      const call = db.transaction("ops", "readonly").objectStore("ops").getAll();
+      const call = db.transaction("events", "readonly").objectStore("events").getAll();
       call.onerror = () => reject(call.error);
       call.onsuccess = () => resolve(call.result.length === expected);
     });

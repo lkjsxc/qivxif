@@ -10,8 +10,8 @@ pub enum HistoryError {
     MissingPayloadHash,
     #[error("payload hash mismatch")]
     PayloadHashMismatch,
-    #[error("cursor must use a durable operation id")]
+    #[error("cursor must use a durable event id")]
     InvalidCursor,
-    #[error("text operation references missing character")]
+    #[error("text event references missing character")]
     MissingTextCharacter,
 }

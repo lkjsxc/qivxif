@@ -5,7 +5,7 @@ use qivxif_api::{
     ApiEnvelope, NodeCreatePayload, NodeCreateRequest, NodePayload, TileLayoutPayload,
     TileLayoutSetRequest,
 };
-use qivxif_core::{MetadataMap, NodeId, OperationId, Visibility};
+use qivxif_core::{EventId, MetadataMap, NodeId, Visibility};
 use qivxif_graph::{NodeKind, TileLayout, TileTab, TileTree};
 use qivxif_server::routes;
 use support::{get, login_full, post_json, read_json, seeded_state};
@@ -17,9 +17,9 @@ async fn accepts_tile_layout_snapshot() {
     let login = login_full(&app).await;
     let layout_node = create_layout_node(&app, &login).await;
     let pane_node = create_pane_node(&app, &login).await;
-    let op_id = OperationId::generate();
+    let event_id = EventId::generate();
     let request = TileLayoutSetRequest {
-        op_id: op_id.clone(),
+        event_id: event_id.clone(),
         actor_seq: 3,
         layout_node_id: layout_node.clone(),
         layout: layout(pane_node),
@@ -38,7 +38,7 @@ async fn accepts_tile_layout_snapshot() {
     assert_eq!(response.status(), StatusCode::OK);
     let envelope: ApiEnvelope<TileLayoutPayload> = read_json(response).await;
     let accepted = envelope.payload.unwrap();
-    assert_eq!(accepted.operation.op_id, op_id);
+    assert_eq!(accepted.event.event_id, event_id);
 
     let duplicate = app
         .clone()
@@ -51,7 +51,7 @@ async fn accepts_tile_layout_snapshot() {
         .await
         .unwrap();
     let envelope: ApiEnvelope<TileLayoutPayload> = read_json(duplicate).await;
-    assert_eq!(envelope.payload.unwrap().operation, accepted.operation);
+    assert_eq!(envelope.payload.unwrap().event, accepted.event);
 
     let response = app
         .oneshot(get(
@@ -85,7 +85,7 @@ async fn create_node(
         kind,
         metadata_map: MetadataMap::empty(),
         node_id: node_id.clone(),
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         visibility: Visibility::Private,
     };
     let response = app

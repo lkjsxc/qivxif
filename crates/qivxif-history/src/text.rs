@@ -1,14 +1,14 @@
 mod reducer;
 
-use qivxif_core::{ActorId, OperationId, TextDocId};
+use qivxif_core::{ActorId, EventId, TextDocId};
 use serde::{Deserialize, Serialize};
 
-pub use reducer::{apply_text_op, restore_text, snapshot_text};
+pub use reducer::{apply_text_event, restore_text, snapshot_text};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct TextSnapshotRef {
     pub doc_id: TextDocId,
-    pub after_operation: OperationId,
+    pub after_event: EventId,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Ord, PartialOrd, Serialize)]
@@ -29,12 +29,12 @@ pub struct TextAtom {
 pub struct TextDocState {
     pub content: String,
     pub atoms: Vec<TextAtom>,
-    pub applied_operations: Vec<OperationId>,
+    pub applied_events: Vec<EventId>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct TextOperation {
-    pub op_id: OperationId,
+pub struct TextEvent {
+    pub event_id: EventId,
     pub doc_id: TextDocId,
     pub edit: TextEdit,
 }
@@ -74,6 +74,6 @@ pub struct TextRestore {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct TextSnapshot {
     pub doc_id: TextDocId,
-    pub after_operation: OperationId,
+    pub after_event: EventId,
     pub content: String,
 }

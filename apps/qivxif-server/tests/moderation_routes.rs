@@ -6,7 +6,7 @@ use qivxif_api::{
     ModerationRequest, ShortPostPayload, ShortPostRequest,
 };
 use qivxif_auth::{AuthRole, hash_password};
-use qivxif_core::{EdgeId, NodeId, OperationId, Visibility};
+use qivxif_core::{EdgeId, EventId, NodeId, Visibility};
 use qivxif_graph::EdgeKind;
 use qivxif_server::routes;
 use support::{get, login_full, login_named, post_json, read_json, seeded_state};
@@ -46,7 +46,7 @@ async fn mute_filters_home_feed_without_removing_markers() {
     assert!(home_feed(&app, &admin.cookie).await.items.is_empty());
 
     let clear = ModerationClearRequest {
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         actor_seq: admin.next_actor_seq + 2,
         edge_id: muted.id,
     };
@@ -126,7 +126,7 @@ async fn follow(
     actor_seq: u64,
 ) {
     let request = FollowRequest {
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         actor_seq,
         edge_id: EdgeId::generate(),
         target_profile_node_id: target_profile_node_id.clone(),
@@ -153,7 +153,7 @@ async fn moderation(
     csrf: &str,
 ) -> qivxif_graph::EdgeRecord {
     let request = ModerationRequest {
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         actor_seq,
         edge_id: EdgeId::generate(),
         target_profile_node_id: target_profile_node_id.clone(),
@@ -189,7 +189,7 @@ fn short_post(actor_seq: u64, body: &str, reply_to: Option<NodeId>) -> ShortPost
         actor_seq,
         body: body.to_owned(),
         node_id: NodeId::generate(),
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         reply_to,
         visibility: Visibility::Public,
     }

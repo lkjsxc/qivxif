@@ -1,18 +1,18 @@
 use crate::{
     StoreError, StoreResult,
     codec::decode,
+    event_log::insert_event,
     feed_support::ensure_session_actor,
     follow_support::{
-        active_edge_kind, edge_by_id, insert_edge_with_indexes, social_edge_operation, update_edge,
+        active_edge_kind, edge_by_id, insert_edge_with_indexes, social_edge_event, update_edge,
     },
-    operation_log::insert_operation,
-    records::OperationReceipt,
+    records::EventReceipt,
     store::QivxifStore,
 };
 use qivxif_auth::{AuthContext, can_read};
-use qivxif_core::{ActorId, EdgeId, MetadataMap, NodeId, OperationId, ServerTime, UserId};
+use qivxif_core::{ActorId, EdgeId, EventId, MetadataMap, NodeId, ServerTime, UserId};
 use qivxif_graph::{EdgeRecord, NodeKind, Tombstone};
-use qivxif_history::OperationKind;
+use qivxif_history::EventKind;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum ModerationAction {
@@ -22,7 +22,7 @@ pub enum ModerationAction {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ModerationInput {
-    pub op_id: OperationId,
+    pub event_id: EventId,
     pub actor_seq: u64,
     pub edge_id: EdgeId,
     pub actor_id: ActorId,
@@ -34,7 +34,7 @@ pub struct ModerationInput {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ModerationClearInput {
-    pub op_id: OperationId,
+    pub event_id: EventId,
     pub actor_seq: u64,
     pub edge_id: EdgeId,
     pub actor_id: ActorId,
@@ -46,7 +46,7 @@ pub struct ModerationClearInput {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ModerationResult {
     pub edge: EdgeRecord,
-    pub receipt: OperationReceipt,
+    pub receipt: EventReceipt,
 }
 
 impl QivxifStore {
@@ -55,8 +55,8 @@ impl QivxifStore {
         auth: &AuthContext,
         input: ModerationInput,
     ) -> StoreResult<ModerationResult> {
-        if self.get_operation(&input.op_id)?.is_some() {
-            return self.replay_moderation(&input.op_id, input.action.create_op());
+        if self.get_event(&input.event_id)?.is_some() {
+            return self.replay_moderation(&input.event_id, input.action.create_event());
         }
         validate_target(self, auth, &input)?;
         let tx = self.database.begin_write()?;
@@ -71,15 +71,15 @@ impl QivxifStore {
         if edge.id != input.edge_id && edge_by_id(&tx, &input.edge_id)?.is_some() {
             return Err(StoreError::EdgeExists);
         }
-        let op = social_edge_operation(
-            &input.op_id,
+        let event = social_edge_event(
+            &input.event_id,
             input.actor_seq,
             &input.actor_id,
             &input.actor_user_id,
-            input.action.create_op(),
+            input.action.create_event(),
             &edge,
         )?;
-        let receipt = insert_operation(&tx, &op)?;
+        let receipt = insert_event(&tx, &event)?;
         if !already_active {
             insert_edge_with_indexes(&tx, &edge)?;
         }
@@ -92,14 +92,14 @@ impl QivxifStore {
         auth: &AuthContext,
         input: ModerationClearInput,
     ) -> StoreResult<ModerationResult> {
-        if self.get_operation(&input.op_id)?.is_some() {
-            return self.replay_moderation(&input.op_id, input.action.clear_op());
+        if self.get_event(&input.event_id)?.is_some() {
+            return self.replay_moderation(&input.event_id, input.action.clear_event());
         }
         ensure_session_actor(auth, &input.actor_id, &input.actor_user_id)?;
         let tx = self.database.begin_write()?;
-        let mut edge = edge_by_id(&tx, &input.edge_id)?.ok_or(StoreError::OperationConflict)?;
+        let mut edge = edge_by_id(&tx, &input.edge_id)?.ok_or(StoreError::EventConflict)?;
         if edge.kind != input.action.edge_kind() || edge.tombstone.is_some() {
-            return Err(StoreError::OperationConflict);
+            return Err(StoreError::EventConflict);
         }
         if edge.from_node != input.actor_profile_node_id {
             return Err(StoreError::Forbidden);
@@ -108,15 +108,15 @@ impl QivxifStore {
             by: input.actor_id.clone(),
             reason: input.action.clear_reason().to_owned(),
         });
-        let op = social_edge_operation(
-            &input.op_id,
+        let event = social_edge_event(
+            &input.event_id,
             input.actor_seq,
             &input.actor_id,
             &input.actor_user_id,
-            input.action.clear_op(),
+            input.action.clear_event(),
             &edge,
         )?;
-        let receipt = insert_operation(&tx, &op)?;
+        let receipt = insert_event(&tx, &event)?;
         update_edge(&tx, &edge)?;
         tx.commit()?;
         Ok(ModerationResult { edge, receipt })
@@ -124,19 +124,17 @@ impl QivxifStore {
 
     fn replay_moderation(
         &self,
-        op_id: &OperationId,
-        expected: OperationKind,
+        event_id: &EventId,
+        expected: EventKind,
     ) -> StoreResult<ModerationResult> {
-        let operation = self
-            .get_operation(op_id)?
-            .ok_or(StoreError::OperationConflict)?;
-        if operation.kind != expected {
-            return Err(StoreError::OperationConflict);
+        let event = self.get_event(event_id)?.ok_or(StoreError::EventConflict)?;
+        if event.kind != expected {
+            return Err(StoreError::EventConflict);
         }
-        let edge = decode(&operation.payload.bytes)?;
+        let edge = decode(&event.payload.bytes)?;
         let receipt = self
-            .operation_receipt(op_id)?
-            .ok_or(StoreError::OperationConflict)?;
+            .event_receipt(event_id)?
+            .ok_or(StoreError::EventConflict)?;
         Ok(ModerationResult { edge, receipt })
     }
 }
@@ -148,7 +146,7 @@ fn validate_target(
 ) -> StoreResult<()> {
     ensure_session_actor(auth, &input.actor_id, &input.actor_user_id)?;
     if input.actor_profile_node_id == input.target_profile_node_id {
-        return Err(StoreError::InvalidOperation);
+        return Err(StoreError::InvalidEvent);
     }
     let Some(from) = store.get_node(&input.actor_profile_node_id)? else {
         return Err(StoreError::NodeMissing);
@@ -157,7 +155,7 @@ fn validate_target(
         return Err(StoreError::NodeMissing);
     };
     if from.kind != NodeKind::Profile || to.kind != NodeKind::Profile {
-        return Err(StoreError::InvalidOperation);
+        return Err(StoreError::InvalidEvent);
     }
     if from.owner_user_id != input.actor_user_id || !can_read(auth, &to) {
         return Err(StoreError::Forbidden);

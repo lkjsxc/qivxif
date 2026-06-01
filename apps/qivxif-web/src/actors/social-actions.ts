@@ -1,6 +1,6 @@
 import { reserveActorSeq } from "./actor-seq.ts";
 import { generateId } from "../ids.ts";
-import { shortPostCreateEntry } from "./local-operations.ts";
+import { shortPostCreateEntry } from "./local-events.ts";
 
 export async function createShortPost(store, state, body) {
   requireAuth(state);
@@ -10,11 +10,11 @@ export async function createShortPost(store, state, body) {
   }
   const actorSeq = await reserveActorSeq(store);
   const created = shortPostCreateEntry(actorSeq, state.auth.user, safeBody);
-  await store.put("ops", created.entry);
+  await store.put("events", created.entry);
   await store.put("nodes", created.node);
   await store.put("feed_windows", {
     dirty: true,
-    id: created.feedItem.operation_id,
+    id: created.feedItem.event_id,
     item: created.feedItem,
   });
 }
@@ -35,9 +35,9 @@ export async function clearSocialEdge(store, state, edgeId, kind) {
   requireAuth(state);
   const route = clearRoute(kind);
   const actorSeq = await reserveActorSeq(store);
-  const opId = generateId("op");
-  const request = { actor_seq: actorSeq, edge_id: edgeId, op_id: opId };
-  await store.put("ops", queueEntry(opId, kind, actorSeq, edgeId, route, request));
+  const eventId = generateId("evt");
+  const request = { actor_seq: actorSeq, edge_id: edgeId, event_id: eventId };
+  await store.put("events", queueEntry(eventId, kind, actorSeq, edgeId, route, request));
   const edge = await store.get("edges", edgeId);
   if (edge) {
     await store.put("edges", {
@@ -65,14 +65,14 @@ async function queueProfileEdge(store, state, targetProfileNodeId, kind, path, e
   }
   const actorSeq = await reserveActorSeq(store);
   const edgeId = generateId("edg");
-  const opId = generateId("op");
+  const eventId = generateId("evt");
   const request = {
     actor_seq: actorSeq,
     edge_id: edgeId,
-    op_id: opId,
+    event_id: eventId,
     target_profile_node_id: target,
   };
-  await store.put("ops", queueEntry(opId, kind, actorSeq, target, path, request));
+  await store.put("events", queueEntry(eventId, kind, actorSeq, target, path, request));
   await store.put("edges", {
     id: edgeId,
     dirty: true,

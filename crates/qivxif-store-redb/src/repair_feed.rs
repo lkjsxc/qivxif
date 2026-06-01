@@ -37,7 +37,7 @@ pub(crate) fn check_feed(
     for item in by_user.iter()? {
         let (key, _) = item?;
         let key = key.value().to_owned();
-        let Some((_, op_id)) = key.split_once(':') else {
+        let Some((_, event_id)) = key.split_once(':') else {
             findings.push(finding(
                 "decode_failed",
                 "feed_items_by_user",
@@ -46,7 +46,7 @@ pub(crate) fn check_feed(
             ));
             continue;
         };
-        if items.get(op_id)?.is_none() {
+        if items.get(event_id)?.is_none() {
             findings.push(finding(
                 "feed_user_index_dangling",
                 "feed_items_by_user",

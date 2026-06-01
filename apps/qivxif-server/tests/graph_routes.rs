@@ -5,7 +5,7 @@ use qivxif_api::{
     ApiEnvelope, EdgeCreatePayload, EdgeCreateRequest, EdgeListPayload, NodeCreatePayload,
     NodeCreateRequest, NodePayload,
 };
-use qivxif_core::{EdgeId, MetadataMap, NodeId, OperationId, Visibility};
+use qivxif_core::{EdgeId, EventId, MetadataMap, NodeId, Visibility};
 use qivxif_graph::{EdgeKind, NodeKind};
 use qivxif_server::routes;
 use support::{get, login, post_json, read_json, seeded_state};
@@ -17,14 +17,14 @@ async fn creates_reads_and_links_graph_records() {
     let (cookie, csrf) = login(&app).await;
     let first = NodeId::generate();
     let second = NodeId::generate();
-    let first_op = OperationId::generate();
+    let first_event = EventId::generate();
 
     let created = create_node(
         &app,
         &cookie,
         &csrf,
         &first,
-        &first_op,
+        &first_event,
         1,
         Visibility::Public,
     )
@@ -35,18 +35,18 @@ async fn creates_reads_and_links_graph_records() {
         &cookie,
         &csrf,
         &first,
-        &first_op,
+        &first_event,
         1,
         Visibility::Public,
     )
     .await;
-    assert_eq!(duplicate.operation, created.operation);
+    assert_eq!(duplicate.event, created.event);
     create_node(
         &app,
         &cookie,
         &csrf,
         &second,
-        &OperationId::generate(),
+        &EventId::generate(),
         2,
         Visibility::Private,
     )
@@ -54,7 +54,7 @@ async fn creates_reads_and_links_graph_records() {
 
     let edge = EdgeId::generate();
     let body = EdgeCreateRequest {
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         actor_seq: 3,
         edge_id: edge.clone(),
         from_node: first.clone(),
@@ -99,7 +99,7 @@ async fn public_viewer_cannot_read_private_node() {
         &cookie,
         &csrf,
         &node,
-        &OperationId::generate(),
+        &EventId::generate(),
         1,
         Visibility::Private,
     )
@@ -117,12 +117,12 @@ async fn create_node(
     cookie: &str,
     csrf: &str,
     node_id: &NodeId,
-    op_id: &OperationId,
+    event_id: &EventId,
     actor_seq: u64,
     visibility: Visibility,
 ) -> NodeCreatePayload {
     let body = NodeCreateRequest {
-        op_id: op_id.clone(),
+        event_id: event_id.clone(),
         actor_seq,
         node_id: node_id.clone(),
         kind: NodeKind::Text,

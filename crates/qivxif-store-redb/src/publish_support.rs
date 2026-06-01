@@ -4,11 +4,10 @@ use crate::{
     tables,
 };
 use qivxif_auth::{AuthContext, Viewer, can_publish};
-use qivxif_core::{ActorId, NodeId, OperationId, ServerTime, Visibility};
+use qivxif_core::{ActorId, EventId, NodeId, ServerTime, Visibility};
 use qivxif_graph::{NodeKind, NodeRecord};
 use qivxif_history::{
-    OperationEnvelope, OperationKind, OperationPayload, OperationScope, hash_payload,
-    text::TextDocState,
+    EventEnvelope, EventKind, EventPayload, EventScope, hash_payload, text::TextDocState,
 };
 use redb::ReadableTable;
 use serde::{Deserialize, Serialize};
@@ -53,7 +52,7 @@ pub(crate) fn ensure_text_body(tx: &redb::WriteTransaction, body_id: &NodeId) ->
     if body.kind == NodeKind::Text {
         Ok(())
     } else {
-        Err(StoreError::InvalidOperation)
+        Err(StoreError::InvalidEvent)
     }
 }
 
@@ -111,9 +110,9 @@ pub(crate) fn public_blog_post(
 pub(crate) fn body_node_id(post: &NodeRecord) -> StoreResult<NodeId> {
     post.metadata_map
         .get("body_node_id")
-        .ok_or(StoreError::InvalidOperation)?
+        .ok_or(StoreError::InvalidEvent)?
         .parse()
-        .map_err(|_| StoreError::InvalidOperation)
+        .map_err(|_| StoreError::InvalidEvent)
 }
 
 pub(crate) fn write_post(tx: &redb::WriteTransaction, post: &NodeRecord) -> StoreResult<()> {
@@ -122,7 +121,7 @@ pub(crate) fn write_post(tx: &redb::WriteTransaction, post: &NodeRecord) -> Stor
     Ok(())
 }
 
-pub(crate) fn publish_envelope(input: &PublishPostInput) -> StoreResult<OperationEnvelope> {
+pub(crate) fn publish_envelope(input: &PublishPostInput) -> StoreResult<EventEnvelope> {
     let payload = PublishPayload {
         node_id: input.post_node_id.clone(),
         slug: input.slug.clone(),
@@ -130,25 +129,25 @@ pub(crate) fn publish_envelope(input: &PublishPostInput) -> StoreResult<Operatio
         author_name: input.author_name.clone(),
     };
     envelope(
-        &input.op_id,
+        &input.event_id,
         &input.actor_id,
         input.actor_seq,
-        OperationKind::PublishPost,
+        EventKind::PublishPost,
         &input.post_node_id,
         &payload,
     )
 }
 
-pub(crate) fn unpublish_envelope(input: &UnpublishPostInput) -> StoreResult<OperationEnvelope> {
+pub(crate) fn unpublish_envelope(input: &UnpublishPostInput) -> StoreResult<EventEnvelope> {
     let payload = UnpublishPayload {
         node_id: input.post_node_id.clone(),
         reason: input.reason.clone(),
     };
     envelope(
-        &input.op_id,
+        &input.event_id,
         &input.actor_id,
         input.actor_seq,
-        OperationKind::PublishUnpublish,
+        EventKind::PublishUnpublish,
         &input.post_node_id,
         &payload,
     )
@@ -170,23 +169,25 @@ fn is_public_match(node: &NodeRecord, author_name: &str, slug: &str) -> bool {
 }
 
 fn envelope<T: Serialize>(
-    op_id: &OperationId,
+    event_id: &EventId,
     actor_id: &ActorId,
     actor_seq: u64,
-    kind: OperationKind,
+    kind: EventKind,
     node_id: &NodeId,
     payload: &T,
-) -> StoreResult<OperationEnvelope> {
-    let bytes = serde_json::to_vec(payload).map_err(|_| StoreError::InvalidOperation)?;
-    Ok(OperationEnvelope {
-        op_id: op_id.clone(),
+) -> StoreResult<EventEnvelope> {
+    let bytes = serde_json::to_vec(payload).map_err(|_| StoreError::InvalidEvent)?;
+    Ok(EventEnvelope {
+        event_id: event_id.clone(),
         actor_id: actor_id.clone(),
         actor_seq,
         parents: Vec::new(),
-        scope: OperationScope::Publish,
+        scope: EventScope::Publish,
         kind,
         target_node_ids: vec![node_id.clone()],
-        payload: OperationPayload {
+        target_edge_ids: Vec::new(),
+        target_event_ids: Vec::new(),
+        payload: EventPayload {
             bytes: bytes.clone(),
         },
         payload_hash: hash_payload(&bytes),

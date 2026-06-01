@@ -1,24 +1,20 @@
 use crate::{
     StoreError, StoreResult,
     codec::{decode, encode},
-    operation_log::insert_operation,
-    records::OperationReceipt,
+    event_log::insert_event,
+    records::EventReceipt,
     store::QivxifStore,
     tables,
 };
 use qivxif_auth::{AuthContext, can_read};
-use qivxif_core::{
-    ActorId, EdgeId, MetadataMap, NodeId, OperationId, ServerTime, UserId, Visibility,
-};
+use qivxif_core::{ActorId, EdgeId, EventId, MetadataMap, NodeId, ServerTime, UserId, Visibility};
 use qivxif_graph::{EdgeKind, EdgeRecord, NodeKind, NodeRecord, project_node};
-use qivxif_history::{
-    OperationEnvelope, OperationKind, OperationPayload, OperationScope, hash_payload,
-};
+use qivxif_history::{EventEnvelope, EventKind, EventPayload, EventScope, hash_payload};
 use redb::ReadableTable;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct NodeCreateInput {
-    pub op_id: OperationId,
+    pub event_id: EventId,
     pub actor_seq: u64,
     pub node_id: NodeId,
     pub owner_user_id: UserId,
@@ -31,12 +27,12 @@ pub struct NodeCreateInput {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct NodeCreateResult {
     pub node: NodeRecord,
-    pub receipt: OperationReceipt,
+    pub receipt: EventReceipt,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct EdgeCreateInput {
-    pub op_id: OperationId,
+    pub event_id: EventId,
     pub actor_seq: u64,
     pub edge_id: EdgeId,
     pub from_node: NodeId,
@@ -49,18 +45,18 @@ pub struct EdgeCreateInput {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct EdgeCreateResult {
     pub edge: EdgeRecord,
-    pub receipt: OperationReceipt,
+    pub receipt: EventReceipt,
 }
 
 impl QivxifStore {
     pub fn create_node(&self, input: NodeCreateInput) -> StoreResult<NodeCreateResult> {
-        if self.get_operation(&input.op_id)?.is_some() {
+        if self.get_event(&input.event_id)?.is_some() {
             let node = self
                 .get_node(&input.node_id)?
-                .ok_or(StoreError::OperationConflict)?;
+                .ok_or(StoreError::EventConflict)?;
             let receipt = self
-                .operation_receipt(&input.op_id)?
-                .ok_or(StoreError::OperationConflict)?;
+                .event_receipt(&input.event_id)?
+                .ok_or(StoreError::EventConflict)?;
             return Ok(NodeCreateResult { node, receipt });
         }
         let now = ServerTime::now();
@@ -78,9 +74,9 @@ impl QivxifStore {
             metadata_map: input.metadata_map,
             tombstone: None,
         };
-        let op = node_operation(&input.op_id, input.actor_seq, &input.actor_id, &node)?;
+        let event = node_event(&input.event_id, input.actor_seq, &input.actor_id, &node)?;
         let tx = self.database.begin_write()?;
-        let receipt = insert_operation(&tx, &op)?;
+        let receipt = insert_event(&tx, &event)?;
         {
             let mut nodes = tx.open_table(tables::NODES)?;
             if let Some(existing) = nodes.get(node.id.as_str())? {
@@ -112,22 +108,24 @@ impl QivxifStore {
     }
 }
 
-pub(crate) fn node_operation(
-    op_id: &OperationId,
+pub(crate) fn node_event(
+    event_id: &EventId,
     actor_seq: u64,
     actor_id: &ActorId,
     node: &NodeRecord,
-) -> StoreResult<OperationEnvelope> {
+) -> StoreResult<EventEnvelope> {
     let bytes = encode(node)?;
-    Ok(OperationEnvelope {
-        op_id: op_id.clone(),
+    Ok(EventEnvelope {
+        event_id: event_id.clone(),
         actor_id: actor_id.clone(),
         actor_seq,
         parents: Vec::new(),
-        scope: OperationScope::Graph,
-        kind: OperationKind::NodeCreate,
+        scope: EventScope::Graph,
+        kind: EventKind::NodeCreate,
         target_node_ids: vec![node.id.clone()],
-        payload: OperationPayload {
+        target_edge_ids: Vec::new(),
+        target_event_ids: Vec::new(),
+        payload: EventPayload {
             bytes: bytes.clone(),
         },
         payload_hash: hash_payload(&bytes),
@@ -137,22 +135,24 @@ pub(crate) fn node_operation(
     })
 }
 
-pub(crate) fn edge_operation(
-    op_id: &OperationId,
+pub(crate) fn edge_event(
+    event_id: &EventId,
     actor_seq: u64,
     actor_id: &ActorId,
     edge: &EdgeRecord,
-) -> StoreResult<OperationEnvelope> {
+) -> StoreResult<EventEnvelope> {
     let bytes = encode(edge)?;
-    Ok(OperationEnvelope {
-        op_id: op_id.clone(),
+    Ok(EventEnvelope {
+        event_id: event_id.clone(),
         actor_id: actor_id.clone(),
         actor_seq,
         parents: Vec::new(),
-        scope: OperationScope::Graph,
-        kind: OperationKind::EdgeCreate,
+        scope: EventScope::Graph,
+        kind: EventKind::EdgeCreate,
         target_node_ids: vec![edge.from_node.clone(), edge.to_node.clone()],
-        payload: OperationPayload {
+        target_edge_ids: vec![edge.id.clone()],
+        target_event_ids: Vec::new(),
+        payload: EventPayload {
             bytes: bytes.clone(),
         },
         payload_hash: hash_payload(&bytes),

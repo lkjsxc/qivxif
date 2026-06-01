@@ -1,12 +1,12 @@
 import { reserveActorSeq } from "./actor-seq.ts";
-import { edgeCreateEntry, nodeCreateEntry } from "./local-operations.ts";
+import { edgeCreateEntry, nodeCreateEntry } from "./local-events.ts";
 
 export async function createBoard(store, state) {
   requireAuth(state);
   const board = nodeCreateEntry(await reserveActorSeq(store), "graph_board", {
     title: "Graph board",
   });
-  await store.put("ops", board.entry);
+  await store.put("events", board.entry);
   await store.put("nodes", board.node);
   await store.put("tile_layout", { id: "active_board", node_id: board.node.id });
   state.activeBoardId = board.node.id;
@@ -52,7 +52,7 @@ export async function linkBoardNodes(store, state) {
     "links_to",
     { source: "board" },
   );
-  await store.put("ops", edge.entry);
+  await store.put("events", edge.entry);
   await store.put("edges", edge.edge);
 }
 
@@ -85,7 +85,7 @@ async function appendPlacement(store, boardId, itemNodeId, seq, x, y) {
     x: String(x),
     y: String(y),
   });
-  await store.put("ops", placement.entry);
+  await store.put("events", placement.entry);
   await store.put("nodes", placement.node);
   const boardEdge = edgeCreateEntry(
     await reserveActorSeq(store),
@@ -94,7 +94,7 @@ async function appendPlacement(store, boardId, itemNodeId, seq, x, y) {
     "placed_on_board",
     { placement_seq: String(seq) },
   );
-  await store.put("ops", boardEdge.entry);
+  await store.put("events", boardEdge.entry);
   await store.put("edges", boardEdge.edge);
   const targetEdge = edgeCreateEntry(
     await reserveActorSeq(store),
@@ -103,7 +103,7 @@ async function appendPlacement(store, boardId, itemNodeId, seq, x, y) {
     "contains",
     { relation: "board_item_target" },
   );
-  await store.put("ops", targetEdge.entry);
+  await store.put("events", targetEdge.entry);
   await store.put("edges", targetEdge.edge);
 }
 

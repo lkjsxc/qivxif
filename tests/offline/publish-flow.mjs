@@ -29,7 +29,7 @@ try {
   await waitForText(page, "Queued: 3", browserEvents);
   await page.getByRole("tab", { name: "Editor" }).first().click();
   await page.locator(".editor").fill(body);
-  await page.getByRole("button", { name: "Save text operation" }).click();
+  await page.getByRole("button", { name: "Save text event" }).click();
   await waitForText(page, "Queued: 4", browserEvents);
   await page.getByRole("tab", { name: "Publish" }).first().click();
   await page.getByLabel("Slug").fill(slug);

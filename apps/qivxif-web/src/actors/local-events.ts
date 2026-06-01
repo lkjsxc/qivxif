@@ -14,17 +14,17 @@ export function blogPostCreateEntry(actorSeq, bodyNodeId, title) {
 
 export function nodeCreateEntry(actorSeq, kind, metadataMap) {
   const nodeId = generateId("nod");
-  const opId = generateId("op");
+  const eventId = generateId("evt");
   const request = {
     actor_seq: actorSeq,
     kind,
     metadata_map: metadataMap,
     node_id: nodeId,
-    op_id: opId,
+    event_id: eventId,
     visibility: "private",
   };
   return {
-    entry: queueEntry(opId, "node.create", actorSeq, nodeId, "/api/nodes", request),
+    entry: queueEntry(eventId, "node.create", actorSeq, nodeId, "/api/nodes", request),
     node: {
       id: nodeId,
       dirty: true,
@@ -35,11 +35,11 @@ export function nodeCreateEntry(actorSeq, kind, metadataMap) {
 }
 
 export function textRestoreEntry(actorSeq, nodeId, docId, actorId, content) {
-  const opId = generateId("op");
-  const path = `/api/text/${nodeId}/ops`;
+  const eventId = generateId("evt");
+  const path = `/api/text/${nodeId}/events`;
   const request = {
     actor_seq: actorSeq,
-    operation: {
+    event: {
       doc_id: docId,
       edit: {
         actor_id: actorId,
@@ -47,25 +47,25 @@ export function textRestoreEntry(actorSeq, nodeId, docId, actorId, content) {
         first_seq: actorSeq * 1000000,
         kind: "restore",
       },
-      op_id: opId,
+      event_id: eventId,
     },
   };
   return {
-    entry: queueEntry(opId, "text.restore", actorSeq, nodeId, path, request),
+    entry: queueEntry(eventId, "text.restore", actorSeq, nodeId, path, request),
     request,
   };
 }
 
 export function edgeCreateEntry(actorSeq, fromNode, toNode, kind, metadataMap) {
   const edgeId = generateId("edg");
-  const opId = generateId("op");
+  const eventId = generateId("evt");
   const request = {
     actor_seq: actorSeq,
     edge_id: edgeId,
     from_node: fromNode,
     kind,
     metadata_map: metadataMap,
-    op_id: opId,
+    event_id: eventId,
     to_node: toNode,
   };
   return {
@@ -77,21 +77,21 @@ export function edgeCreateEntry(actorSeq, fromNode, toNode, kind, metadataMap) {
       metadata_map: metadataMap,
       to_node: toNode,
     },
-    entry: queueEntry(opId, "edge.create", actorSeq, fromNode, "/api/edges", request),
+    entry: queueEntry(eventId, "edge.create", actorSeq, fromNode, "/api/edges", request),
   };
 }
 
 export function tileLayoutSetEntry(actorSeq, layoutNodeId, layout) {
-  const opId = generateId("op");
+  const eventId = generateId("evt");
   const request = {
     actor_seq: actorSeq,
     layout,
     layout_node_id: layoutNodeId,
-    op_id: opId,
+    event_id: eventId,
   };
   return {
     entry: queueEntry(
-      opId,
+      eventId,
       "tile.layout_set",
       actorSeq,
       layoutNodeId,
@@ -108,32 +108,32 @@ export function tileLayoutSetEntry(actorSeq, layoutNodeId, layout) {
 }
 
 export function publishPostEntry(actorSeq, postNodeId, slug, summary) {
-  const opId = generateId("op");
-  const request = { actor_seq: actorSeq, op_id: opId, slug, summary };
+  const eventId = generateId("evt");
+  const request = { actor_seq: actorSeq, event_id: eventId, slug, summary };
   return {
-    entry: queueEntry(opId, "publish.post", actorSeq, postNodeId, `/api/publish/${postNodeId}`, request),
+    entry: queueEntry(eventId, "publish.post", actorSeq, postNodeId, `/api/publish/${postNodeId}`, request),
   };
 }
 
 export function shortPostCreateEntry(actorSeq, user, body) {
   const nodeId = generateId("nod");
-  const opId = generateId("op");
+  const eventId = generateId("evt");
   const request = {
     actor_seq: actorSeq,
     body,
     node_id: nodeId,
-    op_id: opId,
+    event_id: eventId,
     reply_to: null,
     visibility: "public",
   };
   return {
-    entry: queueEntry(opId, "social.short_post_create", actorSeq, nodeId, "/api/social/short-posts", request),
+    entry: queueEntry(eventId, "social.short_post_create", actorSeq, nodeId, "/api/social/short-posts", request),
     feedItem: {
       author_name: user.name,
       author_user_id: user.user_id,
       body,
       created_at: new Date().toISOString(),
-      operation_id: opId,
+      event_id: eventId,
       post_node_id: nodeId,
       visibility: "public",
     },
@@ -147,11 +147,11 @@ export function shortPostCreateEntry(actorSeq, user, body) {
 }
 
 export function unpublishPostEntry(actorSeq, postNodeId, reason) {
-  const opId = generateId("op");
-  const request = { actor_seq: actorSeq, op_id: opId, reason };
+  const eventId = generateId("evt");
+  const request = { actor_seq: actorSeq, event_id: eventId, reason };
   return {
     entry: queueEntry(
-      opId,
+      eventId,
       "publish.unpublish",
       actorSeq,
       postNodeId,

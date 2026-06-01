@@ -3,15 +3,15 @@ use crate::{EdgeKind, NodeKind, project_node};
 use qivxif_core::{ActorId, MetadataMap, ServerTime, UserId, Visibility};
 
 #[test]
-fn creates_node_and_ignores_duplicate_operation() {
+fn creates_node_and_ignores_duplicate_event() {
     let record = node_record(NodeKind::Text);
-    let op = GraphOp::CreateNode {
-        op_id: OperationId::generate(),
+    let event = GraphEvent::CreateNode {
+        event_id: EventId::generate(),
         record: record.clone(),
     };
-    let state = apply_graph_op(GraphState::default(), op.clone()).unwrap();
+    let state = apply_graph_event(GraphState::default(), event.clone()).unwrap();
     assert_eq!(state.nodes.get(&record.id), Some(&record));
-    assert_eq!(apply_graph_op(state.clone(), op).unwrap(), state);
+    assert_eq!(apply_graph_event(state.clone(), event).unwrap(), state);
 }
 
 #[test]
@@ -19,12 +19,12 @@ fn creates_edge_as_independent_record() {
     let left = node_record(NodeKind::Text);
     let right = node_record(NodeKind::Topic);
     let edge = edge_record(&left, &right);
-    let state = apply_graph_op(GraphState::default(), create_node(&left)).unwrap();
-    let state = apply_graph_op(state, create_node(&right)).unwrap();
-    let state = apply_graph_op(
+    let state = apply_graph_event(GraphState::default(), create_node(&left)).unwrap();
+    let state = apply_graph_event(state, create_node(&right)).unwrap();
+    let state = apply_graph_event(
         state,
-        GraphOp::CreateEdge {
-            op_id: OperationId::generate(),
+        GraphEvent::CreateEdge {
+            event_id: EventId::generate(),
             record: edge.clone(),
         },
     )
@@ -39,11 +39,11 @@ fn rejects_edge_when_endpoint_is_missing() {
     let left = node_record(NodeKind::Text);
     let right = node_record(NodeKind::Topic);
     let edge = edge_record(&left, &right);
-    let state = apply_graph_op(GraphState::default(), create_node(&left)).unwrap();
-    let result = apply_graph_op(
+    let state = apply_graph_event(GraphState::default(), create_node(&left)).unwrap();
+    let result = apply_graph_event(
         state,
-        GraphOp::CreateEdge {
-            op_id: OperationId::generate(),
+        GraphEvent::CreateEdge {
+            event_id: EventId::generate(),
             record: edge,
         },
     );
@@ -57,11 +57,11 @@ fn tombstoned_node_is_hidden_from_normal_projection() {
         by: node.created_by.clone(),
         reason: "test".to_owned(),
     };
-    let state = apply_graph_op(GraphState::default(), create_node(&node)).unwrap();
-    let state = apply_graph_op(
+    let state = apply_graph_event(GraphState::default(), create_node(&node)).unwrap();
+    let state = apply_graph_event(
         state,
-        GraphOp::TombstoneNode {
-            op_id: OperationId::generate(),
+        GraphEvent::TombstoneNode {
+            event_id: EventId::generate(),
             node_id: node.id.clone(),
             tombstone,
         },
@@ -72,9 +72,9 @@ fn tombstoned_node_is_hidden_from_normal_projection() {
     assert!(project_node(record, Vec::<EdgeRecord>::new(), true).is_some());
 }
 
-fn create_node(record: &NodeRecord) -> GraphOp {
-    GraphOp::CreateNode {
-        op_id: OperationId::generate(),
+fn create_node(record: &NodeRecord) -> GraphEvent {
+    GraphEvent::CreateNode {
+        event_id: EventId::generate(),
         record: record.clone(),
     }
 }

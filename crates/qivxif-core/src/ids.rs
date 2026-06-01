@@ -66,7 +66,6 @@ id_type!(SessionId, "ses");
 id_type!(NodeId, "nod");
 id_type!(EdgeId, "edg");
 id_type!(EventId, "evt");
-id_type!(OperationId, "op");
 id_type!(CommitGroupId, "cg");
 id_type!(BlobHash, "blb");
 id_type!(ChunkHash, "chk");

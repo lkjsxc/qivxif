@@ -2,11 +2,11 @@ mod support;
 
 use axum::http::StatusCode;
 use qivxif_api::{
-    ApiEnvelope, NodeCreatePayload, NodeCreateRequest, NodeHistoryPayload, TextOperationPayload,
+    ApiEnvelope, NodeCreatePayload, NodeCreateRequest, NodeHistoryPayload, TextEventPayload,
 };
-use qivxif_core::{MetadataMap, NodeId, OperationId, TextDocId, Visibility};
+use qivxif_core::{EventId, MetadataMap, NodeId, TextDocId, Visibility};
 use qivxif_graph::NodeKind;
-use qivxif_history::OperationKind;
+use qivxif_history::EventKind;
 use qivxif_server::routes;
 use serde_json::json;
 use support::{get, login_full, post_json, read_json, seeded_state};
@@ -30,10 +30,10 @@ async fn lists_authorized_node_history_in_acceptance_order() {
         .unwrap();
     assert_eq!(response.status(), StatusCode::OK);
     let envelope: ApiEnvelope<NodeHistoryPayload> = read_json(response).await;
-    let operations = envelope.payload.unwrap().operations;
-    assert_eq!(operations.len(), 2);
-    assert_eq!(operations[0].kind, OperationKind::NodeCreate);
-    assert_eq!(operations[1].kind, OperationKind::TextRestore);
+    let events = envelope.payload.unwrap().events;
+    assert_eq!(events.len(), 2);
+    assert_eq!(events[0].kind, EventKind::NodeCreate);
+    assert_eq!(events[1].kind, EventKind::TextRestore);
 
     let public_response = app
         .oneshot(get(&format!("/api/nodes/{node_id}/history"), None))
@@ -44,7 +44,7 @@ async fn lists_authorized_node_history_in_acceptance_order() {
 
 async fn create_text_node(app: &axum::Router, login: &support::TestLogin, node_id: &NodeId) {
     let node = NodeCreateRequest {
-        op_id: OperationId::generate(),
+        event_id: EventId::generate(),
         actor_seq: 1,
         node_id: node_id.clone(),
         kind: NodeKind::Text,
@@ -68,8 +68,8 @@ async fn create_text_node(app: &axum::Router, login: &support::TestLogin, node_i
 async fn restore_text(app: &axum::Router, login: &support::TestLogin, node_id: &NodeId) {
     let request = json!({
         "actor_seq": 2,
-        "operation": {
-            "op_id": OperationId::generate().to_string(),
+        "event": {
+            "event_id": EventId::generate().to_string(),
             "doc_id": TextDocId::generate().to_string(),
             "edit": {
                 "kind": "restore",
@@ -82,7 +82,7 @@ async fn restore_text(app: &axum::Router, login: &support::TestLogin, node_id: &
     let response = app
         .clone()
         .oneshot(post_json(
-            &format!("/api/text/{node_id}/ops"),
+            &format!("/api/text/{node_id}/events"),
             &request,
             Some(&login.cookie),
             Some(&login.csrf),
@@ -90,5 +90,5 @@ async fn restore_text(app: &axum::Router, login: &support::TestLogin, node_id: &
         .await
         .unwrap();
     assert_eq!(response.status(), StatusCode::OK);
-    read_json::<ApiEnvelope<TextOperationPayload>>(response).await;
+    read_json::<ApiEnvelope<TextEventPayload>>(response).await;
 }

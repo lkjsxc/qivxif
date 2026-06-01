@@ -1,5 +1,5 @@
 use crate::{HistoryError, HistoryResult};
-use qivxif_core::{ActorId, ClientTime, NodeId, OperationId, ServerTime};
+use qivxif_core::{ActorId, ClientTime, EdgeId, EventId, NodeId, ServerTime};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
@@ -13,13 +13,13 @@ impl PayloadHash {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct OperationPayload {
+pub struct EventPayload {
     pub bytes: Vec<u8>,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
-pub enum OperationScope {
+pub enum EventScope {
     Auth,
     Graph,
     Text,
@@ -30,11 +30,11 @@ pub enum OperationScope {
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub enum OperationKind {
-    #[serde(rename = "user.bootstrap_admin")]
-    UserBootstrapAdmin,
-    #[serde(rename = "auth.login_session_created")]
-    AuthLoginSessionCreated,
+pub enum EventKind {
+    #[serde(rename = "user.bootstrap_owner")]
+    UserBootstrapOwner,
+    #[serde(rename = "auth.session_created")]
+    AuthSessionCreated,
     #[serde(rename = "node.create")]
     NodeCreate,
     #[serde(rename = "node.update_metadata")]
@@ -45,6 +45,8 @@ pub enum OperationKind {
     EdgeCreate,
     #[serde(rename = "edge.tombstone")]
     EdgeTombstone,
+    #[serde(rename = "edge.relate")]
+    EdgeRelate,
     #[serde(rename = "text.create_doc")]
     TextCreateDoc,
     #[serde(rename = "text.insert")]
@@ -55,6 +57,8 @@ pub enum OperationKind {
     TextRestore,
     #[serde(rename = "tile.layout_set")]
     TileLayoutSet,
+    #[serde(rename = "board.item_place")]
+    BoardItemPlace,
     #[serde(rename = "sync.cursor_advance")]
     SyncCursorAdvance,
     #[serde(rename = "publish.post")]
@@ -78,15 +82,17 @@ pub enum OperationKind {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct OperationEnvelope {
-    pub op_id: OperationId,
+pub struct EventEnvelope {
+    pub event_id: EventId,
     pub actor_id: ActorId,
     pub actor_seq: u64,
-    pub parents: Vec<OperationId>,
-    pub scope: OperationScope,
-    pub kind: OperationKind,
+    pub parents: Vec<EventId>,
+    pub scope: EventScope,
+    pub kind: EventKind,
     pub target_node_ids: Vec<NodeId>,
-    pub payload: OperationPayload,
+    pub target_edge_ids: Vec<EdgeId>,
+    pub target_event_ids: Vec<EventId>,
+    pub payload: EventPayload,
     pub payload_hash: PayloadHash,
     pub created_at_client: Option<ClientTime>,
     pub received_at_server: Option<ServerTime>,
@@ -94,97 +100,52 @@ pub struct OperationEnvelope {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ValidatedOperation(pub OperationEnvelope);
+pub struct ValidatedEvent(pub EventEnvelope);
 
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct TargetSet {
     pub nodes: BTreeSet<NodeId>,
+    pub edges: BTreeSet<EdgeId>,
+    pub events: BTreeSet<EventId>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct ReplayCursor {
-    pub after_operation: Option<OperationId>,
+    pub after_event: Option<EventId>,
 }
 
 pub fn hash_payload(bytes: &[u8]) -> PayloadHash {
     PayloadHash(blake3::hash(bytes).to_hex().to_string())
 }
 
-pub fn validate_operation_envelope(op: OperationEnvelope) -> HistoryResult<ValidatedOperation> {
-    if op.actor_seq == 0 {
+pub fn validate_event_envelope(event: EventEnvelope) -> HistoryResult<ValidatedEvent> {
+    if event.actor_seq == 0 {
         return Err(HistoryError::InvalidActorSeq);
     }
-    if op.payload_hash.as_str().is_empty() {
+    if event.payload_hash.as_str().is_empty() {
         return Err(HistoryError::MissingPayloadHash);
     }
-    if op.payload_hash != hash_payload(&op.payload.bytes) {
+    if event.payload_hash != hash_payload(&event.payload.bytes) {
         return Err(HistoryError::PayloadHashMismatch);
     }
-    Ok(ValidatedOperation(op))
+    Ok(ValidatedEvent(event))
 }
 
-pub fn operation_targets(op: &OperationEnvelope) -> TargetSet {
+pub fn event_targets(event: &EventEnvelope) -> TargetSet {
     TargetSet {
-        nodes: op.target_node_ids.iter().cloned().collect(),
+        nodes: event.target_node_ids.iter().cloned().collect(),
+        edges: event.target_edge_ids.iter().cloned().collect(),
+        events: event.target_event_ids.iter().cloned().collect(),
     }
 }
 
 impl ReplayCursor {
-    pub fn from_operation(op_id: OperationId) -> Self {
+    pub fn from_event(event_id: EventId) -> Self {
         Self {
-            after_operation: Some(op_id),
+            after_event: Some(event_id),
         }
     }
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use qivxif_core::{ActorId, OperationId};
-
-    fn op(seq: u64, payload_hash: PayloadHash) -> OperationEnvelope {
-        let payload = OperationPayload {
-            bytes: b"{}".to_vec(),
-        };
-        OperationEnvelope {
-            op_id: OperationId::generate(),
-            actor_id: ActorId::generate(),
-            actor_seq: seq,
-            parents: Vec::new(),
-            scope: OperationScope::Graph,
-            kind: OperationKind::NodeCreate,
-            target_node_ids: Vec::new(),
-            payload,
-            payload_hash,
-            created_at_client: None,
-            received_at_server: None,
-            auth_context: None,
-        }
-    }
-
-    #[test]
-    fn rejects_invalid_actor_sequence() {
-        let hash = hash_payload(b"{}");
-        assert_eq!(
-            validate_operation_envelope(op(0, hash)).unwrap_err(),
-            HistoryError::InvalidActorSeq
-        );
-    }
-
-    #[test]
-    fn rejects_missing_payload_hash() {
-        assert_eq!(
-            validate_operation_envelope(op(1, PayloadHash(String::new()))).unwrap_err(),
-            HistoryError::MissingPayloadHash
-        );
-    }
-
-    #[test]
-    fn rejects_payload_hash_mismatch() {
-        let hash = hash_payload(b"different");
-        assert_eq!(
-            validate_operation_envelope(op(1, hash)).unwrap_err(),
-            HistoryError::PayloadHashMismatch
-        );
-    }
-}
+mod tests;

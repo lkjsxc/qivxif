@@ -11,10 +11,10 @@ use axum::{
     routing::{get, post},
 };
 use qivxif_api::{
-    ApiErrorCode, OperationAcceptance, OperationRejection, PullRequest, PullResponse, PushRequest,
+    ApiErrorCode, EventAcceptance, EventRejection, PullRequest, PullResponse, PushRequest,
     PushResponse,
 };
-use qivxif_store_redb::{OperationReceipt, StoreError};
+use qivxif_store_redb::{EventReceipt, StoreError};
 use qivxif_sync::{SyncLimits, validate_pull};
 
 const MAX_SYNC_BATCH: usize = 128;
@@ -40,16 +40,16 @@ async fn push(
     if request.actor_id != session_user.user.actor_id {
         return auth_missing::<PushResponse>(caps).into_response();
     }
-    if request.operations.len() > MAX_SYNC_BATCH {
+    if request.events.len() > MAX_SYNC_BATCH {
         return batch_too_large::<PushResponse>(caps).into_response();
     }
     let auth = auth_context(&session_user);
     let mut accepted = Vec::new();
     let mut rejected = Vec::new();
-    for op in request.operations {
-        match state.store.accept_operation(&auth, op.clone()) {
+    for event in request.events {
+        match state.store.accept_event(&auth, event.clone()) {
             Ok(receipt) => accepted.push(acceptance(receipt)),
-            Err(error) => rejected.push(rejection(op.op_id, error)),
+            Err(error) => rejected.push(rejection(event.event_id, error)),
         }
     }
     let server_cursor = accepted.last().map(|item| item.server_cursor.clone());
@@ -79,11 +79,11 @@ async fn pull(
     let auth = auth_context(&session_user);
     match state
         .store
-        .list_operations_after_cursor(&auth, request.cursor.as_ref(), request.limit)
+        .list_events_after_cursor(&auth, request.cursor.as_ref(), request.limit)
     {
-        Ok((operations, server_cursor, has_more)) => ok(
+        Ok((events, server_cursor, has_more)) => ok(
             PullResponse {
-                operations,
+                events,
                 server_cursor,
                 has_more,
             },
@@ -98,30 +98,27 @@ async fn pull(
     }
 }
 
-fn acceptance(receipt: OperationReceipt) -> OperationAcceptance {
-    OperationAcceptance {
-        op_id: receipt.op_id,
+fn acceptance(receipt: EventReceipt) -> EventAcceptance {
+    EventAcceptance {
+        event_id: receipt.event_id,
         server_cursor: receipt.server_cursor,
     }
 }
 
-fn rejection(op_id: qivxif_core::OperationId, error: StoreError) -> OperationRejection {
+fn rejection(event_id: qivxif_core::EventId, error: StoreError) -> EventRejection {
     let (code, message) = match error {
-        StoreError::UnknownOperationKind => (
-            "schema.unknown_operation_kind",
-            "operation kind is not accepted",
-        ),
-        StoreError::InvalidOperation => ("operation.payload_hash_mismatch", "operation is invalid"),
-        StoreError::Forbidden => ("auth.forbidden", "actor cannot apply operation"),
+        StoreError::UnknownEventKind => ("schema.unknown_event_kind", "event kind is not accepted"),
+        StoreError::InvalidEvent => ("event.payload_hash_mismatch", "event is invalid"),
+        StoreError::Forbidden => ("auth.forbidden", "actor cannot apply event"),
         StoreError::DuplicateActorSeq => (
-            "operation.duplicate_actor_seq",
-            "actor sequence belongs to another operation",
+            "event.duplicate_actor_seq",
+            "actor sequence belongs to another event",
         ),
         StoreError::NodeMissing => ("graph.not_found", "target graph record is absent"),
-        _ => ("store.conflict", "operation conflicts with durable state"),
+        _ => ("store.conflict", "event conflicts with durable state"),
     };
-    OperationRejection {
-        op_id,
+    EventRejection {
+        event_id,
         code: code.to_owned(),
         message: message.to_owned(),
     }
@@ -142,7 +139,7 @@ fn sync_capabilities() -> Vec<qivxif_core::Capability> {
 
 fn limits() -> SyncLimits {
     SyncLimits {
-        max_push_ops: MAX_SYNC_BATCH,
-        max_pull_ops: MAX_SYNC_BATCH,
+        max_push_events: MAX_SYNC_BATCH,
+        max_pull_events: MAX_SYNC_BATCH,
     }
 }

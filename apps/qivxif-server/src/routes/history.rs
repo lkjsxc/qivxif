@@ -9,7 +9,7 @@ use axum::{
     http::{HeaderMap, StatusCode},
     routing::get,
 };
-use qivxif_api::{ApiErrorCode, NodeHistoryPayload, OperationSummary};
+use qivxif_api::{ApiErrorCode, EventSummary, NodeHistoryPayload};
 use qivxif_auth::AuthContext;
 use qivxif_core::NodeId;
 use qivxif_store_redb::StoreError;
@@ -39,13 +39,13 @@ async fn node_history(
     };
     let auth = viewer_context(&state, &headers);
     let limit = query.limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT);
-    match state.store.list_operations_for_node(&auth, &node_id, limit) {
-        Ok(operations) => ok(
+    match state.store.list_events_for_node(&auth, &node_id, limit) {
+        Ok(events) => ok(
             NodeHistoryPayload {
                 node_id,
-                operations: operations
+                events: events
                     .into_iter()
-                    .map(OperationSummary::from_envelope)
+                    .map(EventSummary::from_envelope)
                     .collect(),
             },
             caps,
