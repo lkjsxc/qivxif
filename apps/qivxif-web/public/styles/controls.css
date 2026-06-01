@@ -1,0 +1,92 @@
+.tab,
+.command,
+.header-button,
+.tile-menu,
+.icon-button,
+.chooser-tab,
+.primary,
+form button {
+  border: 1px solid var(--q-border);
+  border-radius: 6px;
+  padding: 7px 10px;
+  color: var(--q-text);
+  background: var(--q-overlay);
+}
+
+.tab.active,
+.primary {
+  color: var(--q-bg-deep);
+  background: var(--q-accent);
+  border-color: var(--q-accent);
+}
+
+.command {
+  width: 100%;
+  text-align: left;
+}
+
+.command.selected {
+  border-color: var(--q-green);
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--q-blue);
+  outline-offset: 2px;
+}
+
+.tab-chooser {
+  position: absolute;
+  right: 8px;
+  top: 44px;
+  z-index: 2;
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid var(--q-border);
+  border-radius: 8px;
+  background: var(--q-bg-deep);
+}
+
+.editor,
+input,
+textarea {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid var(--q-border);
+  border-radius: 6px;
+  padding: 8px;
+  color: var(--q-text);
+  background: var(--q-bg-deep);
+}
+
+.editor {
+  min-height: 320px;
+  resize: vertical;
+}
+
+.login,
+.setup-form,
+.open-node,
+.publish form,
+.social form,
+.status,
+.layout-summary,
+.history,
+.node-list,
+.publish,
+.social {
+  display: grid;
+  gap: 8px;
+}
+
+label {
+  display: grid;
+  gap: 4px;
+  color: var(--q-muted);
+}
+
+.error-text {
+  color: var(--q-red);
+}

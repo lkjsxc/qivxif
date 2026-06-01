@@ -58,7 +58,7 @@ export async function ensureLayout(store, state) {
     state.layoutNodeId = current.layout_node_id;
     return current;
   }
-  const layout = await createNode(store, "workspace_layout", { title: "Workspace" });
+  const layout = await createNode(store, "workspace_layout", { title: "Tile layout" });
   const pane = await createPane(store, state, state.currentNodeId, "Text pane");
   const initial = {
     maximized_pane_id: null,

@@ -10,6 +10,7 @@ export async function createBoard(store, state) {
   await store.put("nodes", board.node);
   await store.put("workspace_layout", { id: "active_board", node_id: board.node.id });
   state.activeBoardId = board.node.id;
+  state.activeTabId = "board";
 }
 
 export async function addCurrentNodeToBoard(store, state) {

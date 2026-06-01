@@ -1,37 +1,8 @@
 const APP_CACHE = "qivxif-app-shell";
-const APP_ASSETS = [
-  "/",
-  "/index.html",
-  "/main.js",
-  "/ids.js",
-  "/http/client.js",
-  "/actors/app-shell.js",
-  "/actors/actor-seq.js",
-  "/actors/board-actions.js",
-  "/actors/local-operations.js",
-  "/actors/publish-actions.js",
-  "/actors/social-actions.js",
-  "/actors/state-loader.js",
-  "/actors/sync.js",
-  "/actors/workspace-actions.js",
-  "/store/indexed-db.js",
-  "/ui/board.js",
-  "/ui/publish.js",
-  "/ui/social.js",
-  "/ui/workspace.js",
-  "/ui/sync-status-pane.js",
-  "/styles.css",
-  "/manifest.json",
-  "/service-worker.js",
-];
+const CORE_ASSETS = ["/", "/index.html", "/main.js", "/styles.css", "/asset-manifest.json"];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches
-      .open(APP_CACHE)
-      .then((cache) => cache.addAll(APP_ASSETS))
-      .then(() => self.skipWaiting()),
-  );
+  event.waitUntil(cacheAppShell().then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (event) => {
@@ -44,15 +15,39 @@ self.addEventListener("fetch", (event) => {
     return;
   }
   if (event.request.mode === "navigate") {
-    event.respondWith(
-      fetch(event.request).catch(() => cachedAppAsset("/index.html")),
-    );
+    event.respondWith(fetch(event.request).catch(() => cachedAppAsset("/index.html")));
     return;
   }
-  event.respondWith(
-    cachedAppAsset(event.request).then((cached) => cached || fetch(event.request)),
-  );
+  event.respondWith(staticAsset(event.request));
 });
+
+async function cacheAppShell() {
+  const cache = await caches.open(APP_CACHE);
+  const assets = await manifestAssets();
+  await cache.addAll([...new Set([...CORE_ASSETS, ...assets])]);
+}
+
+async function manifestAssets() {
+  try {
+    const response = await fetch("/asset-manifest.json", { cache: "no-store" });
+    return await response.json();
+  } catch (_error) {
+    return CORE_ASSETS;
+  }
+}
+
+async function staticAsset(request) {
+  const cached = await cachedAppAsset(request);
+  if (cached) {
+    return cached;
+  }
+  const response = await fetch(request);
+  if (response.ok && request.method === "GET") {
+    const cache = await caches.open(APP_CACHE);
+    cache.put(request, response.clone());
+  }
+  return response;
+}
 
 function cachedAppAsset(requestOrPath) {
   if (typeof requestOrPath === "string") {

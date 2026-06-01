@@ -34,13 +34,10 @@ web_dist="${QIVXIF_WEB_DIST_DIR:-${TMPDIR:-/tmp}/qivxif-web-dist}"
 QIVXIF_WEB_DIST_DIR="$web_dist" npm --prefix apps/qivxif-web run build
 export QIVXIF_STATIC_DIR="$web_dist"
 
-printf 'secret\n' | cargo run --locked -p qivxifctl -- \
-  admin bootstrap --store "$QIVXIF_DATABASE_FILE" --name admin --password-stdin --json
-
 cargo run --locked -p qivxif-server >"$work_dir/server.log" 2>&1 &
 server_pid="$!"
 
-for _ in 1 2 3 4 5 6 7 8 9 10; do
+for _ in $(seq 1 120); do
   if curl -fsS "$base/health" >"$work_dir/health.json"; then
     break
   fi
@@ -56,6 +53,7 @@ fi
 export NODE_PATH="$(npm root -g)${NODE_PATH:+:$NODE_PATH}"
 export QIVXIF_BROWSER="$browser"
 export QIVXIF_E2E_BASE="$base"
+node tests/offline/setup-flow.mjs
 node tests/offline/proof-slice.mjs
 node tests/offline/publish-flow.mjs
 

@@ -1,10 +1,9 @@
-import { login, serverInfo } from "../http/client.ts";
-import { generateId } from "../ids.ts";
+import { createOwner, login, serverInfo, setupStatus } from "../http/client.ts";
 import { openLocalStore } from "../store/indexed-db.ts";
-import { renderWorkspace } from "../ui/workspace.ts";
+import { renderShell } from "../ui/shell.ts";
+import { initialState } from "./app-state.ts";
+import { storeAuthPayload } from "./auth-state.ts";
 import { addCurrentNodeToBoard, createBoard, linkBoardNodes, moveBoardItem } from "./board-actions.ts";
-import { reserveActorSeq } from "./actor-seq.ts";
-import { textNodeCreateEntry, textRestoreEntry } from "./local-operations.ts";
 import { createBlogDraft, publishBlogPost, unpublishBlogPost } from "./publish-actions.ts";
 import {
   blockProfile,
@@ -15,38 +14,45 @@ import {
 } from "./social-actions.ts";
 import { loadLocalState, refreshCurrentNode } from "./state-loader.ts";
 import { flushQueue, refreshQueueState } from "./sync.ts";
+import { createTextNode, openNode, saveText, selectNode } from "./text-actions.ts";
 import { closePane, maximizePane, splitPane, stackTab } from "./workspace-actions.ts";
 
 export async function startAppShell(root) {
   if (!root) {
     return;
   }
-  const state = {
-    online: navigator.onLine,
-    capabilities: [],
-    edges: [],
-    nodes: [],
-    queued: 0,
-    rejected: 0,
-    lastError: "",
-    auth: null,
-    currentNodeId: "",
-    history: [],
-    text: "",
-    textDirty: false,
-    activeBoardId: "",
-    currentBlogPost: null,
-    currentBlogPostId: "",
-    feedItems: [],
-    layout: null,
-    layoutDirty: false,
-    layoutNodeId: "",
-  };
-  renderWorkspace(root, state, {});
+  const state = initialState();
+  renderShell(root, state, {});
+  await refreshSetupStatus(state);
   const store = await openLocalStore();
-  const actions = actionsFor(root, store, state);
   await loadLocalState(store, state);
   await refreshQueueState(store, state);
+  selectInitialTab(state);
+  await refreshServerInfo(state);
+  await registerServiceWorker(state);
+  if (state.auth && !state.setupRequired) {
+    await flushQueue(store, state);
+  }
+  renderShell(root, state, actionsFor(root, store, state));
+}
+
+async function refreshSetupStatus(state) {
+  try {
+    const status = await setupStatus();
+    state.setupChecked = true;
+    state.setupRequired = Boolean(status.required);
+    state.setupError = "";
+    if (state.setupRequired) {
+      state.activeTabId = "setup";
+    }
+  } catch (error) {
+    state.online = false;
+    state.setupError = String(error);
+    state.lastError = String(error);
+  }
+}
+
+async function refreshServerInfo(state) {
   try {
     const payload = await serverInfo();
     state.capabilities = payload.capabilities?.capabilities ?? [];
@@ -55,8 +61,6 @@ export async function startAppShell(root) {
     state.online = false;
     state.lastError = String(error);
   }
-  await registerServiceWorker(state);
-  renderWorkspace(root, state, actions);
 }
 
 async function registerServiceWorker(state) {
@@ -72,28 +76,30 @@ async function registerServiceWorker(state) {
 
 function actionsFor(root, store, state) {
   return {
-    createTextNode: () => run(root, store, state, () => createTextNode(store, state)),
-    login: (name, password) => run(root, store, state, () => loginUser(store, state, name, password)),
-    openNode: (nodeId) => run(root, store, state, () => openNode(store, state, nodeId)),
-    createBlogDraft: (title) => run(root, store, state, () => createBlogDraft(store, state, title)),
-    createShortPost: (body) => run(root, store, state, () => createShortPost(store, state, body)),
-    followProfile: (target) => run(root, store, state, () => followProfile(store, state, target)),
-    muteProfile: (target) => run(root, store, state, () => muteProfile(store, state, target)),
+    addCurrentNodeToBoard: () => run(root, store, state, () => addCurrentNodeToBoard(store, state)),
     blockProfile: (target) => run(root, store, state, () => blockProfile(store, state, target)),
     clearSocialEdge: (edge, kind) => run(root, store, state, () => clearSocialEdge(store, state, edge, kind)),
+    closePane: () => run(root, store, state, () => closePane(store, state)),
+    createBoard: () => run(root, store, state, () => createBoard(store, state)),
+    createBlogDraft: (title) => run(root, store, state, () => createBlogDraft(store, state, title)),
+    createOwner: (name, password) => run(root, store, state, () => createOwnerAccount(store, state, name, password)),
+    createShortPost: (body) => run(root, store, state, () => createShortPost(store, state, body)),
+    createTextNode: () => run(root, store, state, () => createTextNode(store, state)),
+    followProfile: (target) => run(root, store, state, () => followProfile(store, state, target)),
+    linkBoardNodes: () => run(root, store, state, () => linkBoardNodes(store, state)),
+    login: (name, password) => run(root, store, state, () => loginUser(store, state, name, password)),
+    maximizePane: () => run(root, store, state, () => maximizePane(store, state)),
+    moveBoardItem: () => run(root, store, state, () => moveBoardItem(store, state)),
+    openNode: (nodeId) => run(root, store, state, () => openNode(store, state, nodeId)),
+    openTab: (tabId) => openTab(root, store, state, tabId),
     publishBlogPost: (slug, summary) => run(root, store, state, () => publishBlogPost(store, state, slug, summary)),
     saveText: (content) => run(root, store, state, () => saveText(store, state, content)),
     selectNode: (nodeId) => run(root, store, state, () => selectNode(store, state, nodeId)),
-    sync: () => run(root, store, state, () => flushQueue(store, state)),
-    unpublishBlogPost: () => run(root, store, state, () => unpublishBlogPost(store, state)),
-    addCurrentNodeToBoard: () => run(root, store, state, () => addCurrentNodeToBoard(store, state)),
-    closePane: () => run(root, store, state, () => closePane(store, state)),
-    createBoard: () => run(root, store, state, () => createBoard(store, state)),
-    linkBoardNodes: () => run(root, store, state, () => linkBoardNodes(store, state)),
-    maximizePane: () => run(root, store, state, () => maximizePane(store, state)),
-    moveBoardItem: () => run(root, store, state, () => moveBoardItem(store, state)),
     splitPane: () => run(root, store, state, () => splitPane(store, state)),
     stackTab: () => run(root, store, state, () => stackTab(store, state)),
+    sync: () => run(root, store, state, () => flushQueue(store, state)),
+    toggleTabChooser: () => toggleTabChooser(root, store, state),
+    unpublishBlogPost: () => run(root, store, state, () => unpublishBlogPost(store, state)),
   };
 }
 
@@ -106,91 +112,51 @@ async function run(root, store, state, action) {
     await flushQueue(store, state);
     await loadLocalState(store, state);
     if (state.online && state.currentNodeId) {
+      const activeTabId = state.activeTabId;
       await refreshCurrentNode(store, state);
+      if (activeTabId !== "editor" && state.activeTabId === "editor") {
+        state.activeTabId = activeTabId;
+      }
     }
   } catch (error) {
-    state.lastError = error.api?.code ?? String(error);
+    state.lastError = error.api?.message ?? error.api?.code ?? String(error);
+    if (state.activeTabId === "setup") {
+      state.setupError = state.lastError;
+    }
   }
-  renderWorkspace(root, state, actions);
+  renderShell(root, state, actions);
 }
 
 async function loginUser(store, state, name, password) {
-  const payload = await login(name, password);
-  state.auth = payload;
-  await store.put("sync_cursors", { id: "auth", auth: payload });
-  await store.put("sync_cursors", {
-    id: "actor_seq",
-    value: Math.max(0, (payload.next_actor_seq ?? 1) - 1),
-  });
+  await storeAuthPayload(store, state, await login(name, password));
+  state.activeTabId = "home";
 }
 
-async function createTextNode(store, state) {
-  requireAuth(state);
-  const actorSeq = await reserveActorSeq(store);
-  const created = textNodeCreateEntry(actorSeq);
-  await store.put("ops", created.entry);
-  await store.put("nodes", created.node);
-  await store.put("workspace_layout", { id: "current_node", node_id: created.node.id });
-  state.currentNodeId = created.node.id;
+async function createOwnerAccount(store, state, name, password) {
+  await storeAuthPayload(store, state, await createOwner(name, password));
+  state.setupRequired = false;
+  state.setupChecked = true;
+  state.setupError = "";
+  state.activeTabId = "home";
 }
 
-async function saveText(store, state, content) {
-  requireAuth(state);
-  if (!state.currentNodeId) {
-    throw new Error("select a text node first");
+function selectInitialTab(state) {
+  if (state.setupRequired) {
+    state.activeTabId = "setup";
+  } else if (!state.auth) {
+    state.activeTabId = "login";
+  } else if (state.activeBoardId) {
+    state.activeTabId = "board";
   }
-  const actorSeq = await reserveActorSeq(store);
-  const docId = await textDocId(store, state.currentNodeId);
-  const restored = textRestoreEntry(
-    actorSeq,
-    state.currentNodeId,
-    docId,
-    state.auth.user.actor_id,
-    content,
-  );
-  await store.put("ops", restored.entry);
-  await store.put("text_snapshots", { id: state.currentNodeId, doc_id: docId, state: { content }, dirty: true });
-  state.text = content;
 }
 
-async function openNode(store, state, nodeId) {
-  if (!nodeId) {
-    throw new Error("node id is required");
-  }
-  state.currentNodeId = nodeId;
-  await store.put("workspace_layout", { id: "current_node", node_id: nodeId });
-  await refreshCurrentNode(store, state);
+function openTab(root, store, state, tabId) {
+  state.activeTabId = tabId;
+  state.tabChooserOpen = false;
+  renderShell(root, state, actionsFor(root, store, state));
 }
 
-async function selectNode(store, state, nodeId) {
-  const node = await store.get("nodes", nodeId);
-  if (node?.kind === "blog_post") {
-    state.currentBlogPostId = nodeId;
-    await store.put("workspace_layout", { id: "current_blog_post", node_id: nodeId });
-    const bodyNodeId = node.metadata_map?.body_node_id;
-    if (bodyNodeId) {
-      state.currentNodeId = bodyNodeId;
-      await store.put("workspace_layout", { id: "current_node", node_id: bodyNodeId });
-      return;
-    }
-  }
-  state.currentNodeId = nodeId;
-  await store.put("workspace_layout", { id: "current_node", node_id: nodeId });
-}
-
-async function textDocId(store, nodeId) {
-  const key = `text_doc:${nodeId}`;
-  const current = await store.get("sync_cursors", key);
-  if (current?.doc_id) {
-    return current.doc_id;
-  }
-  const docId = generateId("txt");
-  await store.put("sync_cursors", { id: key, doc_id: docId });
-  return docId;
-}
-
-function requireAuth(state) {
-  if (!state.auth?.user?.actor_id) {
-    throw new Error("login is required");
-  }
+function toggleTabChooser(root, store, state) {
+  state.tabChooserOpen = !state.tabChooserOpen;
+  renderShell(root, state, actionsFor(root, store, state));
 }

@@ -6,6 +6,14 @@ export async function login(name, password) {
   return postEnvelope("/api/auth/login", { name, password });
 }
 
+export async function setupStatus() {
+  return getEnvelope("/api/setup");
+}
+
+export async function createOwner(name, password) {
+  return postEnvelope("/api/setup/owner", { name, password });
+}
+
 export async function node(nodeId) {
   return getEnvelope(`/api/nodes/${nodeId}`);
 }

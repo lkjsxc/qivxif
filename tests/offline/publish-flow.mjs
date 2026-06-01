@@ -23,12 +23,15 @@ try {
   await login(page, browserEvents);
 
   await context.setOffline(true);
+  await page.getByRole("tab", { name: "Publish" }).first().click();
   await page.getByLabel("Blog title").fill(title);
   await page.getByRole("button", { name: "Create blog draft" }).click();
   await waitForText(page, "Queued: 3", browserEvents);
+  await page.getByRole("tab", { name: "Editor" }).first().click();
   await page.locator(".editor").fill(body);
   await page.getByRole("button", { name: "Save text operation" }).click();
   await waitForText(page, "Queued: 4", browserEvents);
+  await page.getByRole("tab", { name: "Publish" }).first().click();
   await page.getByLabel("Slug").fill(slug);
   await page.getByLabel("Summary").fill("offline summary");
   await page.getByRole("button", { name: "Publish draft" }).click();
@@ -36,13 +39,17 @@ try {
   assert((await publicStatus(slug)) === 404, "server published while browser was offline");
 
   await page.reload({ waitUntil: "domcontentloaded" });
+  await page.getByRole("tab", { name: "Publish" }).first().click();
   await waitForText(page, `Draft: ${title}`, browserEvents);
   await waitForText(page, "Queued: 5", browserEvents);
+  await page.getByRole("tab", { name: "Editor" }).first().click();
   assert((await page.locator(".editor").inputValue()) === body, "draft body did not reload");
 
   await context.setOffline(false);
+  await page.getByRole("tab", { name: "Home" }).first().click();
   await page.getByRole("button", { name: "Flush queue" }).click();
   await waitForText(page, "Queued: 0", browserEvents, 15000);
+  await page.getByRole("tab", { name: "Publish" }).first().click();
   await waitForText(page, "State: published", browserEvents);
   const html = await publicHtml(slug);
   assert(html.includes("<h1>Offline Post</h1>"), "public heading missing");
@@ -55,18 +62,22 @@ try {
   await second.close();
 
   await page.getByRole("button", { name: "Unpublish" }).click();
+  await page.getByRole("tab", { name: "Publish" }).first().click();
   await waitForText(page, "State: unpublished", browserEvents, 15000);
   assert((await publicStatus(slug)) === 404, "unpublished post stayed public");
 
   await context.setOffline(true);
+  await page.getByRole("tab", { name: "Social" }).first().click();
   await page.getByLabel("Short post").fill("offline social post");
   await page.getByRole("button", { name: "Create short post" }).click();
   await waitForText(page, "Queued: 1", browserEvents);
   await waitForText(page, "offline social post", browserEvents);
   await page.reload({ waitUntil: "domcontentloaded" });
+  await page.getByRole("tab", { name: "Social" }).first().click();
   await waitForText(page, "offline social post", browserEvents);
 
   await context.setOffline(false);
+  await page.getByRole("tab", { name: "Home" }).first().click();
   await page.getByRole("button", { name: "Flush queue" }).click();
   await waitForText(page, "Queued: 0", browserEvents, 15000);
   const feed = await homeFeed(context);

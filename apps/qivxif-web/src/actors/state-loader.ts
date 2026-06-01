@@ -34,6 +34,7 @@ export async function refreshCurrentNode(store, state) {
     await store.put("edges", { ...edge, dirty: false });
   }
   if (nodePayload.projection.node.kind === "text") {
+    state.activeTabId = "editor";
     const textPayload = await text(state.currentNodeId);
     await store.put("text_snapshots", {
       dirty: false,
@@ -42,6 +43,7 @@ export async function refreshCurrentNode(store, state) {
     });
   }
   if (nodePayload.projection.node.kind === "graph_board") {
+    state.activeTabId = "board";
     state.activeBoardId = state.currentNodeId;
     await store.put("workspace_layout", { id: "active_board", node_id: state.currentNodeId });
     await refreshNeighborhood(store, state.currentNodeId);

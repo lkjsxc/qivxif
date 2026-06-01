@@ -1,0 +1,48 @@
+:root {
+  --q-bg: #303446;
+  --q-bg-deep: #232634;
+  --q-surface: #292c3c;
+  --q-surface-raised: #414559;
+  --q-overlay: #51576d;
+  --q-border: #626880;
+  --q-text: #c6d0f5;
+  --q-muted: #a5adce;
+  --q-accent: #babbf1;
+  --q-blue: #8caaee;
+  --q-green: #a6d189;
+  --q-red: #e78284;
+  color: var(--q-text);
+  background: var(--q-bg);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 20px;
+}
+
+h2 {
+  font-size: 15px;
+}

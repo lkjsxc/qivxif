@@ -1,0 +1,28 @@
+export function initialState() {
+  return {
+    activeBoardId: "",
+    activeTabId: "home",
+    auth: null,
+    capabilities: [],
+    currentBlogPost: null,
+    currentBlogPostId: "",
+    currentNodeId: "",
+    edges: [],
+    feedItems: [],
+    history: [],
+    lastError: "",
+    layout: null,
+    layoutDirty: false,
+    layoutNodeId: "",
+    nodes: [],
+    online: navigator.onLine,
+    queued: 0,
+    rejected: 0,
+    setupChecked: false,
+    setupError: "",
+    setupRequired: false,
+    tabChooserOpen: false,
+    text: "",
+    textDirty: false,
+  };
+}

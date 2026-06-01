@@ -56,6 +56,7 @@ try {
   await page.reload({ waitUntil: "domcontentloaded" });
   await waitForText(page, "Layout panes: 2", browserEvents);
   await waitForText(page, "Board items: 1", browserEvents);
+  await page.getByRole("tab", { name: "Editor" }).first().click();
   assert(
     (await page.locator(".editor").inputValue()) === proofText,
     "offline text was not restored",
@@ -66,28 +67,33 @@ try {
   assert(boardStatus !== 200, "server accepted offline board before flush");
 
   await context.setOffline(false);
+  await page.getByRole("tab", { name: "Home" }).first().click();
   await page.getByRole("button", { name: "Flush queue" }).click();
   await page.getByText("Queued: 0").waitFor({ timeout: 15000 });
-  await page.getByText("node.create #1").waitFor();
-  await page.getByText("text.restore #2").waitFor();
+  await page.getByRole("tab", { name: "History" }).first().click();
+  await page.getByText(/^node\.create #/).waitFor();
+  await page.getByText(/^text\.restore #/).waitFor();
 
   const second = await browser.newContext({ baseURL: base });
   const secondPage = await second.newPage();
   const secondEvents = captureBrowserEvents(secondPage);
   await loadShell(secondPage);
   await login(secondPage, secondEvents);
+  await secondPage.getByRole("tab", { name: "Home" }).first().click();
   await secondPage.getByLabel("Server node id").fill(nodeId);
   await secondPage.getByRole("button", { name: "Open node" }).click();
   await secondPage.waitForFunction(
     (expected) => document.querySelector(".editor")?.value === expected,
     proofText,
   );
-  await secondPage.getByText("node.create #1").waitFor();
-  await secondPage.getByText("text.restore #2").waitFor();
+  await secondPage.getByText(/^node\.create #/).waitFor();
+  await secondPage.getByText(/^text\.restore #/).waitFor();
+  await secondPage.getByRole("tab", { name: "Home" }).first().click();
   await secondPage.getByLabel("Server node id").fill(boardId);
   await secondPage.getByRole("button", { name: "Open node" }).click();
   await secondPage.getByText("Board items: 1").waitFor();
   await secondPage.getByText("@ 160,144").waitFor();
+  await secondPage.getByRole("tab", { name: "Home" }).first().click();
   await secondPage.getByLabel("Server node id").fill(layoutId);
   await secondPage.getByRole("button", { name: "Open node" }).click();
   await secondPage.getByText("Layout panes: 2").waitFor();
