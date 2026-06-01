@@ -32,6 +32,8 @@ pub enum StoreError {
     NodeMissing,
     #[error("edge already exists")]
     EdgeExists,
+    #[error("publish slug conflicts with existing post")]
+    SlugConflict,
     #[error("access denied")]
     Forbidden,
     #[error("cursor invalid")]

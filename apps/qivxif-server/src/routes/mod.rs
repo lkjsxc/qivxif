@@ -3,6 +3,7 @@ mod graph;
 mod health;
 mod history;
 mod neighborhood;
+mod publish;
 mod server_info;
 mod session;
 mod static_files;
@@ -22,6 +23,7 @@ pub fn router(state: AppState) -> Router {
         .merge(history::routes())
         .merge(health::routes())
         .merge(neighborhood::routes())
+        .merge(publish::routes())
         .merge(server_info::routes())
         .merge(sync::routes())
         .merge(text::routes())

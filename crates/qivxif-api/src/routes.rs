@@ -152,6 +152,36 @@ pub struct WorkspaceLayoutPayload {
     pub operation: OperationAcceptance,
 }
 
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct PublishRequest {
+    pub op_id: OperationId,
+    pub actor_seq: u64,
+    pub slug: String,
+    pub summary: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct PublishPayload {
+    pub post: NodeRecord,
+    pub operation: OperationAcceptance,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct UnpublishRequest {
+    pub op_id: OperationId,
+    pub actor_seq: u64,
+    pub reason: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct PublicBlogPostPayload {
+    pub title: String,
+    pub author_name: String,
+    pub slug: String,
+    pub summary: String,
+    pub html: String,
+}
+
 impl OperationSummary {
     pub fn from_envelope(op: OperationEnvelope) -> Self {
         Self {

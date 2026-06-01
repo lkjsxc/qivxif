@@ -8,9 +8,9 @@ pub use envelope::{
 pub use routes::{
     EdgeCreatePayload, EdgeCreateRequest, EdgeListPayload, HealthPayload, LoginPayload,
     LoginRequest, LogoutPayload, MePayload, NeighborhoodPayload, NodeCreatePayload,
-    NodeCreateRequest, NodeHistoryPayload, NodePayload, OperationSummary, ServerInfoPayload,
-    TextOperationPayload, TextOperationRequest, TextPayload, UserSummary, WorkspaceLayoutPayload,
-    WorkspaceLayoutSetRequest,
+    NodeCreateRequest, NodeHistoryPayload, NodePayload, OperationSummary, PublicBlogPostPayload,
+    PublishPayload, PublishRequest, ServerInfoPayload, TextOperationPayload, TextOperationRequest,
+    TextPayload, UnpublishRequest, UserSummary, WorkspaceLayoutPayload, WorkspaceLayoutSetRequest,
 };
 pub use sync::{
     OperationAcceptance, OperationRejection, PullRequest, PullResponse, PushRequest, PushResponse,
