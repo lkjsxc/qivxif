@@ -9,6 +9,7 @@
 - Merge accepted remote edits.
 - Show save and sync state.
 - Restore after refresh.
+- Map text edits into ordered character-id operations instead of byte offsets.
 
 ## Constraint
 

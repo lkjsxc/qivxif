@@ -12,4 +12,6 @@ pub enum HistoryError {
     PayloadHashMismatch,
     #[error("cursor must use a durable operation id")]
     InvalidCursor,
+    #[error("text operation references missing character")]
+    MissingTextCharacter,
 }
