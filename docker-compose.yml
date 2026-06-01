@@ -47,6 +47,23 @@ services:
       - cargo-registry:/usr/local/cargo/registry
       - target-cache:/target
 
+  offline-e2e:
+    build:
+      context: .
+      dockerfile: Dockerfile.verify
+    entrypoint: ["sh", "/workspace/scripts/offline-e2e.sh"]
+    environment:
+      CARGO_TARGET_DIR: /target
+      QIVXIF_BROWSER: /usr/bin/chromium
+      QIVXIF_DATA_DIR: /tmp/qivxif-offline-data
+      QIVXIF_DATABASE_FILE: /tmp/qivxif-offline-data/qivxif.redb
+      QIVXIF_STATIC_DIR: /tmp/qivxif-web-dist
+      QIVXIF_WEB_DIST_DIR: /tmp/qivxif-web-dist
+    volumes:
+      - .:/workspace:ro
+      - cargo-registry:/usr/local/cargo/registry
+      - target-cache:/target
+
 volumes:
   qivxif-data:
   cargo-registry:

@@ -1,4 +1,4 @@
-import { sendQueued } from "../api/client.ts";
+import { sendQueued } from "../http/client.ts";
 
 export async function refreshQueueState(store, state) {
   const entries = await store.all("ops");

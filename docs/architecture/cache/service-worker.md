@@ -35,5 +35,6 @@ The service worker does not own graph sync at first.
 
 ## Rules
 
+- Activation claims existing app-shell clients after install.
 - Failed API requests surface as network failures.
 - The service worker never fabricates graph, auth, sync, or publish success.

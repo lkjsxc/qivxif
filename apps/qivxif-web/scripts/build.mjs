@@ -12,7 +12,7 @@ await cp(join(app, "public"), dist, { recursive: true });
 await cp(join(app, "index.html"), join(dist, "index.html"));
 await copyModule(join(app, "src", "main.ts"));
 await copyModule(join(app, "src", "ids.ts"));
-await copyModule(join(app, "src", "api", "client.ts"));
+await copyModule(join(app, "src", "http", "client.ts"));
 await copyModule(join(app, "src", "actors", "app-shell.ts"));
 await copyModule(join(app, "src", "actors", "local-operations.ts"));
 await copyModule(join(app, "src", "actors", "sync.ts"));

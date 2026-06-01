@@ -12,3 +12,4 @@
 
 Host commands are diagnostics. Completed slices pass through Docker Compose unless Docker is unavailable.
 Verification containers mount the repository read-only and write generated browser assets to a scratch output path through `QIVXIF_WEB_DIST_DIR`.
+Browser checks use Chromium in headless mode and keep API requests on the real server path.

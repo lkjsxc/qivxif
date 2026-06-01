@@ -4,6 +4,7 @@ WORKDIR /workspace
 RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     ca-certificates \
+    chromium \
     curl \
     libssl-dev \
     nodejs \
@@ -11,5 +12,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 RUN rustup component add rustfmt clippy
 RUN cargo install cargo-nextest --version 0.9.133 --locked
+RUN npm install -g playwright-core@1.56.1
 
 ENTRYPOINT ["sh", "/workspace/scripts/verify-static.sh"]

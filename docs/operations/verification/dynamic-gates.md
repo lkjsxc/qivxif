@@ -30,3 +30,21 @@
 11. Inspect node history.
 12. Load the app shell route.
 13. Logout and confirm the session is rejected.
+
+## Offline Browser Service
+
+`docker compose run --rm offline-e2e` exercises the browser proof slice:
+
+1. Build the browser app shell.
+2. Bootstrap an admin into an empty redb store.
+3. Start the Axum server.
+4. Load `/` in a real headless browser.
+5. Confirm the service worker becomes ready.
+6. Login through the browser UI.
+7. Switch the browser context offline.
+8. Create a text node and save text.
+9. Confirm IndexedDB has dirty operations.
+10. Reload offline and confirm shell, node, text, and queue survive.
+11. Confirm the server does not yet have the local node.
+12. Reconnect, flush, and confirm the queue clears only after acceptance.
+13. Open a clean browser context, login, open the node, and inspect text plus history.

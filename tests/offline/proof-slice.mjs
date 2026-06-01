@@ -1,0 +1,168 @@
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const { chromium } = require("playwright-core");
+
+const base = process.env.QIVXIF_E2E_BASE ?? "http://127.0.0.1:8080";
+const browserPath = process.env.QIVXIF_BROWSER ?? "/usr/bin/chromium";
+const proofText = "offline proof text";
+
+const browser = await chromium.launch({
+  executablePath: browserPath,
+  headless: true,
+  args: ["--no-sandbox", "--disable-dev-shm-usage"],
+});
+
+try {
+  const context = await browser.newContext({ baseURL: base });
+  const page = await context.newPage();
+  const browserEvents = captureBrowserEvents(page);
+  await loadShell(page);
+  await serviceWorkerReady(page);
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await onlineShellReady(page);
+  await login(page, browserEvents);
+
+  await context.setOffline(true);
+  await page.getByRole("button", { name: "Create text node" }).click();
+  await page.locator("textarea").fill(proofText);
+  await page.getByRole("button", { name: "Save text operation" }).click();
+  await waitForLocalOps(page, 2);
+  await waitForText(page, "Queued: 2", browserEvents);
+  await page.getByText("Sync: offline").waitFor();
+  const localBefore = await localState(page);
+  assert(localBefore.ops.length === 2, "dirty operations were not stored");
+  const nodeId = localBefore.nodes[0]?.id;
+  assert(nodeId, "local node id missing");
+
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await waitForText(page, "Queued: 2", browserEvents);
+  assert(
+    (await page.locator("textarea").inputValue()) === proofText,
+    "offline text was not restored",
+  );
+  const status = await serverNodeStatus(context, nodeId);
+  assert(status !== 200, "server accepted offline node before flush");
+
+  await context.setOffline(false);
+  await page.getByRole("button", { name: "Flush queue" }).click();
+  await page.getByText("Queued: 0").waitFor({ timeout: 15000 });
+  await page.getByText("node.create #1").waitFor();
+  await page.getByText("text.restore #2").waitFor();
+
+  const second = await browser.newContext({ baseURL: base });
+  const secondPage = await second.newPage();
+  const secondEvents = captureBrowserEvents(secondPage);
+  await loadShell(secondPage);
+  await login(secondPage, secondEvents);
+  await secondPage.getByLabel("Server node id").fill(nodeId);
+  await secondPage.getByRole("button", { name: "Open node" }).click();
+  await secondPage.waitForFunction(
+    (expected) => document.querySelector("textarea")?.value === expected,
+    proofText,
+  );
+  await secondPage.getByText("node.create #1").waitFor();
+  await secondPage.getByText("text.restore #2").waitFor();
+  await second.close();
+  await context.close();
+} finally {
+  await browser.close();
+}
+
+async function loadShell(page) {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.locator(".workspace").waitFor();
+  await onlineShellReady(page);
+}
+
+async function onlineShellReady(page) {
+  await page.getByText(/Capabilities: .*server\.health/).waitFor();
+}
+
+async function serviceWorkerReady(page) {
+  await page.evaluate(() => navigator.serviceWorker.ready.then(() => true));
+  await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
+}
+
+async function login(page, browserEvents = []) {
+  await page.getByLabel("Login name").fill("admin");
+  await page.getByLabel("Password").fill("secret");
+  await page.getByRole("button", { name: "Login" }).click();
+  try {
+    await page.getByText("Signed in as admin").waitFor();
+  } catch (error) {
+    const body = await page.locator("body").innerText();
+    throw new Error(`login did not complete\n${body}\n${browserEvents.join("\n")}`);
+  }
+}
+
+async function localState(page) {
+  return page.evaluate(async () => {
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open("qivxif", 1);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+    });
+    const read = (name) =>
+      new Promise((resolve, reject) => {
+        const call = db.transaction(name, "readonly").objectStore(name).getAll();
+        call.onerror = () => reject(call.error);
+        call.onsuccess = () => resolve(call.result);
+      });
+    return {
+      nodes: await read("nodes"),
+      ops: await read("ops"),
+      text: await read("text_snapshots"),
+    };
+  });
+}
+
+async function waitForLocalOps(page, count) {
+  await page.waitForFunction(async (expected) => {
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open("qivxif", 1);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+    });
+    return new Promise((resolve, reject) => {
+      const call = db.transaction("ops", "readonly").objectStore("ops").getAll();
+      call.onerror = () => reject(call.error);
+      call.onsuccess = () => resolve(call.result.length === expected);
+    });
+  }, count);
+}
+
+function captureBrowserEvents(page) {
+  const events = [];
+  page.on("console", (message) => events.push(`console ${message.type()}: ${message.text()}`));
+  page.on("pageerror", (error) => events.push(`pageerror: ${error.message}`));
+  page.on("requestfailed", (request) => {
+    events.push(`requestfailed: ${request.url()} ${request.failure()?.errorText}`);
+  });
+  return events;
+}
+
+async function waitForText(page, value, browserEvents = []) {
+  try {
+    await page.getByText(value).waitFor({ timeout: 5000 });
+  } catch (error) {
+    const body = await page.locator("body").innerText();
+    const local = JSON.stringify(await localState(page));
+    throw new Error(`${value} was not visible\n${body}\n${local}\n${browserEvents.join("\n")}`);
+  }
+}
+
+async function serverNodeStatus(context, nodeId) {
+  const cookies = await context.cookies(base);
+  const cookie = cookies.map((item) => `${item.name}=${item.value}`).join("; ");
+  const response = await fetch(`${base}/api/nodes/${nodeId}`, {
+    headers: { cookie },
+  });
+  return response.status;
+}
+
+function assert(condition, message) {
+  if (!condition) {
+    throw new Error(message);
+  }
+}

@@ -1,4 +1,4 @@
-import { login, node, nodeHistory, serverInfo, text } from "../api/client.ts";
+import { login, node, nodeHistory, serverInfo, text } from "../http/client.ts";
 import { generateId } from "../ids.ts";
 import { openLocalStore } from "../store/indexed-db.ts";
 import { renderWorkspace } from "../ui/workspace.ts";
