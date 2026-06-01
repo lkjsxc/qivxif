@@ -24,7 +24,8 @@ services:
       CARGO_TARGET_DIR: /target
       QIVXIF_DATA_DIR: /tmp/qivxif-data
       QIVXIF_DATABASE_FILE: /tmp/qivxif-data/qivxif.redb
-      QIVXIF_STATIC_DIR: /workspace/apps/qivxif-web/dist
+      QIVXIF_STATIC_DIR: /tmp/qivxif-web-dist
+      QIVXIF_WEB_DIST_DIR: /tmp/qivxif-web-dist
     volumes:
       - .:/workspace:ro
       - cargo-registry:/usr/local/cargo/registry

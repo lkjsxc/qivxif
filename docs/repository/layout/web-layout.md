@@ -18,6 +18,8 @@
 - The server reads `QIVXIF_STATIC_DIR`, defaulting to that path in development.
 - The runtime image may copy `dist` to `/app/static`.
 - `index.html`, compiled modules, service worker, manifest, and CSS are emitted together.
+- `QIVXIF_WEB_DIST_DIR` may redirect build output for read-only verification mounts.
+- A redirected build output directory must also be passed as `QIVXIF_STATIC_DIR` for smoke runs.
 
 ## Build Command
 

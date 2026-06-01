@@ -25,7 +25,9 @@ run_stage() {
   exit "$status"
 }
 
-run_stage web-build npm --prefix apps/qivxif-web run build
+web_dist="${QIVXIF_WEB_DIST_DIR:-${TMPDIR:-/tmp}/qivxif-web-dist}"
+
+run_stage web-build env QIVXIF_WEB_DIST_DIR="$web_dist" npm --prefix apps/qivxif-web run build
 run_stage fmt cargo fmt -- --check
 run_stage clippy cargo clippy --locked --workspace --all-targets -- -D warnings
 run_stage test cargo nextest run --locked --workspace
