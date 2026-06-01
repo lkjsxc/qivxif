@@ -8,4 +8,5 @@
 - [state.md](state.md): actors and state ownership.
 - [rendering.md](rendering.md): rendering rules.
 - [local-first.md](local-first.md): local-first behavior.
+- [pane-context.md](pane-context.md): pane-local command context.
 - [social-actions.md](social-actions.md): queued browser social actions.

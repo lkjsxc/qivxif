@@ -34,20 +34,21 @@ function tileHeader(stack, state, actions, activeTab) {
   const header = document.createElement("div");
   const paneId = activeTab?.pane_node_id ?? activePaneId(stack);
   header.className = "tile-header";
-  header.append(renderStackTabRail(stack, actions), tileControls(actions, paneId));
+  header.append(renderStackTabRail(stack, actions), tileControls(actions, paneId, activeTab));
   if (state.tabChooserOpen && state.tabChooserPaneId === paneId) {
     header.append(tabChooser(state, actions, paneId));
   }
   return header;
 }
 
-function tileControls(actions, paneId) {
+function tileControls(actions, paneId, activeTab) {
   const controls = document.createElement("div");
+  const context = paneContext(activeTab);
   controls.className = "tile-controls";
   controls.append(
     actionButton("+", () => actions.toggleTabChooser?.(paneId), "icon-button tile-add"),
-    actionButton("Split pane", () => actions.splitPane?.(paneId), "tile-menu"),
-    actionButton("Stack tab", () => actions.stackTab?.(paneId), "tile-menu"),
+    actionButton("Split pane", () => actions.splitPane?.(paneId, context), "tile-menu"),
+    actionButton("Stack tab", () => actions.stackTab?.(paneId, context), "tile-menu"),
     actionButton("Maximize pane", () => actions.maximizePane?.(paneId), "tile-menu"),
     actionButton("Close pane", () => actions.closePane?.(paneId), "tile-menu"),
   );
@@ -90,9 +91,20 @@ function stateForTab(state, tab) {
 }
 
 function actionsForTab(actions, tab) {
+  const context = paneContext(tab);
   return {
     ...actions,
+    addCurrentNodeToBoard: () => actions.addCurrentNodeToBoard?.(context),
+    createBoard: () => actions.createBoard?.(context),
     saveText: (content) => actions.saveText?.(content, tab.target_node_id),
+  };
+}
+
+function paneContext(tab) {
+  return {
+    paneId: tab?.pane_node_id ?? "",
+    paneKind: tab?.pane_kind ?? "",
+    targetNodeId: tab?.target_node_id ?? "",
   };
 }
 

@@ -4,6 +4,7 @@ import { renderShell } from "../ui/shell.ts";
 import { initialState } from "./app-state.ts";
 import { storeAuthPayload } from "./auth-state.ts";
 import { addCurrentNodeToBoard, createBoard, linkBoardNodes, moveBoardItem } from "./board-actions.ts";
+import { withPaneContext } from "./pane-context.ts";
 import { createBlogDraft, publishBlogPost, unpublishBlogPost } from "./publish-actions.ts";
 import {
   blockProfile,
@@ -84,11 +85,12 @@ async function registerServiceWorker(state) {
 
 function actionsFor(root, store, state) {
   return {
-    addCurrentNodeToBoard: () => run(root, store, state, () => addCurrentNodeToBoard(store, state)),
+    addCurrentNodeToBoard: (context) =>
+      run(root, store, state, () => addCurrentNodeToBoard(store, withPaneContext(state, context))),
     blockProfile: (target) => run(root, store, state, () => blockProfile(store, state, target)),
     clearSocialEdge: (edge, kind) => run(root, store, state, () => clearSocialEdge(store, state, edge, kind)),
     closePane: (paneId) => run(root, store, state, () => closePane(store, state, paneId)),
-    createBoard: () => run(root, store, state, () => createBoard(store, state)),
+    createBoard: (context) => run(root, store, state, () => createBoard(store, withPaneContext(state, context))),
     createBlogDraft: (title) => run(root, store, state, () => createBlogDraft(store, state, title)),
     createOwner: (name, password) => run(root, store, state, () => createOwnerAccount(store, state, name, password)),
     createShortPost: (body) => run(root, store, state, () => createShortPost(store, state, body)),
@@ -105,8 +107,10 @@ function actionsFor(root, store, state) {
     publishBlogPost: (slug, summary) => run(root, store, state, () => publishBlogPost(store, state, slug, summary)),
     saveText: (content, nodeId) => run(root, store, state, () => saveText(store, state, content, nodeId)),
     selectNode: (nodeId) => run(root, store, state, () => selectNode(store, state, nodeId)),
-    splitPane: (paneId) => run(root, store, state, () => splitPane(store, state, paneId)),
-    stackTab: (paneId) => run(root, store, state, () => stackTab(store, state, paneId)),
+    splitPane: (paneId, context) =>
+      run(root, store, state, () => splitPane(store, withPaneContext(state, context), paneId)),
+    stackTab: (paneId, context) =>
+      run(root, store, state, () => stackTab(store, withPaneContext(state, context), paneId)),
     sync: () => run(root, store, state, () => flushQueue(store, state)),
     toggleTabChooser: (paneId) => toggleTabChooser(root, store, state, paneId),
     unpublishBlogPost: () => run(root, store, state, () => unpublishBlogPost(store, state)),
