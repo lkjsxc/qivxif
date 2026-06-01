@@ -21,6 +21,16 @@ Fields:
 
 Accepted short posts create an author feed marker. Follow fan-out uses the same marker shape for follower user ids; absent follower edges means only the author marker is written.
 
+## Rebuild
+
+`qivxifctl feeds rebuild` reconstructs `feed_items_by_user` from:
+
+- all `feed_items`.
+- each item author.
+- active `follows` edges to the author's profile node.
+
+The rebuild does not rewrite `feed_items`, post nodes, or operation records.
+
 ## Query Contract
 
 `GET /api/feed/home` requires a session and returns:

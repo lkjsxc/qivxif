@@ -18,6 +18,31 @@
 
 `qivxifctl store repair-check` prints a structured repair report.
 
+Current report fields:
+
+- `ok`
+- `findings`
+
+Current finding fields:
+
+- `code`
+- `table`
+- `key`
+- `message`
+
+Current check codes:
+
+- `decode_failed`
+- `edge_target_missing`
+- `edge_from_index_missing`
+- `edge_to_index_missing`
+- `edge_from_index_dangling`
+- `edge_to_index_dangling`
+- `edge_from_index_wrong_endpoint`
+- `edge_to_index_wrong_endpoint`
+- `feed_item_post_missing`
+- `feed_user_index_dangling`
+
 ## Error Behavior
 
 - Decode failure is reported with table name, key bytes, and owner type.

@@ -36,13 +36,15 @@ pub fn store_health(args: StorePath) -> Result<()> {
 
 pub fn store_repair_check(args: StorePath) -> Result<()> {
     let store = open_or_create(StoreConfig::new(args.store))?;
-    let health = store.health()?;
-    print_value(args.json, json!({ "ok": health.ok, "findings": [] }))
+    print_value(args.json, serde_json::to_value(store.repair_check()?)?)
 }
 
 pub fn feeds_rebuild(store: PathBuf, json_output: bool) -> Result<()> {
-    let _store = open_or_create(StoreConfig::new(store))?;
-    print_value(json_output, json!({ "status": "rebuilt", "items": 0 }))
+    let store = open_or_create(StoreConfig::new(store))?;
+    print_value(
+        json_output,
+        serde_json::to_value(store.rebuild_feed_indexes()?)?,
+    )
 }
 
 fn print_value(json_output: bool, value: serde_json::Value) -> Result<()> {
