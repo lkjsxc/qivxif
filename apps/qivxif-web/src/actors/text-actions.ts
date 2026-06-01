@@ -1,6 +1,7 @@
 import { generateId } from "../ids.ts";
 import { refreshCurrentNode } from "./state-loader.ts";
 import { reserveActorSeq } from "./actor-seq.ts";
+import { clearTextDraft } from "./tab-drafts.ts";
 import { textNodeCreateEntry, textRestoreEntry } from "./local-events.ts";
 
 export async function createTextNode(store, state) {
@@ -31,9 +32,7 @@ export async function saveText(store, state, content, nodeId = state.currentNode
   });
   state.currentNodeId = nodeId;
   state.text = content;
-  if (paneId) {
-    delete state.tabDrafts[paneId];
-  }
+  await clearTextDraft(store, state, paneId);
 }
 
 export async function openNode(store, state, nodeId) {

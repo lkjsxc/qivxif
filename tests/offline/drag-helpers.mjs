@@ -121,6 +121,12 @@ export async function assertIndependentTextDrafts(page, savedText) {
     (expected) => document.querySelector("article.tile .editor")?.value === expected,
     draft,
   );
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.locator(".workspace").waitFor();
+  await page.waitForFunction(
+    (expected) => document.querySelector("article.tile .editor")?.value === expected,
+    draft,
+  );
 }
 
 async function firstTileTabPaneIds(page) {

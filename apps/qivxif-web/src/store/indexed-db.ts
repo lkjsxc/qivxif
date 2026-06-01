@@ -7,12 +7,13 @@ const STORE_NAMES = [
   "cache_entries",
   "cache_journal",
   "feed_windows",
+  "tab_snapshots",
   "tile_layout",
 ];
 
 export function openLocalStore() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("qivxif", 2);
+    const request = indexedDB.open("qivxif", 3);
     request.onupgradeneeded = () => {
       const db = request.result;
       for (const name of STORE_NAMES) {

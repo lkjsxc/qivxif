@@ -149,7 +149,7 @@ async function login(page, browserEvents = []) {
 async function localState(page) {
   return page.evaluate(async () => {
     const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 2);
+      const request = indexedDB.open("qivxif", 3);
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve(request.result);
     });
@@ -172,7 +172,7 @@ async function localState(page) {
 async function waitForLocalEvents(page, count) {
   await page.waitForFunction(async (expected) => {
     const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 2);
+      const request = indexedDB.open("qivxif", 3);
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve(request.result);
     });

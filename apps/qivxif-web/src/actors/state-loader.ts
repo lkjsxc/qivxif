@@ -12,6 +12,9 @@ export async function loadLocalState(store, state) {
   state.edges = await store.all("edges");
   state.feedItems = await store.all("feed_windows");
   state.nodes = await store.all("nodes");
+  state.tabDrafts = Object.fromEntries(
+    (await store.all("tab_snapshots")).map((entry) => [entry.pane_id, entry.content]),
+  );
   state.textSnapshots = Object.fromEntries(
     (await store.all("text_snapshots")).map((entry) => [entry.id, entry]),
   );

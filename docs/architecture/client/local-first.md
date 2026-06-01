@@ -4,6 +4,7 @@
 
 - Durable event log in IndexedDB.
 - Materialized node projections in IndexedDB.
+- Tab-local snapshots in IndexedDB.
 - Hot in-memory state for visible panes.
 - Derived indexes for graph neighborhoods and feeds.
 
@@ -50,5 +51,6 @@ returning acceptance.
 
 - Layout commands write the local layout snapshot before queue display changes.
 - Board placement records are visible locally while dirty.
+- Text drafts are stored in `tab_snapshots` by pane ID and survive reload.
 - Edge events are flushed after their source and target node events.
 - A second client reconstructs board items from accepted graph records.
