@@ -31,6 +31,22 @@ services:
       - cargo-registry:/usr/local/cargo/registry
       - target-cache:/target
 
+  api-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.verify
+    entrypoint: ["sh", "/workspace/scripts/api-proof.sh"]
+    environment:
+      CARGO_TARGET_DIR: /target
+      QIVXIF_DATA_DIR: /tmp/qivxif-api-data
+      QIVXIF_DATABASE_FILE: /tmp/qivxif-api-data/qivxif.redb
+      QIVXIF_STATIC_DIR: /tmp/qivxif-web-dist
+      QIVXIF_WEB_DIST_DIR: /tmp/qivxif-web-dist
+    volumes:
+      - .:/workspace:ro
+      - cargo-registry:/usr/local/cargo/registry
+      - target-cache:/target
+
 volumes:
   qivxif-data:
   cargo-registry:
