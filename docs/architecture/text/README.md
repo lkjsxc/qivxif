@@ -6,3 +6,7 @@
 - [edit-groups.md](edit-groups.md): undo and redo grouping.
 - [snapshots.md](snapshots.md): text snapshots.
 - [diff.md](diff.md): diff behavior.
+
+## Schema Links
+
+- [../schema/operation-kinds.md](../schema/operation-kinds.md): text operation registry.

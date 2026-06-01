@@ -3,6 +3,7 @@
 ## Contents
 
 - [system/README.md](system/README.md): process model and boundaries.
+- [schema/README.md](schema/README.md): durable schema contracts.
 - [server/README.md](server/README.md): Axum server contracts.
 - [storage/README.md](storage/README.md): redb storage contracts.
 - [graph/README.md](graph/README.md): graph record contracts.

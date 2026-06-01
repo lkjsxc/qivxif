@@ -14,3 +14,14 @@
 
 - Sync status is available as a pane.
 - Conflicts are not hidden in subtle text.
+- Server-required effects show `queued`, `pending validation`, `accepted`, or `rejected`.
+- Publishing, ACL changes, login, and slug checks are never shown as accepted before server response.
+- Every rejection links to the operation id and error code.
+- Cache pressure warnings distinguish dirty protected data from evictable projections.
+
+## API Mapping
+
+- `accepted[]` from push clears dirty state for those operations.
+- `rejected[]` creates visible conflict or rejection rows.
+- Pull progress updates last applied cursor only after reducers apply.
+- Offline mode increments queued count only after IndexedDB write succeeds.

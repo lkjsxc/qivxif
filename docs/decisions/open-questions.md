@@ -2,14 +2,14 @@
 
 ## Client
 
-- Which browser UI framework best supports a small-file tiled workspace?
-- Should the first text editor use CodeMirror while qivxif owns operation history?
-- Should the client domain crates compile to WASM immediately or after the server foundation lands?
+- Which browser UI framework best supports a mature tiled workspace after the first DOM shell?
+- Which editor widget best preserves qivxif text operations after textarea proof?
+- When should pure Rust reducers be shared with the browser runtime?
 
 ## Protocol
 
 - Which binary framing should replace JSON framing after the protocol is proven?
-- Which browser fallback lane should be preferred when WebTransport is unavailable?
+- Which live transport backup should be documented if WebTransport is unavailable and HTTP polling is too slow?
 
 ## Media
 

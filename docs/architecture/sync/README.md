@@ -6,3 +6,8 @@
 - [push-pull.md](push-pull.md): HTTP sync.
 - [merge.md](merge.md): merge rules.
 - [idempotency.md](idempotency.md): duplicate handling.
+
+## Schema Links
+
+- [../schema/operation-kinds.md](../schema/operation-kinds.md): durable operation registry.
+- [../schema/api-envelope.md](../schema/api-envelope.md): sync response envelope.

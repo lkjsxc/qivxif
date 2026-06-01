@@ -4,30 +4,41 @@
 
 The default server database file is `data/qivxif.redb`.
 
-## Tables
+## Encoding
 
-- `meta`
-- `users`
-- `user_names`
-- `sessions`
-- `nodes`
-- `edges`
-- `edges_by_from`
-- `edges_by_to`
-- `ops`
-- `ops_by_actor`
-- `ops_by_node`
-- `commit_groups`
-- `blobs`
-- `blob_chunks`
-- `text_docs`
-- `text_snapshots`
-- `feed_items`
-- `feed_items_by_user`
-- `auth_tokens`
-- `sync_cursors`
-- `server_jobs`
+- Keys are UTF-8 bytes for string IDs or packed tuple bytes for secondary indexes.
+- Values are bincode bytes encoded from the Rust owner type.
+- Public JSON is decoded at API boundaries before store calls.
+- Flexible metadata maps are validated before encoding.
 
-## Rule
+## Table Contracts
 
-Store values are compact typed bytes. JSON belongs at HTTP boundaries.
+| Table | Key | Value | Rust owner type |
+| --- | --- | --- | --- |
+| `meta` | `MetaKey` | `MetaRecord` | `qivxif_store_redb::meta::MetaRecord` |
+| `users` | `UserId` | `StoredUser` | `qivxif_store_redb::auth::StoredUser` |
+| `user_names` | login name | `UserId` | `qivxif_store_redb::auth::UserNameIndex` |
+| `sessions` | `SessionId` | `StoredSession` | `qivxif_store_redb::auth::StoredSession` |
+| `nodes` | `NodeId` | `NodeRecord` | `qivxif_graph::NodeRecord` |
+| `edges` | `EdgeId` | `EdgeRecord` | `qivxif_graph::EdgeRecord` |
+| `edges_by_from` | `(NodeId, EdgeId)` | empty marker | `qivxif_store_redb::graph::EdgeFromIndex` |
+| `edges_by_to` | `(NodeId, EdgeId)` | empty marker | `qivxif_store_redb::graph::EdgeToIndex` |
+| `ops` | `OperationId` | `OperationEnvelope` | `qivxif_history::OperationEnvelope` |
+| `ops_by_actor` | `(ActorId, actor_seq)` | `OperationId` | `qivxif_store_redb::history::ActorOpIndex` |
+| `ops_by_node` | `(NodeId, OperationId)` | empty marker | `qivxif_store_redb::history::NodeOpIndex` |
+| `commit_groups` | `CommitGroupId` | `CommitGroup` | `qivxif_history::CommitGroup` |
+| `blobs` | `BlobHash` | `BlobManifest` | `qivxif_store_redb::blob::BlobManifest` |
+| `blob_chunks` | `ChunkHash` | `BlobChunk` | `qivxif_store_redb::blob::BlobChunk` |
+| `text_docs` | `TextDocId` | `TextDocState` | `qivxif_history::text::TextDocState` |
+| `text_snapshots` | `(TextDocId, OperationId)` | `TextSnapshot` | `qivxif_history::text::TextSnapshot` |
+| `feed_items` | `OperationId` | `FeedItem` | `qivxif_store_redb::feed::FeedItem` |
+| `feed_items_by_user` | `(UserId, OperationId)` | empty marker | `qivxif_store_redb::feed::FeedUserIndex` |
+| `auth_tokens` | token hash | `AuthTokenRecord` | `qivxif_store_redb::auth::AuthTokenRecord` |
+| `sync_cursors` | `CursorId` | `SyncCursorRecord` | `qivxif_store_redb::sync::SyncCursorRecord` |
+| `server_jobs` | job id | `ServerJobRecord` | `qivxif_store_redb::job::ServerJobRecord` |
+
+## Meta Records
+
+- `schema_contract` stores the current table contract name.
+- `created_at` stores the first open time.
+- `last_opened_at` updates after a successful open.

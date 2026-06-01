@@ -24,3 +24,19 @@
 - Client offline data lives in IndexedDB.
 - The app shell and static assets use a service worker and Cache API.
 - Client cache behavior is governed by a cache orchestrator.
+
+## Client Implementation
+
+- The first browser shell uses minimal TypeScript modules and DOM rendering.
+- The first editor uses a textarea only when edits map into qivxif text operations.
+- CodeMirror may replace the widget after the durable text operation model is stable.
+- Server-side Rust reducers are the first durable authority.
+- Browser code mirrors only the DTO checks needed for local storage until reducer sharing is documented.
+
+## Protocol and Media
+
+- The first durable HTTP wire format is JSON using `qivxif-api` DTOs.
+- Binary framing waits until HTTP sync behavior is proven by integration tests.
+- HTTP push and pull are the always-available durable sync lane.
+- WebTransport is preferred when available and uses the same durable message types.
+- Media chunking waits until upload thresholds and public serving behavior are documented.

@@ -1,24 +1,45 @@
 # Axum API
 
-## Endpoints
+## Envelope
 
-- `GET /health`
-- `GET /api/server-info`
-- `POST /api/auth/login`
-- `POST /api/auth/logout`
-- `GET /api/me`
-- `POST /api/nodes`
-- `GET /api/nodes/{node_id}`
-- `GET /api/nodes/{node_id}/edges`
-- `GET /api/graph/neighborhood`
-- `POST /api/sync/push`
-- `GET /api/sync/pull`
-- `GET /api/text/{node_id}`
-- `POST /api/text/{node_id}/ops`
-- `GET /api/feed/home`
-- `POST /api/publish/{node_id}`
-- `POST /api/unpublish/{node_id}`
+Every `/api` response uses [../schema/api-envelope.md](../schema/api-envelope.md).
 
-## Response Envelope
+## Routes
 
-Every API response uses structured success or error data with request ID, server time, capabilities, and payload.
+| Method | Path | Auth | CSRF | Body | Success payload | Side effect | Offline relation |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `GET` | `/health` | public | no | none | health status | none | app can show server reachability |
+| `GET` | `/api/server-info` | public | no | none | capability list and limits | none | app learns feature flags |
+| `POST` | `/api/auth/login` | public | no | login name, password | user, session summary, csrf token | creates session | requires server |
+| `POST` | `/api/auth/logout` | session | yes | none | logout status | deletes session | queued logout is not accepted |
+| `GET` | `/api/me` | session | no | none | current user and profile | none | stale local user may be shown as offline |
+| `POST` | `/api/nodes` | session | yes | node create request | node record and operation acceptance | appends operation, writes node | local op queues first |
+| `GET` | `/api/nodes/{node_id}` | viewer | no | none | node projection | none | IndexedDB may satisfy stale read |
+| `POST` | `/api/edges` | session | yes | edge create request | edge record and operation acceptance | appends operation, writes edge and indexes | local op queues first |
+| `GET` | `/api/nodes/{node_id}/edges` | viewer | no | direction and limit query | edge list | none | IndexedDB may satisfy stale read |
+| `GET` | `/api/graph/neighborhood` | viewer | no | node, depth, limit query | bounded graph projection | none | IndexedDB may satisfy stale read |
+| `POST` | `/api/sync/push` | session | yes | operation batch | accepted and rejected operation results | appends accepted operations | queued while offline |
+| `GET` | `/api/sync/pull` | session | no | cursor, scope, limit query | operation batch and cursor | none | resumes after reconnect |
+| `GET` | `/api/text/{node_id}` | viewer | no | none | text document projection | none | IndexedDB may satisfy stale read |
+| `POST` | `/api/text/{node_id}/ops` | session | yes | text operation envelope | operation acceptance and text projection | appends text op | local op queues first |
+| `GET` | `/api/feed/home` | session | no | cursor and limit query | feed items | none | cached feed window may render |
+| `POST` | `/api/publish/{node_id}` | session | yes | publish request | publication state | appends publish op | queued pending server validation |
+| `POST` | `/api/unpublish/{node_id}` | session | yes | unpublish request | publication state | appends unpublish op | queued pending server validation |
+
+## Error Codes
+
+- Auth failures use `auth.*` codes.
+- Schema failures use `schema.*` codes.
+- Operation failures use `operation.*` codes.
+- Store failures use `store.*` codes.
+- Sync failures use `sync.*` codes.
+- Publishing conflicts use `publish.*` codes.
+
+See [../schema/error-codes.md](../schema/error-codes.md).
+
+## Handler Rules
+
+- Handlers parse DTOs, extract auth context, call domain services, and wrap envelopes.
+- Handlers do not open redb transactions directly.
+- Handlers do not implement reducers.
+- Request ID is present in logs and response envelopes.
