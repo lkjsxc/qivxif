@@ -25,6 +25,28 @@ Every durable mutation uses one of these operation kinds. Unknown kinds are reje
 | `social.follow` | write | profiles | target profile | edge create | edge id | duplicate active edge is no-op | yes | yes |
 | `social.unfollow` | write | follow edge | edge id | edge tombstone | op id | missing active edge is no-op | yes | yes |
 
+## Workspace Payload Contract
+
+`workspace.layout_set` payload:
+
+- `layout_node_id`: `workspace_layout` node being changed.
+- `layout`: complete tile tree snapshot.
+- `maximized_pane_id`: optional pane node ID inside the tile tree.
+
+The reducer replaces the previous tile tree for the layout node after auth and
+schema validation. Restore uses another `workspace.layout_set` operation.
+
+## Board Placement Contract
+
+Board placement uses graph operations:
+
+- `node.create` creates a `board_item` placement record.
+- `edge.create` with `placed_on_board` links board item to board.
+- `edge.create` with `contains` links board item to displayed node.
+- New movement appends another `board_item` with a higher `placement_seq`.
+
+Clients choose the highest accepted or dirty `placement_seq` per board and item.
+
 ## Shared Envelope Fields
 
 - `op_id`

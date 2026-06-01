@@ -40,3 +40,22 @@ Node kinds are durable names. Unknown kinds are rejected by API validation, sync
 - `metadata_map` may hold kind-specific fields documented by owner docs.
 - Tombstoned nodes remain queryable through history and repair tools.
 - Normal projections hide tombstoned nodes unless the query asks for history.
+
+## Workspace Metadata
+
+`workspace_layout` metadata:
+
+- `title`: display label.
+- `layout_json`: canonical JSON tile tree snapshot from `workspace.layout_set`.
+
+`pane` metadata:
+
+- `pane_kind`: documented pane kind.
+- `title`: display label.
+
+`board_item` metadata:
+
+- `item_node_id`: displayed graph node.
+- `x`: board x coordinate as decimal text.
+- `y`: board y coordinate as decimal text.
+- `placement_seq`: monotonic board placement sequence as decimal text.

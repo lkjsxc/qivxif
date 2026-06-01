@@ -17,3 +17,16 @@
 ## Rule
 
 Components send messages. They do not mutate IndexedDB directly.
+
+## Workspace Actor State
+
+The workspace actor owns:
+
+- active layout node ID.
+- active pane node ID.
+- tile tree snapshot.
+- active board node ID.
+- selected board item node ID.
+
+The actor persists state through IndexedDB messages and queued durable
+operations. UI controls render from actor state and local projections.

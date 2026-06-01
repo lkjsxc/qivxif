@@ -38,3 +38,21 @@ Edges are first-class durable records. Unknown kinds are rejected by API validat
 - Forward and reverse indexes update in the same write transaction.
 - Tombstoned edges remain available to history and repair tools.
 - Owner docs define metadata keys for typed edge behavior.
+
+## Workspace And Board Metadata
+
+`workspace_contains_pane` metadata:
+
+- `slot`: command-created slot label.
+
+`pane_views_node` metadata:
+
+- `pane_kind`: documented pane kind.
+
+`placed_on_board` metadata:
+
+- `placement_seq`: mirrors the board item placement sequence.
+
+`contains` metadata for board items:
+
+- `relation`: `board_item_target`.
