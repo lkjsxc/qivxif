@@ -3,7 +3,7 @@
 ## Actors
 
 - AppShellActor
-- WorkspaceActor
+- TileLayoutActor
 - CacheOrchestrator
 - IndexedDbStore
 - SyncActor
@@ -18,9 +18,9 @@
 
 Components send messages. They do not mutate IndexedDB directly.
 
-## Workspace Actor State
+## Tile Layout Actor State
 
-The workspace actor owns:
+The tile layout actor owns:
 
 - active layout node ID.
 - active pane node ID.

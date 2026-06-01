@@ -3,7 +3,7 @@
 ## Pane Kinds
 
 - graph
-- kjxlkj board
+- board
 - text editor
 - Markdown preview
 - blog composer
@@ -22,4 +22,4 @@
 - Each pane has a stable pane ID.
 - Pane state is serializable when it affects durable behavior.
 - Components do not write directly to IndexedDB.
-- Pane actions produce messages to workspace, sync, editor, feed, or cache actors.
+- Pane actions produce messages to tile layout, sync, editor, feed, or cache actors.

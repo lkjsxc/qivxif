@@ -12,11 +12,11 @@ Node kinds are durable names. Unknown kinds are rejected by API validation, sync
 | `profile` | auth/social | user-facing identity node |
 | `tag` | graph/social | reusable label node |
 | `topic` | graph/social | subject grouping node |
-| `kjxlkj_board` | kjxlkj | graph composition board |
-| `board_item` | kjxlkj | board placement record when a node needs per-board state |
+| `graph_board` | boards | graph composition board |
+| `board_item` | boards | board placement record when a node needs per-board state |
 | `media` | publishing/social | uploaded media descriptor |
-| `workspace_layout` | workspace | durable tiled layout root |
-| `pane` | workspace | pane state in a layout |
+| `workspace_layout` | tile layout | durable tiled layout root |
+| `pane` | tile layout | pane state in a layout |
 | `feed_window` | social/offline | materialized feed range marker |
 
 ## Required Node Fields
@@ -41,7 +41,7 @@ Node kinds are durable names. Unknown kinds are rejected by API validation, sync
 - Tombstoned nodes remain queryable through history and repair tools.
 - Normal projections hide tombstoned nodes unless the query asks for history.
 
-## Workspace Metadata
+## Tile Layout Metadata
 
 `workspace_layout` metadata:
 

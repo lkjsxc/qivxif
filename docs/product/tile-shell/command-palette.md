@@ -2,13 +2,13 @@
 
 ## Purpose
 
-The command palette exposes workspace actions without requiring hidden UI gestures.
+The command palette exposes tile and graph actions without requiring hidden UI gestures.
 
 ## Commands
 
 - Open node.
 - Create text node.
-- Create `kjxlkj` board.
+- Create board.
 - Split pane.
 - Stack tab.
 - Maximize pane.
@@ -31,7 +31,7 @@ Those buttons still use the command contracts:
 | Command | Durable operations | Offline |
 | --- | --- | --- |
 | Create text node | `node.create` | queued |
-| Create `kjxlkj` board | `node.create` | queued |
+| Create board | `node.create` | queued |
 | Split pane | `node.create`, `edge.create`, `workspace.layout_set` | queued |
 | Stack tab | `node.create`, `edge.create`, `workspace.layout_set` | queued |
 | Maximize pane | `workspace.layout_set` | queued |

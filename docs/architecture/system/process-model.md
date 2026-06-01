@@ -9,7 +9,7 @@
 
 ## Browser Process
 
-- App shell renders the workspace.
+- App shell renders the header and tile grid.
 - IndexedDB adapter owns structured local persistence.
 - Service worker owns app-shell cache and offline route.
 - Sync actor pushes and pulls operations.

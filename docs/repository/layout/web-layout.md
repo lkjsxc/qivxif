@@ -6,7 +6,7 @@
 
 - `apps/qivxif-web/index.html`: app shell document.
 - `apps/qivxif-web/src/main.ts`: browser entry point.
-- `apps/qivxif-web/src/actors/`: app, workspace, sync, cache, editor, feed actors.
+- `apps/qivxif-web/src/actors/`: app shell, tile layout, sync, cache, editor, feed actors.
 - `apps/qivxif-web/src/store/`: IndexedDB boundary.
 - `apps/qivxif-web/src/ui/`: DOM rendering modules.
 - `apps/qivxif-web/service-worker/`: service worker source.

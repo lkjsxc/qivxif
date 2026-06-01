@@ -19,7 +19,7 @@ Edges are first-class durable records. Unknown kinds are rejected by API validat
 | `follows` | `profile` | `profile` | social follow relation |
 | `mutes` | `profile` | `profile` | one-way home-feed hiding relation |
 | `blocks` | `profile` | `profile` | two-way interaction blocking relation |
-| `placed_on_board` | any node | `kjxlkj_board` | board membership |
+| `placed_on_board` | any node | `graph_board` | board membership |
 | `workspace_contains_pane` | `workspace_layout` | `pane` | layout membership |
 | `pane_views_node` | `pane` | any node | pane target |
 
@@ -41,7 +41,7 @@ Edges are first-class durable records. Unknown kinds are rejected by API validat
 - Tombstoned edges remain available to history and repair tools.
 - Owner docs define metadata keys for typed edge behavior.
 
-## Workspace And Board Metadata
+## Tile Layout And Board Metadata
 
 `workspace_contains_pane` metadata:
 

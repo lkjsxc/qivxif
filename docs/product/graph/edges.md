@@ -20,7 +20,7 @@ Edges are visible relationships between nodes.
 - reposts
 - bookmarks
 - reacts to
-- workspace contains
+- tile layout contains
 - pane hosts
 - layout splits
 - layout stacks
@@ -30,6 +30,6 @@ Edges are visible relationships between nodes.
 
 ## Behavior
 
-- Edges can be created from graph views and `kjxlkj` boards.
+- Edges can be created from graph views and boards.
 - Forward and reverse traversal are equally supported.
 - Deleted edges become tombstones before compaction eligibility.

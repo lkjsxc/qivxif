@@ -4,8 +4,9 @@
 
 - qivxif is a Rust-first server/client Web super app.
 - `docs/` is the durable source of truth.
-- The browser workspace is tiled and tabbed.
-- `kjxlkj` is the graph composition workspace.
+- The browser app opens directly into a compact header plus tiled tab shell.
+- First-run owner setup lives inside the tile shell, not on a separate page.
+- Board composition is a qivxif-native graph surface.
 - The server supports multiple users in one instance.
 - No retired local GUI shell canon remains.
 - No backward compatibility is preserved during the reset.

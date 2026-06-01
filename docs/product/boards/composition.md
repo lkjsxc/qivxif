@@ -1,14 +1,12 @@
 # Graph Composition
 
-`kjxlkj` is qivxif's network workspace.
-
 ## Purpose
 
-It lets users create, link, arrange, traverse, and publish graph nodes without thinking in directories.
+Boards let users create, link, arrange, traverse, and publish graph nodes without thinking in directories.
 
 ## Behavior
 
-- Create a `kjxlkj` board node.
+- Create a `graph_board` node.
 - Add existing nodes to a board.
 - Create text, post, tag, topic, and media nodes from a board.
 - Connect nodes with typed edges.
@@ -22,7 +20,7 @@ Board layout is graph data, not one opaque local blob.
 
 ## Durable Shape
 
-- The board is a `kjxlkj_board` node.
+- The board is a `graph_board` node.
 - Each visible placement is a `board_item` node.
 - The board item metadata stores `item_node_id`, `x`, `y`, and `placement_seq`.
 - A `placed_on_board` edge links the board item to the board.

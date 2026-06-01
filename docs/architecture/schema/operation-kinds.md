@@ -17,7 +17,7 @@ Every durable mutation uses one of these operation kinds. Unknown kinds are reje
 | `text.insert` | write | text doc | position id, text | text CRDT insert | op id plus actor seq | deterministic CRDT merge | yes | yes |
 | `text.delete` | write | text doc | range ids | text CRDT delete | op id plus actor seq | missing range rejects or waits | yes | yes |
 | `text.restore` | write | text doc | snapshot ref | append restore text op | op id | creates new state, never erases | yes | yes |
-| `workspace.layout_set` | write | workspace layout | tile tree delta | workspace reducer | op id | deterministic last accepted action | yes | yes |
+| `workspace.layout_set` | write | tile layout | tile tree delta | tile layout reducer | op id | deterministic last accepted action | yes | yes |
 | `sync.cursor_advance` | write | cursor | cursor id, position | cursor update | cursor id plus position | cannot move backward | no | yes |
 | `publish.post` | publish | blog post | slug, summary, public time | publication reducer | op id | slug conflict rejects | queued | yes |
 | `publish.unpublish` | publish | blog post | reason code | publication reducer | op id | already private is no-op | queued | yes |
@@ -29,7 +29,7 @@ Every durable mutation uses one of these operation kinds. Unknown kinds are reje
 | `social.block` | write | profiles | target profile | edge create | edge id | duplicate active edge is no-op | yes | yes |
 | `social.unblock` | write | block edge | edge id | edge tombstone | op id | missing active edge rejects unless op was already accepted | yes | yes |
 
-## Workspace Payload Contract
+## Tile Layout Payload Contract
 
 `workspace.layout_set` payload:
 

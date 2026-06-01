@@ -13,6 +13,6 @@
 - Dirty local operations.
 - Local-only nodes.
 - Pinned nodes.
-- Current workspace layout.
+- Current tile layout.
 - Cache manifest.
 - Eviction journal.

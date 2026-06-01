@@ -8,7 +8,7 @@
 - Current text snapshot for text nodes.
 - Recent operation batch.
 - Small media previews.
-- Workspace panes referencing the node.
+- Tile panes referencing the node.
 
 ## Feed Open
 

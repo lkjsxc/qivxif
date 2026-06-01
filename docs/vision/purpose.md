@@ -12,9 +12,9 @@ The product helps users create, link, edit, publish, arrange, and revisit inform
 - A browser client works offline after first load.
 - Durable data is typed KV plus typed graph records.
 - Every durable mutation is an operation.
-- The workspace is tiled, tabbed, and restorable.
-- `kjxlkj` is the graph composition surface where the network is directly edited.
+- The tile shell is tabbed, split-capable, and restorable.
+- Board composition lets users arrange and edit the graph directly.
 
 ## Primary Proof Slice
 
-Admin user -> login -> create graph node -> edit text offline -> persist locally -> sync to server -> load from another client -> inspect history.
+Setup owner -> authenticated session -> create graph node -> edit text offline -> persist locally -> sync to server -> load from another client -> inspect history.

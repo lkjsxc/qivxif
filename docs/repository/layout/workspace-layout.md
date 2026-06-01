@@ -1,4 +1,4 @@
-# Workspace Layout
+# Rust Package Layout
 
 ## Target Rust Members
 

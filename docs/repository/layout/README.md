@@ -4,5 +4,5 @@
 
 - [root-layout.md](root-layout.md): root directories.
 - [docs-layout.md](docs-layout.md): docs tree.
-- [workspace-layout.md](workspace-layout.md): Rust and Web workspace.
+- [workspace-layout.md](workspace-layout.md): Rust and Web package layout.
 - [web-layout.md](web-layout.md): browser source and build output.

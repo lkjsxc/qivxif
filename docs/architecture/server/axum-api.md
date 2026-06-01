@@ -9,6 +9,8 @@ Every `/api` response uses [../schema/api-envelope.md](../schema/api-envelope.md
 | Method | Path | Auth | CSRF | Body | Success payload | Side effect | Offline relation |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `GET` | `/health` | public | no | none | health status | none | app can show server reachability |
+| `GET` | `/api/setup` | public | no | none | setup status | none | app decides first-run tab |
+| `POST` | `/api/setup/owner` | public | no | name and password | owner user, csrf token, next actor sequence | creates first owner and session | requires empty store |
 | `GET` | `/api/server-info` | public | no | none | capability list and limits | none | app learns feature flags |
 | `POST` | `/api/auth/login` | public | no | login name, password | user, session summary, csrf token, next actor sequence | creates session | requires server |
 | `POST` | `/api/auth/logout` | session | yes | none | logout status | deletes session | queued logout is not accepted |
@@ -46,6 +48,22 @@ Every `/api` response uses [../schema/api-envelope.md](../schema/api-envelope.md
 - Publishing conflicts use `publish.*` codes.
 
 See [../schema/error-codes.md](../schema/error-codes.md).
+
+## Setup Payloads
+
+`GET /api/setup` returns:
+
+- `required`
+- `owner_creation_open`
+
+`POST /api/setup/owner` requires:
+
+- `name`
+- `password`
+
+The server rejects owner creation when any durable user exists. A successful
+response creates a normal session and returns the CSRF token used by later
+authenticated mutations.
 
 ## Graph Mutation Payloads
 

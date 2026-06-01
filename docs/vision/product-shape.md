@@ -2,13 +2,13 @@
 
 ## Surfaces
 
-- Tiled workspace with split panes and tab stacks.
+- Header plus tile grid with split tiles and tab stacks.
 - Graph navigation pane.
 - Text editor and Markdown preview panes.
 - Blog draft and public route surfaces.
 - Social post, feed, reply, and moderation surfaces.
 - Sync status and cache diagnostics panes.
-- `kjxlkj` board for direct graph composition.
+- Board tab for direct graph composition.
 
 ## Durable Model
 

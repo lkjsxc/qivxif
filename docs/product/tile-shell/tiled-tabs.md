@@ -2,14 +2,14 @@
 
 ## Model
 
-- A workspace has one root tile.
+- The app shell has one root tile.
 - A tile is either a split or a tab stack.
 - A tab references one pane.
 - A pane can view a graph node, a feed, settings, history, or diagnostics.
 
 ## Durable Shape
 
-- A `workspace_layout` node owns the tiled layout.
+- A `workspace_layout` node owns the tile layout.
 - Each durable pane is a `pane` node.
 - `workspace_contains_pane` edges link the layout node to pane nodes.
 - `pane_views_node` edges link panes to graph targets.

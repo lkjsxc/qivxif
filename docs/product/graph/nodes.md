@@ -9,19 +9,18 @@
 - user profile
 - tag
 - topic
-- workspace
-- pane
 - tile layout
+- pane
 - feed
 - media
 - search view
-- `kjxlkj` board
+- graph board
 - settings
 - system
 
 ## Behavior
 
-- Users create and open nodes from the workspace.
+- Users create and open nodes from the tile shell.
 - Node metadata is editable through operations.
 - Unknown node kinds are rejected until extension docs exist.
 - Tombstoned nodes stay inspectable through history.

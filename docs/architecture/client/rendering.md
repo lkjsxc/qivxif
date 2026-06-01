@@ -13,4 +13,5 @@
 - The first shell uses minimal TypeScript modules and DOM rendering.
 - A larger UI framework waits until actor-driven DOM rendering becomes the limiting factor.
 - Components send actor messages instead of mutating IndexedDB directly.
-- The first visible surface is the workspace, not a marketing page.
+- The first visible surface is the app shell, not a marketing page.
+- The app shell is header plus tile grid; no permanent sidebar or dashboard lives outside tiles.

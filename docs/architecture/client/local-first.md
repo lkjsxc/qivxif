@@ -41,7 +41,7 @@ The first browser sync actor flushes dirty queue entries through existing durabl
 
 HTTP sync push remains the batch operation-envelope lane for clients that can produce the full envelope payload. The browser route flush lane is valid only because the server route creates the same durable operation log entry before returning acceptance.
 
-## Workspace And Board Queue Rules
+## Tile Layout And Board Queue Rules
 
 - Layout commands write the local layout snapshot before queue display changes.
 - Board placement records are visible locally while dirty.
