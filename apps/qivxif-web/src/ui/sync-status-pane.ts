@@ -3,6 +3,8 @@ export function renderSyncStatus(state) {
   pane.className = "pane status";
   pane.append(row("Sync", state.online ? "online" : "offline"));
   pane.append(row("Queued", String(state.queued)));
+  pane.append(row("Rejected", String(state.rejected ?? 0)));
+  pane.append(row("Session", state.auth ? state.auth.user.name : "none"));
   pane.append(row("Capabilities", capabilityText(state.capabilities)));
   if (state.lastError) {
     pane.append(row("Last error", state.lastError));

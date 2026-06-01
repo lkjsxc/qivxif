@@ -25,3 +25,13 @@
 - `rejected[]` creates visible conflict or rejection rows.
 - Pull progress updates last applied cursor only after reducers apply.
 - Offline mode increments queued count only after IndexedDB write succeeds.
+
+## Route Flush Mapping
+
+Route-specific flush responses update the same visible state:
+
+- `POST /api/nodes` acceptance clears the matching `node.create` queue entry.
+- `POST /api/edges` acceptance clears the matching `edge.create` queue entry.
+- `POST /api/text/{node_id}/ops` acceptance clears the matching text queue entry.
+- Any non-success envelope stores its error code on the queue entry and increments rejected count.
+- Network failure leaves the operation dirty and keeps queued count unchanged.

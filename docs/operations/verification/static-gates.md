@@ -3,6 +3,8 @@
 ## Required
 
 - Rust formatting.
+- Browser app build.
+- Browser JavaScript syntax check.
 - Clippy with warnings denied.
 - Unit tests.
 - Doc tests.

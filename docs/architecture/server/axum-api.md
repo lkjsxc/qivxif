@@ -71,6 +71,12 @@ The server requires write access on `from_node` and read access on `to_node`. Re
 
 `operation` is the ordered character-id text operation from [../text/crdt.md](../text/crdt.md). The server wraps it in the durable operation envelope, stores the text projection, and returns the operation acceptance.
 
+The first browser editor may send `text.restore` for whole-text saves. Each restore operation uses a fresh operation id and a monotonic `first_seq` range for the actor so character ids remain unique.
+
+## Browser Route Flush
+
+The browser queue stores the exact JSON request used by each durable mutation route. A queued entry is accepted only when the route response envelope contains the matching operation acceptance. Route flush is not a separate durability model; the server route must append the operation log entry before success.
+
 ## Handler Rules
 
 - Handlers parse DTOs, extract auth context, call domain services, and wrap envelopes.
