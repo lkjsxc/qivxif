@@ -11,6 +11,7 @@ mod store;
 mod sync_accept;
 mod tables;
 mod text_store;
+mod user_store;
 
 pub use config::StoreConfig;
 pub use error::{StoreError, StoreResult};

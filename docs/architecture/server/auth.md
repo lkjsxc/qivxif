@@ -3,6 +3,7 @@
 ## Requirements
 
 - First admin is created through `qivxifctl`.
+- Additional users are durable store records created by admin-controlled tools or tests until invite routes are documented.
 - Password hashes use Argon2id.
 - Sessions are stored in redb.
 - Session cookies are HttpOnly, Secure when TLS is active, and SameSite.

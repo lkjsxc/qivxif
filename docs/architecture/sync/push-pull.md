@@ -41,6 +41,15 @@
 | `server_cursor` | cursor | resume token for later pull |
 | `has_more` | boolean | true when another pull is needed |
 
+## Pull Visibility
+
+- Pull requires an authenticated session.
+- The store filters every returned operation through server ACL.
+- An operation with target nodes is visible only when every target node is readable by the viewer.
+- Operations with no readable target are excluded instead of redacted.
+- Hidden operations do not advance the returned cursor for that viewer.
+- The cursor never reveals operation count or timestamp information for hidden records.
+
 ## Acceptance Rules
 
 - The server validates auth for each operation.

@@ -70,15 +70,16 @@ async fn pull(
     Query(request): Query<PullRequest>,
 ) -> ApiResponse<PullResponse> {
     let caps = sync_capabilities();
-    if load_session_user(&state, &headers).is_none() {
+    let Some(session_user) = load_session_user(&state, &headers) else {
         return auth_missing(caps);
-    }
+    };
     if validate_pull(request.clone(), limits()).is_err() {
         return batch_too_large(caps);
     }
+    let auth = auth_context(&session_user);
     match state
         .store
-        .list_operations_after_cursor(request.cursor.as_ref(), request.limit)
+        .list_operations_after_cursor(&auth, request.cursor.as_ref(), request.limit)
     {
         Ok((operations, server_cursor, has_more)) => ok(
             PullResponse {

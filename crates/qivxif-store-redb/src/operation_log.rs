@@ -5,6 +5,7 @@ use crate::{
     store::QivxifStore,
     tables,
 };
+use qivxif_auth::{AuthContext, can_read};
 use qivxif_core::{ActorId, CursorId, NodeId, OperationId};
 use qivxif_history::OperationEnvelope;
 use redb::ReadableTable;
@@ -35,6 +36,7 @@ impl QivxifStore {
 
     pub fn list_operations_after_cursor(
         &self,
+        auth: &AuthContext,
         cursor: Option<&CursorId>,
         limit: usize,
     ) -> StoreResult<(Vec<OperationEnvelope>, Option<CursorId>, bool)> {
@@ -53,17 +55,36 @@ impl QivxifStore {
             if after.is_some_and(|value| cursor_text <= value) {
                 continue;
             }
-            if out.len() == limit {
-                has_more = true;
-                break;
-            }
             let op_id: OperationId = decode(op_id_bytes.value())?;
             if let Some(op_bytes) = ops.get(op_id.as_str())? {
-                out.push(decode(op_bytes.value())?);
-                last_cursor = Some(cursor_text.parse().map_err(|_| StoreError::CursorInvalid)?);
+                let op = decode(op_bytes.value())?;
+                if !self.can_pull_operation(auth, &op)? {
+                    continue;
+                }
+                if out.len() == limit {
+                    has_more = true;
+                    break;
+                }
+                out.push(op);
+                last_cursor = Some(parse_cursor(cursor_text)?);
             }
         }
         Ok((out, last_cursor, has_more))
+    }
+
+    fn can_pull_operation(&self, auth: &AuthContext, op: &OperationEnvelope) -> StoreResult<bool> {
+        if op.target_node_ids.is_empty() {
+            return Ok(false);
+        }
+        for node_id in &op.target_node_ids {
+            let Some(node) = self.get_node(node_id)? else {
+                return Ok(false);
+            };
+            if !can_read(auth, &node) {
+                return Ok(false);
+            }
+        }
+        Ok(true)
     }
 }
 
@@ -151,6 +172,10 @@ fn next_cursor(tx: &redb::WriteTransaction) -> StoreResult<CursorId> {
         count += 1;
     }
     cursor_from_index(count + 1)
+}
+
+fn parse_cursor(value: &str) -> StoreResult<CursorId> {
+    value.parse().map_err(|_| StoreError::CursorInvalid)
 }
 
 fn cursor_from_index(index: u128) -> StoreResult<CursorId> {

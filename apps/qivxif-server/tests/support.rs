@@ -33,14 +33,17 @@ pub async fn login(app: &Router) -> (String, String) {
 }
 
 pub async fn login_full(app: &Router) -> TestLogin {
+    login_named(app, "admin", "secret").await
+}
+
+pub async fn login_named(app: &Router, name: &str, password: &str) -> TestLogin {
+    let body = serde_json::json!({
+        "name": name,
+        "password": password,
+    });
     let response = app
         .clone()
-        .oneshot(post_raw(
-            "/api/auth/login",
-            r#"{"name":"admin","password":"secret"}"#,
-            None,
-            None,
-        ))
+        .oneshot(post_raw("/api/auth/login", &body.to_string(), None, None))
         .await
         .unwrap();
     let cookie = response

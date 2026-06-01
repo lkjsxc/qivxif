@@ -23,6 +23,7 @@
 - `edge.create` writes operation, edge, `edges_by_from`, and `edges_by_to` in one transaction.
 - `text.insert` and `text.delete` write operation and text projection in one transaction.
 - Feed index updates happen in the same transaction as the operation that creates feed visibility.
+- Sync pull is read-only and must pass auth context into the store before operation envelopes leave storage.
 
 ## Failure Rule
 

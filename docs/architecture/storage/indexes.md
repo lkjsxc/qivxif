@@ -18,6 +18,7 @@
 - Primary write and index write happen in the same transaction.
 - Tombstoned records remain in indexes unless the query explicitly filters them.
 - Repair checks compare every index entry against its primary record.
+- Sync pull scans cursor order, then filters candidate operations by target node ACL.
 
 ## Maintenance
 
