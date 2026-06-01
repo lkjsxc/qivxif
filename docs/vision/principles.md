@@ -1,25 +1,24 @@
 # Principles
 
-Owner doc for durable product and engineering rules.
-
 ## Product
 
-- Start in the working surface, not a marketing page.
-- Make panes predictable, rectangular, and recoverable.
-- Keep text editing and local files central.
-- Apply browser policy before any embedded, detached, or external route.
+- Graph records are the universal product substrate.
+- Offline work is normal, not an exception.
+- History is inspectable and reconstructable.
+- Publishing and social features reuse graph primitives.
+- The first screen is the workspace, not a landing page.
 
 ## Engineering
 
-- Authored application logic and UI source are Rust-only.
-- Use the custom qivxif tile engine for pane layout behavior.
-- Keep pane implementations behind small boundaries.
-- Use typed commands instead of ad hoc callbacks.
-- Prefer simple data files for settings and workspace state.
+- Docs define durable contracts before code.
+- Pure reducers own domain behavior.
+- Effectful code stays at boundaries.
+- The server core requires no external database.
+- Tests prove real behavior; mocks and placeholders do not count as progress.
 
-## Maintenance
+## Agent Readability
 
-- Docs first, then implementation.
-- One owner doc per durable contract.
-- Delete retired contracts.
-- Keep files small and directly named.
+- Files stay small.
+- Names are explicit.
+- Parent `README.md` files act as retrieval maps.
+- Retired contracts are removed.

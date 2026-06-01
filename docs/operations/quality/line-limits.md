@@ -1,18 +1,11 @@
 # Line Limits
 
-Owner doc for file length gates.
-
 ## Limits
 
-| Area | Limit |
-|---|---:|
-| Markdown under `docs/` | 300 lines |
-| Rust under `apps/` and `crates/` | 200 lines |
-| Shell scripts under `scripts/` | 200 lines |
-| Checked root config files | 200 lines |
+- Docs Markdown files: at most 300 lines.
+- Authored source files under `apps/`, `crates/`, and `scripts/`: at most 200 lines.
+- Root support files are checked.
 
-## Rules
+## Rule
 
-- Split files by owner boundary before shortening names.
-- Do not minify prose or code to pass.
-- Generated or external artifacts should stay out of checked paths.
+Do not minify or remove useful names to fit limits.

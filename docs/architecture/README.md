@@ -1,11 +1,14 @@
 # Architecture
 
-Owner index for system contracts.
+## Contents
 
-## Children
-
-- [shell/README.md](shell/README.md): native window, rendering, and commands.
-- [editor/README.md](editor/README.md): buffer and editor view internals.
-- [panes/README.md](panes/README.md): pane host and pane adapters.
-- [workspace/README.md](workspace/README.md): layout, session, and settings state.
-- [platform/README.md](platform/README.md): OS paths, dialogs, clipboard, background work.
+- [system/README.md](system/README.md): process model and boundaries.
+- [server/README.md](server/README.md): Axum server contracts.
+- [storage/README.md](storage/README.md): redb storage contracts.
+- [graph/README.md](graph/README.md): graph record contracts.
+- [history/README.md](history/README.md): operation history contracts.
+- [text/README.md](text/README.md): CRDT text contracts.
+- [sync/README.md](sync/README.md): sync contracts.
+- [transport/README.md](transport/README.md): live transport contracts.
+- [client/README.md](client/README.md): browser client contracts.
+- [cache/README.md](cache/README.md): cache orchestration contracts.

@@ -1,17 +1,8 @@
 # Commit Policy
 
-Owner doc for commit cadence.
-
 ## Rules
 
-- Commit coherent batches frequently.
-- Do not mix unrelated behavior in one commit.
-- Do not revert work from other agents unless explicitly instructed.
-- Include verification notes in the commit message when useful.
-
-## Good Batches
-
-- Documentation canon pivot.
-- Quality gate update.
-- One crate or app slice with tests.
-- Verification script adjustment with passing check.
+- Commit coherent slices frequently.
+- Commit messages explain why the change was made.
+- Include relevant test evidence.
+- Do not mix unrelated cleanup with feature slices.

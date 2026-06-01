@@ -1,11 +1,9 @@
 # Research
 
-Owner index for durable synthesis from reports.
+## Contents
 
-## Children
-
-- [report-synthesis.md](report-synthesis.md): pivot report summary.
-- [desktop-stack.md](desktop-stack.md): shell stack findings.
-- [editor-stack.md](editor-stack.md): editor stack findings.
-- [browser-stack.md](browser-stack.md): browser findings.
-- [quality-stack.md](quality-stack.md): verification findings.
+- [axum-redb.md](axum-redb.md): HTTP and embedded store facts.
+- [webtransport.md](webtransport.md): live transport facts.
+- [offline-web.md](offline-web.md): browser offline facts.
+- [text-crdt.md](text-crdt.md): text CRDT facts.
+- [cache-orchestration.md](cache-orchestration.md): cache policy synthesis.

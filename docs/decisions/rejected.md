@@ -1,18 +1,21 @@
 # Rejected Decisions
 
-Owner doc for inactive paths.
-
 ## Product
 
-- Game, terrain, combat, server, and simulation behavior are not qivxif canon.
-- Browser-first shell is rejected.
-- Plugin marketplace is rejected for the initial architecture.
-- Remote account service is rejected.
+- Native desktop shell as primary product.
+- File tree as primary data structure.
+- Placeholder features.
+- Plugin marketplace before core product stability.
+- Social engagement ranking as default.
 
 ## Architecture
 
-- Web UI as primary shell is rejected.
-- Third-party docking crates as the canonical tile engine are rejected.
-- Direct pane-to-pane mutation is rejected.
-- Opaque binary workspace state is rejected.
-- Blocking filesystem work on the UI thread is rejected.
+- Opaque giant JSON blob for graph state.
+- Durable operation delivery through unreliable datagrams.
+- Mock modules.
+- Direct component writes to IndexedDB.
+- Auth only in the client.
+- Feed queries by scanning all posts.
+- Text history by full-copy-per-edit storage.
+- External database requirement for core operation.
+- redb table access outside the store crate.

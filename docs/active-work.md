@@ -1,23 +1,17 @@
 # Active Work
 
-Owner doc for the current implementation lane.
+## Current Lane
 
-## Focus
+qivxif is being reset into a Rust-first Web super app.
 
-- Keep the Rust-native tile super app as the default implemented path.
-- Ship portable desktop artifacts before installer polish.
-- Keep Compose as the shared build and verification boundary.
+## Active Targets
 
-## Near Work
+- Reset docs canon away from the retired native desktop shell.
+- Build a real Axum server with redb storage.
+- Add first multi-user auth and graph operations.
+- Add offline-capable browser shell, service worker, IndexedDB boundary, and sync status.
+- Keep Docker Compose as the acceptance boundary.
 
-1. Add the portable Windows package lane.
-2. Verify Windows archive shape from Docker Compose.
-3. Keep Linux packaging intact.
-4. Add Windows launch smoke on a Windows runner.
-5. Continue state, tracing, and recovery alignment.
+## Stop Condition
 
-## Acceptance
-
-- Docs describe only the tile super app direction.
-- Portable artifacts include the executable, license, and launch notes.
-- Compose remains the acceptance boundary.
+The repo is coherent when another agent can read [README.md](README.md), run the Compose verification script, and continue from committed slices without hidden context.

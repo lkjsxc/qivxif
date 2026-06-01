@@ -1,21 +1,20 @@
 # Purpose
 
-qivxif is a Rust-native tile super app for local work.
+qivxif is a Rust-first Web super app for personal and multi-user knowledge work.
 
-## Goals
+## Purpose Statement
 
-- Provide a fast native workspace for text editing, Markdown reading, file exploration, and controlled web browsing.
-- Keep every durable contract in docs before implementation.
-- Keep source modules small enough for LLM agents to read and edit safely.
-- Prefer local files and explicit state over opaque services.
+The product helps users create, link, edit, publish, arrange, and revisit information as a graph instead of a directory tree.
 
-## Non-Goals
+## Durable Shape
 
-- No game, server, terrain, simulation, or network protocol canon remains.
-- No browser-first shell.
-- No plugin marketplace surface.
-- No compatibility promise for retired paths.
+- A single server supports multiple users.
+- A browser client works offline after first load.
+- Durable data is typed KV plus typed graph records.
+- Every durable mutation is an operation.
+- The workspace is tiled, tabbed, and restorable.
+- `kjxlkj` is the graph composition surface where the network is directly edited.
 
-## Source Of Truth
+## Primary Proof Slice
 
-Docs are the durable truth. Reports and tmp files are input only until copied into owner docs.
+Admin user -> login -> create graph node -> edit text offline -> persist locally -> sync to server -> load from another client -> inspect history.

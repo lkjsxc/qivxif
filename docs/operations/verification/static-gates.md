@@ -1,18 +1,14 @@
 # Static Gates
 
-Owner doc for static checks.
+## Required
 
-## Checks
-
-- `cargo fmt --all -- --check`
-- `cargo clippy --workspace --all-targets -- -D warnings`
-- `cargo test --workspace --locked`
-- `cargo run -p qivxifctl -- docs validate-topology`
-- `cargo run -p qivxifctl -- quality check-lines`
-- `cargo run -p qivxifctl -- quality check-wording`
-
-## Rules
-
-- Prefer locked dependency resolution.
-- Report exact failing command.
-- Do not rewrite files as part of a check command.
+- Rust formatting.
+- Clippy with warnings denied.
+- Unit tests.
+- Doc tests.
+- Build.
+- Docs topology.
+- Docs and source line limits.
+- Wording rules.
+- No retired native desktop canon.
+- No placeholder markers.

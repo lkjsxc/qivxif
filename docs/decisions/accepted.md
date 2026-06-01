@@ -1,23 +1,26 @@
 # Accepted Decisions
 
-Owner doc for active choices.
-
 ## Product
 
-- qivxif is a Rust-native tile super app.
-- Text editing, Markdown preview, explorer, and browser pane are the core surface.
-- Docs are the durable source of truth.
+- qivxif is a Rust-first server/client Web super app.
+- `docs/` is the durable source of truth.
+- The browser workspace is tiled and tabbed.
+- `kjxlkj` is the graph composition workspace.
+- The server supports multiple users in one instance.
+- No native desktop shell canon remains.
+- No backward compatibility is preserved during the reset.
 
 ## Architecture
 
-- Use `winit`, `wgpu`, and `egui` for the native shell.
-- Use the custom qivxif tile engine for splits, tabs, focus, and layout persistence.
-- Use rope-backed buffers for text.
-- Use `cosmic-text` for text layout and shaping.
-- Use `pulldown-cmark` for Markdown parsing.
-- Use `wry` only behind browser policy, controller, and fallback boundaries.
-- Use TOML for settings and JSON for workspace state.
-
-## Process
-
-- Retired voxel and server contracts are deleted rather than carried as aliases.
+- Axum owns HTTP API, public routes, auth routes, and static app serving.
+- redb owns embedded server storage.
+- WebTransport owns preferred live sync.
+- Durable sync uses reliable streams or HTTP.
+- Datagrams are only for ephemeral hints.
+- The durable data model is typed KV plus typed graph.
+- Nodes and edges are first-class records.
+- All durable mutations append operations.
+- Text nodes use CRDT-backed operation history.
+- Client offline data lives in IndexedDB.
+- The app shell and static assets use a service worker and Cache API.
+- Client cache behavior is governed by a cache orchestrator.

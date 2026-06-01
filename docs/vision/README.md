@@ -1,10 +1,8 @@
 # Vision
 
-Owner index for qivxif direction.
+## Contents
 
-## Children
-
-- [purpose.md](purpose.md): product purpose and non-goals.
-- [principles.md](principles.md): engineering guardrails.
-- [product-shape.md](product-shape.md): canonical product shape.
-- [llm-authoring.md](llm-authoring.md): docs and code authoring style.
+- [purpose.md](purpose.md): why qivxif exists.
+- [principles.md](principles.md): durable product and engineering principles.
+- [product-shape.md](product-shape.md): Web super-app shape.
+- [non-goals.md](non-goals.md): what the reset excludes.

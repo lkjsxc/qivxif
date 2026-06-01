@@ -1,9 +1,7 @@
 # Workflow
 
-Owner index for change workflow.
+## Contents
 
-## Children
-
-- [docs-first-change-sequence.md](docs-first-change-sequence.md): required order.
-- [commit-policy.md](commit-policy.md): commit cadence.
-- [decision-records.md](decision-records.md): decision tracking.
+- [docs-first.md](docs-first.md): docs-first sequence.
+- [commit-policy.md](commit-policy.md): commit expectations.
+- [implementation-slices.md](implementation-slices.md): rebuild slices.

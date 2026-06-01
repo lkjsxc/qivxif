@@ -1,11 +1,8 @@
-# Tile Super App Product
+# Workspace
 
-Owner index for tile super app workspace behavior.
+## Contents
 
-## Children
-
-- [tile-layout.md](tile-layout.md): split and tab behavior.
-- [commands.md](commands.md): command palette and command naming.
-- [sessions.md](sessions.md): workspace restore behavior.
-- [focus-shortcuts.md](focus-shortcuts.md): keyboard focus and shortcuts.
-- [visual-style.md](visual-style.md): native dark theme, pane chrome, and accessibility style.
+- [tiled-tabs.md](tiled-tabs.md): tile and tab behavior.
+- [panes.md](panes.md): pane kinds and expectations.
+- [command-palette.md](command-palette.md): command model.
+- [keyboard.md](keyboard.md): keyboard behavior.

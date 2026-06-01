@@ -1,9 +1,7 @@
 # Repository
 
-Owner index for repository rules.
+## Contents
 
-## Children
-
-- [layout/README.md](layout/README.md): filesystem layout.
-- [rules/README.md](rules/README.md): authoring rules.
-- [workflow/README.md](workflow/README.md): change workflow.
+- [layout/README.md](layout/README.md): repository layout.
+- [rules/README.md](rules/README.md): authoring and dependency rules.
+- [workflow/README.md](workflow/README.md): docs-first workflow and commits.

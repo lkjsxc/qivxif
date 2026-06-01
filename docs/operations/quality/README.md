@@ -1,9 +1,7 @@
 # Quality
 
-Owner index for quality rules.
+## Contents
 
-## Children
-
-- [acceptance-gates.md](acceptance-gates.md): required pass conditions.
-- [documentation-topology.md](documentation-topology.md): docs tree shape.
-- [line-limits.md](line-limits.md): file size limits.
+- [repository-gates.md](repository-gates.md): repository checks.
+- [line-limits.md](line-limits.md): size gates.
+- [wording.md](wording.md): wording gates.

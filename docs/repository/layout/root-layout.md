@@ -1,18 +1,16 @@
 # Root Layout
 
-Owner doc for root paths.
+## Directories
 
-## Paths
+- `apps/`: runnable Rust binaries.
+- `crates/`: reusable Rust crates.
+- `docs/`: durable canon.
+- `scripts/`: verification and maintenance commands.
+- `web/`: browser client, service worker, and browser tests.
+- `tmp/`: non-canon scratch and research input.
 
-| Path | Role |
-|---|---|
-| `docs/` | Canon and owner docs. |
-| `apps/` | Runnable binaries. |
-| `crates/` | Reusable Rust crates. |
-| `scripts/` | Verification and packaging helpers. |
-| `docker-compose.yml` | Compose smoke services. |
-| `tmp/` | Research input, not canon. |
+## Files
 
-## Rule
-
-Root text files may orient agents but must point back to `docs/` for durable truth.
+- `Cargo.toml`: Rust workspace.
+- `Dockerfile.verify`: verification image.
+- `docker-compose.yml`: Compose acceptance boundary.

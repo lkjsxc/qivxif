@@ -1,18 +1,10 @@
 # Authoring
 
-Owner doc for writing rules.
+## Rules
 
-## Docs
-
-- Update owner docs before implementation.
-- Use direct declarative bullets.
-- Link rather than duplicate contracts.
-- Keep examples small and executable where possible.
-
-## Code
-
-- Prefer small modules by ownership boundary.
-- Authored application logic and UI source are Rust-only.
-- Use typed interfaces for cross-crate communication.
-- Avoid placeholders when real behavior is practical.
-- Add tests proportional to behavior risk.
+- Update docs before implementation.
+- Keep files retrieval-friendly.
+- Prefer deletion and existing utilities before adding layers.
+- Avoid placeholders.
+- Tests must prove real behavior.
+- Use pure reducers for domain behavior.

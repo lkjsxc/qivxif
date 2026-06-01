@@ -1,11 +1,7 @@
-# Editor Product
+# Editor
 
-Owner index for text editing behavior.
+## Contents
 
-## Children
-
-- [buffers.md](buffers.md): buffer ownership and dirty state.
-- [cursor-selection.md](cursor-selection.md): caret and selection behavior.
-- [undo-redo.md](undo-redo.md): edit history behavior.
-- [file-io.md](file-io.md): open, save, and external change behavior.
-- [editing-contract.md](editing-contract.md): dirty state, history, recovery, and large-file contract.
+- [text-nodes.md](text-nodes.md): editable text node behavior.
+- [history.md](history.md): history inspection and restore behavior.
+- [markdown.md](markdown.md): Markdown behavior.

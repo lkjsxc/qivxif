@@ -1,10 +1,9 @@
 # Operations
 
-Owner index for project operation contracts.
+## Contents
 
-## Children
-
-- [quality/README.md](quality/README.md): structural quality gates.
-- [verification/README.md](verification/README.md): build and test acceptance.
-- [packaging/README.md](packaging/README.md): desktop artifact rules.
-- [observability/README.md](observability/README.md): logs, profiling, incidents.
+- [verification/README.md](verification/README.md): acceptance checks.
+- [quality/README.md](quality/README.md): static quality gates.
+- [observability/README.md](observability/README.md): logs and diagnostics.
+- [deployment/README.md](deployment/README.md): runtime deployment.
+- [recovery/README.md](recovery/README.md): repair and restore.

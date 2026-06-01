@@ -1,18 +1,8 @@
 # Docs Layout
 
-Owner doc for the docs tree.
+## Rules
 
-## Shape
-
-- Each directory has one `README.md`.
-- Each directory has at least two child Markdown files or two child directories.
-- Parent indexes link immediate child Markdown files and child directory `README.md` files.
-- Root docs index includes a compact recursive map.
-
-## Ownership
-
-- `vision/` owns why.
-- `product/` owns visible behavior.
-- `architecture/` owns internal contracts.
-- `operations/` owns verification and running work.
-- `repository/` owns project structure.
+- Every docs directory has exactly one `README.md`.
+- Every docs directory has multiple child docs or multiple child directories.
+- Parent indexes link immediate children.
+- Root docs index mentions every docs Markdown file.

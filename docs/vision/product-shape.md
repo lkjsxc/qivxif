@@ -1,33 +1,23 @@
 # Product Shape
 
-Owner doc for the canonical qivxif product.
+## Surfaces
 
-## Primary Surface
+- Tiled workspace with split panes and tab stacks.
+- Graph navigation pane.
+- Text editor and Markdown preview panes.
+- Blog draft and public route surfaces.
+- Social post, feed, reply, and moderation surfaces.
+- Sync status and cache diagnostics panes.
+- `kjxlkj` board for direct graph composition.
 
-The app opens to a native desktop tile super app made of dockable tiles.
+## Durable Model
 
-The custom qivxif tile engine owns split, tab, focus, and restore behavior.
+- Nodes represent durable entities.
+- Edges represent durable relationships.
+- Operations represent durable changes.
+- Commit groups bundle meaningful user actions.
+- Snapshots accelerate replay without replacing history.
 
-Each tile hosts one pane kind:
+## Local-First Behavior
 
-- editor
-- explorer
-- Markdown preview
-- browser
-- settings
-
-## Core Loop
-
-1. Open a folder or file.
-2. Edit text in one or more panes.
-3. Split or tab panes as work changes.
-4. Preview Markdown beside its source.
-5. Browse reference pages only after explicit browser policy allows the route.
-6. Restore the same workspace after restart.
-
-## Quality Bar
-
-- Startup must be deterministic enough for smoke checks.
-- Text data must survive crashes through recovery state.
-- Layout state must round trip through readable JSON.
-- Settings must be readable TOML.
+The client stores local operations before network delivery. UI projections update from those operations and later reconcile with server-accepted operations.

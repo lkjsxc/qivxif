@@ -1,17 +1,18 @@
 # Open Questions
 
-Owner doc for unresolved choices.
+## Client
 
-## Browser Embedding
+- Which browser UI framework best supports a small-file tiled workspace?
+- Should the first text editor use CodeMirror while qivxif owns operation history?
+- Should the client domain crates compile to WASM immediately or after the server foundation lands?
 
-- Which Linux fallback is most reliable: detached native window or external browser command?
-- Which permission prompts need persistent decisions beyond downloads?
+## Protocol
 
-## Editor Depth
+- Which binary framing should replace JSON framing after the protocol is proven?
+- Which browser fallback lane should be preferred when WebTransport is unavailable?
 
-- When should syntax highlighting enter the core path?
-- Which tree-sitter crates fit the line-limit and dependency policy best?
+## Media
 
-## Packaging
+- Should media blobs be chunked immediately or after upload thresholds are defined?
 
-- Which installer formats are worth supporting after portable artifacts work?
+These questions do not block the first server, graph, sync, auth, and offline client slices.

@@ -1,9 +1,7 @@
 # Decisions
 
-Owner index for durable choices.
+## Contents
 
-## Children
-
-- [accepted.md](accepted.md): active choices.
-- [rejected.md](rejected.md): inactive paths.
-- [open-questions.md](open-questions.md): unresolved choices.
+- [accepted.md](accepted.md): active durable choices.
+- [rejected.md](rejected.md): retired and disallowed choices.
+- [open-questions.md](open-questions.md): bounded unresolved decisions.
