@@ -37,6 +37,31 @@ Every `/api` response uses [../schema/api-envelope.md](../schema/api-envelope.md
 
 See [../schema/error-codes.md](../schema/error-codes.md).
 
+## Graph Mutation Payloads
+
+`POST /api/nodes` requires:
+
+- `op_id`
+- `actor_seq`
+- `node_id`
+- `kind`
+- `visibility`
+- `metadata_map`
+
+The server supplies owner, actor, receive time, operation payload hash, and current commit group. Repeating the same `op_id` returns the prior acceptance.
+
+`POST /api/edges` requires:
+
+- `op_id`
+- `actor_seq`
+- `edge_id`
+- `from_node`
+- `to_node`
+- `kind`
+- `metadata_map`
+
+The server requires write access on `from_node` and read access on `to_node`. Repeating the same `op_id` returns the prior acceptance.
+
 ## Handler Rules
 
 - Handlers parse DTOs, extract auth context, call domain services, and wrap envelopes.

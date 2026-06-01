@@ -22,6 +22,18 @@ pub enum StoreError {
     AdminExists,
     #[error("duplicate user name")]
     DuplicateUserName,
+    #[error("operation conflicts with existing durable record")]
+    OperationConflict,
+    #[error("actor sequence already belongs to another operation")]
+    DuplicateActorSeq,
+    #[error("node already exists")]
+    NodeExists,
+    #[error("node missing")]
+    NodeMissing,
+    #[error("edge already exists")]
+    EdgeExists,
+    #[error("access denied")]
+    Forbidden,
 }
 
 impl From<redb::DatabaseError> for StoreError {

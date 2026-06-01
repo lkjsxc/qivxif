@@ -859,6 +859,7 @@ dependencies = [
  "qivxif-api",
  "qivxif-auth",
  "qivxif-core",
+ "qivxif-graph",
  "qivxif-store-redb",
  "serde",
  "serde_json",
@@ -874,6 +875,7 @@ name = "qivxif-store-redb"
 version = "0.1.0"
 dependencies = [
  "bincode",
+ "blake3",
  "qivxif-auth",
  "qivxif-core",
  "qivxif-graph",

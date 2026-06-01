@@ -12,8 +12,8 @@ use std::{collections::BTreeMap, fs, path::PathBuf, sync::Arc};
 
 #[derive(Clone)]
 pub struct QivxifStore {
-    database: Arc<Database>,
-    path: PathBuf,
+    pub(crate) database: Arc<Database>,
+    pub(crate) path: PathBuf,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]

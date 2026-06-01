@@ -6,8 +6,9 @@ pub use envelope::{
     ApiEnvelope, ApiError, ApiErrorCode, ConflictInfo, FieldError, RetryInfo, ServerCapabilities,
 };
 pub use routes::{
-    HealthPayload, LoginPayload, LoginRequest, LogoutPayload, MePayload, ServerInfoPayload,
-    UserSummary,
+    EdgeCreatePayload, EdgeCreateRequest, EdgeListPayload, HealthPayload, LoginPayload,
+    LoginRequest, LogoutPayload, MePayload, NodeCreatePayload, NodeCreateRequest, NodePayload,
+    ServerInfoPayload, UserSummary,
 };
 pub use sync::{
     OperationAcceptance, OperationRejection, PullRequest, PullResponse, PushRequest, PushResponse,

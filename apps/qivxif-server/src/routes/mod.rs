@@ -1,6 +1,8 @@
 mod auth;
+mod graph;
 mod health;
 mod server_info;
+mod session;
 mod static_files;
 mod support;
 
@@ -11,6 +13,7 @@ use tower_http::trace::TraceLayer;
 pub fn router(state: AppState) -> Router {
     Router::new()
         .merge(auth::routes())
+        .merge(graph::routes())
         .merge(health::routes())
         .merge(server_info::routes())
         .fallback_service(static_files::service(&state.config.static_dir))

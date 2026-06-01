@@ -30,6 +30,8 @@ pub enum ApiErrorCode {
     AuthCsrfMissing,
     #[serde(rename = "auth.forbidden")]
     AuthForbidden,
+    #[serde(rename = "graph.not_found")]
+    GraphNotFound,
     #[serde(rename = "schema.invalid_id")]
     SchemaInvalidId,
     #[serde(rename = "schema.unknown_node_kind")]

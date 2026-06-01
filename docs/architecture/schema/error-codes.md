@@ -10,6 +10,7 @@ Error codes are stable public names. They are used by API routes, sync rejection
 | `auth.session_missing` | request has no valid session | after login |
 | `auth.csrf_missing` | mutation lacks CSRF proof | after token refresh |
 | `auth.forbidden` | authenticated actor lacks required action | no |
+| `graph.not_found` | requested graph record is absent or hidden | no |
 | `schema.invalid_id` | ID string failed parsing | no |
 | `schema.unknown_node_kind` | node kind not in registry | no |
 | `schema.unknown_edge_kind` | edge kind not in registry | no |

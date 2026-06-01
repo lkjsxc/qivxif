@@ -1,6 +1,6 @@
 use crate::{EdgeKind, NodeKind};
 use qivxif_core::{
-    ActorId, CommitGroupId, EdgeId, MetadataMap, NodeId, TextDocId, UserId, Visibility,
+    ActorId, CommitGroupId, EdgeId, MetadataMap, NodeId, ServerTime, TextDocId, UserId, Visibility,
 };
 use serde::{Deserialize, Serialize};
 
@@ -19,6 +19,8 @@ pub struct NodeRecord {
     pub kind: NodeKind,
     pub owner_user_id: UserId,
     pub created_by: ActorId,
+    pub created_at: ServerTime,
+    pub updated_at: ServerTime,
     pub visibility: Visibility,
     pub acl_ref: Option<AclRef>,
     pub current_commit_group: Option<CommitGroupId>,
@@ -34,6 +36,7 @@ pub struct EdgeRecord {
     pub to_node: NodeId,
     pub kind: EdgeKind,
     pub created_by: ActorId,
+    pub created_at: ServerTime,
     pub metadata_map: MetadataMap,
     pub tombstone: Option<Tombstone>,
 }
