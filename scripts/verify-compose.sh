@@ -12,7 +12,7 @@ run() {
   $compose "$@"
 }
 
-run -f docker-compose.verify.yml run --rm --build -T verify
+run -f docker-compose.yml run --rm --build -T verify
 run run --rm --build -T server-smoke
 run run --rm --build -T api-test
 run run --rm --build -T offline-e2e

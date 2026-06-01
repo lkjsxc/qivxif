@@ -2,6 +2,7 @@
 
 ## Services
 
+- `verify` runs the web build, Rust format check, clippy, workspace tests, and repository quality gates.
 - `server-smoke` starts the server with an empty data directory.
 - `api-test` runs API integration tests.
 - `offline-e2e` runs browser offline checks when browser tests exist.

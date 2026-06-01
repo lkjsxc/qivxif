@@ -7,7 +7,6 @@
 - `server-smoke`: empty data directory startup check.
 - `api-test`: API integration checks.
 - `offline-e2e`: browser offline checks when browser tests exist.
-- `webtransport-test`: live sync checks when the endpoint exists.
 
 ## Rule
 
