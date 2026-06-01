@@ -26,6 +26,7 @@ export function initialState() {
     tabChooserOpen: false,
     tabChooserPaneId: "",
     tabDrafts: {},
+    tabScrolls: {},
     text: "",
     textDirty: false,
     textSnapshots: {},

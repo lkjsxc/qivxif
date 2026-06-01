@@ -3,6 +3,7 @@ import { actionButton, text } from "./dom.ts";
 import { installDropLayer } from "./drop-layer.ts";
 import { renderTabContent } from "./tab-content.ts";
 import { renderStackTabRail, tabsFor } from "./tab-rail.ts";
+import { installPaneScrollSnapshot } from "./tab-scroll.ts";
 
 export function renderTileGrid(state, actions) {
   const grid = document.createElement("section");
@@ -73,6 +74,7 @@ function tabBody(state, actions, activeTab) {
   }
   body.dataset.paneId = activeTab.pane_node_id;
   body.append(renderTabContent(stateForTab(state, activeTab), actionsForTab(actions, activeTab)));
+  installPaneScrollSnapshot(body, activeTab.pane_node_id, state, actions);
   return body;
 }
 

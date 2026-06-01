@@ -65,6 +65,7 @@
 - Layout is stored as graph records and events.
 - Offline restore must work from the local cache.
 - Pane bodies own local vertical scroll.
+- Pane body scroll offsets restore from the visible tab instance snapshot.
 - Shell content must not create horizontal page scroll.
 - Inactive tabs retain logical state, even when a later renderer chooses not to
   keep inactive DOM mounted.

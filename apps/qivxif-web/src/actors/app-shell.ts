@@ -17,6 +17,7 @@ import {
 import { loadLocalState, refreshCurrentNode } from "./state-loader.ts";
 import { flushQueue, refreshQueueState } from "./sync.ts";
 import { updateTextDraft } from "./tab-drafts.ts";
+import { updatePaneScroll } from "./tab-scrolls.ts";
 import { createTextNode, openNode, saveText, selectNode } from "./text-actions.ts";
 import { movePane } from "./tile-move-actions.ts";
 import {
@@ -118,6 +119,7 @@ function actionsFor(root, store, state) {
     toggleCommandPalette: (open) => toggleCommandPalette(root, store, state, open),
     toggleTabChooser: (paneId) => toggleTabChooser(root, store, state, paneId),
     unpublishBlogPost: () => run(root, store, state, () => unpublishBlogPost(store, state)),
+    updatePaneScroll: (paneId, scrollTop) => updatePaneScroll(store, state, paneId, scrollTop),
     updateTextDraft: (paneId, content) => updateTextDraft(store, state, paneId, content),
   };
 }

@@ -12,8 +12,12 @@ export async function loadLocalState(store, state) {
   state.edges = await store.all("edges");
   state.feedItems = await store.all("feed_windows");
   state.nodes = await store.all("nodes");
+  const tabSnapshots = await store.all("tab_snapshots");
   state.tabDrafts = Object.fromEntries(
-    (await store.all("tab_snapshots")).map((entry) => [entry.pane_id, entry.content]),
+    tabSnapshots.filter((entry) => entry.kind === "text_draft").map((entry) => [entry.pane_id, entry.content]),
+  );
+  state.tabScrolls = Object.fromEntries(
+    tabSnapshots.filter((entry) => entry.kind === "pane_scroll").map((entry) => [entry.pane_id, entry.scroll_top]),
   );
   state.textSnapshots = Object.fromEntries(
     (await store.all("text_snapshots")).map((entry) => [entry.id, entry]),

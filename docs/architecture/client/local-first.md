@@ -52,5 +52,7 @@ returning acceptance.
 - Layout commands write the local layout snapshot before queue display changes.
 - Board placement records are visible locally while dirty.
 - Text drafts are stored in `tab_snapshots` by pane ID and survive reload.
+- Pane body scroll offsets are stored in `tab_snapshots` by pane ID and survive
+  tab switches, tab moves, and reload.
 - Edge events are flushed after their source and target node events.
 - A second client reconstructs board items from accepted graph records.
