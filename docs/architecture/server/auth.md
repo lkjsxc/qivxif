@@ -3,7 +3,7 @@
 ## Requirements
 
 - First admin is created through `qivxifctl`.
-- Additional users are durable store records created by admin-controlled tools or tests until invite routes are documented.
+- Additional users are durable store records created by `qivxifctl admin create-user` until invite routes are documented.
 - Password hashes use Argon2id.
 - Sessions are stored in redb.
 - Session cookies are HttpOnly, Secure when TLS is active, and SameSite.
@@ -24,6 +24,29 @@
 | `GET /api/me` | session cookie | user summary, profile node id, roles | `auth.session_missing` |
 
 ## Payloads
+
+`qivxifctl admin bootstrap` requires:
+
+- `--store`
+- `--name`
+- `--password-stdin`
+
+`qivxifctl admin create-user` requires:
+
+- `--store`
+- `--name`
+- `--password-stdin`
+
+Optional `--role` flags accept `owner`, `admin`, `member`, or `guest`; omitted roles create a `member`. `public` is a viewer role, not a durable account role.
+
+Both admin commands return:
+
+- `status`
+- `user_id`
+- `actor_id`
+- `profile_node_id`
+- `name`
+- `roles`
 
 `user summary` contains:
 

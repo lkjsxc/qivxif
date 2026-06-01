@@ -40,6 +40,7 @@ pub struct AdminCommand {
 #[command(rename_all = "kebab-case")]
 pub enum AdminSubcommand {
     Bootstrap(AdminBootstrap),
+    CreateUser(AdminCreateUser),
 }
 
 #[derive(Args)]
@@ -50,6 +51,20 @@ pub struct AdminBootstrap {
     pub name: String,
     #[arg(long)]
     pub password_stdin: bool,
+    #[arg(long)]
+    pub json: bool,
+}
+
+#[derive(Args)]
+pub struct AdminCreateUser {
+    #[arg(long)]
+    pub store: PathBuf,
+    #[arg(long)]
+    pub name: String,
+    #[arg(long)]
+    pub password_stdin: bool,
+    #[arg(long = "role")]
+    pub roles: Vec<String>,
     #[arg(long)]
     pub json: bool,
 }

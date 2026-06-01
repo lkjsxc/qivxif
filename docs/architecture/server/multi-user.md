@@ -11,7 +11,9 @@
 ## Creation
 
 - The first owner-admin is created through `qivxifctl`.
-- Additional member records may be created by admin-controlled tooling.
+- Additional records are created through `qivxifctl admin create-user`.
+- Omitted create-user roles produce a member account.
+- Public is a viewer role and is not written as a stored user role by the CLI.
 - Public signup is not a route until documented in the auth route table.
 
 ## Visibility

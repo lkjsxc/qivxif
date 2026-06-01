@@ -1,6 +1,6 @@
 use crate::cli::{AdminCommand, AdminSubcommand, StorePath};
 use anyhow::{Result, bail};
-use qivxif_auth::hash_password;
+use qivxif_auth::{AuthRole, hash_password};
 use qivxif_store_redb::{StoreConfig, open_or_create};
 use serde_json::json;
 use std::{io::Read, path::PathBuf};
@@ -15,10 +15,18 @@ pub fn admin(command: AdminCommand) -> Result<()> {
             std::io::stdin().read_to_string(&mut password)?;
             let store = open_or_create(StoreConfig::new(args.store))?;
             let user = store.create_admin_user(args.name, hash_password(password.trim_end())?)?;
-            print_value(
-                args.json,
-                json!({ "status": "created", "user_id": user.id }),
-            )?;
+            print_value(args.json, user_created_value("created", &user))?;
+        }
+        AdminSubcommand::CreateUser(args) => {
+            if !args.password_stdin {
+                bail!("admin create-user requires --password-stdin");
+            }
+            let mut password = String::new();
+            std::io::stdin().read_to_string(&mut password)?;
+            let roles = parse_roles(&args.roles)?;
+            let store = open_or_create(StoreConfig::new(args.store))?;
+            let user = store.create_user(args.name, hash_password(password.trim_end())?, roles)?;
+            print_value(args.json, user_created_value("created", &user))?;
         }
     }
     Ok(())
@@ -54,4 +62,33 @@ fn print_value(json_output: bool, value: serde_json::Value) -> Result<()> {
         println!("{}", serde_json::to_string_pretty(&value)?);
     }
     Ok(())
+}
+
+fn user_created_value(status: &str, user: &qivxif_store_redb::StoredUser) -> serde_json::Value {
+    json!({
+        "status": status,
+        "user_id": user.id,
+        "actor_id": user.actor_id,
+        "profile_node_id": user.profile_node_id,
+        "name": user.name,
+        "roles": user.roles,
+    })
+}
+
+fn parse_roles(values: &[String]) -> Result<Vec<AuthRole>> {
+    if values.is_empty() {
+        return Ok(vec![AuthRole::Member]);
+    }
+    values.iter().map(|value| parse_role(value)).collect()
+}
+
+fn parse_role(value: &str) -> Result<AuthRole> {
+    match value {
+        "owner" => Ok(AuthRole::Owner),
+        "admin" => Ok(AuthRole::Admin),
+        "member" => Ok(AuthRole::Member),
+        "guest" => Ok(AuthRole::Guest),
+        "public" => bail!("public is a viewer role, not a durable account role"),
+        _ => bail!("unknown role '{value}'"),
+    }
 }

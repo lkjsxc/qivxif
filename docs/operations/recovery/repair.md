@@ -2,7 +2,7 @@
 
 ## CLI
 
-`qivxifctl store check` validates graph, history, blob, feed, and cursor references.
+`qivxifctl store repair-check` validates graph and feed references.
 
 ## Rule
 
