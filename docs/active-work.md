@@ -6,10 +6,10 @@ qivxif is being reset into a Rust-first Web super app.
 
 ## Active Targets
 
-- Reset docs canon away from the retired local GUI line.
-- Build a real Axum server with redb storage.
-- Add first multi-user auth and graph operations.
-- Add offline-capable browser shell, service worker, IndexedDB boundary, and sync status.
+- Keep docs canonical before behavior changes.
+- Extend the real Axum and redb stack through product slices.
+- Preserve offline browser operation queues through each new user workflow.
+- Add publishing, social feed, moderation, and transport slices on top of the graph model.
 - Keep Docker Compose as the acceptance boundary.
 
 ## Stop Condition

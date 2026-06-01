@@ -27,6 +27,7 @@ Every `/api` response uses [../schema/api-envelope.md](../schema/api-envelope.md
 | `GET` | `/api/feed/home` | session | no | cursor and limit query | feed items | none | cached feed window may render |
 | `POST` | `/api/publish/{node_id}` | session | yes | publish request | publication state | appends publish op | queued pending server validation |
 | `POST` | `/api/unpublish/{node_id}` | session | yes | unpublish request | publication state | appends unpublish op | queued pending server validation |
+| `GET` | `/@{author}/{slug}` | public | no | none | rendered blog post | none | cached public page may render |
 
 ## Error Codes
 
@@ -98,6 +99,28 @@ The response contains a bounded `GraphProjection`. The server checks ACL for eac
 `operation` is the ordered character-id text operation from [../text/crdt.md](../text/crdt.md). The server wraps it in the durable operation envelope, stores the text projection, and returns the operation acceptance.
 
 The first browser editor may send `text.restore` for whole-text saves. Each restore operation uses a fresh operation id and a monotonic `first_seq` range for the actor so character ids remain unique.
+
+## Publishing Payloads
+
+`POST /api/publish/{node_id}` requires:
+
+- `op_id`
+- `actor_seq`
+- `slug`
+- `summary`
+
+The target must be a `blog_post` node with `body_node_id` metadata. The server
+checks write access, slug uniqueness, appends `publish.post`, and makes the
+post public.
+
+`POST /api/unpublish/{node_id}` requires:
+
+- `op_id`
+- `actor_seq`
+- `reason`
+
+The server appends `publish.unpublish`, removes public access, and leaves
+authorized history intact.
 
 ## Browser Route Flush
 

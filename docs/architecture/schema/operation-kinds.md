@@ -47,6 +47,25 @@ Board placement uses graph operations:
 
 Clients choose the highest accepted or dirty `placement_seq` per board and item.
 
+## Publishing Payload Contract
+
+`publish.post` payload:
+
+- `node_id`: `blog_post` node.
+- `slug`: requested public slug.
+- `summary`: public summary.
+- `author_name`: server-owned route handle.
+
+The server rejects slug conflicts for the same author. Acceptance makes the
+post public and keeps the body text history unchanged.
+
+`publish.unpublish` payload:
+
+- `node_id`: `blog_post` node.
+- `reason`: short reason code for history.
+
+Acceptance removes public access and preserves authorized history.
+
 ## Shared Envelope Fields
 
 - `op_id`

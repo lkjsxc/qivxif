@@ -59,3 +59,15 @@ Node kinds are durable names. Unknown kinds are rejected by API validation, sync
 - `x`: board x coordinate as decimal text.
 - `y`: board y coordinate as decimal text.
 - `placement_seq`: monotonic board placement sequence as decimal text.
+
+## Publishing Metadata
+
+`blog_post` metadata:
+
+- `title`: display title.
+- `body_node_id`: referenced text node.
+- `slug`: public route slug.
+- `summary`: public summary.
+- `publication_state`: `draft`, `published`, or `unpublished`.
+- `published_at`: server timestamp when published.
+- `author_name`: server-owned route handle.

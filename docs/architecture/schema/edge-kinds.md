@@ -56,3 +56,7 @@ Edges are first-class durable records. Unknown kinds are rejected by API validat
 `contains` metadata for board items:
 
 - `relation`: `board_item_target`.
+
+`references_text` metadata for publishing:
+
+- `relation`: `blog_body`.
