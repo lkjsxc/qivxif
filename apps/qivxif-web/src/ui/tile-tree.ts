@@ -105,7 +105,7 @@ function tabKindToPanel(kind) {
     home: "home",
     login: "login",
     publishing: "publish",
-    settings: "diagnostics",
+    settings: "settings",
     setup: "setup",
     social_feed: "social",
     sync_status: "sync",
@@ -145,6 +145,7 @@ function paneKindForPanel(panel) {
     login: "login",
     publish: "publishing",
     setup: "setup",
+    settings: "settings",
     social: "social_feed",
     sync: "sync_status",
   };
@@ -161,6 +162,7 @@ function titleForPanel(panel) {
     login: "Login",
     publish: "Publish",
     setup: "Setup",
+    settings: "Settings",
     social: "Social",
     sync: "Sync",
   };

@@ -68,6 +68,7 @@ export function tabsFor(state) {
     { id: "publish", label: "Publish" },
     { id: "social", label: "Social" },
     { id: "sync", label: "Sync" },
+    { id: "settings", label: "Settings" },
     { id: "history", label: "History" },
     { id: "diagnostics", label: "Diagnostics" },
   ];

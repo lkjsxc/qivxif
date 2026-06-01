@@ -40,8 +40,9 @@
 13. [product/tile-shell/tiled-tabs.md](product/tile-shell/tiled-tabs.md)
 14. [product/tile-shell/lkjstr-parity.md](product/tile-shell/lkjstr-parity.md)
 15. [product/tile-shell/drag-drop.md](product/tile-shell/drag-drop.md)
-16. [product/boards/composition.md](product/boards/composition.md)
-17. [operations/verification/compose-pipeline.md](operations/verification/compose-pipeline.md)
+16. [product/tile-shell/settings-pane.md](product/tile-shell/settings-pane.md)
+17. [product/boards/composition.md](product/boards/composition.md)
+18. [operations/verification/compose-pipeline.md](operations/verification/compose-pipeline.md)
 
 ## Complete File Map
 
@@ -181,6 +182,7 @@
 - [product/tile-shell/keyboard.md](product/tile-shell/keyboard.md)
 - [product/tile-shell/lkjstr-parity.md](product/tile-shell/lkjstr-parity.md)
 - [product/tile-shell/panes.md](product/tile-shell/panes.md)
+- [product/tile-shell/settings-pane.md](product/tile-shell/settings-pane.md)
 - [product/tile-shell/tiled-tabs.md](product/tile-shell/tiled-tabs.md)
 - [repository/README.md](repository/README.md)
 - [repository/layout/README.md](repository/layout/README.md)

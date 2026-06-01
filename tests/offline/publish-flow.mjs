@@ -22,6 +22,8 @@ try {
   const browserEvents = captureBrowserEvents(page);
   await loadShell(page);
   await login(page, browserEvents);
+  await openShellTab(page, "Settings");
+  await waitForText(page, "Account: admin", browserEvents);
 
   await context.setOffline(true);
   await openShellTab(page, "Publish");

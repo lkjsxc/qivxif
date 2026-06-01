@@ -2,6 +2,7 @@ import { renderBoardPane } from "./board.ts";
 import { actionButton, field, heading, panel, text } from "./dom.ts";
 import { renderPublishPane } from "./publish.ts";
 import { renderSetupTab } from "./setup.ts";
+import { renderSettingsPane } from "./settings.ts";
 import { renderSocialPane } from "./social.ts";
 import { renderSyncStatus } from "./sync-status-pane.ts";
 
@@ -24,6 +25,8 @@ export function renderTabContent(state, actions) {
       return renderSocialPane(state, actions);
     case "sync":
       return renderSyncStatus(state);
+    case "settings":
+      return renderSettingsPane(state, actions);
     case "history":
       return historyList(state);
     case "diagnostics":
