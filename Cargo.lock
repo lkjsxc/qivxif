@@ -885,6 +885,7 @@ dependencies = [
  "qivxif-history",
  "redb",
  "serde",
+ "serde_json",
  "thiserror",
 ]
 

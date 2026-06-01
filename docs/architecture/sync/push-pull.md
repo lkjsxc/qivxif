@@ -48,6 +48,9 @@
 - Unknown operation kinds use `schema.unknown_operation_kind`.
 - Mixed batches may contain both accepted and rejected entries.
 - Cursor order is deterministic and independent of wall-clock time.
+- `node.create` and `edge.create` envelopes update graph records.
+- `text.insert`, `text.delete`, and `text.restore` envelopes update text projections.
+- Text operation payload bytes are canonical JSON for the text operation model from [../text/crdt.md](../text/crdt.md).
 
 ## Live Lane
 

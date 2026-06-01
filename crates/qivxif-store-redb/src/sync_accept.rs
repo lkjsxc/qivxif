@@ -5,10 +5,13 @@ use crate::{
     records::OperationReceipt,
     store::QivxifStore,
     tables,
+    text_store::TextApplyInput,
 };
 use qivxif_auth::{AuthContext, Viewer, can_link};
 use qivxif_graph::{EdgeRecord, NodeRecord};
-use qivxif_history::{OperationEnvelope, OperationKind, validate_operation_envelope};
+use qivxif_history::{
+    OperationEnvelope, OperationKind, text::TextOperation, validate_operation_envelope,
+};
 use redb::ReadableTable;
 
 impl QivxifStore {
@@ -21,6 +24,9 @@ impl QivxifStore {
         match op.kind {
             OperationKind::NodeCreate => self.accept_node_create_op(auth, op),
             OperationKind::EdgeCreate => self.accept_edge_create_op(auth, op),
+            OperationKind::TextInsert | OperationKind::TextDelete | OperationKind::TextRestore => {
+                self.accept_text_op(auth, op)
+            }
             _ => Err(StoreError::UnknownOperationKind),
         }
     }
@@ -97,6 +103,39 @@ impl QivxifStore {
         }
         tx.commit()?;
         Ok(receipt)
+    }
+
+    fn accept_text_op(
+        &self,
+        auth: &AuthContext,
+        op: OperationEnvelope,
+    ) -> StoreResult<OperationReceipt> {
+        if self.get_operation(&op.op_id)?.is_some() {
+            return self
+                .operation_receipt(&op.op_id)?
+                .ok_or(StoreError::OperationConflict);
+        }
+        if !actor_matches(auth, &op) {
+            return Err(StoreError::Forbidden);
+        }
+        let Some(node_id) = op.target_node_ids.first().cloned() else {
+            return Err(StoreError::InvalidOperation);
+        };
+        let operation: TextOperation =
+            serde_json::from_slice(&op.payload.bytes).map_err(|_| StoreError::InvalidOperation)?;
+        if operation.op_id != op.op_id {
+            return Err(StoreError::InvalidOperation);
+        }
+        self.apply_text_operation(
+            auth,
+            TextApplyInput {
+                actor_id: op.actor_id,
+                actor_seq: op.actor_seq,
+                node_id,
+                operation,
+            },
+        )
+        .map(|result| result.receipt)
     }
 }
 

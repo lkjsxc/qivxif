@@ -2,10 +2,11 @@ mod support;
 
 use axum::http::StatusCode;
 use qivxif_api::{ApiEnvelope, PullResponse, PushRequest, PushResponse};
-use qivxif_core::{MetadataMap, NodeId, OperationId, ServerTime, Visibility};
+use qivxif_core::{MetadataMap, NodeId, OperationId, ServerTime, TextDocId, Visibility};
 use qivxif_graph::{NodeKind, NodeRecord};
 use qivxif_history::{
     OperationEnvelope, OperationKind, OperationPayload, OperationScope, hash_payload,
+    text::{TextEdit, TextOperation, TextRestore},
 };
 use qivxif_server::routes;
 use support::{get, login_full, post_json, read_json, seeded_state};
@@ -15,7 +16,7 @@ use tower::ServiceExt;
 async fn pushes_duplicate_and_pulls_graph_operation() {
     let app = routes::router(seeded_state("sync"));
     let login = login_full(&app).await;
-    let op = node_create_op(&login);
+    let (op, _) = node_create_op(&login, 1);
     let request = PushRequest {
         client_id: "client-a".to_owned(),
         actor_id: login.actor_id.clone(),
@@ -64,7 +65,36 @@ async fn pushes_duplicate_and_pulls_graph_operation() {
     assert_eq!(envelope.payload.unwrap().operations, [op]);
 }
 
-fn node_create_op(login: &support::TestLogin) -> OperationEnvelope {
+#[tokio::test]
+async fn pushes_text_operation_after_graph_node() {
+    let app = routes::router(seeded_state("sync-text"));
+    let login = login_full(&app).await;
+    let (node_op, node_id) = node_create_op(&login, 1);
+    let text_op = text_restore_op(&login, &node_id, 2);
+    let request = PushRequest {
+        client_id: "client-text".to_owned(),
+        actor_id: login.actor_id.clone(),
+        operations: vec![node_op, text_op],
+        cursor_summary: None,
+    };
+
+    let response = app
+        .oneshot(post_json(
+            "/api/sync/push",
+            &request,
+            Some(&login.cookie),
+            Some(&login.csrf),
+        ))
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let envelope: ApiEnvelope<PushResponse> = read_json(response).await;
+    let pushed = envelope.payload.unwrap();
+    assert!(pushed.rejected.is_empty(), "{:?}", pushed.rejected);
+    assert_eq!(pushed.accepted.len(), 2);
+}
+
+fn node_create_op(login: &support::TestLogin, actor_seq: u64) -> (OperationEnvelope, NodeId) {
     let now = ServerTime::now();
     let node = NodeRecord {
         id: NodeId::generate(),
@@ -80,15 +110,50 @@ fn node_create_op(login: &support::TestLogin) -> OperationEnvelope {
         metadata_map: MetadataMap::empty(),
         tombstone: None,
     };
+    let node_id = node.id.clone();
     let bytes = bincode::serialize(&node).unwrap();
-    OperationEnvelope {
+    let envelope = OperationEnvelope {
         op_id: OperationId::generate(),
         actor_id: login.actor_id.clone(),
-        actor_seq: 1,
+        actor_seq,
         parents: Vec::new(),
         scope: OperationScope::Graph,
         kind: OperationKind::NodeCreate,
-        target_node_ids: vec![node.id],
+        target_node_ids: vec![node_id.clone()],
+        payload: OperationPayload {
+            bytes: bytes.clone(),
+        },
+        payload_hash: hash_payload(&bytes),
+        created_at_client: None,
+        received_at_server: None,
+        auth_context: None,
+    };
+    (envelope, node_id)
+}
+
+fn text_restore_op(
+    login: &support::TestLogin,
+    node_id: &NodeId,
+    actor_seq: u64,
+) -> OperationEnvelope {
+    let operation = TextOperation {
+        op_id: OperationId::generate(),
+        doc_id: TextDocId::generate(),
+        edit: TextEdit::Restore(TextRestore {
+            content: "sync text".to_owned(),
+            actor_id: login.actor_id.clone(),
+            first_seq: actor_seq * 1000000,
+        }),
+    };
+    let bytes = serde_json::to_vec(&operation).unwrap();
+    OperationEnvelope {
+        op_id: operation.op_id.clone(),
+        actor_id: login.actor_id.clone(),
+        actor_seq,
+        parents: Vec::new(),
+        scope: OperationScope::Text,
+        kind: OperationKind::TextRestore,
+        target_node_ids: vec![node_id.clone()],
         payload: OperationPayload {
             bytes: bytes.clone(),
         },

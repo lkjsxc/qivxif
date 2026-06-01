@@ -93,7 +93,7 @@ impl QivxifStore {
 }
 
 fn text_envelope(input: &TextApplyInput) -> StoreResult<OperationEnvelope> {
-    let bytes = encode(&input.operation)?;
+    let bytes = serde_json::to_vec(&input.operation).map_err(|_| StoreError::InvalidOperation)?;
     Ok(OperationEnvelope {
         op_id: input.operation.op_id.clone(),
         actor_id: input.actor_id.clone(),
