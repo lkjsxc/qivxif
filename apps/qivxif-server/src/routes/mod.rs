@@ -9,6 +9,7 @@ mod static_files;
 mod support;
 mod sync;
 mod text;
+mod workspace;
 
 use crate::state::AppState;
 use axum::Router;
@@ -24,6 +25,7 @@ pub fn router(state: AppState) -> Router {
         .merge(server_info::routes())
         .merge(sync::routes())
         .merge(text::routes())
+        .merge(workspace::routes())
         .fallback_service(static_files::service(&state.config.static_dir))
         .with_state(state)
         .layer(TraceLayer::new_for_http())

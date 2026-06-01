@@ -1,10 +1,16 @@
+import { renderBoardPane } from "./board.ts";
 import { renderSyncStatus } from "./sync-status-pane.ts";
 
 export function renderWorkspace(root, state, actions) {
   root.innerHTML = "";
   const workspace = document.createElement("section");
   workspace.className = "workspace";
-  workspace.append(graphPane(state, actions), editorPane(state, actions), renderSyncStatus(state));
+  workspace.append(
+    graphPane(state, actions),
+    editorPane(state, actions),
+    renderBoardPane(state, actions),
+    renderSyncStatus(state),
+  );
   root.append(workspace);
 }
 
@@ -16,6 +22,10 @@ function graphPane(state, actions) {
     pane.append(text(`Signed in as ${state.auth.user.name}`));
     pane.append(actionButton("Create text node", () => actions.createTextNode?.()));
     pane.append(actionButton("Flush queue", () => actions.sync?.()));
+    pane.append(actionButton("Split pane", () => actions.splitPane?.()));
+    pane.append(actionButton("Stack tab", () => actions.stackTab?.()));
+    pane.append(actionButton("Maximize pane", () => actions.maximizePane?.()));
+    pane.append(actionButton("Close pane", () => actions.closePane?.()));
     pane.append(openNodeForm(actions));
   } else {
     pane.append(loginForm(actions));
@@ -42,8 +52,21 @@ function editorPane(state, actions) {
   const save = actionButton("Save text operation", () => actions.saveText?.(editor.value));
   pane.append(editor);
   pane.append(save);
+  pane.append(layoutSummary(state));
   pane.append(historyList(state));
   return pane;
+}
+
+function layoutSummary(state) {
+  const section = document.createElement("section");
+  section.className = "layout-summary";
+  const count = state.layout ? paneCount(state.layout.root) : 0;
+  section.append(text(`Layout panes: ${count}`));
+  section.append(text(`Maximized: ${state.layout?.maximized_pane_id ?? "none"}`));
+  if (state.layoutDirty) {
+    section.append(text("Layout has a dirty local operation."));
+  }
+  return section;
 }
 
 function loginForm(actions) {
@@ -123,6 +146,16 @@ function tabbar() {
   tab.textContent = "Workspace";
   bar.append(tab);
   return bar;
+}
+
+function paneCount(tile) {
+  if (!tile) {
+    return 0;
+  }
+  if (tile.kind === "stack") {
+    return tile.tabs.length;
+  }
+  return paneCount(tile.first) + paneCount(tile.second);
 }
 
 function actionButton(label, handler) {

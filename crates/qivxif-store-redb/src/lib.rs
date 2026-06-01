@@ -12,6 +12,7 @@ mod sync_accept;
 mod tables;
 mod text_store;
 mod user_store;
+mod workspace;
 
 pub use config::StoreConfig;
 pub use error::{StoreError, StoreResult};
@@ -19,3 +20,4 @@ pub use graph::{EdgeCreateInput, EdgeCreateResult, NodeCreateInput, NodeCreateRe
 pub use records::{OperationReceipt, StoredSession, StoredUser};
 pub use store::{QivxifStore, StoreHealth, StoreStats, open_or_create};
 pub use text_store::{TextApplyInput, TextApplyResult};
+pub use workspace::{WorkspaceLayoutSetInput, WorkspaceLayoutSetResult};

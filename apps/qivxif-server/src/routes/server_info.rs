@@ -26,8 +26,11 @@ fn capabilities() -> Vec<Capability> {
     [
         "server.health",
         "graph.node_create",
+        "graph.edge_create",
+        "graph.neighborhood",
         "sync.http_push_pull",
         "client.offline_shell",
+        "workspace.layout_set",
     ]
     .into_iter()
     .filter_map(|value| value.parse().ok())

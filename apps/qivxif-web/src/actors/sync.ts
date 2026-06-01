@@ -61,7 +61,16 @@ async function acceptEntry(store, state, entry, payload) {
   await store.delete("ops", entry.id);
   if (entry.kind === "node.create") {
     await store.put("nodes", { ...payload.node, dirty: false });
-    state.currentNodeId = payload.node.id;
+    if (payload.node.kind === "text") {
+      state.currentNodeId = payload.node.id;
+    }
+    if (payload.node.kind === "kjxlkj_board") {
+      state.activeBoardId = payload.node.id;
+      await store.put("workspace_layout", { id: "active_board", node_id: payload.node.id });
+    }
+  }
+  if (entry.kind === "edge.create") {
+    await store.put("edges", { ...payload.edge, dirty: false });
   }
   if (entry.kind.startsWith("text.")) {
     await store.put("text_snapshots", {
@@ -70,6 +79,17 @@ async function acceptEntry(store, state, entry, payload) {
       updated_by: entry.id,
     });
     state.text = payload.state.content;
+  }
+  if (entry.kind === "workspace.layout_set") {
+    await store.put("nodes", { ...payload.layout_node, dirty: false });
+    await store.put("workspace_layout", {
+      dirty: false,
+      id: "workspace_model",
+      layout: entry.request.layout,
+      layout_node_id: entry.request.layout_node_id,
+    });
+    state.layout = entry.request.layout;
+    state.layoutNodeId = entry.request.layout_node_id;
   }
   state.online = true;
   state.lastError = "";

@@ -14,6 +14,10 @@ export async function nodeHistory(nodeId) {
   return getEnvelope(`/api/nodes/${nodeId}/history`);
 }
 
+export async function neighborhood(nodeId) {
+  return getEnvelope(`/api/graph/neighborhood?node_id=${encodeURIComponent(nodeId)}&depth=2&limit=100`);
+}
+
 export async function sendQueued(entry, csrfToken) {
   return postEnvelope(entry.route.path, entry.request, csrfToken);
 }

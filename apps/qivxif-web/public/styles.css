@@ -11,7 +11,7 @@ body {
 .workspace {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(220px, 280px) 1fr minmax(220px, 320px);
+  grid-template-columns: minmax(220px, 280px) 1fr minmax(240px, 320px) minmax(220px, 320px);
 }
 
 .pane {

@@ -3,6 +3,7 @@ use crate::ServerCapabilities;
 use qivxif_core::{
     ActorId, EdgeId, MetadataMap, NodeId, OperationId, ServerTime, UserId, Visibility,
 };
+use qivxif_graph::WorkspaceLayout;
 use qivxif_graph::{EdgeKind, EdgeRecord, GraphProjection, NodeKind, NodeProjection, NodeRecord};
 use qivxif_history::{
     OperationEnvelope, OperationKind, OperationScope, PayloadHash,
@@ -134,6 +135,20 @@ pub struct TextPayload {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct TextOperationPayload {
     pub state: TextDocState,
+    pub operation: OperationAcceptance,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct WorkspaceLayoutSetRequest {
+    pub op_id: OperationId,
+    pub actor_seq: u64,
+    pub layout_node_id: NodeId,
+    pub layout: WorkspaceLayout,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct WorkspaceLayoutPayload {
+    pub layout_node: NodeRecord,
     pub operation: OperationAcceptance,
 }
 

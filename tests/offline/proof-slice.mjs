@@ -30,19 +30,40 @@ try {
   await waitForLocalOps(page, 2);
   await waitForText(page, "Queued: 2", browserEvents);
   await page.getByText("Sync: offline").waitFor();
+  await page.getByRole("button", { name: "Split pane" }).click();
+  await page.getByText("Layout panes: 2").waitFor();
+  await page.getByRole("button", { name: "Stack tab" }).click();
+  await page.getByText("Layout panes: 3").waitFor();
+  await page.getByRole("button", { name: "Maximize pane" }).click();
+  await page.getByText(/^Maximized: nod_/).waitFor();
+  await page.getByRole("button", { name: "Close pane" }).click();
+  await page.getByText("Layout panes: 2").waitFor();
+  await page.getByRole("button", { name: "Create kjxlkj board" }).click();
+  await page.getByText(/^Active board: nod_/).waitFor();
+  await page.getByRole("button", { name: "Add current node to board" }).click();
+  await page.getByText("Board items: 1").waitFor();
+  await page.getByRole("button", { name: "Move board item" }).click();
+  await page.getByText("@ 160,144").waitFor();
   const localBefore = await localState(page);
-  assert(localBefore.ops.length === 2, "dirty operations were not stored");
-  const nodeId = localBefore.nodes[0]?.id;
+  assert(localBefore.ops.length > 10, "workspace and board operations were not queued");
+  const nodeId = localBefore.nodes.find((item) => item.kind === "text")?.id;
+  const boardId = localBefore.workspace.find((item) => item.id === "active_board")?.node_id;
+  const layoutId = localBefore.workspace.find((item) => item.id === "workspace_model")?.layout_node_id;
   assert(nodeId, "local node id missing");
+  assert(boardId, "local board id missing");
+  assert(layoutId, "local layout id missing");
 
   await page.reload({ waitUntil: "domcontentloaded" });
-  await waitForText(page, "Queued: 2", browserEvents);
+  await waitForText(page, "Layout panes: 2", browserEvents);
+  await waitForText(page, "Board items: 1", browserEvents);
   assert(
     (await page.locator("textarea").inputValue()) === proofText,
     "offline text was not restored",
   );
   const status = await serverNodeStatus(context, nodeId);
   assert(status !== 200, "server accepted offline node before flush");
+  const boardStatus = await serverNodeStatus(context, boardId);
+  assert(boardStatus !== 200, "server accepted offline board before flush");
 
   await context.setOffline(false);
   await page.getByRole("button", { name: "Flush queue" }).click();
@@ -63,6 +84,13 @@ try {
   );
   await secondPage.getByText("node.create #1").waitFor();
   await secondPage.getByText("text.restore #2").waitFor();
+  await secondPage.getByLabel("Server node id").fill(boardId);
+  await secondPage.getByRole("button", { name: "Open node" }).click();
+  await secondPage.getByText("Board items: 1").waitFor();
+  await secondPage.getByText("@ 160,144").waitFor();
+  await secondPage.getByLabel("Server node id").fill(layoutId);
+  await secondPage.getByRole("button", { name: "Open node" }).click();
+  await secondPage.getByText("Layout panes: 2").waitFor();
   await second.close();
   await context.close();
 } finally {
@@ -111,8 +139,10 @@ async function localState(page) {
       });
     return {
       nodes: await read("nodes"),
+      edges: await read("edges"),
       ops: await read("ops"),
       text: await read("text_snapshots"),
+      workspace: await read("workspace_layout"),
     };
   });
 }
