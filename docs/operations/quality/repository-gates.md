@@ -11,6 +11,7 @@
 - `qivxifctl quality check-lines`
 - `qivxifctl quality check-wording`
 - `qivxifctl quality check-retired-canon`
+- `qivxifctl quality check-public-names`
 - `qivxifctl quality check-placeholders`
 - `qivxifctl quality check-workspace`
 - `qivxifctl quality check-routes`

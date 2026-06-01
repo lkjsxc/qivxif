@@ -38,7 +38,7 @@ try {
   await page.getByText(/^Maximized: nod_/).waitFor();
   await page.getByRole("button", { name: "Close pane" }).click();
   await page.getByText("Layout panes: 2").waitFor();
-  await page.getByRole("button", { name: "Create kjxlkj board" }).click();
+  await page.getByRole("button", { name: "Create board" }).click();
   await page.getByText(/^Active board: nod_/).waitFor();
   await page.getByRole("button", { name: "Add current node to board" }).click();
   await page.getByText("Board items: 1").waitFor();

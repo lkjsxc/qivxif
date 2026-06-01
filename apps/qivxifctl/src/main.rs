@@ -25,6 +25,7 @@ fn quality(command: QualityCommand) -> Result<()> {
         QualityCommand::Lines => qivxif_quality::check_lines()?,
         QualityCommand::Wording => qivxif_quality::check_wording()?,
         QualityCommand::RetiredCanon => qivxif_quality::check_retired_canon()?,
+        QualityCommand::PublicNames => qivxif_quality::check_public_names()?,
         QualityCommand::ImplementationMarkers => qivxif_quality::check_placeholders()?,
         QualityCommand::Workspace => qivxif_quality::check_workspace_matches_docs()?,
         QualityCommand::Routes => qivxif_quality::check_route_docs_match_api()?,

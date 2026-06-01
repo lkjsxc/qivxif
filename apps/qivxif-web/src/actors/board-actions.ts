@@ -3,8 +3,8 @@ import { edgeCreateEntry, nodeCreateEntry } from "./local-operations.ts";
 
 export async function createBoard(store, state) {
   requireAuth(state);
-  const board = nodeCreateEntry(await reserveActorSeq(store), "kjxlkj_board", {
-    title: "kjxlkj board",
+  const board = nodeCreateEntry(await reserveActorSeq(store), "graph_board", {
+    title: "Graph board",
   });
   await store.put("ops", board.entry);
   await store.put("nodes", board.node);
@@ -49,7 +49,7 @@ export async function linkBoardNodes(store, state) {
     items[0].item_node_id,
     items[1].item_node_id,
     "links_to",
-    { source: "kjxlkj" },
+    { source: "board" },
   );
   await store.put("ops", edge.entry);
   await store.put("edges", edge.edge);

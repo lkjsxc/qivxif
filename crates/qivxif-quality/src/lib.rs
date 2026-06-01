@@ -1,6 +1,7 @@
 mod error;
 mod line_limits;
 mod markers;
+mod public_names;
 mod redb_tables;
 mod retired;
 mod routes;
@@ -11,6 +12,7 @@ mod workspace;
 pub use error::QualityError;
 pub use line_limits::check_lines;
 pub use markers::check_placeholders;
+pub use public_names::check_public_names;
 pub use redb_tables::check_redb_tables_match_docs;
 pub use retired::check_retired_canon;
 pub use routes::check_route_docs_match_api;

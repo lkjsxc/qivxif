@@ -3,12 +3,12 @@ import { boardItems } from "../actors/board-actions.ts";
 export function renderBoardPane(state, actions) {
   const pane = document.createElement("section");
   pane.className = "pane board";
-  pane.append(heading("kjxlkj"));
+  pane.append(heading("Board"));
   if (!state.auth) {
     pane.append(text("Login to use boards."));
     return pane;
   }
-  pane.append(actionButton("Create kjxlkj board", () => actions.createBoard?.()));
+  pane.append(actionButton("Create board", () => actions.createBoard?.()));
   pane.append(actionButton("Add current node to board", () => actions.addCurrentNodeToBoard?.()));
   pane.append(actionButton("Move board item", () => actions.moveBoardItem?.()));
   pane.append(actionButton("Link board nodes", () => actions.linkBoardNodes?.()));

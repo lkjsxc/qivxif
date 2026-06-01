@@ -84,6 +84,8 @@ pub enum QualityCommand {
     Wording,
     #[command(name = "check-retired-canon")]
     RetiredCanon,
+    #[command(name = "check-public-names")]
+    PublicNames,
     #[command(name = "check-placeholders")]
     ImplementationMarkers,
     #[command(name = "check-workspace")]

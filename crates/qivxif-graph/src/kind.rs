@@ -11,7 +11,7 @@ pub enum NodeKind {
     Profile,
     Tag,
     Topic,
-    KjxlkjBoard,
+    GraphBoard,
     BoardItem,
     Media,
     WorkspaceLayout,

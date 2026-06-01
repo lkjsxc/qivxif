@@ -41,7 +41,7 @@ export async function refreshCurrentNode(store, state) {
       state: textPayload.state,
     });
   }
-  if (nodePayload.projection.node.kind === "kjxlkj_board") {
+  if (nodePayload.projection.node.kind === "graph_board") {
     state.activeBoardId = state.currentNodeId;
     await store.put("workspace_layout", { id: "active_board", node_id: state.currentNodeId });
     await refreshNeighborhood(store, state.currentNodeId);
