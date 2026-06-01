@@ -117,11 +117,13 @@ post_json "/api/edges" "$work_dir/edge.json" "$work_dir/edge-out.json"
 
 get_json "/api/nodes/$node_a" "$work_dir/node-read.json"
 get_json "/api/nodes/$node_a/edges" "$work_dir/edges.json"
+get_json "/api/graph/neighborhood?node_id=$node_a&depth=1&limit=10" "$work_dir/neighborhood.json"
 get_json "/api/sync/pull?limit=10&scope=graph" "$work_dir/pull.json"
 get_json "/api/nodes/$node_a/history" "$work_dir/history.json"
 
 json_check "$work_dir/node-read.json" 'if (data.payload.projection.node.id !== process.argv[2]) throw new Error("node read mismatch");' "$node_a"
 json_check "$work_dir/edges.json" 'if (data.payload.outgoing.length !== 1) throw new Error("edge read mismatch");'
+json_check "$work_dir/neighborhood.json" 'if (data.payload.projection.nodes.length !== 2) throw new Error("neighborhood mismatch");'
 json_check "$work_dir/pull.json" 'if (data.payload.operations.length < 4) throw new Error("sync pull missed operations");'
 json_check "$work_dir/history.json" '
 const kinds = data.payload.operations.map((op) => op.kind);

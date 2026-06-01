@@ -25,7 +25,8 @@
 6. Apply a text restore operation.
 7. Create a typed edge between the nodes.
 8. Read node edges.
-9. Pull accepted operations through HTTP sync.
-10. Inspect node history.
-11. Load the app shell route.
-12. Logout and confirm the session is rejected.
+9. Read a bounded graph neighborhood.
+10. Pull accepted operations through HTTP sync.
+11. Inspect node history.
+12. Load the app shell route.
+13. Logout and confirm the session is rejected.

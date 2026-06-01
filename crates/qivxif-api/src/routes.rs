@@ -3,7 +3,7 @@ use crate::ServerCapabilities;
 use qivxif_core::{
     ActorId, EdgeId, MetadataMap, NodeId, OperationId, ServerTime, UserId, Visibility,
 };
-use qivxif_graph::{EdgeKind, EdgeRecord, NodeKind, NodeProjection, NodeRecord};
+use qivxif_graph::{EdgeKind, EdgeRecord, GraphProjection, NodeKind, NodeProjection, NodeRecord};
 use qivxif_history::{
     OperationEnvelope, OperationKind, OperationScope, PayloadHash,
     text::{TextDocState, TextOperation},
@@ -113,6 +113,11 @@ pub struct EdgeCreatePayload {
 pub struct EdgeListPayload {
     pub outgoing: Vec<EdgeRecord>,
     pub incoming: Vec<EdgeRecord>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct NeighborhoodPayload {
+    pub projection: GraphProjection,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

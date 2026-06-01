@@ -63,6 +63,16 @@ The server supplies owner, actor, receive time, operation payload hash, and curr
 
 The server requires write access on `from_node` and read access on `to_node`. Repeating the same `op_id` returns the prior acceptance.
 
+## Graph Query Payloads
+
+`GET /api/graph/neighborhood` requires query parameters:
+
+- `node_id`
+- `depth`, default `1`, maximum `3`
+- `limit`, default `50`, maximum `100`
+
+The response contains a bounded `GraphProjection`. The server checks ACL for each node before adding it to the projection. Edges are included only when both endpoint nodes are visible in the projection.
+
 ## Text Operation Payloads
 
 `POST /api/text/{node_id}/ops` requires:
