@@ -19,7 +19,7 @@
 
 | Route | Request | Success | Errors |
 | --- | --- | --- | --- |
-| `POST /api/auth/login` | login name and password | session cookie, csrf token, user summary | `auth.invalid_credentials`, `store.unavailable` |
+| `POST /api/auth/login` | login name and password | session cookie, csrf token, user summary, next actor sequence | `auth.invalid_credentials`, `store.unavailable` |
 | `POST /api/auth/logout` | csrf token | deleted session and cleared cookie | `auth.session_missing`, `auth.csrf_missing` |
 | `GET /api/me` | session cookie | user summary, profile node id, roles | `auth.session_missing` |
 
@@ -37,6 +37,9 @@
 
 - `user`
 - `csrf_token`
+- `next_actor_seq`
+
+`next_actor_seq` is the next server-safe actor sequence for this actor. A fresh browser stores one less than this value in IndexedDB before reserving local operation numbers.
 
 `POST /api/auth/logout` returns:
 

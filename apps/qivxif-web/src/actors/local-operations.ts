@@ -4,6 +4,14 @@ export function textNodeCreateEntry(actorSeq) {
   return nodeCreateEntry(actorSeq, "text", { title: "Untitled text" });
 }
 
+export function blogPostCreateEntry(actorSeq, bodyNodeId, title) {
+  return nodeCreateEntry(actorSeq, "blog_post", {
+    body_node_id: bodyNodeId,
+    publication_state: "draft",
+    title,
+  });
+}
+
 export function nodeCreateEntry(actorSeq, kind, metadataMap) {
   const nodeId = generateId("nod");
   const opId = generateId("op");
@@ -96,6 +104,29 @@ export function workspaceLayoutSetEntry(actorSeq, layoutNodeId, layout) {
       layout,
       layout_node_id: layoutNodeId,
     },
+  };
+}
+
+export function publishPostEntry(actorSeq, postNodeId, slug, summary) {
+  const opId = generateId("op");
+  const request = { actor_seq: actorSeq, op_id: opId, slug, summary };
+  return {
+    entry: queueEntry(opId, "publish.post", actorSeq, postNodeId, `/api/publish/${postNodeId}`, request),
+  };
+}
+
+export function unpublishPostEntry(actorSeq, postNodeId, reason) {
+  const opId = generateId("op");
+  const request = { actor_seq: actorSeq, op_id: opId, reason };
+  return {
+    entry: queueEntry(
+      opId,
+      "publish.unpublish",
+      actorSeq,
+      postNodeId,
+      `/api/unpublish/${postNodeId}`,
+      request,
+    ),
   };
 }
 

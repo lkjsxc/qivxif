@@ -1,3 +1,4 @@
+mod actor_sequence;
 mod codec;
 mod config;
 mod edge;

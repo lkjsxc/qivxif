@@ -42,6 +42,7 @@ pub struct UserSummary {
 pub struct LoginPayload {
     pub user: UserSummary,
     pub csrf_token: String,
+    pub next_actor_seq: u64,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

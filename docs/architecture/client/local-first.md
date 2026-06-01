@@ -26,6 +26,8 @@ The browser operation queue stores one record per pending durable mutation:
 
 `created_at` is never a sync cursor. The queue key is the operation id.
 
+Login returns `next_actor_seq`. A fresh browser stores `next_actor_seq - 1` before reserving the first local actor sequence, so a second client for the same user does not collide with accepted operations from another browser.
+
 ## Route Flush Lane
 
 The first browser sync actor flushes dirty queue entries through existing durable routes:
@@ -34,6 +36,8 @@ The first browser sync actor flushes dirty queue entries through existing durabl
 - `edge.create` uses `POST /api/edges`.
 - `text.insert`, `text.delete`, and `text.restore` use `POST /api/text/{node_id}/ops`.
 - `workspace.layout_set` uses `POST /api/workspace/layout`.
+- `publish.post` uses `POST /api/publish/{node_id}`.
+- `publish.unpublish` uses `POST /api/unpublish/{node_id}`.
 
 HTTP sync push remains the batch operation-envelope lane for clients that can produce the full envelope payload. The browser route flush lane is valid only because the server route creates the same durable operation log entry before returning acceptance.
 

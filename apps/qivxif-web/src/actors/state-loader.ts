@@ -3,12 +3,18 @@ import { neighborhood, node, nodeHistory, text } from "../http/client.ts";
 export async function loadLocalState(store, state) {
   const auth = await store.get("sync_cursors", "auth");
   const current = await store.get("workspace_layout", "current_node");
+  const currentBlog = await store.get("workspace_layout", "current_blog_post");
   const board = await store.get("workspace_layout", "active_board");
   const layout = await store.get("workspace_layout", "workspace_model");
+  const publicRoute = await store.get("sync_cursors", "last_public_route");
   state.auth = auth?.auth ?? state.auth;
   state.edges = await store.all("edges");
   state.nodes = await store.all("nodes");
   state.currentNodeId = current?.node_id ?? state.currentNodeId;
+  state.currentBlogPostId = currentBlog?.node_id ?? state.currentBlogPostId;
+  state.currentBlogPost =
+    state.nodes.find((node) => node.id === state.currentBlogPostId) ?? null;
+  state.lastPublicRoute = publicRoute?.path ?? state.lastPublicRoute;
   state.activeBoardId = board?.node_id ?? state.activeBoardId;
   state.layout = layout?.layout ?? state.layout;
   state.layoutDirty = layout?.dirty ?? false;
@@ -51,6 +57,14 @@ export async function refreshCurrentNode(store, state) {
         layout_node_id: state.currentNodeId,
       });
     }
+  }
+  if (nodePayload.projection.node.kind === "blog_post") {
+    state.currentBlogPostId = state.currentNodeId;
+    state.currentBlogPost = nodePayload.projection.node;
+    await store.put("workspace_layout", {
+      id: "current_blog_post",
+      node_id: state.currentNodeId,
+    });
   }
   const historyPayload = await nodeHistory(state.currentNodeId);
   state.history = historyPayload.operations;

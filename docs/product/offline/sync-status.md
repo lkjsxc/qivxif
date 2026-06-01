@@ -33,5 +33,7 @@ Route-specific flush responses update the same visible state:
 - `POST /api/nodes` acceptance clears the matching `node.create` queue entry.
 - `POST /api/edges` acceptance clears the matching `edge.create` queue entry.
 - `POST /api/text/{node_id}/ops` acceptance clears the matching text queue entry.
+- `POST /api/publish/{node_id}` acceptance clears the matching publish entry and marks the post public.
+- `POST /api/unpublish/{node_id}` acceptance clears the matching unpublish entry and removes public access.
 - Any non-success envelope stores its error code on the queue entry and increments rejected count.
 - Network failure leaves the operation dirty and keeps queued count unchanged.

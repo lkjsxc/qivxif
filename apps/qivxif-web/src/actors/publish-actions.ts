@@ -1,0 +1,80 @@
+import { generateId } from "../ids.ts";
+import { reserveActorSeq } from "./actor-seq.ts";
+import {
+  blogPostCreateEntry,
+  nodeCreateEntry,
+  publishPostEntry,
+  textRestoreEntry,
+  unpublishPostEntry,
+} from "./local-operations.ts";
+
+export async function createBlogDraft(store, state, title) {
+  requireAuth(state);
+  const safeTitle = title.trim() || "Untitled post";
+  const bodySeq = await reserveActorSeq(store);
+  const body = nodeCreateEntry(bodySeq, "text", { title: `${safeTitle} body` });
+  const docId = generateId("txt");
+  const content = `# ${safeTitle}\n\n`;
+  const textSeq = await reserveActorSeq(store);
+  const restored = textRestoreEntry(textSeq, body.node.id, docId, state.auth.user.actor_id, content);
+  const postSeq = await reserveActorSeq(store);
+  const post = blogPostCreateEntry(postSeq, body.node.id, safeTitle);
+
+  await store.put("ops", body.entry);
+  await store.put("nodes", body.node);
+  await store.put("sync_cursors", { id: `text_doc:${body.node.id}`, doc_id: docId });
+  await store.put("ops", restored.entry);
+  await store.put("text_snapshots", {
+    dirty: true,
+    id: body.node.id,
+    state: { content },
+  });
+  await store.put("ops", post.entry);
+  await store.put("nodes", post.node);
+  await store.put("workspace_layout", { id: "current_node", node_id: body.node.id });
+  await store.put("workspace_layout", { id: "current_blog_post", node_id: post.node.id });
+  state.currentNodeId = body.node.id;
+  state.currentBlogPostId = post.node.id;
+  state.text = content;
+}
+
+export async function publishBlogPost(store, state, slug, summary) {
+  requireAuth(state);
+  const safeSlug = slug.trim();
+  if (!safeSlug) {
+    throw new Error("slug is required");
+  }
+  const postId = await currentPostId(store, state);
+  const actorSeq = await reserveActorSeq(store);
+  const queued = publishPostEntry(actorSeq, postId, safeSlug, summary.trim());
+  await store.put("ops", queued.entry);
+  await store.put("sync_cursors", {
+    id: "last_public_route",
+    path: `/@${state.auth.user.name}/${safeSlug}`,
+  });
+}
+
+export async function unpublishBlogPost(store, state) {
+  requireAuth(state);
+  const postId = await currentPostId(store, state);
+  const actorSeq = await reserveActorSeq(store);
+  const queued = unpublishPostEntry(actorSeq, postId, "browser command");
+  await store.put("ops", queued.entry);
+}
+
+async function currentPostId(store, state) {
+  if (state.currentBlogPostId) {
+    return state.currentBlogPostId;
+  }
+  const current = state.currentNodeId ? await store.get("nodes", state.currentNodeId) : null;
+  if (current?.kind === "blog_post") {
+    return current.id;
+  }
+  throw new Error("select a blog draft first");
+}
+
+function requireAuth(state) {
+  if (!state.auth?.user?.actor_id) {
+    throw new Error("login is required");
+  }
+}

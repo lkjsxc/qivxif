@@ -66,19 +66,22 @@ body {
 }
 
 .login,
-.open-node {
+.open-node,
+.publish form {
   display: grid;
   gap: 8px;
 }
 
 .login label,
-.open-node label {
+.open-node label,
+.publish label {
   display: grid;
   gap: 4px;
 }
 
 .login input,
-.open-node input {
+.open-node input,
+.publish input {
   box-sizing: border-box;
   padding: 8px;
   width: 100%;
@@ -90,6 +93,11 @@ body {
 }
 
 .history {
+  margin-top: 16px;
+  border-top: 1px solid #d7dde0;
+}
+
+.publish {
   margin-top: 16px;
   border-top: 1px solid #d7dde0;
 }

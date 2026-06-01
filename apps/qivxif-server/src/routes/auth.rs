@@ -30,6 +30,9 @@ async fn login(State(state): State<AppState>, Json(request): Json<LoginRequest>)
     if verify_password(&request.password, &user.password_hash).is_err() {
         return invalid_credentials::<LoginPayload>(caps).into_response();
     }
+    let Ok(next_actor_seq) = state.store.next_actor_seq(&user.actor_id) else {
+        return store_unavailable::<LoginPayload>(caps).into_response();
+    };
     let csrf_token = generate_csrf_token();
     let session = StoredSession {
         id: SessionId::generate(),
@@ -44,6 +47,7 @@ async fn login(State(state): State<AppState>, Json(request): Json<LoginRequest>)
         LoginPayload {
             user: user_summary(&user),
             csrf_token,
+            next_actor_seq,
         },
         caps,
     )

@@ -57,5 +57,6 @@ export NODE_PATH="$(npm root -g)${NODE_PATH:+:$NODE_PATH}"
 export QIVXIF_BROWSER="$browser"
 export QIVXIF_E2E_BASE="$base"
 node tests/offline/proof-slice.mjs
+node tests/offline/publish-flow.mjs
 
 printf 'offline e2e pass\n'

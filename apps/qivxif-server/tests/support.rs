@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use axum::{
     Router,
     body::{Body, to_bytes},
@@ -22,6 +24,7 @@ use tower::ServiceExt;
 pub struct TestLogin {
     pub cookie: String,
     pub csrf: String,
+    pub next_actor_seq: u64,
     pub user_id: UserId,
     pub actor_id: ActorId,
 }
@@ -58,6 +61,7 @@ pub async fn login_named(app: &Router, name: &str, password: &str) -> TestLogin 
     TestLogin {
         cookie,
         csrf: payload.csrf_token,
+        next_actor_seq: payload.next_actor_seq,
         user_id: payload.user.user_id,
         actor_id: payload.user.actor_id,
     }

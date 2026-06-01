@@ -10,7 +10,7 @@ Every `/api` response uses [../schema/api-envelope.md](../schema/api-envelope.md
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `GET` | `/health` | public | no | none | health status | none | app can show server reachability |
 | `GET` | `/api/server-info` | public | no | none | capability list and limits | none | app learns feature flags |
-| `POST` | `/api/auth/login` | public | no | login name, password | user, session summary, csrf token | creates session | requires server |
+| `POST` | `/api/auth/login` | public | no | login name, password | user, session summary, csrf token, next actor sequence | creates session | requires server |
 | `POST` | `/api/auth/logout` | session | yes | none | logout status | deletes session | queued logout is not accepted |
 | `GET` | `/api/me` | session | no | none | current user and profile | none | stale local user may be shown as offline |
 | `POST` | `/api/nodes` | session | yes | node create request | node record and operation acceptance | appends operation, writes node | local op queues first |

@@ -91,6 +91,15 @@ async function acceptEntry(store, state, entry, payload) {
     state.layout = entry.request.layout;
     state.layoutNodeId = entry.request.layout_node_id;
   }
+  if (entry.kind.startsWith("publish.")) {
+    await store.put("nodes", { ...payload.post, dirty: false });
+    state.currentBlogPost = payload.post;
+    state.currentBlogPostId = payload.post.id;
+    await store.put("workspace_layout", {
+      id: "current_blog_post",
+      node_id: payload.post.id,
+    });
+  }
   state.online = true;
   state.lastError = "";
 }

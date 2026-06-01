@@ -5,6 +5,7 @@ import { renderWorkspace } from "../ui/workspace.ts";
 import { addCurrentNodeToBoard, createBoard, linkBoardNodes, moveBoardItem } from "./board-actions.ts";
 import { reserveActorSeq } from "./actor-seq.ts";
 import { textNodeCreateEntry, textRestoreEntry } from "./local-operations.ts";
+import { createBlogDraft, publishBlogPost, unpublishBlogPost } from "./publish-actions.ts";
 import { loadLocalState, refreshCurrentNode } from "./state-loader.ts";
 import { flushQueue, refreshQueueState } from "./sync.ts";
 import { closePane, maximizePane, splitPane, stackTab } from "./workspace-actions.ts";
@@ -27,6 +28,8 @@ export async function startAppShell(root) {
     text: "",
     textDirty: false,
     activeBoardId: "",
+    currentBlogPost: null,
+    currentBlogPostId: "",
     layout: null,
     layoutDirty: false,
     layoutNodeId: "",
@@ -64,9 +67,12 @@ function actionsFor(root, store, state) {
     createTextNode: () => run(root, store, state, () => createTextNode(store, state)),
     login: (name, password) => run(root, store, state, () => loginUser(store, state, name, password)),
     openNode: (nodeId) => run(root, store, state, () => openNode(store, state, nodeId)),
+    createBlogDraft: (title) => run(root, store, state, () => createBlogDraft(store, state, title)),
+    publishBlogPost: (slug, summary) => run(root, store, state, () => publishBlogPost(store, state, slug, summary)),
     saveText: (content) => run(root, store, state, () => saveText(store, state, content)),
     selectNode: (nodeId) => run(root, store, state, () => selectNode(store, state, nodeId)),
     sync: () => run(root, store, state, () => flushQueue(store, state)),
+    unpublishBlogPost: () => run(root, store, state, () => unpublishBlogPost(store, state)),
     addCurrentNodeToBoard: () => run(root, store, state, () => addCurrentNodeToBoard(store, state)),
     closePane: () => run(root, store, state, () => closePane(store, state)),
     createBoard: () => run(root, store, state, () => createBoard(store, state)),
@@ -99,6 +105,10 @@ async function loginUser(store, state, name, password) {
   const payload = await login(name, password);
   state.auth = payload;
   await store.put("sync_cursors", { id: "auth", auth: payload });
+  await store.put("sync_cursors", {
+    id: "actor_seq",
+    value: Math.max(0, (payload.next_actor_seq ?? 1) - 1),
+  });
 }
 
 async function createTextNode(store, state) {
@@ -140,6 +150,17 @@ async function openNode(store, state, nodeId) {
 }
 
 async function selectNode(store, state, nodeId) {
+  const node = await store.get("nodes", nodeId);
+  if (node?.kind === "blog_post") {
+    state.currentBlogPostId = nodeId;
+    await store.put("workspace_layout", { id: "current_blog_post", node_id: nodeId });
+    const bodyNodeId = node.metadata_map?.body_node_id;
+    if (bodyNodeId) {
+      state.currentNodeId = bodyNodeId;
+      await store.put("workspace_layout", { id: "current_node", node_id: bodyNodeId });
+      return;
+    }
+  }
   state.currentNodeId = nodeId;
   await store.put("workspace_layout", { id: "current_node", node_id: nodeId });
 }
