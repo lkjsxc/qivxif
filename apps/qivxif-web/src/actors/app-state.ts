@@ -22,6 +22,7 @@ export function initialState() {
     setupError: "",
     setupRequired: false,
     tabChooserOpen: false,
+    tabChooserPaneId: "",
     text: "",
     textDirty: false,
   };

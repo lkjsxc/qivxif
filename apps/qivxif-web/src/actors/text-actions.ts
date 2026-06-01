@@ -14,27 +14,22 @@ export async function createTextNode(store, state) {
   state.activeTabId = "editor";
 }
 
-export async function saveText(store, state, content) {
+export async function saveText(store, state, content, nodeId = state.currentNodeId) {
   requireAuth(state);
-  if (!state.currentNodeId) {
+  if (!nodeId) {
     throw new Error("select a text node first");
   }
   const actorSeq = await reserveActorSeq(store);
-  const docId = await textDocId(store, state.currentNodeId);
-  const restored = textRestoreEntry(
-    actorSeq,
-    state.currentNodeId,
-    docId,
-    state.auth.user.actor_id,
-    content,
-  );
+  const docId = await textDocId(store, nodeId);
+  const restored = textRestoreEntry(actorSeq, nodeId, docId, state.auth.user.actor_id, content);
   await store.put("events", restored.entry);
   await store.put("text_snapshots", {
     dirty: true,
     doc_id: docId,
-    id: state.currentNodeId,
+    id: nodeId,
     state: { content },
   });
+  state.currentNodeId = nodeId;
   state.text = content;
 }
 

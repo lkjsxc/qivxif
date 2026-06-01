@@ -1,53 +1,73 @@
 import { reserveActorSeq } from "./actor-seq.ts";
+import {
+  activePaneId,
+  closePaneInLayout,
+  focusPaneInLayout,
+  maximizePaneInLayout,
+  splitPaneInLayout,
+  stackTabInLayout,
+} from "../domain/tile-tree.ts";
 import { edgeCreateEntry, nodeCreateEntry, tileLayoutSetEntry } from "./local-events.ts";
 
-export async function splitPane(store, state) {
+export async function focusPane(store, state, paneId) {
   requireAuth(state);
   const model = await ensureLayout(store, state);
-  const pane = await createPane(store, state, state.currentNodeId, "Split pane");
-  const next = {
-    maximized_pane_id: null,
-    root: {
-      axis: "row",
-      first: model.layout.root,
-      kind: "split",
-      ratio_percent: 50,
-      second: stackTile([tabFor(pane.node.id, state.currentNodeId, "Split pane")]),
-    },
-  };
+  await queueLayout(store, state, model.layout_node_id, focusPaneInLayout(model.layout, paneId));
+}
+
+export async function splitPane(store, state, paneId) {
+  requireAuth(state);
+  const model = await ensureLayout(store, state);
+  const target = targetPane(model.layout.root, paneId);
+  const pane = await createPane(store, state, state.currentNodeId, "Split pane", "text_editor");
+  const tab = tabFor(pane.node.id, state.currentNodeId, "Split pane", "text_editor");
+  const next = splitPaneInLayout(model.layout, target, tab, "right");
   await queueLayout(store, state, model.layout_node_id, next);
 }
 
-export async function stackTab(store, state) {
+export async function stackTab(store, state, paneId) {
   requireAuth(state);
   const model = await ensureLayout(store, state);
-  const pane = await createPane(store, state, state.currentNodeId, "Stacked pane");
-  const next = {
-    ...model.layout,
-    root: appendTab(
-      model.layout.root,
-      tabFor(pane.node.id, state.currentNodeId, "Stacked pane"),
-    ),
-  };
+  const target = targetPane(model.layout.root, paneId);
+  const pane = await createPane(store, state, state.currentNodeId, "Stacked pane", "text_editor");
+  const tab = tabFor(pane.node.id, state.currentNodeId, "Stacked pane", "text_editor");
+  const next = stackTabInLayout(model.layout, target, tab);
   await queueLayout(store, state, model.layout_node_id, next);
 }
 
-export async function maximizePane(store, state) {
-  requireAuth(state);
+export async function openProductTab(store, state, paneId, tabId) {
+  if (!state.auth?.user?.actor_id) {
+    state.activeTabId = tabId;
+    state.tabChooserOpen = false;
+    return;
+  }
   const model = await ensureLayout(store, state);
-  const paneId = firstPaneId(model.layout.root);
-  const next = { ...model.layout, maximized_pane_id: paneId };
+  const spec = tabSpec(tabId, state);
+  const target = targetPane(model.layout.root, paneId);
+  const pane = await createPane(store, state, spec.targetNodeId, spec.title, spec.paneKind);
+  const tab = tabFor(pane.node.id, spec.targetNodeId, spec.title, spec.paneKind);
+  const next = stackTabInLayout(model.layout, target, tab);
+  state.tabChooserOpen = false;
+  state.tabChooserPaneId = "";
   await queueLayout(store, state, model.layout_node_id, next);
 }
 
-export async function closePane(store, state) {
+export async function maximizePane(store, state, paneId) {
   requireAuth(state);
   const model = await ensureLayout(store, state);
-  const next = {
-    ...model.layout,
-    maximized_pane_id: null,
-    root: removeFirstPane(model.layout.root),
-  };
+  const target = targetPane(model.layout.root, paneId);
+  const next =
+    model.layout.maximized_pane_id === target
+      ? { ...model.layout, maximized_pane_id: null }
+      : maximizePaneInLayout(model.layout, target);
+  await queueLayout(store, state, model.layout_node_id, next);
+}
+
+export async function closePane(store, state, paneId) {
+  requireAuth(state);
+  const model = await ensureLayout(store, state);
+  const target = targetPane(model.layout.root, paneId);
+  const next = closePaneInLayout(model.layout, target);
   await queueLayout(store, state, model.layout_node_id, next);
 }
 
@@ -62,7 +82,7 @@ export async function ensureLayout(store, state) {
   const pane = await createPane(store, state, state.currentNodeId, "Text pane");
   const initial = {
     maximized_pane_id: null,
-    root: stackTile([tabFor(pane.node.id, state.currentNodeId, "Text pane")]),
+    root: stackTile([tabFor(pane.node.id, state.currentNodeId, "Text pane", "text_editor")]),
   };
   const record = {
     dirty: true,
@@ -77,14 +97,14 @@ export async function ensureLayout(store, state) {
   return record;
 }
 
-async function createPane(store, state, targetNodeId, title) {
-  const pane = await createNode(store, "pane", { pane_kind: "text_editor", title });
+async function createPane(store, state, targetNodeId, title, paneKind = "text_editor") {
+  const pane = await createNode(store, "pane", { pane_kind: paneKind, title });
   const model = await store.get("tile_layout", "tile_model");
   if (model?.layout_node_id) {
     await link(store, model.layout_node_id, pane.node.id, "tile_contains_pane", { slot: title });
   }
   if (targetNodeId) {
-    await link(store, pane.node.id, targetNodeId, "pane_views_node", { pane_kind: "text_editor" });
+    await link(store, pane.node.id, targetNodeId, "pane_views_node", { pane_kind: paneKind });
   }
   return pane;
 }
@@ -111,38 +131,47 @@ async function queueLayout(store, state, layoutNodeId, layout) {
   state.layoutNodeId = layoutNodeId;
 }
 
-function appendTab(tile, tab) {
-  if (tile.kind === "stack") {
-    return { ...tile, active: tile.tabs.length, tabs: [...tile.tabs, tab] };
-  }
-  return { ...tile, second: appendTab(tile.second, tab) };
-}
-
-function removeFirstPane(tile) {
-  if (tile.kind === "stack") {
-    return stackTile(tile.tabs.slice(1));
-  }
-  return { ...tile, first: removeFirstPane(tile.first) };
-}
-
-function firstPaneId(tile) {
-  if (tile.kind === "stack") {
-    return tile.tabs[0]?.pane_node_id ?? null;
-  }
-  return firstPaneId(tile.first);
-}
-
 function stackTile(tabs) {
   return { active: Math.max(0, tabs.length - 1), kind: "stack", tabs };
 }
 
-function tabFor(paneNodeId, targetNodeId, title) {
+function tabFor(paneNodeId, targetNodeId, title, paneKind) {
   return {
-    pane_kind: "text_editor",
+    pane_kind: paneKind,
     pane_node_id: paneNodeId,
     target_node_id: targetNodeId,
     title,
   };
+}
+
+function tabSpec(tabId, state) {
+  const targetNodeId =
+    tabId === "editor" || tabId === "graph" ? state.currentNodeId : boardTarget(tabId, state);
+  const specs = {
+    board: ["graph_board", "Board"],
+    diagnostics: ["diagnostics", "Diagnostics"],
+    editor: ["text_editor", "Text Node"],
+    graph: ["graph_node", "Graph Node"],
+    history: ["history", "History"],
+    home: ["home", "Home"],
+    publish: ["publishing", "Publishing"],
+    settings: ["settings", "Settings"],
+    social: ["social_feed", "Social"],
+    sync: ["sync_status", "Sync Status"],
+  };
+  const [paneKind, title] = specs[tabId] ?? ["home", "Home"];
+  return { paneKind, targetNodeId, title };
+}
+
+function targetPane(root, paneId) {
+  return paneId?.startsWith("nod_") ? paneId : activePaneId(root);
+}
+
+function boardTarget(tabId, state) {
+  if (tabId === "board") {
+    return state.activeBoardId || state.currentNodeId;
+  }
+  return "";
 }
 
 function requireAuth(state) {

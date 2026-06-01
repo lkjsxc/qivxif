@@ -15,7 +15,14 @@ import {
 import { loadLocalState, refreshCurrentNode } from "./state-loader.ts";
 import { flushQueue, refreshQueueState } from "./sync.ts";
 import { createTextNode, openNode, saveText, selectNode } from "./text-actions.ts";
-import { closePane, maximizePane, splitPane, stackTab } from "./tile-actions.ts";
+import {
+  closePane,
+  focusPane,
+  maximizePane,
+  openProductTab,
+  splitPane,
+  stackTab,
+} from "./tile-actions.ts";
 
 export async function startAppShell(root) {
   if (!root) {
@@ -79,26 +86,27 @@ function actionsFor(root, store, state) {
     addCurrentNodeToBoard: () => run(root, store, state, () => addCurrentNodeToBoard(store, state)),
     blockProfile: (target) => run(root, store, state, () => blockProfile(store, state, target)),
     clearSocialEdge: (edge, kind) => run(root, store, state, () => clearSocialEdge(store, state, edge, kind)),
-    closePane: () => run(root, store, state, () => closePane(store, state)),
+    closePane: (paneId) => run(root, store, state, () => closePane(store, state, paneId)),
     createBoard: () => run(root, store, state, () => createBoard(store, state)),
     createBlogDraft: (title) => run(root, store, state, () => createBlogDraft(store, state, title)),
     createOwner: (name, password) => run(root, store, state, () => createOwnerAccount(store, state, name, password)),
     createShortPost: (body) => run(root, store, state, () => createShortPost(store, state, body)),
     createTextNode: () => run(root, store, state, () => createTextNode(store, state)),
     followProfile: (target) => run(root, store, state, () => followProfile(store, state, target)),
+    focusPane: (paneId) => run(root, store, state, () => focusPane(store, state, paneId)),
     linkBoardNodes: () => run(root, store, state, () => linkBoardNodes(store, state)),
     login: (name, password) => run(root, store, state, () => loginUser(store, state, name, password)),
-    maximizePane: () => run(root, store, state, () => maximizePane(store, state)),
+    maximizePane: (paneId) => run(root, store, state, () => maximizePane(store, state, paneId)),
     moveBoardItem: () => run(root, store, state, () => moveBoardItem(store, state)),
     openNode: (nodeId) => run(root, store, state, () => openNode(store, state, nodeId)),
-    openTab: (tabId) => openTab(root, store, state, tabId),
+    openTab: (tabId, paneId) => openTab(root, store, state, tabId, paneId),
     publishBlogPost: (slug, summary) => run(root, store, state, () => publishBlogPost(store, state, slug, summary)),
-    saveText: (content) => run(root, store, state, () => saveText(store, state, content)),
+    saveText: (content, nodeId) => run(root, store, state, () => saveText(store, state, content, nodeId)),
     selectNode: (nodeId) => run(root, store, state, () => selectNode(store, state, nodeId)),
-    splitPane: () => run(root, store, state, () => splitPane(store, state)),
-    stackTab: () => run(root, store, state, () => stackTab(store, state)),
+    splitPane: (paneId) => run(root, store, state, () => splitPane(store, state, paneId)),
+    stackTab: (paneId) => run(root, store, state, () => stackTab(store, state, paneId)),
     sync: () => run(root, store, state, () => flushQueue(store, state)),
-    toggleTabChooser: () => toggleTabChooser(root, store, state),
+    toggleTabChooser: (paneId) => toggleTabChooser(root, store, state, paneId),
     unpublishBlogPost: () => run(root, store, state, () => unpublishBlogPost(store, state)),
   };
 }
@@ -150,13 +158,19 @@ function selectInitialTab(state) {
   }
 }
 
-function openTab(root, store, state, tabId) {
+function openTab(root, store, state, tabId, paneId) {
+  if (paneId) {
+    run(root, store, state, () => openProductTab(store, state, paneId, tabId));
+    return;
+  }
   state.activeTabId = tabId;
   state.tabChooserOpen = false;
   renderShell(root, state, actionsFor(root, store, state));
 }
 
-function toggleTabChooser(root, store, state) {
-  state.tabChooserOpen = !state.tabChooserOpen;
+function toggleTabChooser(root, store, state, paneId = "") {
+  const samePane = state.tabChooserOpen && state.tabChooserPaneId === paneId;
+  state.tabChooserOpen = !samePane;
+  state.tabChooserPaneId = state.tabChooserOpen ? paneId : "";
   renderShell(root, state, actionsFor(root, store, state));
 }

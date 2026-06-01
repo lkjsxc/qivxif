@@ -26,6 +26,8 @@ Domain reducers:
 - Return event drafts when durable changes are needed.
 - Stay pure and deterministic.
 - Do not read clocks, storage, cookies, or network state.
+- The browser tile tree reducer mirrors the Rust tile reducer for optimistic
+  shell commands before server acceptance.
 
 ## Effect Adapters
 
