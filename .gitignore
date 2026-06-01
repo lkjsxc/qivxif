@@ -2,6 +2,7 @@
 /.env
 /data/
 /dist/
+**/dist/
 /tmp/
 /.sisyphus/evidence/
 *.redb
