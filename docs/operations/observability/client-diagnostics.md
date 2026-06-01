@@ -5,7 +5,7 @@
 - online state
 - active sync lane
 - last successful sync
-- queued local operations
+- queued local events
 - cache usage estimate
 - pinned count
 - dirty local count

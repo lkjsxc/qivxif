@@ -18,7 +18,7 @@ A blog post is a graph node with title, slug, summary, author, tags, body text n
 
 ## Behavior
 
-- Draft, publish, unpublish, and slug changes are operations.
+- Draft, publish, unpublish, and slug changes are events.
 - Public rendering reads through ACL projection.
 - Tags and author pages are graph projections.
 - Dynamic public routes come before static render caching.

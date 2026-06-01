@@ -62,7 +62,9 @@ Both admin commands return:
 - `csrf_token`
 - `next_actor_seq`
 
-`next_actor_seq` is the next server-safe actor sequence for this actor. A fresh browser stores one less than this value in IndexedDB before reserving local operation numbers.
+`next_actor_seq` is the next server-safe actor sequence for this actor. A fresh
+browser stores one less than this value in IndexedDB before reserving local
+event numbers.
 
 `POST /api/auth/logout` returns:
 

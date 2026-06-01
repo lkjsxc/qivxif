@@ -9,7 +9,7 @@
 - latency
 - store transaction duration
 - sync batch count
-- operation accept or reject reason
+- event accept or reject reason
 - WebTransport connect and disconnect
 
 ## Prohibited

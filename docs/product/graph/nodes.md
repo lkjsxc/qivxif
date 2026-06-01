@@ -21,6 +21,6 @@
 ## Behavior
 
 - Users create and open nodes from the tile shell.
-- Node metadata is editable through operations.
+- Node metadata is editable through events.
 - Unknown node kinds are rejected until extension docs exist.
 - Tombstoned nodes stay inspectable through history.

@@ -7,7 +7,7 @@
 3. Server validates session against redb.
 4. Server sends accepted capabilities and cursor summary.
 5. Client sends local cursor summary.
-6. Peers exchange missing operation batches.
+6. Peers exchange missing event batches.
 
 ## Rule
 

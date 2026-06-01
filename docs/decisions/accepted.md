@@ -20,8 +20,8 @@
 - Datagrams are only for ephemeral hints.
 - The durable data model is typed KV plus typed graph.
 - Nodes and edges are first-class records.
-- All durable mutations append operations.
-- Text nodes use CRDT-backed operation history.
+- All durable mutations append events.
+- Text nodes use CRDT-backed event history.
 - Client offline data lives in IndexedDB.
 - The app shell and static assets use a service worker and Cache API.
 - Client cache behavior is governed by a cache orchestrator.
@@ -29,10 +29,12 @@
 ## Client Implementation
 
 - The first browser shell uses minimal TypeScript modules and DOM rendering.
-- The first editor uses a textarea only when edits map into qivxif text operations.
-- CodeMirror may replace the widget after the durable text operation model is stable.
+- The first editor uses a textarea only when edits map into qivxif text events.
+- CodeMirror may replace the widget after the durable text event model is stable.
 - Server-side Rust reducers are the first durable authority.
 - Browser code mirrors only the DTO checks needed for local storage until reducer sharing is documented.
+- Browser UI modules emit commands; reducers and effect adapters own event
+  drafts, persistence, and sync.
 
 ## Protocol and Media
 

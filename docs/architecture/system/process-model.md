@@ -12,8 +12,9 @@
 - App shell renders the header and tile grid.
 - IndexedDB adapter owns structured local persistence.
 - Service worker owns app-shell cache and offline route.
-- Sync actor pushes and pulls operations.
+- Sync actor pushes and pulls events.
 
 ## CLI Process
 
-`qivxifctl` owns admin bootstrap, store inspection, repair checks, feed rebuilds, and quality gates.
+`qivxifctl` owns admin bootstrap, event and store inspection, repair checks,
+feed rebuilds, and quality gates.

@@ -21,14 +21,14 @@ The body is plain text. Markdown preview is not part of this slice.
 
 `POST /api/social/short-posts` accepts:
 
-- `op_id`
+- `event_id`
 - `actor_seq`
 - `node_id`
 - `body`
 - `visibility`
 - `reply_to`
 
-The server supplies owner, actor, timestamps, feed item, and operation envelope.
+The server supplies owner, actor, timestamps, feed item, and event envelope.
 
 ## Rules
 
@@ -38,5 +38,5 @@ The server supplies owner, actor, timestamps, feed item, and operation envelope.
 - `reply_to`, when present, must target a readable `short_post`.
 - Acceptance appends `social.short_post_create`.
 - Acceptance writes the node and feed item in the same redb transaction.
-- Duplicate `op_id` returns the prior acceptance.
-- Duplicate actor sequence for another operation is rejected.
+- Duplicate `event_id` returns the prior acceptance.
+- Duplicate actor sequence for another event is rejected.

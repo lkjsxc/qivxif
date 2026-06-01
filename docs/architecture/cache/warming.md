@@ -6,7 +6,7 @@
 - Direct outgoing and incoming edges.
 - Author profile.
 - Current text snapshot for text nodes.
-- Recent operation batch.
+- Recent event batch.
 - Small media previews.
 - Tile panes referencing the node.
 

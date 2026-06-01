@@ -4,10 +4,11 @@
 
 - [system/README.md](system/README.md): process model and boundaries.
 - [schema/README.md](schema/README.md): durable schema contracts.
+- [events/README.md](events/README.md): durable event contracts.
 - [server/README.md](server/README.md): Axum server contracts.
 - [storage/README.md](storage/README.md): redb storage contracts.
 - [graph/README.md](graph/README.md): graph record contracts.
-- [history/README.md](history/README.md): operation history contracts.
+- [history/README.md](history/README.md): event history query contracts.
 - [text/README.md](text/README.md): CRDT text contracts.
 - [social/README.md](social/README.md): social post and feed contracts.
 - [sync/README.md](sync/README.md): sync contracts.

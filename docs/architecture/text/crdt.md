@@ -2,7 +2,7 @@
 
 ## Contract
 
-Text nodes use a CRDT operation log for plain text.
+Text nodes use a CRDT event log for plain text.
 
 The first text model is an ordered character sequence. Each inserted character has a stable id:
 
@@ -18,7 +18,7 @@ Each character stores:
 
 `after` is null for root insertions or references another character id. Visible content is rendered by walking root children and child lists sorted by character id.
 
-## Operations
+## Events
 
 `text.insert` payload:
 
@@ -48,5 +48,5 @@ Restore creates new inserted characters. It does not remove prior history.
 - Local edits are durable before sync.
 - Remote edits merge deterministically.
 - Markdown is plain text plus preview projection.
-- Duplicate text operations do not change state twice.
+- Duplicate text events do not change state twice.
 - Inserts that reference missing anchors are rejected until the anchor arrives.

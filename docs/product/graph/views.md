@@ -12,7 +12,7 @@
 
 - Views are projections over graph data.
 - Expensive views must have bounded depth or saved query shape.
-- A view may be cached, but durable truth remains graph records and operations.
+- A view may be cached, but durable truth remains graph records and events.
 
 ## Neighborhood Query
 

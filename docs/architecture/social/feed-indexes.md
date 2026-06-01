@@ -2,11 +2,11 @@
 
 ## Feed Item
 
-`FeedItem` is stored in `feed_items` keyed by the creating operation id.
+`FeedItem` is stored in `feed_items` keyed by the creating event id.
 
 Fields:
 
-- `operation_id`
+- `event_id`
 - `post_node_id`
 - `author_user_id`
 - `author_name`
@@ -17,7 +17,7 @@ Fields:
 
 ## User Index
 
-`feed_items_by_user` stores `(user_id, operation_id)` to an empty marker.
+`feed_items_by_user` stores `(user_id, event_id)` to an empty marker.
 
 Accepted short posts create an author feed marker. Follow fan-out uses the same marker shape for follower user ids; absent follower edges means only the author marker is written.
 
@@ -29,7 +29,7 @@ Accepted short posts create an author feed marker. Follow fan-out uses the same 
 - each item author.
 - active `follows` edges to the author's profile node.
 
-The rebuild does not rewrite `feed_items`, post nodes, or operation records.
+The rebuild does not rewrite `feed_items`, post nodes, or event records.
 
 ## Query Contract
 

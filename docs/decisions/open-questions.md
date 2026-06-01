@@ -3,7 +3,7 @@
 ## Client
 
 - Which browser UI framework best supports a mature tiled shell after the first DOM shell?
-- Which editor widget best preserves qivxif text operations after textarea proof?
+- Which editor widget best preserves qivxif text events after textarea proof?
 - When should pure Rust reducers be shared with the browser runtime?
 
 ## Protocol

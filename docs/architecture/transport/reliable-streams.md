@@ -2,8 +2,8 @@
 
 ## Uses
 
-- Operation push.
-- Operation pull.
+- Event push.
+- Event pull.
 - Acknowledgement.
 - Backpressure.
 - Resync request.

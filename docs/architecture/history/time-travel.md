@@ -2,7 +2,7 @@
 
 ## Layers
 
-- Operation envelopes.
+- Event envelopes.
 - Commit groups.
 - Snapshots.
 
@@ -10,5 +10,5 @@
 
 - Graph state replays from snapshot boundaries.
 - Text state replays from CRDT history plus snapshots.
-- Restore creates new operations.
+- Restore creates new events.
 - Public history remains inspectable by authorized viewers.

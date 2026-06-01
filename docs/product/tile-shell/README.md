@@ -7,3 +7,8 @@
 - [panes.md](panes.md): pane kinds and expectations.
 - [command-palette.md](command-palette.md): command model.
 - [keyboard.md](keyboard.md): keyboard behavior.
+
+## Architecture Link
+
+- [../../architecture/client/surface-boundary.md](../../architecture/client/surface-boundary.md):
+  replaceable browser surface boundary.

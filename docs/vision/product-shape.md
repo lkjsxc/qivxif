@@ -14,10 +14,11 @@
 
 - Nodes represent durable entities.
 - Edges represent durable relationships.
-- Operations represent durable changes.
+- Events represent durable changes.
 - Commit groups bundle meaningful user actions.
 - Snapshots accelerate replay without replacing history.
 
 ## Local-First Behavior
 
-The client stores local operations before network delivery. UI projections update from those operations and later reconcile with server-accepted operations.
+The client stores local events before network delivery. UI projections update
+from those events and later reconcile with server-accepted events.

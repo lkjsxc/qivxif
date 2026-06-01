@@ -15,16 +15,16 @@ Error codes are stable public names. They are used by API routes, sync rejection
 | `schema.invalid_input` | request field failed validation | no |
 | `schema.unknown_node_kind` | node kind not in registry | no |
 | `schema.unknown_edge_kind` | edge kind not in registry | no |
-| `schema.unknown_operation_kind` | operation kind not in registry | no |
-| `operation.duplicate_actor_seq` | actor sequence conflicts with different op | no |
-| `operation.payload_hash_mismatch` | payload bytes do not match hash | no |
-| `operation.missing_parent` | required parent operation is absent | after pull |
+| `schema.unknown_event_kind` | event kind not in registry | no |
+| `event.duplicate_actor_seq` | actor sequence conflicts with different event | no |
+| `event.payload_hash_mismatch` | payload bytes do not match hash | no |
+| `event.missing_parent` | required parent event is absent | after pull |
 | `store.conflict` | unique store constraint failed | no |
 | `store.unavailable` | database could not complete request | yes |
 | `sync.batch_too_large` | request exceeds batch limit | with smaller batch |
 | `sync.cursor_invalid` | cursor is absent or malformed | after full pull |
 | `publish.slug_conflict` | public slug already owned by another post | no |
-| `text.invalid_range` | text operation references an invalid range | no |
+| `text.invalid_range` | text event references an invalid range | no |
 | `cache.quota_exceeded` | client cache plan cannot protect required data | after user action |
 
 ## Rules

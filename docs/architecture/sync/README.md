@@ -10,5 +10,5 @@
 
 ## Schema Links
 
-- [../schema/operation-kinds.md](../schema/operation-kinds.md): durable operation registry.
+- [../schema/event-kinds.md](../schema/event-kinds.md): durable event registry.
 - [../schema/api-envelope.md](../schema/api-envelope.md): sync response envelope.

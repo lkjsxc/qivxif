@@ -2,7 +2,7 @@
 
 ## Purpose
 
-A commit group bundles operations into a user-meaningful action.
+A commit group bundles events into a user-meaningful action.
 
 ## Examples
 

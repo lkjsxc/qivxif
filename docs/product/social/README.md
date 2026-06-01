@@ -9,4 +9,4 @@
 
 ## Schema Links
 
-- [../../architecture/schema/operation-kinds.md](../../architecture/schema/operation-kinds.md): social operation registry.
+- [../../architecture/schema/event-kinds.md](../../architecture/schema/event-kinds.md): social event registry.

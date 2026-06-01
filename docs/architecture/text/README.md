@@ -9,4 +9,4 @@
 
 ## Schema Links
 
-- [../schema/operation-kinds.md](../schema/operation-kinds.md): text operation registry.
+- [../schema/event-kinds.md](../schema/event-kinds.md): text event registry.

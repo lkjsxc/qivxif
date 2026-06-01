@@ -20,5 +20,7 @@
 - Node IDs are typed.
 - Known kinds are validated.
 - Tombstones preserve history.
-- Direct node creation routes receive `op_id`, `actor_seq`, `node_id`, `kind`, `visibility`, and `metadata_map`.
-- The server assigns owner, actor, receive time, and operation indexes during acceptance.
+- Direct node creation routes receive `event_id`, `actor_seq`, `node_id`, `kind`,
+  `visibility`, and `metadata_map`.
+- The server assigns owner, actor, receive time, and event indexes during
+  acceptance.

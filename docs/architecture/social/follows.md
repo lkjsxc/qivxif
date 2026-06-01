@@ -4,7 +4,7 @@
 
 `POST /api/social/follow` accepts:
 
-- `op_id`
+- `event_id`
 - `actor_seq`
 - `edge_id`
 - `target_profile_node_id`
@@ -13,7 +13,7 @@ The server creates a `follows` edge from the signed-in user's profile node to th
 
 `POST /api/social/unfollow` accepts:
 
-- `op_id`
+- `event_id`
 - `actor_seq`
 - `edge_id`
 
@@ -32,6 +32,6 @@ Unfollow removes existing home-feed markers for the target author's feed items f
 
 - Following yourself is rejected.
 - The target must be a readable `profile` node.
-- Repeating the same follow operation returns the prior acceptance.
+- Repeating the same follow event returns the prior acceptance.
 - Repeating a follow edge that is already active returns the existing active edge.
-- Unfollow of a missing or already tombstoned edge is idempotent for the supplied operation id only.
+- Unfollow of a missing or already tombstoned edge is idempotent for the supplied event id only.

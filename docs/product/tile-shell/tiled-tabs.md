@@ -42,7 +42,7 @@
 - Invalid drops are no-ops.
 - Maximize hides sibling tiles without destroying layout.
 - Closing the last tab removes its stack.
-- Layout is stored as graph records and operations.
+- Layout is stored as graph records and events.
 - Offline restore must work from the local cache.
 - Pane bodies own local vertical scroll.
 - Shell content must not create horizontal page scroll.
@@ -57,7 +57,7 @@ Before drag gestures exist, command buttons create the same durable records:
 - Stack creates a pane node inside the active tab stack and appends `tile.layout_set`.
 - Maximize appends `tile.layout_set` with `maximized_pane_id`.
 - Close removes the pane from the tile tree snapshot through `tile.layout_set`.
-- Dirty layout operations are visible in the sync status pane until accepted.
+- Dirty layout events are visible in the sync status pane until accepted.
 
 ## Constraints
 
@@ -68,7 +68,7 @@ Before drag gestures exist, command buttons create the same durable records:
 - Shared resource state belongs to graph node, text document, edge, feed, cache,
   and accepted event records.
 - Conflicts need pane-level affordances.
-- A rejected layout operation keeps the local layout dirty and visible.
+- A rejected layout event keeps the local layout dirty and visible.
 
 ## Initial Tab Kinds
 

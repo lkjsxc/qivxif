@@ -9,4 +9,4 @@
 
 ## Implication
 
-qivxif keeps durable operations on reliable streams or HTTP.
+qivxif keeps durable events on reliable streams or HTTP.

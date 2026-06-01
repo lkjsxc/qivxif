@@ -20,7 +20,7 @@ Durable truth belongs in [docs/](docs/). Implementation follows the owner docs a
 - Axum HTTP server.
 - redb embedded storage.
 - Typed KV plus typed graph data.
-- Operation log and commit groups for history.
+- Event log and commit groups for history.
 - Browser client with IndexedDB, service worker, and local-first sync.
 - WebTransport as the preferred live sync lane.
 - Header plus tiled tab shell as the first visible product surface.

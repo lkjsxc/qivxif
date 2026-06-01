@@ -4,7 +4,8 @@
 
 - nodes
 - edges
-- ops
+- dirty_events
+- accepted_events
 - text snapshots
 - sync cursors
 - cache entries
@@ -17,9 +18,9 @@ IndexedDB stores structured qivxif data. The Cache API stores app shell and safe
 
 ## Queue Store
 
-The `ops` store is keyed by operation id. Queue records include:
+The `dirty_events` store is keyed by event id. Queue records include:
 
-- documented operation kind
+- documented event kind
 - dirty or rejected state
 - target node id when present
 - route method and path

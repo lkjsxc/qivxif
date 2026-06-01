@@ -7,10 +7,10 @@
 - Every typed value decodes into its owner type.
 - Node current pointers reference existing commit groups.
 - Edge endpoints reference existing nodes or are tombstoned.
-- Operation parents exist or are root references.
+- Event parents exist or are root references.
 - Feed index entries reference readable nodes.
 - Blob manifests reference existing chunks.
-- Sync cursors point to known operation positions.
+- Sync cursors point to known event positions.
 - Every secondary index points at an existing primary record.
 - Every primary record that requires an index has the matching index entry.
 

@@ -29,4 +29,4 @@ The tile layout actor owns:
 - selected board item node ID.
 
 The actor persists state through IndexedDB messages and queued durable
-operations. UI controls render from actor state and local projections.
+events. UI controls render from actor state and local projections.

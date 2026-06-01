@@ -11,11 +11,11 @@
 ## Architecture
 
 - Opaque giant JSON blob for graph state.
-- Durable operation delivery through unreliable datagrams.
+- Durable event delivery through unreliable datagrams.
 - Mock modules.
 - Direct component writes to IndexedDB.
 - Auth only in the client.
 - Feed queries by scanning all posts.
 - Text history by full-copy-per-edit storage.
-- External database requirement for core operation.
+- External database requirement for core behavior.
 - redb table access outside the store crate.

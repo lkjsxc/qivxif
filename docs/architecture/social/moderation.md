@@ -23,18 +23,19 @@ Moderation state is graph data.
 
 `POST /api/social/mute` and `POST /api/social/block` accept:
 
-- `op_id`
+- `event_id`
 - `actor_seq`
 - `edge_id`
 - `target_profile_node_id`
 
 `POST /api/social/unmute` and `POST /api/social/unblock` accept:
 
-- `op_id`
+- `event_id`
 - `actor_seq`
 - `edge_id`
 
-The server appends the matching moderation operation and writes or tombstones the edge in the same transaction.
+The server appends the matching moderation event and writes or tombstones the
+edge in the same transaction.
 
 ## Query Rules
 
@@ -47,6 +48,8 @@ The server appends the matching moderation operation and writes or tombstones th
 
 ## Idempotency
 
-- Repeating an accepted `op_id` returns the prior acceptance.
-- Repeating an active moderation edge appends the operation but does not create another active edge.
-- Clearing a missing or already tombstoned edge rejects unless the clearing operation was already accepted.
+- Repeating an accepted `event_id` returns the prior acceptance.
+- Repeating an active moderation edge appends the event but does not create
+  another active edge.
+- Clearing a missing or already tombstoned edge rejects unless the clearing
+  event was already accepted.

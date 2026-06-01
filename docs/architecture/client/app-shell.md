@@ -37,9 +37,12 @@ The browser shell owns the first end-to-end graph and text proof through actor m
 3. Tile action actor creates a text node command.
 4. Local store actor writes a dirty `node.create` queue entry before the UI increments queued count.
 5. Sync actor sends the entry to `POST /api/nodes` when a session and network are available.
-6. Local store actor marks the entry accepted only after the response contains an operation acceptance.
+6. Local store actor marks the entry accepted only after the response contains an event acceptance.
 7. Editor actor writes a dirty `text.restore` or `text.insert` queue entry before showing the edit as queued.
-8. Sync actor sends the entry to `POST /api/text/{node_id}/ops`.
-9. Pull and history panes read server state only after accepted operations are visible through API responses.
+8. Sync actor sends the entry to `POST /api/text/{node_id}/events`.
+9. Pull and history panes read server state only after accepted events are visible through API responses.
 
-This browser flow uses route-specific durable mutation endpoints until Rust reducers are shared with the browser. The route endpoints still append operation envelopes on the server, so no queued operation is treated as accepted without durable server storage.
+This browser flow uses route-specific durable mutation endpoints until Rust
+reducers are shared with the browser. The route endpoints still append event
+envelopes on the server, so no queued event is treated as accepted without
+durable server storage.

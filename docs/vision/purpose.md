@@ -11,10 +11,12 @@ The product helps users create, link, edit, publish, arrange, and revisit inform
 - A single server supports multiple users.
 - A browser client works offline after first load.
 - Durable data is typed KV plus typed graph records.
-- Every durable mutation is an operation.
+- Every durable mutation is an event.
 - The tile shell is tabbed, split-capable, and restorable.
 - Board composition lets users arrange and edit the graph directly.
 
 ## Primary Proof Slice
 
-Setup owner -> authenticated session -> create graph node -> edit text offline -> persist locally -> sync to server -> load from another client -> inspect history.
+Setup owner -> authenticated session -> create graph node -> edit text offline
+-> persist locally -> sync events to server -> load from another client ->
+inspect history.

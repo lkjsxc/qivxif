@@ -6,7 +6,7 @@ The cache is a planned subsystem, not ad hoc browser storage.
 
 ## Requirements
 
-- Dirty local operations dominate eviction.
+- Dirty local events dominate eviction.
 - Pinned nodes survive normal cleanup.
 - Tile-layout-hot records are prioritized.
 - Graph-neighbor warming is bounded.

@@ -20,7 +20,7 @@ The command palette exposes tile and graph actions without requiring hidden UI g
 ## Rules
 
 - Commands declare required capability and offline behavior.
-- Commands that mutate durable state create operations.
+- Commands that mutate durable state create events.
 - Unavailable commands explain the missing capability.
 
 ## Initial Command Routing
@@ -28,7 +28,7 @@ The command palette exposes tile and graph actions without requiring hidden UI g
 The first browser shell may expose command buttons instead of a palette surface.
 Those buttons still use the command contracts:
 
-| Command | Durable operations | Offline |
+| Command | Durable events | Offline |
 | --- | --- | --- |
 | Create text node | `node.create` | queued |
 | Create board | `node.create` | queued |

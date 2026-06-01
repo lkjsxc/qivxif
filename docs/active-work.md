@@ -8,7 +8,7 @@ UI shell parity with lkjstr plus event-graph reset.
 
 - Keep docs canonical before behavior changes.
 - Extend the real Axum and redb stack through product slices.
-- Preserve offline browser operation queues through each new user workflow.
+- Preserve offline browser event queues through each new user workflow.
 - Add first-run owner setup inside the app shell.
 - Make `/` render the shell immediately, even for an empty store.
 - Reproduce the reference workspace grammar: split, stack, move, close, restore,

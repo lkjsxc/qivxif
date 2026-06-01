@@ -5,7 +5,7 @@
 - ID parsing and formatting.
 - Graph reducers.
 - History projection.
-- Text operation grouping.
+- Text event grouping.
 - Feed derivation.
 - Cache planning.
 

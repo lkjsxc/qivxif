@@ -8,4 +8,5 @@
 
 ## Implication
 
-qivxif stores graph, ops, text snapshots, cursors, and cache metadata in IndexedDB.
+qivxif stores graph, dirty events, accepted events, text snapshots, cursors, and
+cache metadata in IndexedDB.

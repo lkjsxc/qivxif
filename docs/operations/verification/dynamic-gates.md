@@ -11,7 +11,7 @@
 - Push and pull sync work.
 - App shell loads.
 - Offline reload works.
-- Dirty local operation survives cache planning.
+- Dirty local event survives cache planning.
 
 ## API Proof Service
 
@@ -22,11 +22,11 @@
 3. Start the Axum server.
 4. Login and capture the session cookie plus CSRF token.
 5. Create two text nodes.
-6. Apply a text restore operation.
+6. Apply a text restore event.
 7. Create a typed edge between the nodes.
 8. Read node edges.
 9. Read a bounded graph neighborhood.
-10. Pull accepted operations through HTTP sync.
+10. Pull accepted events through HTTP sync.
 11. Inspect node history.
 12. Load the app shell route.
 13. Logout and confirm the session is rejected.
@@ -43,7 +43,7 @@
 6. Login through the browser UI.
 7. Switch the browser context offline.
 8. Create a text node and save text.
-9. Confirm IndexedDB has dirty operations.
+9. Confirm IndexedDB has dirty events.
 10. Reload offline and confirm shell, node, text, and queue survive.
 11. Confirm the server does not yet have the local node.
 12. Reconnect, flush, and confirm the queue clears only after acceptance.

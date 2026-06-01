@@ -12,4 +12,4 @@
 - Draft nodes remain private until `publish.post` is accepted.
 - Publish rejection does not remove draft edits.
 - Unpublish sets `publication_state` to `unpublished` and removes public access.
-- Restoring a prior public body creates new text operations before another publish.
+- Restoring a prior public body creates new text events before another publish.

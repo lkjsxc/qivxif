@@ -23,16 +23,19 @@ The default server database file is `data/qivxif.redb`.
 | `edges` | `EdgeId` | `EdgeRecord` | `qivxif_graph::EdgeRecord` |
 | `edges_by_from` | `(NodeId, EdgeId)` | empty marker | `qivxif_store_redb::graph::EdgeFromIndex` |
 | `edges_by_to` | `(NodeId, EdgeId)` | empty marker | `qivxif_store_redb::graph::EdgeToIndex` |
-| `ops` | `OperationId` | `OperationEnvelope` | `qivxif_history::OperationEnvelope` |
-| `ops_by_actor` | `(ActorId, actor_seq)` | `OperationId` | `qivxif_store_redb::history::ActorOpIndex` |
-| `ops_by_node` | `(NodeId, OperationId)` | empty marker | `qivxif_store_redb::history::NodeOpIndex` |
+| `events_by_id` | `EventId` | `EventEnvelope` | `qivxif_history::EventEnvelope` |
+| `event_ids_by_actor` | `(ActorId, actor_seq)` | `EventId` | `qivxif_store_redb::history::ActorEventIndex` |
+| `event_ids_by_parent` | `(EventId, EventId)` | empty marker | `qivxif_store_redb::history::EventParentIndex` |
+| `event_ids_by_target_node` | `(NodeId, EventId)` | empty marker | `qivxif_store_redb::history::NodeEventIndex` |
+| `event_ids_by_target_edge` | `(EdgeId, EventId)` | empty marker | `qivxif_store_redb::history::EdgeEventIndex` |
+| `event_ids_by_target_event` | `(EventId, EventId)` | empty marker | `qivxif_store_redb::history::TargetEventIndex` |
 | `commit_groups` | `CommitGroupId` | `CommitGroup` | `qivxif_history::CommitGroup` |
 | `blobs` | `BlobHash` | `BlobManifest` | `qivxif_store_redb::blob::BlobManifest` |
 | `blob_chunks` | `ChunkHash` | `BlobChunk` | `qivxif_store_redb::blob::BlobChunk` |
 | `text_docs` | `TextDocId` | `TextDocState` | `qivxif_history::text::TextDocState` |
-| `text_snapshots` | `(TextDocId, OperationId)` | `TextSnapshot` | `qivxif_history::text::TextSnapshot` |
-| `feed_items` | `OperationId` | `FeedItem` | `qivxif_store_redb::feed::FeedItem` |
-| `feed_items_by_user` | `(UserId, OperationId)` | empty marker | `qivxif_store_redb::feed::FeedUserIndex` |
+| `text_snapshots` | `(TextDocId, EventId)` | `TextSnapshot` | `qivxif_history::text::TextSnapshot` |
+| `feed_items` | `EventId` | `FeedItem` | `qivxif_store_redb::feed::FeedItem` |
+| `feed_items_by_user` | `(UserId, EventId)` | empty marker | `qivxif_store_redb::feed::FeedUserIndex` |
 | `auth_tokens` | token hash | `AuthTokenRecord` | `qivxif_store_redb::auth::AuthTokenRecord` |
 | `sync_cursors` | `CursorId` | `SyncCursorRecord` | `qivxif_store_redb::sync::SyncCursorRecord` |
 | `server_jobs` | job id | `ServerJobRecord` | `qivxif_store_redb::job::ServerJobRecord` |

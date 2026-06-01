@@ -15,7 +15,7 @@ Queued relationship actions:
 
 The entry stores:
 
-- operation id.
+- event id.
 - actor sequence.
 - request body.
 - route path.

@@ -36,7 +36,7 @@ Node kinds are durable names. Unknown kinds are rejected by API validation, sync
 
 ## Rules
 
-- Kind changes are new operations, not in-place rewrites.
+- Kind changes are new events, not in-place rewrites.
 - `metadata_map` may hold kind-specific fields documented by owner docs.
 - Tombstoned nodes remain queryable through history and repair tools.
 - Normal projections hide tombstoned nodes unless the query asks for history.
