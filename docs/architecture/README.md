@@ -9,6 +9,7 @@
 - [graph/README.md](graph/README.md): graph record contracts.
 - [history/README.md](history/README.md): operation history contracts.
 - [text/README.md](text/README.md): CRDT text contracts.
+- [social/README.md](social/README.md): social post and feed contracts.
 - [sync/README.md](sync/README.md): sync contracts.
 - [transport/README.md](transport/README.md): live transport contracts.
 - [client/README.md](client/README.md): browser client contracts.

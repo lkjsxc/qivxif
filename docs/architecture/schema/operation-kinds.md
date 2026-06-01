@@ -21,7 +21,7 @@ Every durable mutation uses one of these operation kinds. Unknown kinds are reje
 | `sync.cursor_advance` | write | cursor | cursor id, position | cursor update | cursor id plus position | cannot move backward | no | yes |
 | `publish.post` | publish | blog post | slug, summary, public time | publication reducer | op id | slug conflict rejects | queued | yes |
 | `publish.unpublish` | publish | blog post | reason code | publication reducer | op id | already private is no-op | queued | yes |
-| `social.short_post_create` | write | short post | text ref, visibility | graph plus feed reducer | node id | duplicate returns prior acceptance | yes | yes |
+| `social.short_post_create` | write | short post | body, visibility, optional reply target | graph plus feed reducer | node id | duplicate returns prior acceptance | yes | yes |
 | `social.follow` | write | profiles | target profile | edge create | edge id | duplicate active edge is no-op | yes | yes |
 | `social.unfollow` | write | follow edge | edge id | edge tombstone | op id | missing active edge is no-op | yes | yes |
 

@@ -9,6 +9,7 @@ export async function loadLocalState(store, state) {
   const publicRoute = await store.get("sync_cursors", "last_public_route");
   state.auth = auth?.auth ?? state.auth;
   state.edges = await store.all("edges");
+  state.feedItems = await store.all("feed_windows");
   state.nodes = await store.all("nodes");
   state.currentNodeId = current?.node_id ?? state.currentNodeId;
   state.currentBlogPostId = currentBlog?.node_id ?? state.currentBlogPostId;

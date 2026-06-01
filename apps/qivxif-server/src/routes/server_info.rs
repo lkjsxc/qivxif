@@ -29,6 +29,8 @@ fn capabilities() -> Vec<Capability> {
         "graph.edge_create",
         "graph.neighborhood",
         "publish.blog",
+        "social.short_post",
+        "feed.home",
         "sync.http_push_pull",
         "client.offline_shell",
         "workspace.layout_set",

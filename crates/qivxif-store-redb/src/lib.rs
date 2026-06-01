@@ -3,6 +3,8 @@ mod codec;
 mod config;
 mod edge;
 mod error;
+mod feed;
+mod feed_support;
 mod graph;
 mod graph_query;
 mod history_query;
@@ -19,6 +21,7 @@ mod workspace;
 
 pub use config::StoreConfig;
 pub use error::{StoreError, StoreResult};
+pub use feed::{FeedItem, ShortPostInput, ShortPostResult};
 pub use graph::{EdgeCreateInput, EdgeCreateResult, NodeCreateInput, NodeCreateResult};
 pub use publish::{PublicBlogPost, PublishPostInput, PublishPostResult, UnpublishPostInput};
 pub use records::{OperationReceipt, StoredSession, StoredUser};

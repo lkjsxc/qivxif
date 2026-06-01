@@ -67,14 +67,16 @@ body {
 
 .login,
 .open-node,
-.publish form {
+.publish form,
+.social form {
   display: grid;
   gap: 8px;
 }
 
 .login label,
 .open-node label,
-.publish label {
+.publish label,
+.social label {
   display: grid;
   gap: 4px;
 }
@@ -100,4 +102,15 @@ body {
 .publish {
   margin-top: 16px;
   border-top: 1px solid #d7dde0;
+}
+
+.social {
+  margin-top: 16px;
+  border-top: 1px solid #d7dde0;
+}
+
+.social textarea {
+  box-sizing: border-box;
+  min-height: 80px;
+  width: 100%;
 }

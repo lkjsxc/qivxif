@@ -25,7 +25,7 @@ try {
 
   await context.setOffline(true);
   await page.getByRole("button", { name: "Create text node" }).click();
-  await page.locator("textarea").fill(proofText);
+  await page.locator(".editor").fill(proofText);
   await page.getByRole("button", { name: "Save text operation" }).click();
   await waitForLocalOps(page, 2);
   await waitForText(page, "Queued: 2", browserEvents);
@@ -57,7 +57,7 @@ try {
   await waitForText(page, "Layout panes: 2", browserEvents);
   await waitForText(page, "Board items: 1", browserEvents);
   assert(
-    (await page.locator("textarea").inputValue()) === proofText,
+    (await page.locator(".editor").inputValue()) === proofText,
     "offline text was not restored",
   );
   const status = await serverNodeStatus(context, nodeId);
@@ -79,7 +79,7 @@ try {
   await secondPage.getByLabel("Server node id").fill(nodeId);
   await secondPage.getByRole("button", { name: "Open node" }).click();
   await secondPage.waitForFunction(
-    (expected) => document.querySelector("textarea")?.value === expected,
+    (expected) => document.querySelector(".editor")?.value === expected,
     proofText,
   );
   await secondPage.getByText("node.create #1").waitFor();

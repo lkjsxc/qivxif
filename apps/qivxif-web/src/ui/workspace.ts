@@ -1,5 +1,6 @@
 import { renderBoardPane } from "./board.ts";
 import { renderPublishPane } from "./publish.ts";
+import { renderSocialPane } from "./social.ts";
 import { renderSyncStatus } from "./sync-status-pane.ts";
 
 export function renderWorkspace(root, state, actions) {
@@ -28,6 +29,7 @@ function graphPane(state, actions) {
     pane.append(actionButton("Maximize pane", () => actions.maximizePane?.()));
     pane.append(actionButton("Close pane", () => actions.closePane?.()));
     pane.append(renderPublishPane(state, actions));
+    pane.append(renderSocialPane(state, actions));
     pane.append(openNodeForm(actions));
   } else {
     pane.append(loginForm(actions));

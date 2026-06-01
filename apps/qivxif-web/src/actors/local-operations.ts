@@ -115,6 +115,37 @@ export function publishPostEntry(actorSeq, postNodeId, slug, summary) {
   };
 }
 
+export function shortPostCreateEntry(actorSeq, user, body) {
+  const nodeId = generateId("nod");
+  const opId = generateId("op");
+  const request = {
+    actor_seq: actorSeq,
+    body,
+    node_id: nodeId,
+    op_id: opId,
+    reply_to: null,
+    visibility: "public",
+  };
+  return {
+    entry: queueEntry(opId, "social.short_post_create", actorSeq, nodeId, "/api/social/short-posts", request),
+    feedItem: {
+      author_name: user.name,
+      author_user_id: user.user_id,
+      body,
+      created_at: new Date().toISOString(),
+      operation_id: opId,
+      post_node_id: nodeId,
+      visibility: "public",
+    },
+    node: {
+      id: nodeId,
+      dirty: true,
+      kind: "short_post",
+      metadata_map: { author_name: user.name, body, social_state: "posted" },
+    },
+  };
+}
+
 export function unpublishPostEntry(actorSeq, postNodeId, reason) {
   const opId = generateId("op");
   const request = { actor_seq: actorSeq, op_id: opId, reason };

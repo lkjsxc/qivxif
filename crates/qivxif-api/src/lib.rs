@@ -1,5 +1,6 @@
 mod envelope;
 mod routes;
+mod social;
 mod sync;
 
 pub use envelope::{
@@ -12,6 +13,7 @@ pub use routes::{
     PublishPayload, PublishRequest, ServerInfoPayload, TextOperationPayload, TextOperationRequest,
     TextPayload, UnpublishRequest, UserSummary, WorkspaceLayoutPayload, WorkspaceLayoutSetRequest,
 };
+pub use social::{FeedHomePayload, FeedItemPayload, ShortPostPayload, ShortPostRequest};
 pub use sync::{
     OperationAcceptance, OperationRejection, PullRequest, PullResponse, PushRequest, PushResponse,
 };

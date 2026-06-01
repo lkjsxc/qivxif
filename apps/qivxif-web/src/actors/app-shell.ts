@@ -6,6 +6,7 @@ import { addCurrentNodeToBoard, createBoard, linkBoardNodes, moveBoardItem } fro
 import { reserveActorSeq } from "./actor-seq.ts";
 import { textNodeCreateEntry, textRestoreEntry } from "./local-operations.ts";
 import { createBlogDraft, publishBlogPost, unpublishBlogPost } from "./publish-actions.ts";
+import { createShortPost } from "./social-actions.ts";
 import { loadLocalState, refreshCurrentNode } from "./state-loader.ts";
 import { flushQueue, refreshQueueState } from "./sync.ts";
 import { closePane, maximizePane, splitPane, stackTab } from "./workspace-actions.ts";
@@ -30,6 +31,7 @@ export async function startAppShell(root) {
     activeBoardId: "",
     currentBlogPost: null,
     currentBlogPostId: "",
+    feedItems: [],
     layout: null,
     layoutDirty: false,
     layoutNodeId: "",
@@ -68,6 +70,7 @@ function actionsFor(root, store, state) {
     login: (name, password) => run(root, store, state, () => loginUser(store, state, name, password)),
     openNode: (nodeId) => run(root, store, state, () => openNode(store, state, nodeId)),
     createBlogDraft: (title) => run(root, store, state, () => createBlogDraft(store, state, title)),
+    createShortPost: (body) => run(root, store, state, () => createShortPost(store, state, body)),
     publishBlogPost: (slug, summary) => run(root, store, state, () => publishBlogPost(store, state, slug, summary)),
     saveText: (content) => run(root, store, state, () => saveText(store, state, content)),
     selectNode: (nodeId) => run(root, store, state, () => selectNode(store, state, nodeId)),

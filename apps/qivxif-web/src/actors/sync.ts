@@ -100,6 +100,14 @@ async function acceptEntry(store, state, entry, payload) {
       node_id: payload.post.id,
     });
   }
+  if (entry.kind === "social.short_post_create") {
+    await store.put("nodes", { ...payload.post, dirty: false });
+    await store.put("feed_windows", {
+      dirty: false,
+      id: payload.feed_item.operation_id,
+      item: payload.feed_item,
+    });
+  }
   state.online = true;
   state.lastError = "";
 }

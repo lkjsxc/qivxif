@@ -26,7 +26,7 @@ try {
   await page.getByLabel("Blog title").fill(title);
   await page.getByRole("button", { name: "Create blog draft" }).click();
   await waitForText(page, "Queued: 3", browserEvents);
-  await page.locator("textarea").fill(body);
+  await page.locator(".editor").fill(body);
   await page.getByRole("button", { name: "Save text operation" }).click();
   await waitForText(page, "Queued: 4", browserEvents);
   await page.getByLabel("Slug").fill(slug);
@@ -38,7 +38,7 @@ try {
   await page.reload({ waitUntil: "domcontentloaded" });
   await waitForText(page, `Draft: ${title}`, browserEvents);
   await waitForText(page, "Queued: 5", browserEvents);
-  assert((await page.locator("textarea").inputValue()) === body, "draft body did not reload");
+  assert((await page.locator(".editor").inputValue()) === body, "draft body did not reload");
 
   await context.setOffline(false);
   await page.getByRole("button", { name: "Flush queue" }).click();
@@ -57,6 +57,20 @@ try {
   await page.getByRole("button", { name: "Unpublish" }).click();
   await waitForText(page, "State: unpublished", browserEvents, 15000);
   assert((await publicStatus(slug)) === 404, "unpublished post stayed public");
+
+  await context.setOffline(true);
+  await page.getByLabel("Short post").fill("offline social post");
+  await page.getByRole("button", { name: "Create short post" }).click();
+  await waitForText(page, "Queued: 1", browserEvents);
+  await waitForText(page, "offline social post", browserEvents);
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await waitForText(page, "offline social post", browserEvents);
+
+  await context.setOffline(false);
+  await page.getByRole("button", { name: "Flush queue" }).click();
+  await waitForText(page, "Queued: 0", browserEvents, 15000);
+  const feed = await homeFeed(context);
+  assert(feed.items.some((item) => item.body === "offline social post"), "feed item missing");
   await context.close();
 } finally {
   await browser.close();
@@ -106,6 +120,16 @@ async function publicHtml(slugValue) {
   const response = await fetch(`${base}/@admin/${slugValue}`);
   assert(response.status === 200, `public route returned ${response.status}`);
   return response.text();
+}
+
+async function homeFeed(context) {
+  const cookies = await context.cookies(base);
+  const cookie = cookies.map((item) => `${item.name}=${item.value}`).join("; ");
+  const response = await fetch(`${base}/api/feed/home?limit=10`, {
+    headers: { cookie },
+  });
+  assert(response.status === 200, `feed route returned ${response.status}`);
+  return (await response.json()).payload;
 }
 
 function captureBrowserEvents(page) {
