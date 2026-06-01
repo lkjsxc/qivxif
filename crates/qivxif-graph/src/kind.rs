@@ -24,6 +24,9 @@ pub enum NodeKind {
 pub enum EdgeKind {
     LinksTo,
     Contains,
+    ParentOf,
+    OrderedChild,
+    References,
     ReferencesText,
     TaggedWith,
     AuthoredBy,
@@ -38,6 +41,8 @@ pub enum EdgeKind {
     PlacedOnBoard,
     TileContainsPane,
     PaneViewsNode,
+    Supersedes,
+    Tombstones,
 }
 
 impl FromStr for NodeKind {

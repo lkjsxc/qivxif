@@ -12,6 +12,12 @@ pub enum GraphError {
     NodeMissing,
     #[error("edge missing")]
     EdgeMissing,
+    #[error("tree contains a cycle")]
+    TreeCycle,
+    #[error("tree child has multiple active parents")]
+    DuplicateActiveParent,
+    #[error("tree relation is tombstoned")]
+    TombstonedRelation,
     #[error("unknown node kind")]
     UnknownNodeKind,
     #[error("unknown edge kind")]

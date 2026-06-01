@@ -9,8 +9,16 @@ general graph.
 
 - Root node ID.
 - Accepted edge records.
-- Accepted tombstone events.
+- Accepted tombstone events or tombstoned edge records.
 - Optional owner-specific relation kinds.
+
+## Tombstones
+
+The normal current-state projection ignores tombstoned relation edges.
+
+History-oriented projections may surface tombstoned relation errors, but current
+product views must be able to represent moves by tombstoning the old edge and
+creating a new relation edge.
 
 ## Ordering
 
@@ -29,7 +37,7 @@ Tree projection surfaces these errors instead of hiding them:
 - Missing child node.
 - Cycle.
 - Duplicate active parent when the tree requires one parent.
-- Tombstoned relation.
+- Tombstoned relation in a history-oriented projection.
 
 ## Graph Links
 

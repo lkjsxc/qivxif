@@ -38,8 +38,9 @@
 
 - Event terms now match across docs, Rust, API DTOs, sync queues, and browser
   local event queues.
-- Tree projection is documented, but the Rust projection over relation events
-  still needs a dedicated implementation slice.
+- Tree projection over relation edges now has a pure Rust projection with
+  deterministic ordering, cycle detection, duplicate-parent detection, and
+  tombstone-aware move behavior.
 - Tile shell docs spell out the target grammar, but the browser drag resolver
   and retained inactive-tab snapshots still need implementation work.
 - Browser UI modules are split, and the hard surface boundary is documented;
@@ -47,7 +48,6 @@
 
 ## Next Implementation Changes
 
-- Implement tree projection over relation events.
 - Strengthen tile layout reducers around independent visible tab instances.
 - Add parity-grade tab movement and edge split drag behavior.
 - Expand browser persistence from a local event queue into accepted, dirty, and
