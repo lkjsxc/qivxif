@@ -31,8 +31,9 @@
   target indexes.
 - `qivxif-server` exposes setup, auth, graph, history, sync, text, tile layout,
   social, publishing, moderation, and static file routes.
-- `qivxif-web` already has TypeScript actor and UI modules, but tab movement and
-  split behavior are still command-heavy rather than parity-grade drag behavior.
+- `qivxif-web` has TypeScript actor and UI modules for shell rendering, tab
+  movement, drag splitting, tab rail reorder, pane-local drafts, and pane-local
+  scroll snapshots.
 
 ## Mismatches
 
@@ -41,14 +42,14 @@
 - Tree projection over relation edges now has a pure Rust projection with
   deterministic ordering, cycle detection, duplicate-parent detection, and
   tombstone-aware move behavior.
-- Tile shell docs spell out the target grammar, but the browser drag resolver
-  and retained inactive-tab snapshots still need implementation work.
+- Tile shell docs spell out the target grammar, and the browser now covers the
+  core tab move, split, reorder, draft, and scroll snapshot behavior.
 - Browser UI modules are split, and the hard surface boundary is documented;
   controller/reducer separation still needs a broader implementation pass.
 
 ## Next Implementation Changes
 
 - Strengthen tile layout reducers around independent visible tab instances.
-- Add parity-grade tab movement and edge split drag behavior.
 - Expand browser persistence from a local event queue into accepted, dirty, and
-  rejected event stores with tab snapshots.
+  rejected event inspection surfaces.
+- Improve command, diagnostics, and pane-level conflict surfaces.

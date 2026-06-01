@@ -12,10 +12,14 @@ The command palette exposes tile and graph actions without requiring hidden UI g
 - Split pane.
 - Stack tab.
 - Maximize pane.
+- Add current node to board.
+- Move board item.
+- Link board nodes.
 - Open sync status.
 - Open history.
-- Publish draft.
-- Create short post.
+- Open settings.
+- Open publishing tools.
+- Open social tools.
 
 ## Rules
 
@@ -24,10 +28,14 @@ The command palette exposes tile and graph actions without requiring hidden UI g
 - Unavailable commands explain the missing capability.
 - The palette opens from the header command button.
 - The palette opens with `Control+K` or `Meta+K`.
+- The search field is focused when the palette opens.
+- Filtering matches command label and disabled reason text.
 - `Escape` closes the palette.
 - Palette commands route through the same app action boundary as visible pane
   buttons.
 - Pane-sensitive commands use the active pane context.
+- Commands that need user input open the pane that owns the form instead of
+  inventing payload values.
 
 ## Current Command Routing
 
@@ -44,3 +52,9 @@ the same command contracts:
 | Add node to board | `node.create`, `edge.create` | queued |
 | Move board item | `node.create`, `edge.create` | queued |
 | Link board nodes | `edge.create` | queued |
+| Open graph | none | available |
+| Open sync status | none | available |
+| Open history | none | available |
+| Open settings | none | available |
+| Open publishing tools | none | available |
+| Open social tools | none | available |

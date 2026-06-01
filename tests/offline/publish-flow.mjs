@@ -24,6 +24,8 @@ try {
   await login(page, browserEvents);
   await page.keyboard.press("Control+K");
   await waitForText(page, "Command palette", browserEvents);
+  await page.getByLabel("Search commands").fill("settings");
+  assert((await page.getByRole("button", { name: "Open graph" }).count()) === 0, "palette filter kept graph visible");
   await page.getByRole("button", { name: "Open settings" }).click();
   await waitForText(page, "Account: admin", browserEvents);
 
