@@ -3,6 +3,9 @@ import { sendQueued } from "../http/client.ts";
 export async function refreshQueueState(store, state) {
   const entries = await store.all("events");
   state.queued = entries.filter((entry) => entry.status !== "accepted").length;
+  state.queueEntries = entries
+    .filter((entry) => entry.status !== "accepted")
+    .sort((left, right) => left.actor_seq - right.actor_seq);
   state.rejected = entries.filter((entry) => entry.status === "rejected").length;
   return entries;
 }

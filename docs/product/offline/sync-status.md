@@ -17,6 +17,10 @@
 - Server-required effects show `queued`, `pending validation`, `accepted`, or `rejected`.
 - Publishing, ACL changes, login, and slug checks are never shown as accepted before server response.
 - Every rejection links to the event id and error code.
+- Non-accepted queue entries are listed in actor sequence order.
+- Each queue row shows event kind, status, event id, route, and last error when
+  present.
+- Long ids and error details wrap inside the pane.
 - Cache pressure warnings distinguish dirty protected data from evictable projections.
 
 ## API Mapping

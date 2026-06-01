@@ -104,6 +104,7 @@ textarea {
 .publish form,
 .social form,
 .status,
+.queue-list,
 .layout-summary,
 .history,
 .node-list,
@@ -111,6 +112,16 @@ textarea {
 .social {
   display: grid;
   gap: 8px;
+}
+
+.queue-entry {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid var(--q-border);
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+  background: var(--q-bg-deep);
 }
 
 label {

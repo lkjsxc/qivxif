@@ -34,6 +34,8 @@ try {
   await page.getByLabel("Blog title").fill(title);
   await page.getByRole("button", { name: "Create blog draft" }).click();
   await waitForQueuedAtLeast(page, 3, browserEvents);
+  await openShellTab(page, "Sync");
+  await waitForText(page, "Event: node.create dirty", browserEvents);
   await openShellTab(page, "Editor");
   await page.locator(".editor").fill(body);
   await page.getByRole("button", { name: "Save text event" }).click();

@@ -19,6 +19,7 @@ export function initialState() {
     nodes: [],
     online: navigator.onLine,
     queued: 0,
+    queueEntries: [],
     rejected: 0,
     setupChecked: false,
     setupError: "",

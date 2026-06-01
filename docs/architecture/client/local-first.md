@@ -26,6 +26,8 @@ The browser event queue stores one record per pending durable mutation:
 - `last_error`: last structured rejection when present.
 
 `created_at` is never a sync cursor. The queue key is the event id.
+The sync actor exposes non-accepted queue entries to panes in actor sequence
+order so dirty and rejected state remains inspectable while offline.
 
 Login returns `next_actor_seq`. A fresh browser stores `next_actor_seq - 1`
 before reserving the first local actor sequence, so a second client for the
