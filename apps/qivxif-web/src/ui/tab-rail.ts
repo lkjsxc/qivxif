@@ -61,7 +61,7 @@ export function tabsFor(state) {
     ];
   }
   return [
-    { id: "home", label: "Home" },
+    { id: "welcome", label: "Welcome" },
     { id: "graph", label: "Graph" },
     { id: "editor", label: "Editor" },
     { id: "board", label: "Board" },

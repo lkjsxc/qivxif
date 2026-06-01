@@ -75,7 +75,7 @@ try {
   assert(boardStatus !== 200, "server accepted offline board before flush");
 
   await context.setOffline(false);
-  await openShellTab(page, "Home");
+  await openShellTab(page, "Welcome");
   await page.getByRole("button", { name: "Flush queue" }).click();
   try {
     await waitForText(page, "Queued: 0", browserEvents, 30000);
@@ -91,7 +91,7 @@ try {
   const secondEvents = captureBrowserEvents(secondPage);
   await loadShell(secondPage);
   await login(secondPage, secondEvents);
-  await openShellTab(secondPage, "Home");
+  await openShellTab(secondPage, "Welcome");
   await openServerNode(secondPage, nodeId);
   try {
     await secondPage.waitForFunction(
@@ -104,12 +104,12 @@ try {
   }
   await secondPage.getByText(/^node\.create #/).first().waitFor();
   await secondPage.getByText(/^text\.restore #/).first().waitFor();
-  await openShellTab(secondPage, "Home");
+  await openShellTab(secondPage, "Welcome");
   await openServerNode(secondPage, boardId);
   await openShellTab(secondPage, "Board");
   await secondPage.getByText("Board items: 1").first().waitFor();
   await secondPage.getByText("@ 160,144").first().waitFor();
-  await openShellTab(secondPage, "Home");
+  await openShellTab(secondPage, "Welcome");
   await openServerNode(secondPage, layoutId);
   await secondPage.getByText("Layout panes: 3").first().waitFor();
   await second.close();

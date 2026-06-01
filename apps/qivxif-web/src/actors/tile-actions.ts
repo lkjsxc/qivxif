@@ -157,7 +157,7 @@ function initialPaneSpec(state) {
   if (state.currentNodeId) {
     return { paneKind: "text_editor", targetNodeId: state.currentNodeId, title: "Text pane" };
   }
-  return { paneKind: "home", targetNodeId: null, title: "Home" };
+  return { paneKind: "welcome", targetNodeId: null, title: "Welcome" };
 }
 
 function tabSpec(tabId, state) {
@@ -169,13 +169,13 @@ function tabSpec(tabId, state) {
     editor: ["text_editor", "Text Node"],
     graph: ["graph_node", "Graph Node"],
     history: ["history", "History"],
-    home: ["home", "Home"],
     publish: ["publishing", "Publishing"],
     settings: ["settings", "Settings"],
     social: ["social_feed", "Social"],
     sync: ["sync_status", "Sync Status"],
+    welcome: ["welcome", "Welcome"],
   };
-  const [paneKind, title] = specs[tabId] ?? ["home", "Home"];
+  const [paneKind, title] = specs[tabId] ?? ["welcome", "Welcome"];
   return { paneKind, targetNodeId, title };
 }
 

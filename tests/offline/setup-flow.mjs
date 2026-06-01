@@ -27,11 +27,11 @@ try {
   await page.getByLabel("Password").fill("secret");
   await page.getByRole("button", { name: "Create owner account" }).click();
   await waitForText(page, "Signed in as admin", events, 15000);
-  await page.getByRole("tab", { name: "Home" }).waitFor();
+  await page.getByRole("tab", { name: "Welcome" }).waitFor();
   await page.getByRole("button", { name: "Create text node" }).waitFor();
   await page.reload({ waitUntil: "domcontentloaded" });
   await waitForText(page, "Signed in as admin", events, 15000);
-  await page.getByRole("tab", { name: "Home" }).waitFor();
+  await page.getByRole("tab", { name: "Welcome" }).waitFor();
   await context.close();
 } finally {
   await browser.close();

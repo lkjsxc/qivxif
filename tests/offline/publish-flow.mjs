@@ -51,7 +51,7 @@ try {
   assert((await page.locator(".editor").inputValue()) === body, "draft body did not reload");
 
   await context.setOffline(false);
-  await openShellTab(page, "Home");
+  await openShellTab(page, "Welcome");
   await page.getByRole("button", { name: "Flush queue" }).click();
   await waitForText(page, "Queued: 0", browserEvents, 15000);
   await openShellTab(page, "Publish");
@@ -82,7 +82,7 @@ try {
   await waitForText(page, "offline social post", browserEvents);
 
   await context.setOffline(false);
-  await openShellTab(page, "Home");
+  await openShellTab(page, "Welcome");
   await page.getByRole("button", { name: "Flush queue" }).click();
   await waitForText(page, "Queued: 0", browserEvents, 15000);
   const feed = await homeFeed(context);

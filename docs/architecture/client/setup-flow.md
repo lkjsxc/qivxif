@@ -25,7 +25,7 @@ The app shell owns setup state:
 2. The response is stored through the same auth helper used by login.
 3. The actor sequence cursor is persisted before queued mutations start.
 4. `setupRequired` becomes false.
-5. The active tab becomes Home or Graph.
+5. The active tab becomes Welcome or Graph.
 
 ## Render Rules
 

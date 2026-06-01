@@ -32,12 +32,12 @@ export function renderTabContent(state, actions) {
     case "diagnostics":
       return diagnosticsPanel(state);
     default:
-      return homePanel(state, actions);
+      return welcomePanel(state, actions);
   }
 }
 
-function homePanel(state, actions) {
-  const section = panel("tab-panel home", heading("Home"));
+function welcomePanel(state, actions) {
+  const section = panel("tab-panel welcome", heading("Welcome"));
   if (state.auth) {
     section.append(actionButton("Create text node", () => actions.createTextNode?.()));
     section.append(actionButton("Create board", () => actions.createBoard?.()));

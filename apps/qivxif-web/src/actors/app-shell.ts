@@ -146,7 +146,7 @@ async function run(root, store, state, action) {
 
 async function loginUser(store, state, name, password) {
   await storeAuthPayload(store, state, await login(name, password));
-  state.activeTabId = "home";
+  state.activeTabId = "welcome";
 }
 
 async function createOwnerAccount(store, state, name, password) {
@@ -154,7 +154,7 @@ async function createOwnerAccount(store, state, name, password) {
   state.setupRequired = false;
   state.setupChecked = true;
   state.setupError = "";
-  state.activeTabId = "home";
+  state.activeTabId = "welcome";
 }
 
 function selectInitialTab(state) {

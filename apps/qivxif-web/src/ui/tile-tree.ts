@@ -114,7 +114,6 @@ function tabKindToPanel(kind) {
     graph_board: "board",
     graph_node: "graph",
     history: "history",
-    home: "home",
     login: "login",
     publishing: "publish",
     settings: "settings",
@@ -122,8 +121,9 @@ function tabKindToPanel(kind) {
     social_feed: "social",
     sync_status: "sync",
     text_editor: "editor",
+    welcome: "welcome",
   };
-  return panels[kind] ?? "home";
+  return panels[kind] ?? "welcome";
 }
 
 function boundedActive(stack) {
@@ -160,8 +160,9 @@ function paneKindForPanel(panel) {
     settings: "settings",
     social: "social_feed",
     sync: "sync_status",
+    welcome: "welcome",
   };
-  return kinds[panel] ?? "home";
+  return kinds[panel] ?? "welcome";
 }
 
 function titleForPanel(panel) {
@@ -177,6 +178,7 @@ function titleForPanel(panel) {
     settings: "Settings",
     social: "Social",
     sync: "Sync",
+    welcome: "Welcome",
   };
-  return titles[panel] ?? "Home";
+  return titles[panel] ?? "Welcome";
 }

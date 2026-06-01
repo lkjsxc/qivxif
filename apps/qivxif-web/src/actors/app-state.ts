@@ -2,7 +2,7 @@ export function initialState() {
   return {
     activeBoardId: "",
     activePaneId: "",
-    activeTabId: "home",
+    activeTabId: "welcome",
     auth: null,
     capabilities: [],
     commandPaletteOpen: false,
