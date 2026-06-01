@@ -182,6 +182,7 @@
 - [repository/rules/limits.md](repository/rules/limits.md)
 - [repository/workflow/README.md](repository/workflow/README.md)
 - [repository/workflow/commit-policy.md](repository/workflow/commit-policy.md)
+- [repository/workflow/current-shell-and-event-audit.md](repository/workflow/current-shell-and-event-audit.md)
 - [repository/workflow/docs-first.md](repository/workflow/docs-first.md)
 - [repository/workflow/implementation-slices.md](repository/workflow/implementation-slices.md)
 - [research/README.md](research/README.md)
