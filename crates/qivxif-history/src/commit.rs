@@ -9,7 +9,7 @@ pub enum CommitGroupKind {
     EditText,
     LinkNodes,
     PublishPost,
-    WorkspaceChange,
+    TileChange,
     SocialAction,
 }
 

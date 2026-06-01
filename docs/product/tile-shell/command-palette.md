@@ -32,9 +32,9 @@ Those buttons still use the command contracts:
 | --- | --- | --- |
 | Create text node | `node.create` | queued |
 | Create board | `node.create` | queued |
-| Split pane | `node.create`, `edge.create`, `workspace.layout_set` | queued |
-| Stack tab | `node.create`, `edge.create`, `workspace.layout_set` | queued |
-| Maximize pane | `workspace.layout_set` | queued |
+| Split pane | `node.create`, `edge.create`, `tile.layout_set` | queued |
+| Stack tab | `node.create`, `edge.create`, `tile.layout_set` | queued |
+| Maximize pane | `tile.layout_set` | queued |
 | Add node to board | `node.create`, `edge.create` | queued |
 | Move board item | `node.create`, `edge.create` | queued |
 | Link board nodes | `edge.create` | queued |

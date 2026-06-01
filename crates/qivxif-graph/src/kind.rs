@@ -14,7 +14,7 @@ pub enum NodeKind {
     GraphBoard,
     BoardItem,
     Media,
-    WorkspaceLayout,
+    TileLayout,
     Pane,
     FeedWindow,
 }
@@ -36,7 +36,7 @@ pub enum EdgeKind {
     Mutes,
     Blocks,
     PlacedOnBoard,
-    WorkspaceContainsPane,
+    TileContainsPane,
     PaneViewsNode,
 }
 

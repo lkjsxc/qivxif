@@ -10,29 +10,29 @@ use axum::{
     response::{IntoResponse, Response},
     routing::post,
 };
-use qivxif_api::{OperationAcceptance, WorkspaceLayoutPayload, WorkspaceLayoutSetRequest};
-use qivxif_store_redb::{OperationReceipt, WorkspaceLayoutSetInput};
+use qivxif_api::{OperationAcceptance, TileLayoutPayload, TileLayoutSetRequest};
+use qivxif_store_redb::{OperationReceipt, TileLayoutSetInput};
 
 pub fn routes() -> Router<AppState> {
-    Router::new().route("/api/workspace/layout", post(set_layout))
+    Router::new().route("/api/tile-layout", post(set_layout))
 }
 
 async fn set_layout(
     State(state): State<AppState>,
     headers: HeaderMap,
-    Json(request): Json<WorkspaceLayoutSetRequest>,
+    Json(request): Json<TileLayoutSetRequest>,
 ) -> Response {
-    let caps = workspace_capabilities();
+    let caps = tile_capabilities();
     let Some(session_user) = load_session_user(&state, &headers) else {
-        return auth_missing::<WorkspaceLayoutPayload>(caps).into_response();
+        return auth_missing::<TileLayoutPayload>(caps).into_response();
     };
     if !csrf_matches(&headers, &session_user.session) {
-        return csrf_missing::<WorkspaceLayoutPayload>(caps).into_response();
+        return csrf_missing::<TileLayoutPayload>(caps).into_response();
     }
     let auth = auth_context(&session_user);
-    let result = state.store.set_workspace_layout(
+    let result = state.store.set_tile_layout(
         &auth,
-        WorkspaceLayoutSetInput {
+        TileLayoutSetInput {
             op_id: request.op_id,
             actor_seq: request.actor_seq,
             actor_id: session_user.user.actor_id,
@@ -42,14 +42,14 @@ async fn set_layout(
     );
     match result {
         Ok(result) => ok(
-            WorkspaceLayoutPayload {
+            TileLayoutPayload {
                 layout_node: result.layout_node,
                 operation: acceptance(result.receipt),
             },
             caps,
         )
         .into_response(),
-        Err(error) => graph_store_error::<WorkspaceLayoutPayload>(error, caps).into_response(),
+        Err(error) => graph_store_error::<TileLayoutPayload>(error, caps).into_response(),
     }
 }
 
@@ -60,6 +60,6 @@ fn acceptance(receipt: OperationReceipt) -> OperationAcceptance {
     }
 }
 
-fn workspace_capabilities() -> Vec<qivxif_core::Capability> {
-    capabilities(&["workspace.layout_set"])
+fn tile_capabilities() -> Vec<qivxif_core::Capability> {
+    capabilities(&["tile.layout_set"])
 }

@@ -4,44 +4,44 @@ use crate::{
 };
 use qivxif_auth::{AuthContext, Viewer, can_write};
 use qivxif_core::{ActorId, NodeId, OperationId, ServerTime};
-use qivxif_graph::{NodeKind, NodeRecord, WorkspaceLayout};
+use qivxif_graph::{NodeKind, NodeRecord, TileLayout};
 use qivxif_history::{
     OperationEnvelope, OperationKind, OperationPayload, OperationScope, hash_payload,
 };
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct WorkspaceLayoutSetInput {
+pub struct TileLayoutSetInput {
     pub op_id: OperationId,
     pub actor_seq: u64,
     pub actor_id: ActorId,
     pub layout_node_id: NodeId,
-    pub layout: WorkspaceLayout,
+    pub layout: TileLayout,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct WorkspaceLayoutSetResult {
+pub struct TileLayoutSetResult {
     pub layout_node: NodeRecord,
     pub receipt: OperationReceipt,
 }
 
 impl QivxifStore {
-    pub fn set_workspace_layout(
+    pub fn set_tile_layout(
         &self,
         auth: &AuthContext,
-        input: WorkspaceLayoutSetInput,
-    ) -> StoreResult<WorkspaceLayoutSetResult> {
-        let op = workspace_envelope(&input)?;
-        self.accept_workspace_layout_op(auth, op, input.layout)
+        input: TileLayoutSetInput,
+    ) -> StoreResult<TileLayoutSetResult> {
+        let op = tile_envelope(&input)?;
+        self.accept_tile_layout_op(auth, op, input.layout)
     }
 
-    pub(crate) fn accept_workspace_layout_op(
+    pub(crate) fn accept_tile_layout_op(
         &self,
         auth: &AuthContext,
         op: OperationEnvelope,
-        layout: WorkspaceLayout,
-    ) -> StoreResult<WorkspaceLayoutSetResult> {
+        layout: TileLayout,
+    ) -> StoreResult<TileLayoutSetResult> {
         if self.get_operation(&op.op_id)?.is_some() {
-            return self.workspace_layout_replay(&op);
+            return self.tile_layout_replay(&op);
         }
         let Some(layout_node_id) = op.target_node_ids.first().cloned() else {
             return Err(StoreError::InvalidOperation);
@@ -52,7 +52,7 @@ impl QivxifStore {
         let mut node = self
             .get_node(&layout_node_id)?
             .ok_or(StoreError::NodeMissing)?;
-        if node.kind != NodeKind::WorkspaceLayout || !can_write(auth, &node) {
+        if node.kind != NodeKind::TileLayout || !can_write(auth, &node) {
             return Err(StoreError::Forbidden);
         }
         let layout_json =
@@ -66,16 +66,13 @@ impl QivxifStore {
             nodes.insert(node.id.as_str(), encode(&node)?.as_slice())?;
         }
         tx.commit()?;
-        Ok(WorkspaceLayoutSetResult {
+        Ok(TileLayoutSetResult {
             layout_node: node,
             receipt,
         })
     }
 
-    fn workspace_layout_replay(
-        &self,
-        op: &OperationEnvelope,
-    ) -> StoreResult<WorkspaceLayoutSetResult> {
+    fn tile_layout_replay(&self, op: &OperationEnvelope) -> StoreResult<TileLayoutSetResult> {
         let layout_node_id = op
             .target_node_ids
             .first()
@@ -86,22 +83,22 @@ impl QivxifStore {
         let receipt = self
             .operation_receipt(&op.op_id)?
             .ok_or(StoreError::OperationConflict)?;
-        Ok(WorkspaceLayoutSetResult {
+        Ok(TileLayoutSetResult {
             layout_node,
             receipt,
         })
     }
 }
 
-fn workspace_envelope(input: &WorkspaceLayoutSetInput) -> StoreResult<OperationEnvelope> {
+fn tile_envelope(input: &TileLayoutSetInput) -> StoreResult<OperationEnvelope> {
     let bytes = serde_json::to_vec(&input.layout).map_err(|_| StoreError::InvalidOperation)?;
     Ok(OperationEnvelope {
         op_id: input.op_id.clone(),
         actor_id: input.actor_id.clone(),
         actor_seq: input.actor_seq,
         parents: Vec::new(),
-        scope: OperationScope::Workspace,
-        kind: OperationKind::WorkspaceLayoutSet,
+        scope: OperationScope::Tile,
+        kind: OperationKind::TileLayoutSet,
         target_node_ids: vec![input.layout_node_id.clone()],
         payload: OperationPayload {
             bytes: bytes.clone(),

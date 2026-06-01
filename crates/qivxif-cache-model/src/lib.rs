@@ -21,7 +21,7 @@ pub enum CacheEntryKind {
     PublicNodeBody,
     DirtyOperation,
     LocalOnlyNode,
-    CurrentWorkspaceLayout,
+    CurrentTileLayout,
     CacheManifest,
     EvictionJournal,
 }
@@ -108,7 +108,7 @@ fn protected(entry: &CacheEntry) -> bool {
             entry.kind,
             CacheEntryKind::DirtyOperation
                 | CacheEntryKind::LocalOnlyNode
-                | CacheEntryKind::CurrentWorkspaceLayout
+                | CacheEntryKind::CurrentTileLayout
                 | CacheEntryKind::CacheManifest
                 | CacheEntryKind::EvictionJournal
         )

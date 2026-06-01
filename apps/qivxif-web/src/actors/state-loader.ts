@@ -2,10 +2,10 @@ import { neighborhood, node, nodeHistory, text } from "../http/client.ts";
 
 export async function loadLocalState(store, state) {
   const auth = await store.get("sync_cursors", "auth");
-  const current = await store.get("workspace_layout", "current_node");
-  const currentBlog = await store.get("workspace_layout", "current_blog_post");
-  const board = await store.get("workspace_layout", "active_board");
-  const layout = await store.get("workspace_layout", "workspace_model");
+  const current = await store.get("tile_layout", "current_node");
+  const currentBlog = await store.get("tile_layout", "current_blog_post");
+  const board = await store.get("tile_layout", "active_board");
+  const layout = await store.get("tile_layout", "tile_model");
   const publicRoute = await store.get("sync_cursors", "last_public_route");
   state.auth = auth?.auth ?? state.auth;
   state.edges = await store.all("edges");
@@ -45,17 +45,17 @@ export async function refreshCurrentNode(store, state) {
   if (nodePayload.projection.node.kind === "graph_board") {
     state.activeTabId = "board";
     state.activeBoardId = state.currentNodeId;
-    await store.put("workspace_layout", { id: "active_board", node_id: state.currentNodeId });
+    await store.put("tile_layout", { id: "active_board", node_id: state.currentNodeId });
     await refreshNeighborhood(store, state.currentNodeId);
   }
-  if (nodePayload.projection.node.kind === "workspace_layout") {
+  if (nodePayload.projection.node.kind === "tile_layout") {
     const layoutJson = nodePayload.projection.node.metadata_map?.layout_json;
     if (layoutJson) {
       state.layout = JSON.parse(layoutJson);
       state.layoutNodeId = state.currentNodeId;
-      await store.put("workspace_layout", {
+      await store.put("tile_layout", {
         dirty: false,
-        id: "workspace_model",
+        id: "tile_model",
         layout: state.layout,
         layout_node_id: state.currentNodeId,
       });
@@ -64,7 +64,7 @@ export async function refreshCurrentNode(store, state) {
   if (nodePayload.projection.node.kind === "blog_post") {
     state.currentBlogPostId = state.currentNodeId;
     state.currentBlogPost = nodePayload.projection.node;
-    await store.put("workspace_layout", {
+    await store.put("tile_layout", {
       id: "current_blog_post",
       node_id: state.currentNodeId,
     });

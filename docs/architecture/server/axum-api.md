@@ -21,7 +21,7 @@ Every `/api` response uses [../schema/api-envelope.md](../schema/api-envelope.md
 | `POST` | `/api/edges` | session | yes | edge create request | edge record and operation acceptance | appends operation, writes edge and indexes | local op queues first |
 | `GET` | `/api/nodes/{node_id}/edges` | viewer | no | direction and limit query | edge list | none | IndexedDB may satisfy stale read |
 | `GET` | `/api/graph/neighborhood` | viewer | no | node, depth, limit query | bounded graph projection | none | IndexedDB may satisfy stale read |
-| `POST` | `/api/workspace/layout` | session | yes | layout set request | layout node and operation acceptance | appends layout op, writes layout metadata | local op queues first |
+| `POST` | `/api/tile-layout` | session | yes | layout set request | layout node and operation acceptance | appends layout op, writes layout metadata | local op queues first |
 | `POST` | `/api/sync/push` | session | yes | operation batch | accepted and rejected operation results | appends accepted operations | queued while offline |
 | `GET` | `/api/sync/pull` | session | no | cursor, scope, limit query | operation batch and cursor | none | resumes after reconnect |
 | `GET` | `/api/text/{node_id}` | viewer | no | none | text document projection | none | IndexedDB may satisfy stale read |
@@ -90,18 +90,18 @@ The server supplies owner, actor, receive time, operation payload hash, and curr
 
 The server requires write access on `from_node` and read access on `to_node`. Repeating the same `op_id` returns the prior acceptance.
 
-## Workspace Layout Payloads
+## Tile Layout Payloads
 
-`POST /api/workspace/layout` requires:
+`POST /api/tile-layout` requires:
 
 - `op_id`
 - `actor_seq`
 - `layout_node_id`
 - `layout`
 
-The target node must be a `workspace_layout` node owned by the actor or writable
+The target node must be a `tile_layout` node owned by the actor or writable
 by an admin. The server stores the canonical layout JSON in node metadata and
-appends `workspace.layout_set`. Repeating the same `op_id` returns the prior
+appends `tile.layout_set`. Repeating the same `op_id` returns the prior
 acceptance.
 
 ## Graph Query Payloads

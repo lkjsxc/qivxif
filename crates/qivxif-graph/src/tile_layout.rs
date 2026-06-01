@@ -2,23 +2,23 @@ use qivxif_core::NodeId;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct WorkspaceLayout {
-    pub root: WorkspaceTile,
+pub struct TileLayout {
+    pub root: TileTree,
     pub maximized_pane_id: Option<NodeId>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
-pub enum WorkspaceTile {
+pub enum TileTree {
     Split {
         axis: SplitAxis,
         ratio_percent: u8,
-        first: Box<WorkspaceTile>,
-        second: Box<WorkspaceTile>,
+        first: Box<TileTree>,
+        second: Box<TileTree>,
     },
     Stack {
         active: usize,
-        tabs: Vec<WorkspaceTab>,
+        tabs: Vec<TileTab>,
     },
 }
 
@@ -30,24 +30,22 @@ pub enum SplitAxis {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct WorkspaceTab {
+pub struct TileTab {
     pub pane_node_id: NodeId,
     pub pane_kind: String,
     pub target_node_id: Option<NodeId>,
     pub title: String,
 }
 
-impl WorkspaceLayout {
+impl TileLayout {
     pub fn pane_count(&self) -> usize {
         tile_pane_count(&self.root)
     }
 }
 
-fn tile_pane_count(tile: &WorkspaceTile) -> usize {
+fn tile_pane_count(tile: &TileTree) -> usize {
     match tile {
-        WorkspaceTile::Split { first, second, .. } => {
-            tile_pane_count(first) + tile_pane_count(second)
-        }
-        WorkspaceTile::Stack { tabs, .. } => tabs.len(),
+        TileTree::Split { first, second, .. } => tile_pane_count(first) + tile_pane_count(second),
+        TileTree::Stack { tabs, .. } => tabs.len(),
     }
 }

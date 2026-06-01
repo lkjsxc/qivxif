@@ -66,7 +66,7 @@ async function acceptEntry(store, state, entry, payload) {
     }
     if (payload.node.kind === "graph_board") {
       state.activeBoardId = payload.node.id;
-      await store.put("workspace_layout", { id: "active_board", node_id: payload.node.id });
+      await store.put("tile_layout", { id: "active_board", node_id: payload.node.id });
     }
   }
   if (entry.kind === "edge.create") {
@@ -80,11 +80,11 @@ async function acceptEntry(store, state, entry, payload) {
     });
     state.text = payload.state.content;
   }
-  if (entry.kind === "workspace.layout_set") {
+  if (entry.kind === "tile.layout_set") {
     await store.put("nodes", { ...payload.layout_node, dirty: false });
-    await store.put("workspace_layout", {
+    await store.put("tile_layout", {
       dirty: false,
-      id: "workspace_model",
+      id: "tile_model",
       layout: entry.request.layout,
       layout_node_id: entry.request.layout_node_id,
     });
@@ -95,7 +95,7 @@ async function acceptEntry(store, state, entry, payload) {
     await store.put("nodes", { ...payload.post, dirty: false });
     state.currentBlogPost = payload.post;
     state.currentBlogPostId = payload.post.id;
-    await store.put("workspace_layout", {
+    await store.put("tile_layout", {
       id: "current_blog_post",
       node_id: payload.post.id,
     });

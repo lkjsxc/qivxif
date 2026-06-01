@@ -15,7 +15,7 @@ import {
 import { loadLocalState, refreshCurrentNode } from "./state-loader.ts";
 import { flushQueue, refreshQueueState } from "./sync.ts";
 import { createTextNode, openNode, saveText, selectNode } from "./text-actions.ts";
-import { closePane, maximizePane, splitPane, stackTab } from "./workspace-actions.ts";
+import { closePane, maximizePane, splitPane, stackTab } from "./tile-actions.ts";
 
 export async function startAppShell(root) {
   if (!root) {

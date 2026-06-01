@@ -36,7 +36,7 @@ fn capabilities() -> Vec<Capability> {
         "sync.http_push_pull",
         "client.offline_shell",
         "setup.owner_create",
-        "workspace.layout_set",
+        "tile.layout_set",
     ]
     .into_iter()
     .filter_map(|value| value.parse().ok())

@@ -12,7 +12,7 @@ pub use routes::{
     LoginRequest, LogoutPayload, MePayload, NeighborhoodPayload, NodeCreatePayload,
     NodeCreateRequest, NodeHistoryPayload, NodePayload, OperationSummary, PublicBlogPostPayload,
     PublishPayload, PublishRequest, ServerInfoPayload, TextOperationPayload, TextOperationRequest,
-    TextPayload, UnpublishRequest, UserSummary, WorkspaceLayoutPayload, WorkspaceLayoutSetRequest,
+    TextPayload, TileLayoutPayload, TileLayoutSetRequest, UnpublishRequest, UserSummary,
 };
 pub use setup::{SetupOwnerPayload, SetupOwnerRequest, SetupStatusPayload};
 pub use social::{

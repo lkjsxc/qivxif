@@ -8,7 +8,7 @@ export async function createBoard(store, state) {
   });
   await store.put("ops", board.entry);
   await store.put("nodes", board.node);
-  await store.put("workspace_layout", { id: "active_board", node_id: board.node.id });
+  await store.put("tile_layout", { id: "active_board", node_id: board.node.id });
   state.activeBoardId = board.node.id;
   state.activeTabId = "board";
 }

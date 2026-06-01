@@ -81,7 +81,7 @@ export function edgeCreateEntry(actorSeq, fromNode, toNode, kind, metadataMap) {
   };
 }
 
-export function workspaceLayoutSetEntry(actorSeq, layoutNodeId, layout) {
+export function tileLayoutSetEntry(actorSeq, layoutNodeId, layout) {
   const opId = generateId("op");
   const request = {
     actor_seq: actorSeq,
@@ -92,15 +92,15 @@ export function workspaceLayoutSetEntry(actorSeq, layoutNodeId, layout) {
   return {
     entry: queueEntry(
       opId,
-      "workspace.layout_set",
+      "tile.layout_set",
       actorSeq,
       layoutNodeId,
-      "/api/workspace/layout",
+      "/api/tile-layout",
       request,
     ),
     layoutRecord: {
       dirty: true,
-      id: "workspace_model",
+      id: "tile_model",
       layout,
       layout_node_id: layoutNodeId,
     },

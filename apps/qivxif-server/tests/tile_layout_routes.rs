@@ -2,23 +2,23 @@ mod support;
 
 use axum::http::StatusCode;
 use qivxif_api::{
-    ApiEnvelope, NodeCreatePayload, NodeCreateRequest, NodePayload, WorkspaceLayoutPayload,
-    WorkspaceLayoutSetRequest,
+    ApiEnvelope, NodeCreatePayload, NodeCreateRequest, NodePayload, TileLayoutPayload,
+    TileLayoutSetRequest,
 };
 use qivxif_core::{MetadataMap, NodeId, OperationId, Visibility};
-use qivxif_graph::{NodeKind, WorkspaceLayout, WorkspaceTab, WorkspaceTile};
+use qivxif_graph::{NodeKind, TileLayout, TileTab, TileTree};
 use qivxif_server::routes;
 use support::{get, login_full, post_json, read_json, seeded_state};
 use tower::ServiceExt;
 
 #[tokio::test]
-async fn accepts_workspace_layout_snapshot() {
-    let app = routes::router(seeded_state("workspace-layout"));
+async fn accepts_tile_layout_snapshot() {
+    let app = routes::router(seeded_state("tile-layout"));
     let login = login_full(&app).await;
     let layout_node = create_layout_node(&app, &login).await;
     let pane_node = create_pane_node(&app, &login).await;
     let op_id = OperationId::generate();
-    let request = WorkspaceLayoutSetRequest {
+    let request = TileLayoutSetRequest {
         op_id: op_id.clone(),
         actor_seq: 3,
         layout_node_id: layout_node.clone(),
@@ -28,7 +28,7 @@ async fn accepts_workspace_layout_snapshot() {
     let response = app
         .clone()
         .oneshot(post_json(
-            "/api/workspace/layout",
+            "/api/tile-layout",
             &request,
             Some(&login.cookie),
             Some(&login.csrf),
@@ -36,21 +36,21 @@ async fn accepts_workspace_layout_snapshot() {
         .await
         .unwrap();
     assert_eq!(response.status(), StatusCode::OK);
-    let envelope: ApiEnvelope<WorkspaceLayoutPayload> = read_json(response).await;
+    let envelope: ApiEnvelope<TileLayoutPayload> = read_json(response).await;
     let accepted = envelope.payload.unwrap();
     assert_eq!(accepted.operation.op_id, op_id);
 
     let duplicate = app
         .clone()
         .oneshot(post_json(
-            "/api/workspace/layout",
+            "/api/tile-layout",
             &request,
             Some(&login.cookie),
             Some(&login.csrf),
         ))
         .await
         .unwrap();
-    let envelope: ApiEnvelope<WorkspaceLayoutPayload> = read_json(duplicate).await;
+    let envelope: ApiEnvelope<TileLayoutPayload> = read_json(duplicate).await;
     assert_eq!(envelope.payload.unwrap().operation, accepted.operation);
 
     let response = app
@@ -66,7 +66,7 @@ async fn accepts_workspace_layout_snapshot() {
 }
 
 async fn create_layout_node(app: &axum::Router, login: &support::TestLogin) -> NodeId {
-    create_node(app, login, 1, NodeKind::WorkspaceLayout).await
+    create_node(app, login, 1, NodeKind::TileLayout).await
 }
 
 async fn create_pane_node(app: &axum::Router, login: &support::TestLogin) -> NodeId {
@@ -103,12 +103,12 @@ async fn create_node(
     node_id
 }
 
-fn layout(pane_node_id: NodeId) -> WorkspaceLayout {
-    WorkspaceLayout {
+fn layout(pane_node_id: NodeId) -> TileLayout {
+    TileLayout {
         maximized_pane_id: Some(pane_node_id.clone()),
-        root: WorkspaceTile::Stack {
+        root: TileTree::Stack {
             active: 0,
-            tabs: vec![WorkspaceTab {
+            tabs: vec![TileTab {
                 pane_kind: "text_editor".to_owned(),
                 pane_node_id,
                 target_node_id: None,

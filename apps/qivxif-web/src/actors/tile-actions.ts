@@ -1,5 +1,5 @@
 import { reserveActorSeq } from "./actor-seq.ts";
-import { edgeCreateEntry, nodeCreateEntry, workspaceLayoutSetEntry } from "./local-operations.ts";
+import { edgeCreateEntry, nodeCreateEntry, tileLayoutSetEntry } from "./local-operations.ts";
 
 export async function splitPane(store, state) {
   requireAuth(state);
@@ -52,13 +52,13 @@ export async function closePane(store, state) {
 }
 
 export async function ensureLayout(store, state) {
-  const current = await store.get("workspace_layout", "workspace_model");
+  const current = await store.get("tile_layout", "tile_model");
   if (current?.layout_node_id && current?.layout) {
     state.layout = current.layout;
     state.layoutNodeId = current.layout_node_id;
     return current;
   }
-  const layout = await createNode(store, "workspace_layout", { title: "Tile layout" });
+  const layout = await createNode(store, "tile_layout", { title: "Tile layout" });
   const pane = await createPane(store, state, state.currentNodeId, "Text pane");
   const initial = {
     maximized_pane_id: null,
@@ -66,12 +66,12 @@ export async function ensureLayout(store, state) {
   };
   const record = {
     dirty: true,
-    id: "workspace_model",
+    id: "tile_model",
     layout: initial,
     layout_node_id: layout.node.id,
   };
-  await link(store, layout.node.id, pane.node.id, "workspace_contains_pane", { slot: "root" });
-  await store.put("workspace_layout", record);
+  await link(store, layout.node.id, pane.node.id, "tile_contains_pane", { slot: "root" });
+  await store.put("tile_layout", record);
   state.layout = initial;
   state.layoutNodeId = layout.node.id;
   return record;
@@ -79,9 +79,9 @@ export async function ensureLayout(store, state) {
 
 async function createPane(store, state, targetNodeId, title) {
   const pane = await createNode(store, "pane", { pane_kind: "text_editor", title });
-  const model = await store.get("workspace_layout", "workspace_model");
+  const model = await store.get("tile_layout", "tile_model");
   if (model?.layout_node_id) {
-    await link(store, model.layout_node_id, pane.node.id, "workspace_contains_pane", { slot: title });
+    await link(store, model.layout_node_id, pane.node.id, "tile_contains_pane", { slot: title });
   }
   if (targetNodeId) {
     await link(store, pane.node.id, targetNodeId, "pane_views_node", { pane_kind: "text_editor" });
@@ -104,9 +104,9 @@ async function link(store, fromNode, toNode, kind, metadata) {
 }
 
 async function queueLayout(store, state, layoutNodeId, layout) {
-  const created = workspaceLayoutSetEntry(await reserveActorSeq(store), layoutNodeId, layout);
+  const created = tileLayoutSetEntry(await reserveActorSeq(store), layoutNodeId, layout);
   await store.put("ops", created.entry);
-  await store.put("workspace_layout", created.layoutRecord);
+  await store.put("tile_layout", created.layoutRecord);
   state.layout = layout;
   state.layoutNodeId = layoutNodeId;
 }

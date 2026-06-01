@@ -47,8 +47,8 @@ try {
   const localBefore = await localState(page);
   assert(localBefore.ops.length > 10, "workspace and board operations were not queued");
   const nodeId = localBefore.nodes.find((item) => item.kind === "text")?.id;
-  const boardId = localBefore.workspace.find((item) => item.id === "active_board")?.node_id;
-  const layoutId = localBefore.workspace.find((item) => item.id === "workspace_model")?.layout_node_id;
+  const boardId = localBefore.layoutRecords.find((item) => item.id === "active_board")?.node_id;
+  const layoutId = localBefore.layoutRecords.find((item) => item.id === "tile_model")?.layout_node_id;
   assert(nodeId, "local node id missing");
   assert(boardId, "local board id missing");
   assert(layoutId, "local layout id missing");
@@ -133,7 +133,7 @@ async function login(page, browserEvents = []) {
 async function localState(page) {
   return page.evaluate(async () => {
     const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 1);
+      const request = indexedDB.open("qivxif", 2);
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve(request.result);
     });
@@ -148,7 +148,7 @@ async function localState(page) {
       edges: await read("edges"),
       ops: await read("ops"),
       text: await read("text_snapshots"),
-      workspace: await read("workspace_layout"),
+      layoutRecords: await read("tile_layout"),
     };
   });
 }
@@ -156,7 +156,7 @@ async function localState(page) {
 async function waitForLocalOps(page, count) {
   await page.waitForFunction(async (expected) => {
     const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 1);
+      const request = indexedDB.open("qivxif", 2);
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve(request.result);
     });

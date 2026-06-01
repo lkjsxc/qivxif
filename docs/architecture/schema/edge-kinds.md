@@ -20,7 +20,7 @@ Edges are first-class durable records. Unknown kinds are rejected by API validat
 | `mutes` | `profile` | `profile` | one-way home-feed hiding relation |
 | `blocks` | `profile` | `profile` | two-way interaction blocking relation |
 | `placed_on_board` | any node | `graph_board` | board membership |
-| `workspace_contains_pane` | `workspace_layout` | `pane` | layout membership |
+| `tile_contains_pane` | `tile_layout` | `pane` | layout membership |
 | `pane_views_node` | `pane` | any node | pane target |
 
 ## Required Edge Fields
@@ -43,7 +43,7 @@ Edges are first-class durable records. Unknown kinds are rejected by API validat
 
 ## Tile Layout And Board Metadata
 
-`workspace_contains_pane` metadata:
+`tile_contains_pane` metadata:
 
 - `slot`: command-created slot label.
 

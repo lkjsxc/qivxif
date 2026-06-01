@@ -9,11 +9,11 @@
 
 ## Durable Shape
 
-- A `workspace_layout` node owns the tile layout.
+- A `tile_layout` node owns the tile layout.
 - Each durable pane is a `pane` node.
-- `workspace_contains_pane` edges link the layout node to pane nodes.
+- `tile_contains_pane` edges link the layout node to pane nodes.
 - `pane_views_node` edges link panes to graph targets.
-- `workspace.layout_set` stores the complete tile tree snapshot for the layout node.
+- `tile.layout_set` stores the complete tile tree snapshot for the layout node.
 - The tile tree references pane node IDs, never transient DOM IDs.
 
 ## Behavior
@@ -29,10 +29,10 @@
 
 Before drag gestures exist, command buttons create the same durable records:
 
-- Split creates a pane node, links it to the layout, and appends `workspace.layout_set`.
-- Stack creates a pane node inside the active tab stack and appends `workspace.layout_set`.
-- Maximize appends `workspace.layout_set` with `maximized_pane_id`.
-- Close removes the pane from the tile tree snapshot through `workspace.layout_set`.
+- Split creates a pane node, links it to the layout, and appends `tile.layout_set`.
+- Stack creates a pane node inside the active tab stack and appends `tile.layout_set`.
+- Maximize appends `tile.layout_set` with `maximized_pane_id`.
+- Close removes the pane from the tile tree snapshot through `tile.layout_set`.
 - Dirty layout operations are visible in the sync status pane until accepted.
 
 ## Constraints

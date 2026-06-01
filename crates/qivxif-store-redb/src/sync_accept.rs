@@ -27,7 +27,7 @@ impl QivxifStore {
             OperationKind::TextInsert | OperationKind::TextDelete | OperationKind::TextRestore => {
                 self.accept_text_op(auth, op)
             }
-            OperationKind::WorkspaceLayoutSet => self.accept_workspace_op(auth, op),
+            OperationKind::TileLayoutSet => self.accept_tile_op(auth, op),
             _ => Err(StoreError::UnknownOperationKind),
         }
     }
@@ -139,14 +139,14 @@ impl QivxifStore {
         .map(|result| result.receipt)
     }
 
-    fn accept_workspace_op(
+    fn accept_tile_op(
         &self,
         auth: &AuthContext,
         op: OperationEnvelope,
     ) -> StoreResult<OperationReceipt> {
         let layout =
             serde_json::from_slice(&op.payload.bytes).map_err(|_| StoreError::InvalidOperation)?;
-        self.accept_workspace_layout_op(auth, op, layout)
+        self.accept_tile_layout_op(auth, op, layout)
             .map(|result| result.receipt)
     }
 }

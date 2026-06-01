@@ -31,8 +31,8 @@ export async function createBlogDraft(store, state, title) {
   });
   await store.put("ops", post.entry);
   await store.put("nodes", post.node);
-  await store.put("workspace_layout", { id: "current_node", node_id: body.node.id });
-  await store.put("workspace_layout", { id: "current_blog_post", node_id: post.node.id });
+  await store.put("tile_layout", { id: "current_node", node_id: body.node.id });
+  await store.put("tile_layout", { id: "current_blog_post", node_id: post.node.id });
   state.currentNodeId = body.node.id;
   state.currentBlogPostId = post.node.id;
   state.text = content;

@@ -23,7 +23,7 @@ pub enum OperationScope {
     Auth,
     Graph,
     Text,
-    Workspace,
+    Tile,
     Sync,
     Publish,
     Social,
@@ -53,8 +53,8 @@ pub enum OperationKind {
     TextDelete,
     #[serde(rename = "text.restore")]
     TextRestore,
-    #[serde(rename = "workspace.layout_set")]
-    WorkspaceLayoutSet,
+    #[serde(rename = "tile.layout_set")]
+    TileLayoutSet,
     #[serde(rename = "sync.cursor_advance")]
     SyncCursorAdvance,
     #[serde(rename = "publish.post")]

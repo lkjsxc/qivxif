@@ -15,7 +15,7 @@ Node kinds are durable names. Unknown kinds are rejected by API validation, sync
 | `graph_board` | boards | graph composition board |
 | `board_item` | boards | board placement record when a node needs per-board state |
 | `media` | publishing/social | uploaded media descriptor |
-| `workspace_layout` | tile layout | durable tiled layout root |
+| `tile_layout` | tile layout | durable tiled layout root |
 | `pane` | tile layout | pane state in a layout |
 | `feed_window` | social/offline | materialized feed range marker |
 
@@ -43,10 +43,10 @@ Node kinds are durable names. Unknown kinds are rejected by API validation, sync
 
 ## Tile Layout Metadata
 
-`workspace_layout` metadata:
+`tile_layout` metadata:
 
 - `title`: display label.
-- `layout_json`: canonical JSON tile tree snapshot from `workspace.layout_set`.
+- `layout_json`: canonical JSON tile tree snapshot from `tile.layout_set`.
 
 `pane` metadata:
 

@@ -17,7 +17,7 @@ Every durable mutation uses one of these operation kinds. Unknown kinds are reje
 | `text.insert` | write | text doc | position id, text | text CRDT insert | op id plus actor seq | deterministic CRDT merge | yes | yes |
 | `text.delete` | write | text doc | range ids | text CRDT delete | op id plus actor seq | missing range rejects or waits | yes | yes |
 | `text.restore` | write | text doc | snapshot ref | append restore text op | op id | creates new state, never erases | yes | yes |
-| `workspace.layout_set` | write | tile layout | tile tree delta | tile layout reducer | op id | deterministic last accepted action | yes | yes |
+| `tile.layout_set` | write | tile layout | tile tree delta | tile layout reducer | op id | deterministic last accepted action | yes | yes |
 | `sync.cursor_advance` | write | cursor | cursor id, position | cursor update | cursor id plus position | cannot move backward | no | yes |
 | `publish.post` | publish | blog post | slug, summary, public time | publication reducer | op id | slug conflict rejects | queued | yes |
 | `publish.unpublish` | publish | blog post | reason code | publication reducer | op id | already private is no-op | queued | yes |
@@ -31,14 +31,14 @@ Every durable mutation uses one of these operation kinds. Unknown kinds are reje
 
 ## Tile Layout Payload Contract
 
-`workspace.layout_set` payload:
+`tile.layout_set` payload:
 
-- `layout_node_id`: `workspace_layout` node being changed.
+- `layout_node_id`: `tile_layout` node being changed.
 - `layout`: complete tile tree snapshot.
 - `maximized_pane_id`: optional pane node ID inside the tile tree.
 
 The reducer replaces the previous tile tree for the layout node after auth and
-schema validation. Restore uses another `workspace.layout_set` operation.
+schema validation. Restore uses another `tile.layout_set` operation.
 
 ## Board Placement Contract
 

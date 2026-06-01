@@ -35,7 +35,7 @@ The first browser sync actor flushes dirty queue entries through existing durabl
 - `node.create` uses `POST /api/nodes`.
 - `edge.create` uses `POST /api/edges`.
 - `text.insert`, `text.delete`, and `text.restore` use `POST /api/text/{node_id}/ops`.
-- `workspace.layout_set` uses `POST /api/workspace/layout`.
+- `tile.layout_set` uses `POST /api/tile-layout`.
 - `publish.post` uses `POST /api/publish/{node_id}`.
 - `publish.unpublish` uses `POST /api/unpublish/{node_id}`.
 
