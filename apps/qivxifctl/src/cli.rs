@@ -90,6 +90,8 @@ pub enum QualityCommand {
     Workspace,
     #[command(name = "check-routes")]
     Routes,
+    #[command(name = "check-redb-tables")]
+    RedbTables,
 }
 
 #[derive(Subcommand)]

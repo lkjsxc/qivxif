@@ -28,6 +28,7 @@ fn quality(command: QualityCommand) -> Result<()> {
         QualityCommand::ImplementationMarkers => qivxif_quality::check_placeholders()?,
         QualityCommand::Workspace => qivxif_quality::check_workspace_matches_docs()?,
         QualityCommand::Routes => qivxif_quality::check_route_docs_match_api()?,
+        QualityCommand::RedbTables => qivxif_quality::check_redb_tables_match_docs()?,
     }
     Ok(())
 }

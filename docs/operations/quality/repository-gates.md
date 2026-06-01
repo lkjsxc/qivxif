@@ -14,6 +14,7 @@
 - `qivxifctl quality check-placeholders`
 - `qivxifctl quality check-workspace`
 - `qivxifctl quality check-routes`
+- `qivxifctl quality check-redb-tables`
 
 ## Route Gate
 
@@ -25,3 +26,12 @@ The gate fails when:
 
 - a documented route is not mounted.
 - a mounted route is not documented.
+
+## redb Table Gate
+
+`check-redb-tables` compares the table list in
+`docs/architecture/storage/redb-layout.md` with `tables::ALL` in
+`crates/qivxif-store-redb/src/tables.rs`.
+
+The gate fails when a table name is missing from either side or when the
+documented table order differs from the store registry.

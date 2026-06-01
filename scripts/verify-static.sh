@@ -41,5 +41,6 @@ run_stage retired-canon cargo run --locked --bin qivxifctl -- quality check-reti
 run_stage implementation-markers cargo run --locked --bin qivxifctl -- quality check-placeholders
 run_stage workspace-match cargo run --locked --bin qivxifctl -- quality check-workspace
 run_stage route-match cargo run --locked --bin qivxifctl -- quality check-routes
+run_stage redb-table-match cargo run --locked --bin qivxifctl -- quality check-redb-tables
 
 printf 'verify pass\n'
