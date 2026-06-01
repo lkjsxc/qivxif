@@ -6,6 +6,7 @@
 - [push-pull.md](push-pull.md): HTTP sync.
 - [merge.md](merge.md): merge rules.
 - [idempotency.md](idempotency.md): duplicate handling.
+- [status-model.md](status-model.md): pending queue and visible sync state.
 
 ## Schema Links
 

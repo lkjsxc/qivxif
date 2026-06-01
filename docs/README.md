@@ -88,6 +88,7 @@
 - [architecture/sync/idempotency.md](architecture/sync/idempotency.md)
 - [architecture/sync/merge.md](architecture/sync/merge.md)
 - [architecture/sync/push-pull.md](architecture/sync/push-pull.md)
+- [architecture/sync/status-model.md](architecture/sync/status-model.md)
 - [architecture/system/README.md](architecture/system/README.md)
 - [architecture/system/boundaries.md](architecture/system/boundaries.md)
 - [architecture/system/dataflow.md](architecture/system/dataflow.md)
