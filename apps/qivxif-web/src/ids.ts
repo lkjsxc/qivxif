@@ -1,5 +1,5 @@
 export function generateId(prefix) {
-  const bytes = new Uint8Array(16);
+  const bytes = new Uint8Array(32);
   crypto.getRandomValues(bytes);
   return `${prefix}_${hex(bytes)}`;
 }
