@@ -1,5 +1,6 @@
 import { createRequire } from "node:module";
 import { captureBrowserEvents, openShellTab, waitForText } from "./browser-helpers.mjs";
+import { createPublishedPost, expectPublishSlugConflict } from "./publish-helpers.mjs";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright-core");
@@ -95,6 +96,16 @@ try {
   await waitForText(page, "Queued: 0", browserEvents, 15000);
   const feed = await homeFeed(context);
   assert(feed.items.some((item) => item.body === "offline social post"), "feed item missing");
+  await createPublishedPost(page, {
+    slug: "occupied-slug",
+    summary: "owner summary",
+    title: "Slug Owner",
+  }, browserEvents);
+  await expectPublishSlugConflict(page, {
+    slug: "occupied-slug",
+    summary: "conflict summary",
+    title: "Slug Challenger",
+  }, browserEvents);
   await context.close();
 } finally {
   await browser.close();
