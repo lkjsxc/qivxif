@@ -27,6 +27,11 @@ The tile layout actor owns:
 - tile tree snapshot.
 - active board node ID.
 - selected board item node ID.
+- per-pane text drafts keyed by pane node ID.
+- per-node accepted text snapshots keyed by node ID.
 
 The actor persists state through IndexedDB messages and queued durable
 events. UI controls render from actor state and local projections.
+
+Per-pane drafts are local visible-tab state. Saving a text event writes the
+shared text snapshot for the target node and clears only the saved pane draft.

@@ -107,7 +107,7 @@ function actionsFor(root, store, state) {
     openNode: (nodeId) => run(root, store, state, () => openNode(store, state, nodeId)),
     openTab: (tabId, paneId) => openTab(root, store, state, tabId, paneId),
     publishBlogPost: (slug, summary) => run(root, store, state, () => publishBlogPost(store, state, slug, summary)),
-    saveText: (content, nodeId) => run(root, store, state, () => saveText(store, state, content, nodeId)),
+    saveText: (content, nodeId, paneId) => run(root, store, state, () => saveText(store, state, content, nodeId, paneId)),
     selectNode: (nodeId) => run(root, store, state, () => selectNode(store, state, nodeId)),
     splitPane: (paneId, context) =>
       run(root, store, state, () => splitPane(store, withPaneContext(state, context), paneId)),
@@ -117,6 +117,9 @@ function actionsFor(root, store, state) {
     toggleCommandPalette: (open) => toggleCommandPalette(root, store, state, open),
     toggleTabChooser: (paneId) => toggleTabChooser(root, store, state, paneId),
     unpublishBlogPost: () => run(root, store, state, () => unpublishBlogPost(store, state)),
+    updateTextDraft: (paneId, content) => {
+      state.tabDrafts[paneId] = content;
+    },
   };
 }
 

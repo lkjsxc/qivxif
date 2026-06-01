@@ -12,6 +12,9 @@ export async function loadLocalState(store, state) {
   state.edges = await store.all("edges");
   state.feedItems = await store.all("feed_windows");
   state.nodes = await store.all("nodes");
+  state.textSnapshots = Object.fromEntries(
+    (await store.all("text_snapshots")).map((entry) => [entry.id, entry]),
+  );
   state.currentNodeId = current?.node_id ?? state.currentNodeId;
   state.currentBlogPostId = currentBlog?.node_id ?? state.currentBlogPostId;
   state.currentBlogPost =
@@ -24,9 +27,7 @@ export async function loadLocalState(store, state) {
   if (state.layout && !containsPane(state.layout.root, state.activePaneId)) {
     state.activePaneId = activePaneId(state.layout.root);
   }
-  const textState = state.currentNodeId
-    ? await store.get("text_snapshots", state.currentNodeId)
-    : null;
+  const textState = state.currentNodeId ? state.textSnapshots[state.currentNodeId] : null;
   state.text = textState?.state?.content ?? "";
   state.textDirty = textState?.dirty ?? false;
 }

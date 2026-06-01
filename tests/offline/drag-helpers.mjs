@@ -102,11 +102,46 @@ export async function shortTouchDoesNotArmTabDrag(page) {
   assert(!armed, "short touch armed tab drag");
 }
 
+export async function assertIndependentTextDrafts(page, savedText) {
+  const draft = "pane-local unsaved draft";
+  const editor = page.locator("article.tile").first().locator(".editor");
+  const draftPane = await selectedPaneId(page);
+  assert(draftPane, "draft pane is missing");
+  await editor.fill(draft);
+  await clickOtherTab(page, draftPane);
+  await page.waitForFunction(
+    (expected) => document.querySelector("article.tile .editor")?.value === expected,
+    savedText,
+  );
+  await page.evaluate((paneId) => {
+    const firstTileTabs = () => [...document.querySelector("article.tile").querySelectorAll('[role="tab"]')];
+    firstTileTabs().find((tab) => tab.dataset.paneId === paneId)?.click();
+  }, draftPane);
+  await page.waitForFunction(
+    (expected) => document.querySelector("article.tile .editor")?.value === expected,
+    draft,
+  );
+}
+
 async function firstTileTabPaneIds(page) {
   return page.evaluate(() => {
     const firstTileTabs = () => [...document.querySelector("article.tile").querySelectorAll('[role="tab"]')];
     return firstTileTabs().map((tab) => tab.dataset.paneId);
   });
+}
+
+async function selectedPaneId(page) {
+  return page.evaluate(() => {
+    const firstTileTabs = () => [...document.querySelector("article.tile").querySelectorAll('[role="tab"]')];
+    return firstTileTabs().find((tab) => tab.getAttribute("aria-selected") === "true")?.dataset.paneId;
+  });
+}
+
+async function clickOtherTab(page, paneId) {
+  await page.evaluate((current) => {
+    const firstTileTabs = () => [...document.querySelector("article.tile").querySelectorAll('[role="tab"]')];
+    firstTileTabs().find((tab) => tab.dataset.paneId !== current)?.click();
+  }, paneId);
 }
 
 async function waitForFirstTab(page, paneId) {

@@ -77,9 +77,13 @@ function tabBody(state, actions, activeTab) {
 }
 
 function stateForTab(state, tab) {
-  const tabState = { ...state, activeTabId: tabKindToPanel(tab.pane_kind) };
+  const tabState = { ...state, activePaneId: tab.pane_node_id, activeTabId: tabKindToPanel(tab.pane_kind) };
   if (tab.target_node_id && tabState.activeTabId === "editor") {
     tabState.currentNodeId = tab.target_node_id;
+    const snapshot = state.textSnapshots?.[tab.target_node_id];
+    const hasDraft = Object.prototype.hasOwnProperty.call(state.tabDrafts ?? {}, tab.pane_node_id);
+    tabState.text = hasDraft ? state.tabDrafts[tab.pane_node_id] : snapshot?.state?.content ?? "";
+    tabState.textDirty = hasDraft || Boolean(snapshot?.dirty);
   }
   if (tab.target_node_id && tabState.activeTabId === "graph") {
     tabState.currentNodeId = tab.target_node_id;
@@ -96,7 +100,8 @@ function actionsForTab(actions, tab) {
     ...actions,
     addCurrentNodeToBoard: () => actions.addCurrentNodeToBoard?.(context),
     createBoard: () => actions.createBoard?.(context),
-    saveText: (content) => actions.saveText?.(content, tab.target_node_id),
+    saveText: (content) => actions.saveText?.(content, tab.target_node_id, tab.pane_node_id),
+    updateTextDraft: (content) => actions.updateTextDraft?.(tab.pane_node_id, content),
   };
 }
 

@@ -14,7 +14,7 @@ export async function createTextNode(store, state) {
   state.activeTabId = "editor";
 }
 
-export async function saveText(store, state, content, nodeId = state.currentNodeId) {
+export async function saveText(store, state, content, nodeId = state.currentNodeId, paneId = "") {
   requireAuth(state);
   if (!nodeId) {
     throw new Error("select a text node first");
@@ -31,6 +31,9 @@ export async function saveText(store, state, content, nodeId = state.currentNode
   });
   state.currentNodeId = nodeId;
   state.text = content;
+  if (paneId) {
+    delete state.tabDrafts[paneId];
+  }
 }
 
 export async function openNode(store, state, nodeId) {

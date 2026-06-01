@@ -25,7 +25,9 @@ export function initialState() {
     setupRequired: false,
     tabChooserOpen: false,
     tabChooserPaneId: "",
+    tabDrafts: {},
     text: "",
     textDirty: false,
+    textSnapshots: {},
   };
 }

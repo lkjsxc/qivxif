@@ -86,6 +86,7 @@ function editorPanel(state, actions) {
   const editor = document.createElement("textarea");
   editor.className = "editor";
   editor.value = state.text ?? "";
+  editor.addEventListener("input", () => actions.updateTextDraft?.(editor.value));
   section.append(editor, actionButton("Save text event", () => actions.saveText?.(editor.value)));
   section.append(actionButton("Create board", () => actions.createBoard?.()));
   section.append(layoutSummary(state), historyList(state));
