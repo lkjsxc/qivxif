@@ -19,7 +19,7 @@ export function renderStackTabRail(stack, actions) {
   const rail = document.createElement("div");
   rail.className = "tab-rail";
   stack.tabs.forEach((tab, index) => {
-    const button = actionButton(tabLabel(tab), () => actions.focusPane?.(tab.pane_node_id), "tab");
+    const button = actionButton(tabLabel(tab), tabFocus(tab, actions), "tab");
     button.dataset.paneId = tab.pane_node_id;
     button.setAttribute("role", "tab");
     button.setAttribute("aria-selected", String(index === stack.active));
@@ -29,6 +29,13 @@ export function renderStackTabRail(stack, actions) {
     rail.append(button);
   });
   return rail;
+}
+
+function tabFocus(tab, actions) {
+  if (!tab.pane_node_id?.startsWith("nod_")) {
+    return () => {};
+  }
+  return () => actions.focusPane?.(tab.pane_node_id);
 }
 
 function tabLabel(tab) {

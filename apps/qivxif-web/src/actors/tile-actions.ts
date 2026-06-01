@@ -79,10 +79,11 @@ export async function ensureLayout(store, state) {
     return current;
   }
   const layout = await createNode(store, "tile_layout", { title: "Tile layout" });
-  const pane = await createPane(store, state, state.currentNodeId, "Text pane");
+  const spec = initialPaneSpec(state);
+  const pane = await createPane(store, state, spec.targetNodeId, spec.title, spec.paneKind);
   const initial = {
     maximized_pane_id: null,
-    root: stackTile([tabFor(pane.node.id, state.currentNodeId, "Text pane", "text_editor")]),
+    root: stackTile([tabFor(pane.node.id, spec.targetNodeId, spec.title, spec.paneKind)]),
   };
   const record = {
     dirty: true,
@@ -139,14 +140,21 @@ function tabFor(paneNodeId, targetNodeId, title, paneKind) {
   return {
     pane_kind: paneKind,
     pane_node_id: paneNodeId,
-    target_node_id: targetNodeId,
+    target_node_id: targetNodeId || null,
     title,
   };
 }
 
+function initialPaneSpec(state) {
+  if (state.currentNodeId) {
+    return { paneKind: "text_editor", targetNodeId: state.currentNodeId, title: "Text pane" };
+  }
+  return { paneKind: "home", targetNodeId: null, title: "Home" };
+}
+
 function tabSpec(tabId, state) {
   const targetNodeId =
-    tabId === "editor" || tabId === "graph" ? state.currentNodeId : boardTarget(tabId, state);
+    tabId === "editor" || tabId === "graph" ? state.currentNodeId || null : boardTarget(tabId, state);
   const specs = {
     board: ["graph_board", "Board"],
     diagnostics: ["diagnostics", "Diagnostics"],
@@ -169,9 +177,9 @@ function targetPane(root, paneId) {
 
 function boardTarget(tabId, state) {
   if (tabId === "board") {
-    return state.activeBoardId || state.currentNodeId;
+    return state.activeBoardId || state.currentNodeId || null;
   }
-  return "";
+  return null;
 }
 
 function requireAuth(state) {

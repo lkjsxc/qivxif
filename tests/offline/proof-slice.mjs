@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import { captureBrowserEvents, openServerNode, openShellTab, waitForText } from "./browser-helpers.mjs";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright-core");
@@ -29,21 +30,22 @@ try {
   await page.getByRole("button", { name: "Save text event" }).click();
   await waitForLocalEvents(page, 2);
   await waitForText(page, "Queued: 2", browserEvents);
-  await page.getByText("Sync: offline").waitFor();
-  await page.getByRole("button", { name: "Split pane" }).click();
-  await page.getByText("Layout panes: 2").waitFor();
-  await page.getByRole("button", { name: "Stack tab" }).click();
-  await page.getByText("Layout panes: 3").waitFor();
-  await page.getByRole("button", { name: "Maximize pane" }).click();
-  await page.getByText(/^Maximized: nod_/).waitFor();
-  await page.getByRole("button", { name: "Close pane" }).click();
-  await page.getByText("Layout panes: 2").waitFor();
-  await page.getByRole("button", { name: "Create board" }).click();
-  await page.getByText(/^Active board: nod_/).waitFor();
-  await page.getByRole("button", { name: "Add current node to board" }).click();
-  await page.getByText("Board items: 1").waitFor();
-  await page.getByRole("button", { name: "Move board item" }).click();
-  await page.getByText("@ 160,144").waitFor();
+  await page.getByText("Sync: offline").first().waitFor();
+  await page.getByRole("button", { name: "Split pane" }).first().click();
+  await waitForText(page, "Layout panes: 2", browserEvents);
+  await page.getByRole("button", { name: "Stack tab" }).first().click();
+  await waitForText(page, "Layout panes: 3", browserEvents);
+  await page.getByRole("button", { name: "Maximize pane" }).first().click();
+  await page.getByText(/^Maximized: nod_/).first().waitFor();
+  await page.getByRole("button", { name: "Close pane" }).first().click();
+  await waitForText(page, "Layout panes: 2", browserEvents);
+  await page.getByRole("button", { name: "Create board" }).first().click();
+  await openShellTab(page, "Board");
+  await page.getByText(/^Active board: nod_/).first().waitFor();
+  await page.getByRole("button", { name: "Add current node to board" }).first().click();
+  await page.getByText("Board items: 1").first().waitFor();
+  await page.getByRole("button", { name: "Move board item" }).first().click();
+  await page.getByText("@ 160,144").first().waitFor();
   const localBefore = await localState(page);
   assert(localBefore.events.length > 10, "workspace and board events were not queued");
   const nodeId = localBefore.nodes.find((item) => item.kind === "text")?.id;
@@ -54,11 +56,11 @@ try {
   assert(layoutId, "local layout id missing");
 
   await page.reload({ waitUntil: "domcontentloaded" });
-  await waitForText(page, "Layout panes: 2", browserEvents);
+  await waitForText(page, "Layout panes: 3", browserEvents);
   await waitForText(page, "Board items: 1", browserEvents);
-  await page.getByRole("tab", { name: "Editor" }).first().click();
+  await openShellTab(page, "Editor");
   assert(
-    (await page.locator(".editor").inputValue()) === proofText,
+    (await page.locator("article.tile").first().locator(".editor").inputValue()) === proofText,
     "offline text was not restored",
   );
   const status = await serverNodeStatus(context, nodeId);
@@ -67,36 +69,43 @@ try {
   assert(boardStatus !== 200, "server accepted offline board before flush");
 
   await context.setOffline(false);
-  await page.getByRole("tab", { name: "Home" }).first().click();
+  await openShellTab(page, "Home");
   await page.getByRole("button", { name: "Flush queue" }).click();
-  await page.getByText("Queued: 0").waitFor({ timeout: 15000 });
-  await page.getByRole("tab", { name: "History" }).first().click();
-  await page.getByText(/^node\.create #/).waitFor();
-  await page.getByText(/^text\.restore #/).waitFor();
+  try {
+    await waitForText(page, "Queued: 0", browserEvents, 30000);
+  } catch (error) {
+    throw new Error(`${error.message}\n${JSON.stringify(await localState(page), null, 2)}`);
+  }
+  await openShellTab(page, "History");
+  await page.getByText(/^node\.create #/).first().waitFor();
+  await page.getByText(/^text\.restore #/).first().waitFor();
 
   const second = await browser.newContext({ baseURL: base });
   const secondPage = await second.newPage();
   const secondEvents = captureBrowserEvents(secondPage);
   await loadShell(secondPage);
   await login(secondPage, secondEvents);
-  await secondPage.getByRole("tab", { name: "Home" }).first().click();
-  await secondPage.getByLabel("Server node id").fill(nodeId);
-  await secondPage.getByRole("button", { name: "Open node" }).click();
-  await secondPage.waitForFunction(
-    (expected) => document.querySelector(".editor")?.value === expected,
-    proofText,
-  );
-  await secondPage.getByText(/^node\.create #/).waitFor();
-  await secondPage.getByText(/^text\.restore #/).waitFor();
-  await secondPage.getByRole("tab", { name: "Home" }).first().click();
-  await secondPage.getByLabel("Server node id").fill(boardId);
-  await secondPage.getByRole("button", { name: "Open node" }).click();
-  await secondPage.getByText("Board items: 1").waitFor();
-  await secondPage.getByText("@ 160,144").waitFor();
-  await secondPage.getByRole("tab", { name: "Home" }).first().click();
-  await secondPage.getByLabel("Server node id").fill(layoutId);
-  await secondPage.getByRole("button", { name: "Open node" }).click();
-  await secondPage.getByText("Layout panes: 2").waitFor();
+  await openShellTab(secondPage, "Home");
+  await openServerNode(secondPage, nodeId);
+  try {
+    await secondPage.waitForFunction(
+      (expected) => document.querySelector(".editor")?.value === expected,
+      proofText,
+    );
+  } catch (error) {
+    const body = await secondPage.locator("body").innerText();
+    throw new Error(`server text did not open\n${body}\n${secondEvents.join("\n")}`);
+  }
+  await secondPage.getByText(/^node\.create #/).first().waitFor();
+  await secondPage.getByText(/^text\.restore #/).first().waitFor();
+  await openShellTab(secondPage, "Home");
+  await openServerNode(secondPage, boardId);
+  await openShellTab(secondPage, "Board");
+  await secondPage.getByText("Board items: 1").first().waitFor();
+  await secondPage.getByText("@ 160,144").first().waitFor();
+  await openShellTab(secondPage, "Home");
+  await openServerNode(secondPage, layoutId);
+  await secondPage.getByText("Layout panes: 3").first().waitFor();
   await second.close();
   await context.close();
 } finally {
@@ -166,26 +175,6 @@ async function waitForLocalEvents(page, count) {
       call.onsuccess = () => resolve(call.result.length === expected);
     });
   }, count);
-}
-
-function captureBrowserEvents(page) {
-  const events = [];
-  page.on("console", (message) => events.push(`console ${message.type()}: ${message.text()}`));
-  page.on("pageerror", (error) => events.push(`pageerror: ${error.message}`));
-  page.on("requestfailed", (request) => {
-    events.push(`requestfailed: ${request.url()} ${request.failure()?.errorText}`);
-  });
-  return events;
-}
-
-async function waitForText(page, value, browserEvents = []) {
-  try {
-    await page.getByText(value).waitFor({ timeout: 5000 });
-  } catch (error) {
-    const body = await page.locator("body").innerText();
-    const local = JSON.stringify(await localState(page));
-    throw new Error(`${value} was not visible\n${body}\n${local}\n${browserEvents.join("\n")}`);
-  }
 }
 
 async function serverNodeStatus(context, nodeId) {

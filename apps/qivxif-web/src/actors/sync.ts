@@ -81,15 +81,20 @@ async function acceptEntry(store, state, entry, payload) {
     state.text = payload.state.content;
   }
   if (entry.kind === "tile.layout_set") {
-    await store.put("nodes", { ...payload.layout_node, dirty: false });
-    await store.put("tile_layout", {
-      dirty: false,
-      id: "tile_model",
-      layout: entry.request.layout,
-      layout_node_id: entry.request.layout_node_id,
+    const newerDirtyLayout = (await store.all("events")).some((item) => {
+      return item.kind === "tile.layout_set" && item.actor_seq > entry.actor_seq;
     });
-    state.layout = entry.request.layout;
-    state.layoutNodeId = entry.request.layout_node_id;
+    await store.put("nodes", { ...payload.layout_node, dirty: false });
+    if (!newerDirtyLayout) {
+      await store.put("tile_layout", {
+        dirty: false,
+        id: "tile_model",
+        layout: entry.request.layout,
+        layout_node_id: entry.request.layout_node_id,
+      });
+      state.layout = entry.request.layout;
+      state.layoutNodeId = entry.request.layout_node_id;
+    }
   }
   if (entry.kind.startsWith("publish.")) {
     await store.put("nodes", { ...payload.post, dirty: false });

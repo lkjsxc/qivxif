@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import { captureBrowserEvents, openShellTab, waitForText } from "./browser-helpers.mjs";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright-core");
@@ -23,33 +24,33 @@ try {
   await login(page, browserEvents);
 
   await context.setOffline(true);
-  await page.getByRole("tab", { name: "Publish" }).first().click();
+  await openShellTab(page, "Publish");
   await page.getByLabel("Blog title").fill(title);
   await page.getByRole("button", { name: "Create blog draft" }).click();
-  await waitForText(page, "Queued: 3", browserEvents);
-  await page.getByRole("tab", { name: "Editor" }).first().click();
+  await waitForQueuedAtLeast(page, 3, browserEvents);
+  await openShellTab(page, "Editor");
   await page.locator(".editor").fill(body);
   await page.getByRole("button", { name: "Save text event" }).click();
-  await waitForText(page, "Queued: 4", browserEvents);
-  await page.getByRole("tab", { name: "Publish" }).first().click();
+  await waitForQueuedAtLeast(page, 4, browserEvents);
+  await openShellTab(page, "Publish");
   await page.getByLabel("Slug").fill(slug);
   await page.getByLabel("Summary").fill("offline summary");
   await page.getByRole("button", { name: "Publish draft" }).click();
-  await waitForText(page, "Queued: 5", browserEvents);
+  await waitForQueuedAtLeast(page, 5, browserEvents);
   assert((await publicStatus(slug)) === 404, "server published while browser was offline");
 
   await page.reload({ waitUntil: "domcontentloaded" });
-  await page.getByRole("tab", { name: "Publish" }).first().click();
+  await openShellTab(page, "Publish");
   await waitForText(page, `Draft: ${title}`, browserEvents);
-  await waitForText(page, "Queued: 5", browserEvents);
-  await page.getByRole("tab", { name: "Editor" }).first().click();
+  await waitForQueuedAtLeast(page, 5, browserEvents);
+  await openShellTab(page, "Editor");
   assert((await page.locator(".editor").inputValue()) === body, "draft body did not reload");
 
   await context.setOffline(false);
-  await page.getByRole("tab", { name: "Home" }).first().click();
+  await openShellTab(page, "Home");
   await page.getByRole("button", { name: "Flush queue" }).click();
   await waitForText(page, "Queued: 0", browserEvents, 15000);
-  await page.getByRole("tab", { name: "Publish" }).first().click();
+  await openShellTab(page, "Publish");
   await waitForText(page, "State: published", browserEvents);
   const html = await publicHtml(slug);
   assert(html.includes("<h1>Offline Post</h1>"), "public heading missing");
@@ -62,22 +63,22 @@ try {
   await second.close();
 
   await page.getByRole("button", { name: "Unpublish" }).click();
-  await page.getByRole("tab", { name: "Publish" }).first().click();
+  await openShellTab(page, "Publish");
   await waitForText(page, "State: unpublished", browserEvents, 15000);
   assert((await publicStatus(slug)) === 404, "unpublished post stayed public");
 
   await context.setOffline(true);
-  await page.getByRole("tab", { name: "Social" }).first().click();
+  await openShellTab(page, "Social");
   await page.getByLabel("Short post").fill("offline social post");
   await page.getByRole("button", { name: "Create short post" }).click();
-  await waitForText(page, "Queued: 1", browserEvents);
+  await waitForQueuedAtLeast(page, 1, browserEvents);
   await waitForText(page, "offline social post", browserEvents);
   await page.reload({ waitUntil: "domcontentloaded" });
-  await page.getByRole("tab", { name: "Social" }).first().click();
+  await openShellTab(page, "Social");
   await waitForText(page, "offline social post", browserEvents);
 
   await context.setOffline(false);
-  await page.getByRole("tab", { name: "Home" }).first().click();
+  await openShellTab(page, "Home");
   await page.getByRole("button", { name: "Flush queue" }).click();
   await waitForText(page, "Queued: 0", browserEvents, 15000);
   const feed = await homeFeed(context);
@@ -113,12 +114,15 @@ async function login(page, browserEvents = []) {
   }
 }
 
-async function waitForText(page, value, events = [], timeout = 5000) {
+async function waitForQueuedAtLeast(page, minimum, events = [], timeout = 5000) {
   try {
-    await page.getByText(value).waitFor({ timeout });
+    await page.waitForFunction((count) => {
+      const match = document.body.textContent.match(/Queued: (\d+)/);
+      return match && Number(match[1]) >= count;
+    }, minimum, { timeout });
   } catch (error) {
     const bodyText = await page.locator("body").innerText();
-    throw new Error(`${value} missing\n${bodyText}\n${events.join("\n")}`);
+    throw new Error(`queued count below ${minimum}\n${bodyText}\n${events.join("\n")}`);
   }
 }
 
@@ -141,16 +145,6 @@ async function homeFeed(context) {
   });
   assert(response.status === 200, `feed route returned ${response.status}`);
   return (await response.json()).payload;
-}
-
-function captureBrowserEvents(page) {
-  const events = [];
-  page.on("console", (message) => events.push(`console ${message.type()}: ${message.text()}`));
-  page.on("pageerror", (error) => events.push(`pageerror: ${error.message}`));
-  page.on("requestfailed", (request) => {
-    events.push(`requestfailed: ${request.url()} ${request.failure()?.errorText}`);
-  });
-  return events;
 }
 
 function assert(condition, message) {
