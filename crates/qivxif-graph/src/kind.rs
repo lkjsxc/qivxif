@@ -33,6 +33,8 @@ pub enum EdgeKind {
     Bookmarks,
     Reacts,
     Follows,
+    Mutes,
+    Blocks,
     PlacedOnBoard,
     WorkspaceContainsPane,
     PaneViewsNode,

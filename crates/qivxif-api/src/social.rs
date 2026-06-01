@@ -42,6 +42,27 @@ pub struct FollowPayload {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct ModerationRequest {
+    pub op_id: OperationId,
+    pub actor_seq: u64,
+    pub edge_id: EdgeId,
+    pub target_profile_node_id: NodeId,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct ModerationClearRequest {
+    pub op_id: OperationId,
+    pub actor_seq: u64,
+    pub edge_id: EdgeId,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct ModerationPayload {
+    pub edge: EdgeRecord,
+    pub operation: OperationAcceptance,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct FeedHomePayload {
     pub items: Vec<FeedItemPayload>,
     pub cursor: Option<OperationId>,

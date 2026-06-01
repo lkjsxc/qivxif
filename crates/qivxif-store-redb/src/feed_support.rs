@@ -1,3 +1,4 @@
+use crate::moderation_query::interaction_blocked;
 use crate::{FeedItem, ShortPostInput, StoreError, StoreResult, codec::encode, store::QivxifStore};
 use qivxif_auth::{AuthContext, Viewer, can_read};
 use qivxif_core::{MetadataMap, NodeId, OperationId, ServerTime, UserId};
@@ -37,6 +38,11 @@ pub(crate) fn ensure_reply_target(
         return Err(StoreError::NodeMissing);
     };
     if node.kind == NodeKind::ShortPost && can_read(auth, &node) {
+        if let Some(actor_user_id) = auth.user_id()
+            && interaction_blocked(store, actor_user_id, &node.owner_user_id)?
+        {
+            return Err(StoreError::Forbidden);
+        }
         Ok(())
     } else {
         Err(StoreError::Forbidden)

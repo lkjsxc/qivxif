@@ -14,8 +14,8 @@ pub use routes::{
     TextPayload, UnpublishRequest, UserSummary, WorkspaceLayoutPayload, WorkspaceLayoutSetRequest,
 };
 pub use social::{
-    FeedHomePayload, FeedItemPayload, FollowPayload, FollowRequest, ShortPostPayload,
-    ShortPostRequest, UnfollowRequest,
+    FeedHomePayload, FeedItemPayload, FollowPayload, FollowRequest, ModerationClearRequest,
+    ModerationPayload, ModerationRequest, ShortPostPayload, ShortPostRequest, UnfollowRequest,
 };
 pub use sync::{
     OperationAcceptance, OperationRejection, PullRequest, PullResponse, PushRequest, PushResponse,

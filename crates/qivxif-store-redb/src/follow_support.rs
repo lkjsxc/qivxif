@@ -15,6 +15,15 @@ pub(crate) fn active_follow(
     from_node: &NodeId,
     to_node: &NodeId,
 ) -> StoreResult<Option<EdgeRecord>> {
+    active_edge_kind(tx, from_node, to_node, EdgeKind::Follows)
+}
+
+pub(crate) fn active_edge_kind(
+    tx: &redb::WriteTransaction,
+    from_node: &NodeId,
+    to_node: &NodeId,
+    kind: EdgeKind,
+) -> StoreResult<Option<EdgeRecord>> {
     let by_from = tx.open_table(tables::EDGES_BY_FROM)?;
     let edges = tx.open_table(tables::EDGES)?;
     let prefix = format!("{}:", from_node.as_str());
@@ -28,7 +37,7 @@ pub(crate) fn active_follow(
             continue;
         };
         let edge: EdgeRecord = decode(edge_bytes.value())?;
-        if edge.kind == EdgeKind::Follows && &edge.to_node == to_node && edge.tombstone.is_none() {
+        if edge.kind == kind && &edge.to_node == to_node && edge.tombstone.is_none() {
             return Ok(Some(edge));
         }
     }
@@ -94,7 +103,7 @@ pub(crate) fn update_edge(tx: &redb::WriteTransaction, edge: &EdgeRecord) -> Sto
     Ok(())
 }
 
-pub(crate) fn follow_operation(
+pub(crate) fn social_edge_operation(
     op_id: &OperationId,
     actor_seq: u64,
     actor_id: &ActorId,

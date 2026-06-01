@@ -6,6 +6,7 @@ use crate::{
         ensure_reply_target, ensure_session_actor, feed_item, feed_order, feed_user_key,
         short_post_record, social_post_operation, validate_body,
     },
+    moderation_query::feed_item_visible,
     operation_log::insert_operation,
     records::OperationReceipt,
     store::QivxifStore,
@@ -117,7 +118,9 @@ impl QivxifStore {
                 let feed_item = decode::<FeedItem>(bytes.value())?;
                 if let Some(node_bytes) = nodes.get(feed_item.post_node_id.as_str())? {
                     let node: NodeRecord = decode(node_bytes.value())?;
-                    if can_read(auth, &node) {
+                    if can_read(auth, &node)
+                        && feed_item_visible(&tx, user_id, &feed_item.author_user_id)?
+                    {
                         out.push(feed_item);
                     }
                 }

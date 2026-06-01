@@ -3,6 +3,7 @@ mod follow;
 mod graph;
 mod health;
 mod history;
+mod moderation;
 mod neighborhood;
 mod publish;
 mod server_info;
@@ -25,6 +26,7 @@ pub fn router(state: AppState) -> Router {
         .merge(graph::routes())
         .merge(history::routes())
         .merge(health::routes())
+        .merge(moderation::routes())
         .merge(neighborhood::routes())
         .merge(publish::routes())
         .merge(server_info::routes())

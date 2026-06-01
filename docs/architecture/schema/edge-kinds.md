@@ -17,6 +17,8 @@ Edges are first-class durable records. Unknown kinds are rejected by API validat
 | `bookmarks` | `profile` | content node | bookmark relation |
 | `reacts` | `profile` | content node | reaction relation |
 | `follows` | `profile` | `profile` | social follow relation |
+| `mutes` | `profile` | `profile` | one-way home-feed hiding relation |
+| `blocks` | `profile` | `profile` | two-way interaction blocking relation |
 | `placed_on_board` | any node | `kjxlkj_board` | board membership |
 | `workspace_contains_pane` | `workspace_layout` | `pane` | layout membership |
 | `pane_views_node` | `pane` | any node | pane target |

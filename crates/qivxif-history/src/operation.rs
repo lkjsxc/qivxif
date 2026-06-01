@@ -67,6 +67,14 @@ pub enum OperationKind {
     SocialFollow,
     #[serde(rename = "social.unfollow")]
     SocialUnfollow,
+    #[serde(rename = "social.mute")]
+    SocialMute,
+    #[serde(rename = "social.unmute")]
+    SocialUnmute,
+    #[serde(rename = "social.block")]
+    SocialBlock,
+    #[serde(rename = "social.unblock")]
+    SocialUnblock,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
