@@ -88,6 +88,22 @@ pub fn seeded_state(name: &str) -> AppState {
     }
 }
 
+pub fn empty_state(name: &str) -> AppState {
+    let root = test_dir(name);
+    let database_file = root.join("qivxif.redb");
+    let store = open_or_create(StoreConfig::new(&database_file)).unwrap();
+    AppState {
+        config: ServerConfig {
+            bind: "127.0.0.1:0".parse().unwrap(),
+            data_dir: root.clone(),
+            database_file,
+            static_dir: root,
+            cookie_secure: false,
+        },
+        store,
+    }
+}
+
 pub fn get(uri: &str, cookie: Option<&str>) -> Request<Body> {
     let mut builder = Request::builder().method("GET").uri(uri);
     if let Some(cookie) = cookie {

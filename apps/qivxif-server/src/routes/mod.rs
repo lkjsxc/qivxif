@@ -8,6 +8,7 @@ mod neighborhood;
 mod publish;
 mod server_info;
 mod session;
+mod setup;
 mod social;
 mod static_files;
 mod support;
@@ -30,6 +31,7 @@ pub fn router(state: AppState) -> Router {
         .merge(neighborhood::routes())
         .merge(publish::routes())
         .merge(server_info::routes())
+        .merge(setup::routes())
         .merge(social::routes())
         .merge(sync::routes())
         .merge(text::routes())

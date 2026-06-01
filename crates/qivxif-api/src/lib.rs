@@ -1,5 +1,6 @@
 mod envelope;
 mod routes;
+mod setup;
 mod social;
 mod sync;
 
@@ -13,6 +14,7 @@ pub use routes::{
     PublishPayload, PublishRequest, ServerInfoPayload, TextOperationPayload, TextOperationRequest,
     TextPayload, UnpublishRequest, UserSummary, WorkspaceLayoutPayload, WorkspaceLayoutSetRequest,
 };
+pub use setup::{SetupOwnerPayload, SetupOwnerRequest, SetupStatusPayload};
 pub use social::{
     FeedHomePayload, FeedItemPayload, FollowPayload, FollowRequest, ModerationClearRequest,
     ModerationPayload, ModerationRequest, ShortPostPayload, ShortPostRequest, UnfollowRequest,

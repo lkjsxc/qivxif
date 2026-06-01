@@ -54,6 +54,16 @@ post_json() {
     "$base$path" >"$out"
 }
 
+post_public_json() {
+  path="$1"
+  body="$2"
+  out="$3"
+  curl -fsS -b "$cookies" -c "$cookies" \
+    -H "content-type: application/json" \
+    -d @"$body" \
+    "$base$path" >"$out"
+}
+
 get_json() {
   path="$1"
   out="$2"
@@ -65,13 +75,11 @@ mkdir -p "$QIVXIF_DATA_DIR"
 web_dist="${QIVXIF_WEB_DIST_DIR:-${TMPDIR:-/tmp}/qivxif-web-dist}"
 QIVXIF_WEB_DIST_DIR="$web_dist" npm --prefix apps/qivxif-web run build
 export QIVXIF_STATIC_DIR="$web_dist"
-printf 'secret\n' | cargo run --locked -p qivxifctl -- \
-  admin bootstrap --store "$QIVXIF_DATABASE_FILE" --name admin --password-stdin --json
 
 cargo run --locked -p qivxif-server >"$work_dir/server.log" 2>&1 &
 server_pid="$!"
 
-for _ in 1 2 3 4 5 6 7 8 9 10; do
+for _ in $(seq 1 120); do
   if curl -fsS "$base/health" >"$work_dir/health.json"; then
     break
   fi
@@ -84,13 +92,33 @@ if ! test -s "$work_dir/health.json"; then
   exit 1
 fi
 
-cat >"$work_dir/login-body.json" <<'JSON'
+get_json "/api/setup" "$work_dir/setup-open.json"
+json_check "$work_dir/setup-open.json" '
+if (!data.payload.required || !data.payload.owner_creation_open) {
+  throw new Error("setup was not open");
+}
+'
+
+cat >"$work_dir/setup-body.json" <<'JSON'
 {"name":"admin","password":"secret"}
 JSON
-curl -fsS -c "$cookies" -H "content-type: application/json" \
-  -d @"$work_dir/login-body.json" "$base/api/auth/login" >"$work_dir/login.json"
-csrf="$(json_value "$work_dir/login.json" payload.csrf_token)"
-actor_id="$(json_value "$work_dir/login.json" payload.user.actor_id)"
+post_public_json "/api/setup/owner" "$work_dir/setup-body.json" "$work_dir/setup-owner.json"
+csrf="$(json_value "$work_dir/setup-owner.json" payload.csrf_token)"
+actor_id="$(json_value "$work_dir/setup-owner.json" payload.user.actor_id)"
+get_json "/api/me" "$work_dir/me-after-setup.json"
+json_check "$work_dir/me-after-setup.json" '
+if (data.payload.user.name !== "admin") throw new Error("setup session missing");
+'
+status="$(curl -sS -o "$work_dir/setup-conflict.json" -w "%{http_code}" \
+  -b "$cookies" -c "$cookies" -H "content-type: application/json" \
+  -d @"$work_dir/setup-body.json" "$base/api/setup/owner")"
+test "$status" = "409"
+get_json "/api/setup" "$work_dir/setup-closed.json"
+json_check "$work_dir/setup-closed.json" '
+if (data.payload.required || data.payload.owner_creation_open) {
+  throw new Error("setup stayed open");
+}
+'
 
 node_a="$(make_id nod)"
 node_b="$(make_id nod)"

@@ -42,6 +42,12 @@ impl QivxifStore {
         Ok(user)
     }
 
+    pub fn has_users(&self) -> StoreResult<bool> {
+        let tx = self.database.begin_read()?;
+        let names = tx.open_table(tables::USER_NAMES)?;
+        Ok(names.iter()?.next().is_some())
+    }
+
     pub fn find_user_by_name(&self, name: &str) -> StoreResult<Option<StoredUser>> {
         let tx = self.database.begin_read()?;
         let names = tx.open_table(tables::USER_NAMES)?;

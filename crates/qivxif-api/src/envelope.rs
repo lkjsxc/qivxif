@@ -34,6 +34,8 @@ pub enum ApiErrorCode {
     GraphNotFound,
     #[serde(rename = "schema.invalid_id")]
     SchemaInvalidId,
+    #[serde(rename = "schema.invalid_input")]
+    SchemaInvalidInput,
     #[serde(rename = "schema.unknown_node_kind")]
     SchemaUnknownNodeKind,
     #[serde(rename = "schema.unknown_edge_kind")]

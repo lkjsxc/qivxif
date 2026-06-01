@@ -35,6 +35,7 @@ fn capabilities() -> Vec<Capability> {
         "feed.home",
         "sync.http_push_pull",
         "client.offline_shell",
+        "setup.owner_create",
         "workspace.layout_set",
     ]
     .into_iter()
