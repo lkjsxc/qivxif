@@ -18,8 +18,10 @@ cleanup() {
 trap cleanup EXIT HUP INT TERM
 
 make_id() {
-  hex="$(tr -d '-' </proc/sys/kernel/random/uuid)"
-  printf '%s_%s' "$1" "$hex"
+  node -e '
+const crypto = require("crypto");
+console.log(`${process.argv[1]}_${crypto.randomBytes(32).toString("hex")}`);
+' "$1"
 }
 
 json_value() {
@@ -124,22 +126,22 @@ node_a="$(make_id nod)"
 node_b="$(make_id nod)"
 
 cat >"$work_dir/node-a.json" <<JSON
-{"op_id":"$(make_id op)","actor_seq":1,"node_id":"$node_a","kind":"text","visibility":"private","metadata_map":{"title":"API proof A"}}
+{"event_id":"$(make_id evt)","actor_seq":1,"node_id":"$node_a","kind":"text","visibility":"private","metadata_map":{"title":"API proof A"}}
 JSON
 post_json "/api/nodes" "$work_dir/node-a.json" "$work_dir/node-a-out.json"
 
 cat >"$work_dir/node-b.json" <<JSON
-{"op_id":"$(make_id op)","actor_seq":2,"node_id":"$node_b","kind":"text","visibility":"private","metadata_map":{"title":"API proof B"}}
+{"event_id":"$(make_id evt)","actor_seq":2,"node_id":"$node_b","kind":"text","visibility":"private","metadata_map":{"title":"API proof B"}}
 JSON
 post_json "/api/nodes" "$work_dir/node-b.json" "$work_dir/node-b-out.json"
 
 cat >"$work_dir/text.json" <<JSON
-{"actor_seq":3,"operation":{"op_id":"$(make_id op)","doc_id":"$(make_id txt)","edit":{"kind":"restore","content":"compose proof text","actor_id":"$actor_id","first_seq":3000000}}}
+{"actor_seq":3,"event":{"event_id":"$(make_id evt)","doc_id":"$(make_id txt)","edit":{"kind":"restore","content":"compose proof text","actor_id":"$actor_id","first_seq":3000000}}}
 JSON
-post_json "/api/text/$node_a/ops" "$work_dir/text.json" "$work_dir/text-out.json"
+post_json "/api/text/$node_a/events" "$work_dir/text.json" "$work_dir/text-out.json"
 
 cat >"$work_dir/edge.json" <<JSON
-{"op_id":"$(make_id op)","actor_seq":4,"edge_id":"$(make_id edg)","from_node":"$node_a","to_node":"$node_b","kind":"links_to","metadata_map":{}}
+{"event_id":"$(make_id evt)","actor_seq":4,"edge_id":"$(make_id edg)","from_node":"$node_a","to_node":"$node_b","kind":"links_to","metadata_map":{}}
 JSON
 post_json "/api/edges" "$work_dir/edge.json" "$work_dir/edge-out.json"
 
@@ -152,9 +154,9 @@ get_json "/api/nodes/$node_a/history" "$work_dir/history.json"
 json_check "$work_dir/node-read.json" 'if (data.payload.projection.node.id !== process.argv[2]) throw new Error("node read mismatch");' "$node_a"
 json_check "$work_dir/edges.json" 'if (data.payload.outgoing.length !== 1) throw new Error("edge read mismatch");'
 json_check "$work_dir/neighborhood.json" 'if (data.payload.projection.nodes.length !== 2) throw new Error("neighborhood mismatch");'
-json_check "$work_dir/pull.json" 'if (data.payload.operations.length < 4) throw new Error("sync pull missed operations");'
+json_check "$work_dir/pull.json" 'if (data.payload.events.length < 4) throw new Error("sync pull missed events");'
 json_check "$work_dir/history.json" '
-const kinds = data.payload.operations.map((op) => op.kind);
+const kinds = data.payload.events.map((event) => event.kind);
 for (const kind of ["node.create", "text.restore", "edge.create"]) {
   if (!kinds.includes(kind)) throw new Error(`history missed ${kind}`);
 }
