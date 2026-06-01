@@ -15,6 +15,7 @@ Every `/api` response uses [../schema/api-envelope.md](../schema/api-envelope.md
 | `GET` | `/api/me` | session | no | none | current user and profile | none | stale local user may be shown as offline |
 | `POST` | `/api/nodes` | session | yes | node create request | node record and operation acceptance | appends operation, writes node | local op queues first |
 | `GET` | `/api/nodes/{node_id}` | viewer | no | none | node projection | none | IndexedDB may satisfy stale read |
+| `GET` | `/api/nodes/{node_id}/history` | viewer | no | limit query | operation summaries | none | IndexedDB may show cached summaries |
 | `POST` | `/api/edges` | session | yes | edge create request | edge record and operation acceptance | appends operation, writes edge and indexes | local op queues first |
 | `GET` | `/api/nodes/{node_id}/edges` | viewer | no | direction and limit query | edge list | none | IndexedDB may satisfy stale read |
 | `GET` | `/api/graph/neighborhood` | viewer | no | node, depth, limit query | bounded graph projection | none | IndexedDB may satisfy stale read |
@@ -76,6 +77,10 @@ The first browser editor may send `text.restore` for whole-text saves. Each rest
 ## Browser Route Flush
 
 The browser queue stores the exact JSON request used by each durable mutation route. A queued entry is accepted only when the route response envelope contains the matching operation acceptance. Route flush is not a separate durability model; the server route must append the operation log entry before success.
+
+## History Payloads
+
+`GET /api/nodes/{node_id}/history` returns operation summaries for viewers who can read the node. The route exposes ids, scope, kind, actor sequence, payload hash, targets, and receive time. It does not expose payload bytes.
 
 ## Handler Rules
 

@@ -1,7 +1,8 @@
-import { login, serverInfo } from "../api/client.ts";
+import { login, node, nodeHistory, serverInfo, text } from "../api/client.ts";
 import { generateId } from "../ids.ts";
 import { openLocalStore } from "../store/indexed-db.ts";
 import { renderWorkspace } from "../ui/workspace.ts";
+import { textNodeCreateEntry, textRestoreEntry } from "./local-operations.ts";
 import { flushQueue, refreshQueueState } from "./sync.ts";
 
 export async function startAppShell(root) {
@@ -17,6 +18,7 @@ export async function startAppShell(root) {
     lastError: "",
     auth: null,
     currentNodeId: "",
+    history: [],
     text: "",
     textDirty: false,
   };
@@ -52,6 +54,7 @@ function actionsFor(root, store, state) {
   return {
     createTextNode: () => run(root, store, state, () => createTextNode(store, state)),
     login: (name, password) => run(root, store, state, () => loginUser(store, state, name, password)),
+    openNode: (nodeId) => run(root, store, state, () => openNode(store, state, nodeId)),
     saveText: (content) => run(root, store, state, () => saveText(store, state, content)),
     selectNode: (nodeId) => run(root, store, state, () => selectNode(store, state, nodeId)),
     sync: () => run(root, store, state, () => flushQueue(store, state)),
@@ -66,6 +69,9 @@ async function run(root, store, state, action) {
     await refreshQueueState(store, state);
     await flushQueue(store, state);
     await loadLocalState(store, state);
+    if (state.online && state.currentNodeId) {
+      await refreshCurrentNode(store, state);
+    }
   } catch (error) {
     state.lastError = error.api?.code ?? String(error);
   }
@@ -81,20 +87,11 @@ async function loginUser(store, state, name, password) {
 async function createTextNode(store, state) {
   requireAuth(state);
   const actorSeq = await reserveActorSeq(store);
-  const nodeId = generateId("nod");
-  const opId = generateId("op");
-  const request = {
-    actor_seq: actorSeq,
-    kind: "text",
-    metadata_map: { title: "Untitled text" },
-    node_id: nodeId,
-    op_id: opId,
-    visibility: "private",
-  };
-  await store.put("ops", queueEntry(opId, "node.create", actorSeq, nodeId, "/api/nodes", request));
-  await store.put("nodes", { id: nodeId, kind: "text", metadata_map: request.metadata_map, dirty: true });
-  await store.put("workspace_layout", { id: "current_node", node_id: nodeId });
-  state.currentNodeId = nodeId;
+  const created = textNodeCreateEntry(actorSeq);
+  await store.put("ops", created.entry);
+  await store.put("nodes", created.node);
+  await store.put("workspace_layout", { id: "current_node", node_id: created.node.id });
+  state.currentNodeId = created.node.id;
 }
 
 async function saveText(store, state, content) {
@@ -103,25 +100,26 @@ async function saveText(store, state, content) {
     throw new Error("select a text node first");
   }
   const actorSeq = await reserveActorSeq(store);
-  const opId = generateId("op");
   const docId = await textDocId(store, state.currentNodeId);
-  const request = {
-    actor_seq: actorSeq,
-    operation: {
-      doc_id: docId,
-      edit: {
-        actor_id: state.auth.user.actor_id,
-        content,
-        first_seq: actorSeq * 1000000,
-        kind: "restore",
-      },
-      op_id: opId,
-    },
-  };
-  const path = `/api/text/${state.currentNodeId}/ops`;
-  await store.put("ops", queueEntry(opId, "text.restore", actorSeq, state.currentNodeId, path, request));
+  const restored = textRestoreEntry(
+    actorSeq,
+    state.currentNodeId,
+    docId,
+    state.auth.user.actor_id,
+    content,
+  );
+  await store.put("ops", restored.entry);
   await store.put("text_snapshots", { id: state.currentNodeId, doc_id: docId, state: { content }, dirty: true });
   state.text = content;
+}
+
+async function openNode(store, state, nodeId) {
+  if (!nodeId) {
+    throw new Error("node id is required");
+  }
+  state.currentNodeId = nodeId;
+  await store.put("workspace_layout", { id: "current_node", node_id: nodeId });
+  await refreshCurrentNode(store, state);
 }
 
 async function selectNode(store, state, nodeId) {
@@ -140,6 +138,19 @@ async function loadLocalState(store, state) {
   state.textDirty = text?.dirty ?? false;
 }
 
+async function refreshCurrentNode(store, state) {
+  const nodePayload = await node(state.currentNodeId);
+  await store.put("nodes", { ...nodePayload.projection.node, dirty: false });
+  const textPayload = await text(state.currentNodeId);
+  await store.put("text_snapshots", {
+    id: state.currentNodeId,
+    dirty: false,
+    state: textPayload.state,
+  });
+  const historyPayload = await nodeHistory(state.currentNodeId);
+  state.history = historyPayload.operations;
+}
+
 async function reserveActorSeq(store) {
   const current = await store.get("sync_cursors", "actor_seq");
   const value = (current?.value ?? 0) + 1;
@@ -156,19 +167,6 @@ async function textDocId(store, nodeId) {
   const docId = generateId("txt");
   await store.put("sync_cursors", { id: key, doc_id: docId });
   return docId;
-}
-
-function queueEntry(id, kind, actorSeq, nodeId, path, request) {
-  return {
-    id,
-    actor_seq: actorSeq,
-    created_at: new Date().toISOString(),
-    kind,
-    node_id: nodeId,
-    request,
-    route: { method: "POST", path },
-    status: "dirty",
-  };
 }
 
 function requireAuth(state) {

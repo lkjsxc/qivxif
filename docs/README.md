@@ -62,6 +62,7 @@
 - [architecture/history/README.md](architecture/history/README.md)
 - [architecture/history/commit-groups.md](architecture/history/commit-groups.md)
 - [architecture/history/content-addressing.md](architecture/history/content-addressing.md)
+- [architecture/history/inspection.md](architecture/history/inspection.md)
 - [architecture/history/operation-log.md](architecture/history/operation-log.md)
 - [architecture/history/time-travel.md](architecture/history/time-travel.md)
 - [architecture/schema/README.md](architecture/schema/README.md)

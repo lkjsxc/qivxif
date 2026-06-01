@@ -6,6 +6,7 @@ const APP_ASSETS = [
   "/ids.js",
   "/api/client.js",
   "/actors/app-shell.js",
+  "/actors/local-operations.js",
   "/actors/sync.js",
   "/store/indexed-db.js",
   "/ui/workspace.js",

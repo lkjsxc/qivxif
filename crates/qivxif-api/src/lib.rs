@@ -7,8 +7,9 @@ pub use envelope::{
 };
 pub use routes::{
     EdgeCreatePayload, EdgeCreateRequest, EdgeListPayload, HealthPayload, LoginPayload,
-    LoginRequest, LogoutPayload, MePayload, NodeCreatePayload, NodeCreateRequest, NodePayload,
-    ServerInfoPayload, TextOperationPayload, TextOperationRequest, TextPayload, UserSummary,
+    LoginRequest, LogoutPayload, MePayload, NodeCreatePayload, NodeCreateRequest,
+    NodeHistoryPayload, NodePayload, OperationSummary, ServerInfoPayload, TextOperationPayload,
+    TextOperationRequest, TextPayload, UserSummary,
 };
 pub use sync::{
     OperationAcceptance, OperationRejection, PullRequest, PullResponse, PushRequest, PushResponse,

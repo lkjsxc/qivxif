@@ -1,6 +1,7 @@
 mod auth;
 mod graph;
 mod health;
+mod history;
 mod server_info;
 mod session;
 mod static_files;
@@ -16,6 +17,7 @@ pub fn router(state: AppState) -> Router {
     Router::new()
         .merge(auth::routes())
         .merge(graph::routes())
+        .merge(history::routes())
         .merge(health::routes())
         .merge(server_info::routes())
         .merge(sync::routes())

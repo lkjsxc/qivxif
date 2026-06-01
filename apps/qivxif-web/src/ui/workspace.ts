@@ -16,6 +16,7 @@ function graphPane(state, actions) {
     pane.append(text(`Signed in as ${state.auth.user.name}`));
     pane.append(actionButton("Create text node", () => actions.createTextNode?.()));
     pane.append(actionButton("Flush queue", () => actions.sync?.()));
+    pane.append(openNodeForm(actions));
   } else {
     pane.append(loginForm(actions));
   }
@@ -41,6 +42,7 @@ function editorPane(state, actions) {
   const save = actionButton("Save text operation", () => actions.saveText?.(editor.value));
   pane.append(editor);
   pane.append(save);
+  pane.append(historyList(state));
   return pane;
 }
 
@@ -81,6 +83,37 @@ function nodeList(state, actions) {
   return list;
 }
 
+function openNodeForm(actions) {
+  const form = document.createElement("form");
+  form.className = "open-node";
+  const nodeLabel = field("Server node id", "text");
+  const nodeInput = nodeLabel.querySelector("input");
+  const submit = document.createElement("button");
+  submit.type = "submit";
+  submit.textContent = "Open node";
+  form.append(nodeLabel, submit);
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    actions.openNode?.(nodeInput.value.trim());
+  });
+  return form;
+}
+
+function historyList(state) {
+  const history = document.createElement("section");
+  history.className = "history";
+  history.append(subheading("History"));
+  const operations = state.history ?? [];
+  if (operations.length === 0) {
+    history.append(text("No accepted operations loaded."));
+    return history;
+  }
+  for (const operation of operations) {
+    history.append(text(`${operation.kind} #${operation.actor_seq}`));
+  }
+  return history;
+}
+
 function tabbar() {
   const bar = document.createElement("div");
   bar.className = "tabbar";
@@ -103,6 +136,12 @@ function actionButton(label, handler) {
 
 function heading(value) {
   const element = document.createElement("h1");
+  element.textContent = value;
+  return element;
+}
+
+function subheading(value) {
+  const element = document.createElement("h2");
   element.textContent = value;
   return element;
 }

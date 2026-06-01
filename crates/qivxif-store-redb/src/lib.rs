@@ -4,6 +4,7 @@ mod edge;
 mod error;
 mod graph;
 mod graph_query;
+mod history_query;
 mod operation_log;
 mod records;
 mod store;

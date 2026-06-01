@@ -159,7 +159,7 @@ fn cursor_from_index(index: u128) -> StoreResult<CursorId> {
         .map_err(|_| StoreError::CursorInvalid)
 }
 
-fn op_cursor_key(op_id: &OperationId) -> String {
+pub(crate) fn op_cursor_key(op_id: &OperationId) -> String {
     format!("op:{}", op_id.as_str())
 }
 

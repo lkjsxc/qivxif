@@ -1,8 +1,13 @@
 use crate::OperationAcceptance;
 use crate::ServerCapabilities;
-use qivxif_core::{ActorId, EdgeId, MetadataMap, NodeId, OperationId, UserId, Visibility};
+use qivxif_core::{
+    ActorId, EdgeId, MetadataMap, NodeId, OperationId, ServerTime, UserId, Visibility,
+};
 use qivxif_graph::{EdgeKind, EdgeRecord, NodeKind, NodeProjection, NodeRecord};
-use qivxif_history::text::{TextDocState, TextOperation};
+use qivxif_history::{
+    OperationEnvelope, OperationKind, OperationScope, PayloadHash,
+    text::{TextDocState, TextOperation},
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -70,6 +75,24 @@ pub struct NodePayload {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct NodeHistoryPayload {
+    pub node_id: NodeId,
+    pub operations: Vec<OperationSummary>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct OperationSummary {
+    pub op_id: OperationId,
+    pub actor_id: ActorId,
+    pub actor_seq: u64,
+    pub scope: OperationScope,
+    pub kind: OperationKind,
+    pub target_node_ids: Vec<NodeId>,
+    pub payload_hash: PayloadHash,
+    pub received_at_server: Option<ServerTime>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct EdgeCreateRequest {
     pub op_id: OperationId,
     pub actor_seq: u64,
@@ -107,4 +130,19 @@ pub struct TextPayload {
 pub struct TextOperationPayload {
     pub state: TextDocState,
     pub operation: OperationAcceptance,
+}
+
+impl OperationSummary {
+    pub fn from_envelope(op: OperationEnvelope) -> Self {
+        Self {
+            op_id: op.op_id,
+            actor_id: op.actor_id,
+            actor_seq: op.actor_seq,
+            scope: op.scope,
+            kind: op.kind,
+            target_node_ids: op.target_node_ids,
+            payload_hash: op.payload_hash,
+            received_at_server: op.received_at_server,
+        }
+    }
 }

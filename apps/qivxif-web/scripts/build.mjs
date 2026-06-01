@@ -14,6 +14,7 @@ await copyModule(join(app, "src", "main.ts"));
 await copyModule(join(app, "src", "ids.ts"));
 await copyModule(join(app, "src", "api", "client.ts"));
 await copyModule(join(app, "src", "actors", "app-shell.ts"));
+await copyModule(join(app, "src", "actors", "local-operations.ts"));
 await copyModule(join(app, "src", "actors", "sync.ts"));
 await copyModule(join(app, "src", "store", "indexed-db.ts"));
 await copyModule(join(app, "src", "ui", "workspace.ts"));
