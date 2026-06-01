@@ -88,6 +88,8 @@ pub enum QualityCommand {
     ImplementationMarkers,
     #[command(name = "check-workspace")]
     Workspace,
+    #[command(name = "check-routes")]
+    Routes,
 }
 
 #[derive(Subcommand)]

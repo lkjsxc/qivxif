@@ -40,5 +40,6 @@ run_stage wording cargo run --locked --bin qivxifctl -- quality check-wording
 run_stage retired-canon cargo run --locked --bin qivxifctl -- quality check-retired-canon
 run_stage implementation-markers cargo run --locked --bin qivxifctl -- quality check-placeholders
 run_stage workspace-match cargo run --locked --bin qivxifctl -- quality check-workspace
+run_stage route-match cargo run --locked --bin qivxifctl -- quality check-routes
 
 printf 'verify pass\n'

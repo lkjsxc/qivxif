@@ -27,6 +27,7 @@ fn quality(command: QualityCommand) -> Result<()> {
         QualityCommand::RetiredCanon => qivxif_quality::check_retired_canon()?,
         QualityCommand::ImplementationMarkers => qivxif_quality::check_placeholders()?,
         QualityCommand::Workspace => qivxif_quality::check_workspace_matches_docs()?,
+        QualityCommand::Routes => qivxif_quality::check_route_docs_match_api()?,
     }
     Ok(())
 }
