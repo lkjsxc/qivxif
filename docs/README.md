@@ -36,8 +36,9 @@
 9. [architecture/client/local-first.md](architecture/client/local-first.md)
 10. [product/setup/first-run.md](product/setup/first-run.md)
 11. [product/tile-shell/tiled-tabs.md](product/tile-shell/tiled-tabs.md)
-12. [product/boards/composition.md](product/boards/composition.md)
-13. [operations/verification/compose-pipeline.md](operations/verification/compose-pipeline.md)
+12. [product/tile-shell/lkjstr-parity.md](product/tile-shell/lkjstr-parity.md)
+13. [product/boards/composition.md](product/boards/composition.md)
+14. [operations/verification/compose-pipeline.md](operations/verification/compose-pipeline.md)
 
 ## Complete File Map
 
@@ -168,6 +169,7 @@
 - [product/tile-shell/README.md](product/tile-shell/README.md)
 - [product/tile-shell/command-palette.md](product/tile-shell/command-palette.md)
 - [product/tile-shell/keyboard.md](product/tile-shell/keyboard.md)
+- [product/tile-shell/lkjstr-parity.md](product/tile-shell/lkjstr-parity.md)
 - [product/tile-shell/panes.md](product/tile-shell/panes.md)
 - [product/tile-shell/tiled-tabs.md](product/tile-shell/tiled-tabs.md)
 - [repository/README.md](repository/README.md)
