@@ -34,6 +34,12 @@ pub enum StoreError {
     EdgeExists,
     #[error("access denied")]
     Forbidden,
+    #[error("cursor invalid")]
+    CursorInvalid,
+    #[error("operation envelope invalid")]
+    InvalidOperation,
+    #[error("operation kind is not accepted by this store path")]
+    UnknownOperationKind,
 }
 
 impl From<redb::DatabaseError> for StoreError {

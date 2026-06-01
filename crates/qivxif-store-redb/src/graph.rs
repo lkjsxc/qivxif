@@ -1,7 +1,7 @@
 use crate::{
     StoreError, StoreResult,
     codec::{decode, encode},
-    operation_log::{insert_operation, receipt},
+    operation_log::insert_operation,
     records::OperationReceipt,
     store::QivxifStore,
     tables,
@@ -58,10 +58,10 @@ impl QivxifStore {
             let node = self
                 .get_node(&input.node_id)?
                 .ok_or(StoreError::OperationConflict)?;
-            return Ok(NodeCreateResult {
-                node,
-                receipt: receipt(&input.op_id),
-            });
+            let receipt = self
+                .operation_receipt(&input.op_id)?
+                .ok_or(StoreError::OperationConflict)?;
+            return Ok(NodeCreateResult { node, receipt });
         }
         let now = ServerTime::now();
         let node = NodeRecord {

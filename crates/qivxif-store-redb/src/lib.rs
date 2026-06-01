@@ -7,6 +7,7 @@ mod graph_query;
 mod operation_log;
 mod records;
 mod store;
+mod sync_accept;
 mod tables;
 
 pub use config::StoreConfig;

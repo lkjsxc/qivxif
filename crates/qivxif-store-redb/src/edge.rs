@@ -2,7 +2,7 @@ use crate::{
     StoreError, StoreResult,
     codec::{decode, encode},
     graph::{EdgeCreateInput, EdgeCreateResult, edge_operation},
-    operation_log::{insert_operation, receipt},
+    operation_log::insert_operation,
     store::QivxifStore,
     tables,
 };
@@ -21,10 +21,10 @@ impl QivxifStore {
             let edge = self
                 .get_edge(&input.edge_id)?
                 .ok_or(StoreError::OperationConflict)?;
-            return Ok(EdgeCreateResult {
-                edge,
-                receipt: receipt(&input.op_id),
-            });
+            let receipt = self
+                .operation_receipt(&input.op_id)?
+                .ok_or(StoreError::OperationConflict)?;
+            return Ok(EdgeCreateResult { edge, receipt });
         }
         let Some(from) = self.get_node(&input.from_node)? else {
             return Err(StoreError::NodeMissing);

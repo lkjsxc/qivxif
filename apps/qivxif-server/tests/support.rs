@@ -8,6 +8,7 @@ use axum::{
 };
 use qivxif_api::{ApiEnvelope, LoginPayload};
 use qivxif_auth::hash_password;
+use qivxif_core::{ActorId, UserId};
 use qivxif_server::{config::ServerConfig, state::AppState};
 use qivxif_store_redb::{StoreConfig, open_or_create};
 use std::{
@@ -17,7 +18,21 @@ use std::{
 };
 use tower::ServiceExt;
 
+#[allow(dead_code)]
+pub struct TestLogin {
+    pub cookie: String,
+    pub csrf: String,
+    pub user_id: UserId,
+    pub actor_id: ActorId,
+}
+
+#[allow(dead_code)]
 pub async fn login(app: &Router) -> (String, String) {
+    let login = login_full(app).await;
+    (login.cookie, login.csrf)
+}
+
+pub async fn login_full(app: &Router) -> TestLogin {
     let response = app
         .clone()
         .oneshot(post_raw(
@@ -36,7 +51,13 @@ pub async fn login(app: &Router) -> (String, String) {
         .unwrap()
         .to_owned();
     let envelope: ApiEnvelope<LoginPayload> = read_json(response).await;
-    (cookie, envelope.payload.unwrap().csrf_token)
+    let payload = envelope.payload.unwrap();
+    TestLogin {
+        cookie,
+        csrf: payload.csrf_token,
+        user_id: payload.user.user_id,
+        actor_id: payload.user.actor_id,
+    }
 }
 
 pub fn seeded_state(name: &str) -> AppState {

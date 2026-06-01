@@ -8,11 +8,14 @@ authors.workspace = true
 [dependencies]
 anyhow.workspace = true
 axum.workspace = true
+bincode.workspace = true
 qivxif-api.workspace = true
 qivxif-auth.workspace = true
 qivxif-core.workspace = true
 qivxif-graph.workspace = true
+qivxif-history.workspace = true
 qivxif-store-redb.workspace = true
+qivxif-sync.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 tokio.workspace = true
