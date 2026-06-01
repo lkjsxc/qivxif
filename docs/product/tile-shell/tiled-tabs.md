@@ -16,10 +16,30 @@
 - A `tile_layout` node owns the tile layout.
 - Each durable pane instance is a `pane` node unless a later owner doc
   introduces a distinct `tab` node.
+- During the current implementation, `pane_node_id` is the visible tab identity.
 - `tile_contains_pane` edges link the layout node to pane nodes.
 - `pane_views_node` edges link panes to graph targets.
 - `tile.layout_set` stores the complete tile tree snapshot for the layout node.
 - The tile tree references pane node IDs, never transient DOM IDs.
+
+## Reducer Contract
+
+- Tile reducers are pure functions over a `TileLayout` snapshot.
+- Reducers do not read clocks, DOM state, IndexedDB, redb, HTTP state, or global
+  mutable state.
+- Every reducer command targets a pane ID or the stack that contains it.
+- Stack `active` indexes are local to one stack.
+- Opening a tab appends a new pane instance to the target stack and activates it.
+- Focusing a tab changes only the target stack.
+- Splitting a tab creates a sibling stack at the requested edge.
+- Moving a tab to a stack activates it in the target stack.
+- Moving a tab to an edge removes it from the source stack, creates a sibling
+  stack, and activates the moved tab.
+- Closing or moving the last tab out of a stack collapses that stack from the
+  tree.
+- Maximizing a pane only sets `maximized_pane_id`; restore clears it.
+- Reducers report missing pane IDs. The browser treats invalid drag drops as
+  no-ops before queuing events.
 
 ## Behavior
 

@@ -18,6 +18,12 @@ pub enum GraphError {
     DuplicateActiveParent,
     #[error("tree relation is tombstoned")]
     TombstonedRelation,
+    #[error("pane already exists")]
+    PaneExists,
+    #[error("pane missing")]
+    PaneMissing,
+    #[error("tile layout would be empty")]
+    TileLayoutEmpty,
     #[error("unknown node kind")]
     UnknownNodeKind,
     #[error("unknown edge kind")]
