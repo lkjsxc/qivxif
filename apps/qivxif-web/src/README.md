@@ -1,13 +1,20 @@
 # Browser Source
 
-## Contents
+SvelteKit client for qivxif.
 
-- [app/README.md](app/README.md): bootstrap and controller.
-- [domain/README.md](domain/README.md): pure reducers and resolvers.
-- [effects/README.md](effects/README.md): IO adapters.
-- [ui/README.md](ui/README.md): DOM render modules.
-- [main.ts](main.ts): entry point.
+## Layout
 
-## Entry
+- [routes/](routes/): SvelteKit pages and layout.
+- [lib/app/](lib/app/): controller and workspace context.
+- [lib/domain/](lib/domain/): pure reducers and drop resolver.
+- [lib/effects/](lib/effects/): IndexedDB, sync, and API adapters.
+- [lib/components/](lib/components/): workspace shell and tab surfaces.
+- [lib/styles/](lib/styles/): design tokens and CSS modules.
 
-`main.ts` calls `bootstrapApp` from `app/bootstrap.ts`.
+## Build
+
+```bash
+npm run build
+```
+
+Output is written to `dist/`.

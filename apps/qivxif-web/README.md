@@ -1,22 +1,29 @@
 # qivxif Web App
 
-This package owns the replaceable browser surface served by `qivxif-server`.
-It uses small TypeScript modules and direct DOM rendering so LLM agents can
-trace shell behavior without framework indirection.
+SvelteKit browser client served by `qivxif-server`.
 
 ## Contents
 
-- [index.html](index.html): root app document.
-- [package.json](package.json): browser build entry.
-- [public/](public/): manifest and authored CSS.
-- [scripts/](scripts/): static build copier.
+- [src/routes/](src/routes/): SvelteKit entry and layout.
+- [src/lib/app/](src/lib/app/): controller, ports, workspace context.
+- [src/lib/domain/](src/lib/domain/): pure tile and workspace reducers.
+- [src/lib/effects/](src/lib/effects/): IndexedDB, sync, and API adapters.
+- [src/lib/components/](src/lib/components/): workspace shell and product surfaces.
+- [src/lib/styles/](src/lib/styles/): design tokens and layout CSS.
 - [service-worker/](service-worker/): service worker source.
-- [src/](src/): browser actors, domain reducers, effects, and UI modules.
+- [static/](static/): manifest and icons.
+
+## Build
+
+```bash
+npm install
+npm run build
+```
+
+Output is written to `dist/` for `QIVXIF_STATIC_DIR`.
 
 ## Rules
 
-- UI modules render state and emit actions.
-- Actors own orchestration, persistence, and sync calls.
-- Domain modules stay pure and do not touch DOM, storage, or network.
-- Durable business rules must also exist in Rust reducers or server stores.
-- Generated `dist/` files are build output, not source canon.
+- Components emit actions; the controller owns state transitions.
+- Domain modules stay pure with no DOM or network access.
+- Source files stay at 200 lines or fewer.

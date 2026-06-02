@@ -1,4 +1,6 @@
 /target/
+node_modules/
+.svelte-kit/
 /.env
 /data/
 /dist/
