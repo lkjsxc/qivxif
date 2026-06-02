@@ -45,10 +45,8 @@ qivxif tabs should cover these product surfaces:
 
 ## Source Boundary
 
-- qivxif keeps minimal TypeScript modules and DOM rendering until the docs say
-  otherwise.
-- The browser surface mirrors the component boundaries: app shell, app header,
-  split node, pane, pane head, tab strip, tab frame, tab stack, drop layer, and
-  tab body.
+- qivxif uses SvelteKit components under `src/lib/components/workspace/`.
+- The browser surface mirrors: app shell, app header, split node, pane, pane head,
+  tab strip, tab frame, tab stack, `PaneDropLayer`, and tab body.
 - Domain reducers and effect adapters own durable state transitions.
-- UI modules emit commands and render state.
+- Components emit `WorkspaceCommand` and render controller snapshots.

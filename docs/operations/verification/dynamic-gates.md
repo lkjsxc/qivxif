@@ -17,7 +17,7 @@
 
 `docker compose run --rm api-test` exercises the current durable API proof:
 
-1. Build the browser app shell.
+1. Build the SvelteKit browser app (`npm run build` → `dist/`).
 2. Bootstrap an admin into an empty redb store.
 3. Start the Axum server.
 4. Login and capture the session cookie plus CSRF token.
@@ -35,7 +35,7 @@
 
 `docker compose run --rm offline-e2e` exercises the browser proof slice:
 
-1. Build the browser app shell.
+1. Build the SvelteKit browser app (`npm run build` → `dist/`).
 2. Bootstrap an admin into an empty redb store.
 3. Start the Axum server.
 4. Load `/` in a real headless browser.

@@ -35,10 +35,16 @@ Do not copy lkjstr palette or Nostr-specific chrome.
 - Lists and tables: tight row height, clear separators, no card sprawl.
 - Status chips in header: small, inline, readable at a glance.
 
+## Active Tab
+
+- Active tab uses raised surface (`--q-surface-raised` or one step above rail) plus
+  `--q-border-strong` border.
+- Do not use inverted pill fills (light text on `--q-accent` background) on tab rails.
+
 ## Focus And Motion
 
 - Focus rings use a single accent outline, 2px, visible on keyboard focus.
-- Drag previews use a flat accent tint, never animated glow.
+- Drag previews use a flat neutral tint via `color-mix`, never animated glow.
 - Resize handles are 4px hit targets with 1px visible line on hover.
 - Transitions are optional and short; never block interaction.
 

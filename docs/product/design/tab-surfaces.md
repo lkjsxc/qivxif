@@ -27,10 +27,9 @@ density rules from [visual-language.md](visual-language.md).
 
 ## Text Node
 
-- Full-height editor filling pane body.
-- Dirty state visible on tab frame and in sync tab.
-- Save action queues a text event.
-- Empty state prompts create or select a node.
+- See [surfaces-editor.md](surfaces-editor.md) for editor layout.
+- Playwright: `.editor` textarea fills pane; save queues text event.
+- Dirty dot on tab frame when draft differs from last accepted text.
 
 ## Board
 
@@ -41,9 +40,9 @@ density rules from [visual-language.md](visual-language.md).
 
 ## Feed
 
-- Chronological short posts when social data exists.
-- Compose form at top when authenticated.
-- Empty state explains follow graph requirement.
+- See [surfaces-feed.md](surfaces-feed.md) for card layout.
+- Playwright: `article.feed-card` visible when API returns posts.
+- Compose textarea and submit at top when authenticated.
 
 ## Publishing
 

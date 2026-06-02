@@ -65,6 +65,6 @@ All browser styles consume these variables from `tokens.css`.
 
 ## File Ownership
 
-- Token definitions live in `apps/qivxif-web/src/styles/tokens.css`.
-- Component styles reference tokens only; no hard-coded hex in component files
-  except token definitions.
+- Token definitions live in `apps/qivxif-web/src/lib/styles/tokens.css`.
+- Imported from `src/routes/+layout.svelte` before shell and surface styles.
+- Component styles reference tokens only; no hard-coded hex outside token definitions.

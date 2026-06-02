@@ -21,7 +21,7 @@
 
 - One row per tab in the rail.
 - Max width ~180px, truncated title with ellipsis.
-- Active tab: bottom or left accent border, raised text color.
+- Active tab: raised surface plus `--q-border-strong`; text stays `--q-text`.
 - Close button is a separate hit target, not the whole tab.
 - Dirty tabs show a dot or asterisk before the title.
 - `data-pane-id` and `data-tab-kind` attributes for tests.

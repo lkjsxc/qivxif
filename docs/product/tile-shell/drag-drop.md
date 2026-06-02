@@ -21,6 +21,14 @@ the tile buttons. It must not create a second layout model.
 - Invalid drops do not queue events.
 - Accepted drops append one `tile.layout_set` event.
 
+## PaneDropLayer
+
+- `PaneDropLayer.svelte` covers the full pane for hit testing while dragging.
+- Preview uses CSS variables `--drop-left`, `--drop-top`, `--drop-width`,
+  `--drop-height` on the layer element.
+- Do not rely on `::after` pseudo-elements on `.pane-stack` alone for previews.
+- `body.dragging-tab` enables the layer and raises the tab strip z-index.
+
 ## Pane Regions
 
 Each pane divides into chrome and body:
@@ -69,8 +77,9 @@ suppresses accidental edge splits on the target pane.
 
 - Fine pointers may use native browser drag after the movement threshold.
 - Coarse pointers use `touch-action: pan-x` until long-press arms drag.
-- Armed dragging sets `body.tab-drag-armed` and `user-select: none`.
+- Armed dragging sets `body.dragging-tab` and `body.tab-strip-drag-arming`.
 - Pointer capture is used after activation when supported.
+- See [../design/motion-and-drag.md](../design/motion-and-drag.md) for class contract.
 
 ## Reducer Boundary
 
