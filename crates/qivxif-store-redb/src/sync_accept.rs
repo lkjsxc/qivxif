@@ -20,6 +20,9 @@ impl QivxifStore {
         event: EventEnvelope,
     ) -> StoreResult<EventReceipt> {
         validate_event_envelope(event.clone()).map_err(|_| StoreError::InvalidEvent)?;
+        if !actor_matches(auth, &event) {
+            return Err(StoreError::Forbidden);
+        }
         if let Some(receipt) = self.replay_receipt_if_match(&event)? {
             return Ok(receipt);
         }
