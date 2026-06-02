@@ -1,6 +1,10 @@
 use qivxif_core::NodeId;
 use serde::{Deserialize, Serialize};
 
+pub const MIN_PANE_WIDTH: u16 = 260;
+pub const MIN_PANE_HEIGHT: u16 = 180;
+pub const DEFAULT_SPLIT_WEIGHT: u16 = 500;
+
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct TileLayout {
     pub root: TileTree,
@@ -12,9 +16,8 @@ pub struct TileLayout {
 pub enum TileTree {
     Split {
         axis: SplitAxis,
-        ratio_percent: u8,
-        first: Box<TileTree>,
-        second: Box<TileTree>,
+        children: Vec<TileTree>,
+        sizes: Vec<u16>,
     },
     Stack {
         active: usize,
@@ -43,9 +46,13 @@ impl TileLayout {
     }
 }
 
+pub fn equal_split_sizes(count: usize) -> Vec<u16> {
+    vec![DEFAULT_SPLIT_WEIGHT; count.max(1)]
+}
+
 fn tile_pane_count(tile: &TileTree) -> usize {
     match tile {
-        TileTree::Split { first, second, .. } => tile_pane_count(first) + tile_pane_count(second),
+        TileTree::Split { children, .. } => children.iter().map(tile_pane_count).sum(),
         TileTree::Stack { tabs, .. } => tabs.len(),
     }
 }

@@ -1,10 +1,11 @@
+mod insert;
 mod shape;
 
 use crate::{GraphError, GraphResult, TileLayout, TileTab};
 use qivxif_core::NodeId;
 use shape::{
     activate, append_to_stack, clear_maximized, ensure_contains, reject_existing, remove_tab,
-    split_stack,
+    resize_split, split_stack,
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -119,6 +120,17 @@ pub fn maximize_pane(mut layout: TileLayout, pane_id: &NodeId) -> GraphResult<Ti
 pub fn restore_maximized(mut layout: TileLayout) -> TileLayout {
     layout.maximized_pane_id = None;
     layout
+}
+
+pub fn resize_split_layout(
+    mut layout: TileLayout,
+    pane_id: &NodeId,
+    sizes: Vec<u16>,
+) -> GraphResult<TileLayout> {
+    if !resize_split(&mut layout.root, pane_id, sizes) {
+        return Err(GraphError::PaneMissing);
+    }
+    Ok(layout)
 }
 
 #[cfg(test)]

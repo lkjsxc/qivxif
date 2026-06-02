@@ -1,46 +1,41 @@
 use super::SplitDirection;
-use crate::{GraphError, GraphResult, SplitAxis, TileTab, TileTree};
+use super::insert::insert_pane_by_edge;
+use crate::{equal_split_sizes, SplitAxis, TileTab, TileTree};
 use qivxif_core::NodeId;
 
-pub(super) fn reject_existing(root: &TileTree, pane_id: &NodeId) -> GraphResult<()> {
+pub(super) fn reject_existing(root: &TileTree, pane_id: &NodeId) -> crate::GraphResult<()> {
     if contains_pane(root, pane_id) {
-        Err(GraphError::PaneExists)
+        Err(crate::GraphError::PaneExists)
     } else {
         Ok(())
     }
 }
 
-pub(super) fn ensure_contains(root: &TileTree, pane_id: &NodeId) -> GraphResult<()> {
+pub(super) fn ensure_contains(root: &TileTree, pane_id: &NodeId) -> crate::GraphResult<()> {
     contains_pane(root, pane_id)
         .then_some(())
-        .ok_or(GraphError::PaneMissing)
+        .ok_or(crate::GraphError::PaneMissing)
 }
 
 pub(super) fn activate(tile: &mut TileTree, pane_id: &NodeId) -> bool {
     match tile {
-        TileTree::Split { first, second, .. } => {
-            activate(first, pane_id) || activate(second, pane_id)
-        }
-        TileTree::Stack { active, tabs } => {
-            match tabs.iter().position(|tab| &tab.pane_node_id == pane_id) {
-                Some(index) => {
-                    *active = index;
-                    true
-                }
-                None => false,
+        TileTree::Split { children, .. } => children.iter_mut().any(|child| activate(child, pane_id)),
+        TileTree::Stack { active, tabs } => match tabs.iter().position(|tab| &tab.pane_node_id == pane_id) {
+            Some(index) => {
+                *active = index;
+                true
             }
-        }
+            None => false,
+        },
     }
 }
 
 pub(super) fn append_to_stack(tile: &mut TileTree, target: &NodeId, tab: TileTab) -> bool {
     match tile {
-        TileTree::Split { first, second, .. } => {
-            append_to_stack(first, target, tab.clone()) || append_to_stack(second, target, tab)
+        TileTree::Split { children, .. } => {
+            children.iter_mut().any(|child| append_to_stack(child, target, tab.clone()))
         }
-        TileTree::Stack { active, tabs }
-            if tabs.iter().any(|item| &item.pane_node_id == target) =>
-        {
+        TileTree::Stack { active, tabs } if tabs.iter().any(|item| &item.pane_node_id == target) => {
             *active = tabs.len();
             tabs.push(tab);
             true
@@ -55,21 +50,30 @@ pub(super) fn remove_tab(tile: TileTree, pane_id: &NodeId) -> (Option<TileTree>,
             mut active,
             mut tabs,
         } => remove_from_stack(&mut active, &mut tabs, pane_id),
-        TileTree::Split {
-            axis,
-            ratio_percent,
-            first,
-            second,
-        } => {
-            let (first_tile, removed) = remove_tab(*first, pane_id);
-            if removed.is_some() {
-                return (
-                    join(axis, ratio_percent, first_tile, Some(*second)),
-                    removed,
-                );
+        TileTree::Split { axis, children, sizes } => {
+            for index in 0..children.len() {
+                let (maybe_child, maybe_removed) = remove_tab(children[index].clone(), pane_id);
+                if maybe_removed.is_some() {
+                    let mut out_children = children;
+                    let mut out_sizes = sizes;
+                    match maybe_child {
+                        Some(child) => out_children[index] = child,
+                        None => {
+                            out_children.remove(index);
+                            out_sizes.remove(index);
+                        }
+                    }
+                    return (collapse_split(axis, out_children, out_sizes), maybe_removed);
+                }
             }
-            let (second_tile, removed) = remove_tab(*second, pane_id);
-            (join(axis, ratio_percent, first_tile, second_tile), removed)
+            (
+                Some(TileTree::Split {
+                    axis,
+                    children,
+                    sizes,
+                }),
+                None,
+            )
         }
     }
 }
@@ -80,29 +84,28 @@ pub(super) fn split_stack(
     tab: TileTab,
     direction: SplitDirection,
 ) -> (TileTree, bool) {
+    if let Some(next) = insert_pane_by_edge(&tile, target, direction, stack(0, vec![tab])) {
+        return (next, true);
+    }
+    (tile, false)
+}
+
+pub(super) fn resize_split(
+    tile: &mut TileTree,
+    pane_id: &NodeId,
+    sizes: Vec<u16>,
+) -> bool {
     match tile {
-        TileTree::Split {
-            axis,
-            ratio_percent,
-            first,
-            second,
-        } => {
-            let (first_tile, changed) = split_stack(*first, target, tab.clone(), direction);
-            if changed {
-                return (split(axis, ratio_percent, first_tile, *second), true);
+        TileTree::Split { children, sizes: current, .. } => {
+            if children.iter().any(|child| direct_child_contains(child, pane_id))
+                && sizes.len() == children.len()
+            {
+                *current = sizes;
+                return true;
             }
-            let (second_tile, changed) = split_stack(*second, target, tab, direction);
-            (split(axis, ratio_percent, first_tile, second_tile), changed)
+            children.iter_mut().any(|child| resize_split(child, pane_id, sizes.clone()))
         }
-        TileTree::Stack { active, tabs }
-            if tabs.iter().any(|item| &item.pane_node_id == target) =>
-        {
-            (
-                split_for_direction(stack(active, tabs), stack(0, vec![tab]), direction),
-                true,
-            )
-        }
-        other => (other, false),
+        TileTree::Stack { .. } => false,
     }
 }
 
@@ -128,10 +131,36 @@ fn remove_from_stack(
 
 fn contains_pane(tile: &TileTree, pane_id: &NodeId) -> bool {
     match tile {
-        TileTree::Split { first, second, .. } => {
-            contains_pane(first, pane_id) || contains_pane(second, pane_id)
-        }
+        TileTree::Split { children, .. } => children.iter().any(|child| contains_pane(child, pane_id)),
         TileTree::Stack { tabs, .. } => tabs.iter().any(|tab| &tab.pane_node_id == pane_id),
+    }
+}
+
+fn direct_child_contains(child: &TileTree, pane_id: &NodeId) -> bool {
+    match child {
+        TileTree::Stack { tabs, .. } => tabs.iter().any(|tab| &tab.pane_node_id == pane_id),
+        TileTree::Split { .. } => false,
+    }
+}
+
+fn collapse_split(axis: SplitAxis, children: Vec<TileTree>, sizes: Vec<u16>) -> Option<TileTree> {
+    let count = children.len();
+    match count {
+        0 => None,
+        1 => Some(children.into_iter().next().expect("one child")),
+        _ => Some(TileTree::Split {
+            axis,
+            children,
+            sizes: normalize_sizes(sizes, count),
+        }),
+    }
+}
+
+fn normalize_sizes(sizes: Vec<u16>, count: usize) -> Vec<u16> {
+    if sizes.len() == count {
+        sizes
+    } else {
+        equal_split_sizes(count)
     }
 }
 
@@ -139,44 +168,7 @@ fn next_active(active: usize, removed_index: usize, len: usize) -> usize {
     if removed_index < active {
         active - 1
     } else {
-        active.min(len - 1)
-    }
-}
-
-fn join(
-    axis: SplitAxis,
-    ratio_percent: u8,
-    first: Option<TileTree>,
-    second: Option<TileTree>,
-) -> Option<TileTree> {
-    match (first, second) {
-        (Some(first), Some(second)) => Some(split(axis, ratio_percent, first, second)),
-        (Some(tile), None) | (None, Some(tile)) => Some(tile),
-        (None, None) => None,
-    }
-}
-
-fn split_for_direction(
-    existing: TileTree,
-    created: TileTree,
-    direction: SplitDirection,
-) -> TileTree {
-    let axis = match direction {
-        SplitDirection::Left | SplitDirection::Right => SplitAxis::Row,
-        SplitDirection::Top | SplitDirection::Bottom => SplitAxis::Column,
-    };
-    match direction {
-        SplitDirection::Left | SplitDirection::Top => split(axis, 50, created, existing),
-        SplitDirection::Right | SplitDirection::Bottom => split(axis, 50, existing, created),
-    }
-}
-
-fn split(axis: SplitAxis, ratio_percent: u8, first: TileTree, second: TileTree) -> TileTree {
-    TileTree::Split {
-        axis,
-        ratio_percent,
-        first: Box::new(first),
-        second: Box::new(second),
+        active.min(len.saturating_sub(1))
     }
 }
 

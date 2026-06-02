@@ -1,5 +1,5 @@
 use super::*;
-use crate::{SplitAxis, TileTree};
+use crate::{equal_split_sizes, SplitAxis, TileTree};
 
 #[test]
 fn focusing_is_local_to_one_stack() {
@@ -13,9 +13,9 @@ fn focusing_is_local_to_one_stack() {
 
     let next = focus_tab(layout, &left_b.pane_node_id).unwrap();
 
-    let (left, right_stack) = split_pair(&next.root);
-    assert_eq!(stack_active(left), 1);
-    assert_eq!(stack_active(right_stack), 0);
+    let split = expect_split(&next.root);
+    assert_eq!(stack_active(&split.1[0]), 1);
+    assert_eq!(stack_active(&split.1[1]), 0);
 }
 
 #[test]
@@ -30,13 +30,13 @@ fn opening_tab_targets_only_anchor_stack() {
 
     let next = open_tab(layout, &right.pane_node_id, created.clone()).unwrap();
 
-    let (left_stack, right_stack) = split_pair(&next.root);
-    assert_eq!(stack_tabs(left_stack), vec![left.pane_node_id]);
+    let split = expect_split(&next.root);
+    assert_eq!(stack_tabs(&split.1[0]), vec![left.pane_node_id]);
     assert_eq!(
-        stack_tabs(right_stack),
+        stack_tabs(&split.1[1]),
         vec![right.pane_node_id, created.pane_node_id]
     );
-    assert_eq!(stack_active(right_stack), 1);
+    assert_eq!(stack_active(&split.1[1]), 1);
 }
 
 #[test]
@@ -112,9 +112,24 @@ fn moving_tab_to_edge_creates_sibling_stack() {
     )
     .unwrap();
 
-    let (first, second) = split_pair(&next.root);
-    assert_eq!(stack_tabs(first), vec![left.pane_node_id]);
-    assert_eq!(stack_tabs(second), vec![right.pane_node_id]);
+    let split = expect_split(&next.root);
+    assert_eq!(stack_tabs(&split.1[0]), vec![left.pane_node_id]);
+    assert_eq!(stack_tabs(&split.1[1]), vec![right.pane_node_id]);
+}
+
+#[test]
+fn resize_split_updates_direct_parent_sizes() {
+    let left = tab("left", None);
+    let right = tab("right", None);
+    let layout = split_layout(
+        stack_tile(0, vec![left.clone()]),
+        stack_tile(0, vec![right.clone()]),
+    );
+
+    let next = resize_split_layout(layout, &left.pane_node_id, vec![700, 300]).unwrap();
+
+    let split = expect_split(&next.root);
+    assert_eq!(split.2, vec![700, 300]);
 }
 
 #[test]
@@ -139,7 +154,7 @@ fn single_layout_with_tabs(tabs: Vec<TileTab>) -> TileLayout {
 
 fn split_layout(first: TileTree, second: TileTree) -> TileLayout {
     TileLayout {
-        root: split_tile(SplitAxis::Row, 50, first, second),
+        root: split_tile(SplitAxis::Row, vec![first, second]),
         maximized_pane_id: None,
     }
 }
@@ -148,12 +163,12 @@ fn stack_tile(active: usize, tabs: Vec<TileTab>) -> TileTree {
     TileTree::Stack { active, tabs }
 }
 
-fn split_tile(axis: SplitAxis, ratio_percent: u8, first: TileTree, second: TileTree) -> TileTree {
+fn split_tile(axis: SplitAxis, children: Vec<TileTree>) -> TileTree {
+    let count = children.len();
     TileTree::Split {
         axis,
-        ratio_percent,
-        first: Box::new(first),
-        second: Box::new(second),
+        children,
+        sizes: equal_split_sizes(count),
     }
 }
 
@@ -166,9 +181,9 @@ fn tab(title: &str, target_node_id: Option<NodeId>) -> TileTab {
     }
 }
 
-fn split_pair(tile: &TileTree) -> (&TileTree, &TileTree) {
+fn expect_split(tile: &TileTree) -> (SplitAxis, &[TileTree], &[u16]) {
     match tile {
-        TileTree::Split { first, second, .. } => (first, second),
+        TileTree::Split { axis, children, sizes } => (*axis, children.as_slice(), sizes.as_slice()),
         TileTree::Stack { .. } => panic!("expected split"),
     }
 }
