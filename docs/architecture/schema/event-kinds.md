@@ -65,6 +65,12 @@ before reducer application.
 - `layout`: complete tile tree snapshot.
 - `maximized_pane_id`: optional pane node ID inside the tile tree.
 
+The `layout.root` tree uses N-way splits:
+
+- Split nodes contain `axis`, `children`, and `sizes`.
+- Stack nodes contain `active` and `tabs`.
+- See [../../product/tile-shell/layout-tree.md](../../product/tile-shell/layout-tree.md).
+
 ## Board Placement Payload
 
 `board.item_place` payload:

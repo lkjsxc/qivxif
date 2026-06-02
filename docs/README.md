@@ -187,6 +187,7 @@
 - [product/tile-shell/command-palette.md](product/tile-shell/command-palette.md)
 - [product/tile-shell/drag-drop.md](product/tile-shell/drag-drop.md)
 - [product/tile-shell/keyboard.md](product/tile-shell/keyboard.md)
+- [product/tile-shell/layout-tree.md](product/tile-shell/layout-tree.md)
 - [product/tile-shell/lkjstr-parity.md](product/tile-shell/lkjstr-parity.md)
 - [product/tile-shell/panes.md](product/tile-shell/panes.md)
 - [product/tile-shell/settings-pane.md](product/tile-shell/settings-pane.md)

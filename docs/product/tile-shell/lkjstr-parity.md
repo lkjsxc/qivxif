@@ -8,7 +8,8 @@ This file defines what "like lkjstr except colors" means for qivxif.
 
 - Copy the interaction grammar, not the source framework.
 - Copy the compact header plus full-height recursive workspace shape.
-- Copy tab splitting, stacking, moving, closing, maximizing, and restoring.
+- Copy N-way splits with resize handles, tab splitting, stacking, moving,
+  closing, maximizing, and restoring.
 - Copy pane-local vertical scroll and no horizontal shell scroll.
 - Copy one-row horizontally scrollable tab rails with overflow fades.
 - Copy active-tab reveal inside the rail.
@@ -20,7 +21,8 @@ This file defines what "like lkjstr except colors" means for qivxif.
 
 ## Do Not Copy
 
-- Do not copy the palette.
+- Do not copy the palette. qivxif uses the Zed-minimal dark tokens from
+  [../design/visual-language.md](../design/visual-language.md).
 - Do not copy Nostr-specific product tools.
 - Do not copy relay settings, Mine npub, profile-only tools, or signing surfaces.
 - Do not turn qivxif into a browser-only local app.

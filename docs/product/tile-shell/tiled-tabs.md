@@ -4,7 +4,8 @@
 
 - The first visible product surface is the header plus recursive tile grid.
 - The app shell has one root tile.
-- A tile is either a split node or a tab stack.
+- A tile is either an N-way split node or a tab stack.
+- Split nodes contain `children` and `sizes`; see [layout-tree.md](layout-tree.md).
 - A stack has one pane header, one horizontally scrollable tab rail, and one
   pane body region.
 - A visible tab instance references one durable pane instance.
@@ -31,7 +32,9 @@
 - Stack `active` indexes are local to one stack.
 - Opening a tab appends a new pane instance to the target stack and activates it.
 - Focusing a tab changes only the target stack.
-- Splitting a tab creates a sibling stack at the requested edge.
+- Splitting a tab creates a sibling stack at the requested edge using smart
+  split insertion.
+- Resizing a split updates adjacent `sizes` entries and emits `tile.layout_set`.
 - Moving a tab to a stack activates it in the target stack.
 - Moving a tab to an edge removes it from the source stack, creates a sibling
   stack, and activates the moved tab.
@@ -69,8 +72,9 @@
 - Pane bodies own local vertical scroll.
 - Pane body scroll offsets restore from the visible tab instance snapshot.
 - Shell content must not create horizontal page scroll.
-- Inactive tabs retain logical state, even when a later renderer chooses not to
-  keep inactive DOM mounted.
+- Inactive tabs retain logical state through hidden-mounted tab bodies and
+  IndexedDB snapshots.
+- Split children expose resize handles between adjacent panes.
 
 ## Command Slice
 

@@ -2,6 +2,7 @@
 
 ## Contents
 
+- [layout-tree.md](layout-tree.md): N-way split tree schema.
 - [tiled-tabs.md](tiled-tabs.md): tile and tab behavior.
 - [lkjstr-parity.md](lkjstr-parity.md): reference workspace interaction parity.
 - [drag-drop.md](drag-drop.md): native tab drag and drop behavior.
