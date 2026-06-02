@@ -50,14 +50,8 @@ pub struct EdgeCreateResult {
 
 impl QivxifStore {
     pub fn create_node(&self, input: NodeCreateInput) -> StoreResult<NodeCreateResult> {
-        if self.get_event(&input.event_id)?.is_some() {
-            let node = self
-                .get_node(&input.node_id)?
-                .ok_or(StoreError::EventConflict)?;
-            let receipt = self
-                .event_receipt(&input.event_id)?
-                .ok_or(StoreError::EventConflict)?;
-            return Ok(NodeCreateResult { node, receipt });
+        if let Some(existing) = self.get_event(&input.event_id)? {
+            return self.node_create_replay(&existing, &input);
         }
         let now = ServerTime::now();
         let node = NodeRecord {
@@ -89,6 +83,37 @@ impl QivxifStore {
             }
         }
         tx.commit()?;
+        Ok(NodeCreateResult { node, receipt })
+    }
+
+    fn node_create_replay(
+        &self,
+        event: &EventEnvelope,
+        input: &NodeCreateInput,
+    ) -> StoreResult<NodeCreateResult> {
+        if event.kind != EventKind::NodeCreate
+            || event.actor_id != input.actor_id
+            || event.actor_seq != input.actor_seq
+            || event.target_node_ids.as_slice() != std::slice::from_ref(&input.node_id)
+        {
+            return Err(StoreError::EventConflict);
+        }
+        let created: NodeRecord = decode(&event.payload.bytes)?;
+        if created.id != input.node_id
+            || created.kind != input.kind
+            || created.owner_user_id != input.owner_user_id
+            || created.created_by != input.actor_id
+            || created.visibility != input.visibility
+            || created.metadata_map != input.metadata_map
+        {
+            return Err(StoreError::EventConflict);
+        }
+        let node = self
+            .get_node(&input.node_id)?
+            .ok_or(StoreError::EventConflict)?;
+        let receipt = self
+            .event_receipt(&input.event_id)?
+            .ok_or(StoreError::EventConflict)?;
         Ok(NodeCreateResult { node, receipt })
     }
 

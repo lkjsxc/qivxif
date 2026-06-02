@@ -41,6 +41,25 @@ async fn creates_reads_and_links_graph_records() {
     )
     .await;
     assert_eq!(duplicate.event, created.event);
+    let conflict = NodeCreateRequest {
+        event_id: first_event.clone(),
+        actor_seq: 1,
+        node_id: NodeId::generate(),
+        kind: NodeKind::Text,
+        visibility: Visibility::Public,
+        metadata_map: MetadataMap::empty(),
+    };
+    let response = app
+        .clone()
+        .oneshot(post_json(
+            "/api/nodes",
+            &conflict,
+            Some(&cookie),
+            Some(&csrf),
+        ))
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::CONFLICT);
     create_node(
         &app,
         &cookie,

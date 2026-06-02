@@ -52,6 +52,28 @@ async fn pushes_duplicate_and_pulls_graph_event() {
         .unwrap();
     let envelope: ApiEnvelope<PushResponse> = read_json(duplicate).await;
     assert_eq!(envelope.payload.unwrap().accepted, pushed.accepted);
+    assert_opaque_cursor(&pushed.accepted[0].server_cursor);
+
+    let (mut conflict_event, _) = node_create_event(&login, 1);
+    conflict_event.event_id = event.event_id.clone();
+    let conflict = PushRequest {
+        client_id: "client-a".to_owned(),
+        actor_id: login.actor_id.clone(),
+        events: vec![conflict_event],
+        cursor_summary: None,
+    };
+    let response = app
+        .clone()
+        .oneshot(post_json(
+            "/api/sync/push",
+            &conflict,
+            Some(&login.cookie),
+            Some(&login.csrf),
+        ))
+        .await
+        .unwrap();
+    let envelope: ApiEnvelope<PushResponse> = read_json(response).await;
+    assert_eq!(envelope.payload.unwrap().rejected[0].code, "store.conflict");
 
     let response = app
         .oneshot(get(
@@ -92,6 +114,15 @@ async fn pushes_text_event_after_graph_node() {
     let pushed = envelope.payload.unwrap();
     assert!(pushed.rejected.is_empty(), "{:?}", pushed.rejected);
     assert_eq!(pushed.accepted.len(), 2);
+}
+
+fn assert_opaque_cursor(cursor: &qivxif_core::CursorId) {
+    let text = cursor.as_str();
+    assert!(text.starts_with("cur_"));
+    assert_ne!(
+        text,
+        "cur_0000000000000000000000000000000000000000000000000000000000000001"
+    );
 }
 
 fn node_create_event(login: &support::TestLogin, actor_seq: u64) -> (EventEnvelope, NodeId) {

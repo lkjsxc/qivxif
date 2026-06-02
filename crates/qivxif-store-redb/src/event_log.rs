@@ -6,7 +6,7 @@ use qivxif_core::{CursorId, EventId};
 use qivxif_history::EventEnvelope;
 use redb::ReadableTable;
 
-pub(crate) use crate::event_write::{event_cursor_key, insert_event};
+pub(crate) use crate::event_write::{cursor_key, event_cursor_key, insert_event};
 
 impl QivxifStore {
     pub fn get_event(&self, event_id: &EventId) -> StoreResult<Option<EventEnvelope>> {
@@ -40,18 +40,16 @@ impl QivxifStore {
         limit: usize,
     ) -> StoreResult<(Vec<EventEnvelope>, Option<CursorId>, bool)> {
         let tx = self.database.begin_read()?;
-        let cursors = tx.open_table(tables::SYNC_CURSORS)?;
+        let after = cursor_sequence(&tx, cursor)?;
+        let acceptance = tx.open_table(tables::EVENT_IDS_BY_ACCEPTANCE)?;
         let events = tx.open_table(tables::EVENTS_BY_ID)?;
-        let after = cursor.map(CursorId::as_str);
+        let cursors = tx.open_table(tables::SYNC_CURSORS)?;
         let mut out = Vec::new();
         let mut last_cursor = cursor.cloned();
         let mut has_more = false;
-        for item in cursors.iter()? {
+        for item in acceptance.iter()? {
             let (key, event_id_bytes) = item?;
-            let Some(cursor_text) = key.value().strip_prefix("cursor:") else {
-                continue;
-            };
-            if after.is_some_and(|value| cursor_text <= value) {
+            if sequence_from_key(key.value())? <= after {
                 continue;
             }
             let event_id: EventId = decode(event_id_bytes.value())?;
@@ -64,8 +62,8 @@ impl QivxifStore {
                     has_more = true;
                     break;
                 }
+                last_cursor = event_cursor(&cursors, &event_id)?.or(last_cursor);
                 out.push(event);
-                last_cursor = Some(parse_cursor(cursor_text)?);
             }
         }
         Ok((out, last_cursor, has_more))
@@ -87,6 +85,30 @@ impl QivxifStore {
     }
 }
 
-fn parse_cursor(value: &str) -> StoreResult<CursorId> {
-    value.parse().map_err(|_| StoreError::CursorInvalid)
+fn cursor_sequence(tx: &redb::ReadTransaction, cursor: Option<&CursorId>) -> StoreResult<u128> {
+    let Some(cursor) = cursor else {
+        return Ok(0);
+    };
+    let cursors = tx.open_table(tables::SYNC_CURSORS)?;
+    let Some(sequence_bytes) = cursors.get(cursor_key(cursor).as_str())? else {
+        return Err(StoreError::CursorInvalid);
+    };
+    decode(sequence_bytes.value())
+}
+
+fn event_cursor(
+    cursors: &redb::ReadOnlyTable<&str, &[u8]>,
+    event_id: &EventId,
+) -> StoreResult<Option<CursorId>> {
+    cursors
+        .get(event_cursor_key(event_id).as_str())?
+        .map(|bytes| decode(bytes.value()))
+        .transpose()
+}
+
+fn sequence_from_key(key: &str) -> StoreResult<u128> {
+    key.strip_prefix("acceptance:")
+        .ok_or(StoreError::CursorInvalid)?
+        .parse()
+        .map_err(|_| StoreError::CursorInvalid)
 }

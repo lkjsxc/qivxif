@@ -19,6 +19,8 @@ pub const EVENT_IDS_BY_TARGET_EDGE: TableDefinition<&str, &[u8]> =
     TableDefinition::new("event_ids_by_target_edge");
 pub const EVENT_IDS_BY_TARGET_EVENT: TableDefinition<&str, &[u8]> =
     TableDefinition::new("event_ids_by_target_event");
+pub const EVENT_IDS_BY_ACCEPTANCE: TableDefinition<&str, &[u8]> =
+    TableDefinition::new("event_ids_by_acceptance");
 pub const COMMIT_GROUPS: TableDefinition<&str, &[u8]> = TableDefinition::new("commit_groups");
 pub const BLOBS: TableDefinition<&str, &[u8]> = TableDefinition::new("blobs");
 pub const BLOB_CHUNKS: TableDefinition<&str, &[u8]> = TableDefinition::new("blob_chunks");
@@ -46,6 +48,7 @@ pub const ALL: &[(&str, TableDefinition<&str, &[u8]>)] = &[
     ("event_ids_by_target_node", EVENT_IDS_BY_TARGET_NODE),
     ("event_ids_by_target_edge", EVENT_IDS_BY_TARGET_EDGE),
     ("event_ids_by_target_event", EVENT_IDS_BY_TARGET_EVENT),
+    ("event_ids_by_acceptance", EVENT_IDS_BY_ACCEPTANCE),
     ("commit_groups", COMMIT_GROUPS),
     ("blobs", BLOBS),
     ("blob_chunks", BLOB_CHUNKS),

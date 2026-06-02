@@ -2,6 +2,7 @@ use crate::{
     StoreError, StoreResult,
     codec::{decode, encode},
     event_log::insert_event,
+    event_write::event_matches_for_replay,
     records::EventReceipt,
     store::QivxifStore,
     tables,
@@ -19,6 +20,9 @@ impl QivxifStore {
         event: EventEnvelope,
     ) -> StoreResult<EventReceipt> {
         validate_event_envelope(event.clone()).map_err(|_| StoreError::InvalidEvent)?;
+        if let Some(receipt) = self.replay_receipt_if_match(&event)? {
+            return Ok(receipt);
+        }
         match event.kind {
             EventKind::NodeCreate => self.accept_node_create_event(auth, event),
             EventKind::EdgeCreate => self.accept_edge_create_event(auth, event),
@@ -28,6 +32,18 @@ impl QivxifStore {
             EventKind::TileLayoutSet => self.accept_tile_event(auth, event),
             _ => Err(StoreError::UnknownEventKind),
         }
+    }
+
+    fn replay_receipt_if_match(&self, event: &EventEnvelope) -> StoreResult<Option<EventReceipt>> {
+        let Some(existing) = self.get_event(&event.event_id)? else {
+            return Ok(None);
+        };
+        if !event_matches_for_replay(&existing, event) {
+            return Err(StoreError::EventConflict);
+        }
+        self.event_receipt(&event.event_id)?
+            .map(Some)
+            .ok_or(StoreError::EventConflict)
     }
 
     fn accept_node_create_event(

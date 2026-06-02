@@ -1,6 +1,6 @@
 use crate::{
-    StoreError, StoreResult, codec::encode, event_log::insert_event, records::EventReceipt,
-    store::QivxifStore, tables,
+    StoreError, StoreResult, codec::encode, event_log::insert_event,
+    event_write::event_matches_for_replay, records::EventReceipt, store::QivxifStore, tables,
 };
 use qivxif_auth::{AuthContext, Viewer, can_write};
 use qivxif_core::{ActorId, EventId, NodeId, ServerTime};
@@ -38,7 +38,10 @@ impl QivxifStore {
         event: EventEnvelope,
         layout: TileLayout,
     ) -> StoreResult<TileLayoutSetResult> {
-        if self.get_event(&event.event_id)?.is_some() {
+        if let Some(existing) = self.get_event(&event.event_id)? {
+            if !event_matches_for_replay(&existing, &event) {
+                return Err(StoreError::EventConflict);
+            }
             return self.tile_layout_replay(&event);
         }
         let Some(layout_node_id) = event.target_node_ids.first().cloned() else {

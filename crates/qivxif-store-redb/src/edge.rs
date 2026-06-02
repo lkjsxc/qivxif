@@ -9,6 +9,7 @@ use crate::{
 use qivxif_auth::{AuthContext, can_link};
 use qivxif_core::ServerTime;
 use qivxif_graph::EdgeRecord;
+use qivxif_history::{EventEnvelope, EventKind};
 use redb::ReadableTable;
 
 impl QivxifStore {
@@ -17,14 +18,8 @@ impl QivxifStore {
         auth: &AuthContext,
         input: EdgeCreateInput,
     ) -> StoreResult<EdgeCreateResult> {
-        if self.get_event(&input.event_id)?.is_some() {
-            let edge = self
-                .get_edge(&input.edge_id)?
-                .ok_or(StoreError::EventConflict)?;
-            let receipt = self
-                .event_receipt(&input.event_id)?
-                .ok_or(StoreError::EventConflict)?;
-            return Ok(EdgeCreateResult { edge, receipt });
+        if let Some(existing) = self.get_event(&input.event_id)? {
+            return self.edge_create_replay(&existing, &input);
         }
         let Some(from) = self.get_node(&input.from_node)? else {
             return Err(StoreError::NodeMissing);
@@ -70,6 +65,37 @@ impl QivxifStore {
             }
         }
         tx.commit()?;
+        Ok(EdgeCreateResult { edge, receipt })
+    }
+
+    fn edge_create_replay(
+        &self,
+        event: &EventEnvelope,
+        input: &EdgeCreateInput,
+    ) -> StoreResult<EdgeCreateResult> {
+        if event.kind != EventKind::EdgeCreate
+            || event.actor_id != input.actor_id
+            || event.actor_seq != input.actor_seq
+            || event.target_edge_ids.as_slice() != std::slice::from_ref(&input.edge_id)
+        {
+            return Err(StoreError::EventConflict);
+        }
+        let created: EdgeRecord = decode(&event.payload.bytes)?;
+        if created.id != input.edge_id
+            || created.from_node != input.from_node
+            || created.to_node != input.to_node
+            || created.kind != input.kind
+            || created.created_by != input.actor_id
+            || created.metadata_map != input.metadata_map
+        {
+            return Err(StoreError::EventConflict);
+        }
+        let edge = self
+            .get_edge(&input.edge_id)?
+            .ok_or(StoreError::EventConflict)?;
+        let receipt = self
+            .event_receipt(&input.event_id)?
+            .ok_or(StoreError::EventConflict)?;
         Ok(EdgeCreateResult { edge, receipt })
     }
 }

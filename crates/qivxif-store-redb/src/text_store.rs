@@ -2,6 +2,7 @@ use crate::{
     StoreError, StoreResult,
     codec::{decode, encode},
     event_log::insert_event,
+    event_write::event_matches_for_replay,
     records::EventReceipt,
     store::QivxifStore,
     tables,
@@ -53,7 +54,11 @@ impl QivxifStore {
         auth: &AuthContext,
         input: TextApplyInput,
     ) -> StoreResult<TextApplyResult> {
-        if self.get_event(&input.event.event_id)?.is_some() {
+        let event = text_envelope(&input)?;
+        if let Some(existing) = self.get_event(&input.event.event_id)? {
+            if !event_matches_for_replay(&existing, &event) {
+                return Err(StoreError::EventConflict);
+            }
             let state = self
                 .get_text_state(auth, &input.node_id)?
                 .ok_or(StoreError::NodeMissing)?;
@@ -73,7 +78,6 @@ impl QivxifStore {
             .unwrap_or_default();
         let next =
             apply_text_event(current, input.event.clone()).map_err(|_| StoreError::InvalidEvent)?;
-        let event = text_envelope(&input)?;
         let tx = self.database.begin_write()?;
         let receipt = insert_event(&tx, &event)?;
         {
