@@ -29,6 +29,9 @@ try {
   await waitForText(page, "Signed in as admin", events, 15000);
   await page.getByRole("tab", { name: "Welcome" }).waitFor();
   await page.getByRole("button", { name: "Create text node" }).waitFor();
+  await page.getByRole("button", { name: "New tab" }).click();
+  await page.locator("article.tile").first().locator(".tab-chooser").getByRole("button", { name: "Settings" }).click();
+  await page.getByRole("tab", { name: "Settings" }).waitFor();
   await page.reload({ waitUntil: "domcontentloaded" });
   await waitForText(page, "Signed in as admin", events, 15000);
   await page.getByRole("tab", { name: "Welcome" }).waitFor();

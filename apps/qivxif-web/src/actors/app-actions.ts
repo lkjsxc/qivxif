@@ -1,4 +1,5 @@
 import { createOwner, login } from "../http/client.ts";
+import { activePaneId as firstActivePaneId } from "../domain/tile-tree.ts";
 import { renderShell } from "../ui/shell.ts";
 import { storeAuthPayload } from "./auth-state.ts";
 import { addCurrentNodeToBoard, createBoard, linkBoardNodes, moveBoardItem } from "./board-actions.ts";
@@ -112,13 +113,41 @@ function openTab(root, store, state, tabId, paneId) {
 }
 
 function toggleTabChooser(root, store, state, paneId = "") {
-  const samePane = state.tabChooserOpen && state.tabChooserPaneId === paneId;
+  const targetPaneId = paneId || chooserPaneId(state);
+  const samePane = state.tabChooserOpen && state.tabChooserPaneId === targetPaneId;
   state.tabChooserOpen = !samePane;
-  state.tabChooserPaneId = state.tabChooserOpen ? paneId : "";
+  state.tabChooserPaneId = state.tabChooserOpen ? targetPaneId : "";
   renderShell(root, state, actionsFor(root, store, state));
 }
 
 function toggleCommandPalette(root, store, state, open) {
   state.commandPaletteOpen = typeof open === "boolean" ? open : !state.commandPaletteOpen;
   renderShell(root, state, actionsFor(root, store, state));
+}
+
+function chooserPaneId(state) {
+  return state.activePaneId || firstActivePaneId(state.layout?.root) || localPaneId(state);
+}
+
+function localPaneId(state) {
+  const panel = state.setupRequired ? "setup" : state.activeTabId;
+  return `local_${paneKindForPanel(panel)}`;
+}
+
+function paneKindForPanel(panel) {
+  const kinds = {
+    board: "graph_board",
+    diagnostics: "diagnostics",
+    editor: "text_editor",
+    graph: "graph_node",
+    history: "history",
+    login: "login",
+    publish: "publishing",
+    settings: "settings",
+    setup: "setup",
+    social: "social_feed",
+    sync: "sync_status",
+    welcome: "welcome",
+  };
+  return kinds[panel] ?? "welcome";
 }
