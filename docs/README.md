@@ -64,6 +64,7 @@
 - [architecture/client/setup-flow.md](architecture/client/setup-flow.md)
 - [architecture/client/social-actions.md](architecture/client/social-actions.md)
 - [architecture/client/state.md](architecture/client/state.md)
+- [architecture/client/drag-resolver.md](architecture/client/drag-resolver.md)
 - [architecture/client/surface-boundary.md](architecture/client/surface-boundary.md)
 - [architecture/events/README.md](architecture/events/README.md)
 - [architecture/events/edge-events.md](architecture/events/edge-events.md)
