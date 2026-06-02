@@ -34,8 +34,10 @@ export async function text(nodeId) {
   return getEnvelope(`/api/text/${nodeId}`);
 }
 
+const REQUEST_TIMEOUT_MS = 15000;
+
 async function getEnvelope(path) {
-  const response = await fetch(path, { credentials: "include" });
+  const response = await fetchWithTimeout(path, { credentials: "include" });
   return readEnvelope(response);
 }
 
@@ -44,13 +46,23 @@ async function postEnvelope(path, body, csrfToken) {
   if (csrfToken) {
     headers["x-qivxif-csrf"] = csrfToken;
   }
-  const response = await fetch(path, {
+  const response = await fetchWithTimeout(path, {
     body: JSON.stringify(body),
     credentials: "include",
     headers,
     method: "POST",
   });
   return readEnvelope(response);
+}
+
+async function fetchWithTimeout(path, init) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    return await fetch(path, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function readEnvelope(response) {

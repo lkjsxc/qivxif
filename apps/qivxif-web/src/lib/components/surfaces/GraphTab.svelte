@@ -1,17 +1,19 @@
 <script lang="ts">
   let { state: viewState, actions } = $props();
-  let nodeId = $state("");
 
   function openNode(event: Event) {
     event.preventDefault();
-    actions.openNode?.(nodeId.trim());
+    const form = event.currentTarget as HTMLFormElement;
+    const data = new FormData(form);
+    actions.openNode?.(String(data.get("nodeId") ?? "").trim());
   }
 </script>
 
 <section class="tab-panel graph">
   <h1>Graph</h1>
   <form class="open-node" onsubmit={openNode}>
-    <label>Server node id <input type="text" bind:value={nodeId} /></label>
+    <label for="graph-node-id">Server node id</label>
+    <input id="graph-node-id" name="nodeId" type="text" required />
     <button type="submit">Open node</button>
   </form>
   <div class="node-list">

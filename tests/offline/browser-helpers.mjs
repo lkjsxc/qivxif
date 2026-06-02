@@ -1,3 +1,53 @@
+export async function shellReady(page, timeout = 90000) {
+  await page.waitForFunction(
+    () => document.querySelector("section.app-shell.workspace") !== null,
+    { timeout },
+  );
+  await page.getByText(/Capabilities: .*server\.health/).waitFor({ timeout });
+}
+
+export async function loadShell(page) {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await shellReady(page);
+}
+
+export async function reloadShell(page) {
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await shellReady(page);
+}
+
+export async function setupOwner(page, events = [], { name = "admin", password = "secret" } = {}) {
+  await waitForText(page, "Setup required", events, 60000);
+  await page.getByRole("heading", { name: "Setup" }).waitFor({ timeout: 30000 });
+  await page.locator("#setup-name").fill(name);
+  await page.locator("#setup-password").fill(password);
+  await page.locator("form.setup-form").evaluate((form) => form.requestSubmit());
+  await page.locator(".header-status").getByText(`Signed in as ${name}`).waitFor({ timeout: 60000 });
+}
+
+export async function login(page, events = [], { name = "admin", password = "secret" } = {}) {
+  const signedIn = page.locator(".header-status").getByText(`Signed in as ${name}`);
+  if (await signedIn.isVisible().catch(() => false)) {
+    return;
+  }
+  if (!(await page.locator("form.login").isVisible().catch(() => false))) {
+    const openLogin = page.getByRole("button", { name: "Open login" });
+    if (await openLogin.isVisible().catch(() => false)) {
+      await openLogin.click({ force: true });
+    }
+  }
+  await page.locator("form.login").waitFor({ timeout: 60000 });
+  await page.locator("#login-name").fill(name);
+  await page.locator("#login-password").fill(password);
+  await page.locator("form.login").evaluate((form) => form.requestSubmit());
+  try {
+    await signedIn.waitFor({ timeout: 60000 });
+  } catch (error) {
+    const bodyText = await page.locator("body").innerText();
+    throw new Error(`login failed\n${bodyText}\n${events.join("\n")}`);
+  }
+}
+
 export function captureBrowserEvents(page) {
   const events = [];
   page.on("console", (message) => events.push(`console ${message.type()}: ${message.text()}`));
@@ -12,7 +62,7 @@ export async function clickButton(page, name) {
   await page.getByRole("button", { name }).first().click({ force: true });
 }
 
-export async function waitForBodyText(page, pattern, timeout = 30000) {
+export async function waitForBodyText(page, pattern, timeout = 90000) {
   await page.waitForFunction(
     (source) => new RegExp(source).test(document.body.innerText),
     pattern.source,
@@ -96,22 +146,10 @@ async function tabSnapshot(page) {
   });
 }
 
-export async function openServerNode(page, nodeId) {
-  await page.waitForFunction((id) => {
-    const labels = [...document.querySelectorAll("label")];
-    const label = labels.find((entry) => {
-      return entry.textContent?.includes("Server node id") && entry.offsetParent !== null;
-    });
-    const input = label?.querySelector("input");
-    const form = input?.closest("form");
-    if (!input || !form) {
-      return false;
-    }
-    input.value = id;
-    input.dispatchEvent(new Event("input", { bubbles: true }));
-    form.requestSubmit();
-    return true;
-  }, nodeId);
+export async function openServerNode(page, nodeId, timeout = 90000) {
+  await page.waitForSelector("form.open-node input[name='nodeId'], #graph-node-id", { timeout });
+  await page.locator("form.open-node input[name='nodeId'], #graph-node-id").first().fill(nodeId);
+  await page.locator("form.open-node").first().evaluate((form) => form.requestSubmit());
 }
 
 async function selectedTabInTile(page, name, index) {

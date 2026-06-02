@@ -1,11 +1,11 @@
 <script lang="ts">
   let { state: viewState, actions } = $props();
-  let name = $state("");
-  let password = $state("");
 
   function submit(event: Event) {
     event.preventDefault();
-    actions.createOwner?.(name, password);
+    const form = event.currentTarget as HTMLFormElement;
+    const data = new FormData(form);
+    actions.createOwner?.(String(data.get("name") ?? ""), String(data.get("password") ?? ""));
   }
 </script>
 
@@ -13,8 +13,10 @@
   <h1>Setup</h1>
   <p>Create the first owner account for this qivxif data store.</p>
   <form class="setup-form" onsubmit={submit}>
-    <label>Name <input type="text" autocomplete="username" bind:value={name} /></label>
-    <label>Password <input type="password" autocomplete="new-password" bind:value={password} /></label>
+    <label for="setup-name">Name</label>
+    <input id="setup-name" name="name" type="text" autocomplete="username" required />
+    <label for="setup-password">Password</label>
+    <input id="setup-password" name="password" type="password" autocomplete="new-password" required />
     <button type="submit" class="primary">Create owner account</button>
   </form>
   {#if viewState.setupError}

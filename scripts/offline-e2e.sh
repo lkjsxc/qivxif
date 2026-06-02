@@ -31,10 +31,11 @@ fi
 rm -rf "$QIVXIF_DATA_DIR"
 mkdir -p "$QIVXIF_DATA_DIR"
 web_dist="${QIVXIF_WEB_DIST_DIR:-${TMPDIR:-/tmp}/qivxif-web-dist}"
-QIVXIF_WEB_DIST_DIR="$web_dist" npm --prefix apps/qivxif-web run build
+QIVXIF_WEB_DIST_DIR="$web_dist" sh scripts/build-web.sh
 export QIVXIF_STATIC_DIR="$web_dist"
 
-cargo run --locked -p qivxif-server >"$work_dir/server.log" 2>&1 &
+cargo build --locked -p qivxif-server
+"${CARGO_TARGET_DIR:-target}/debug/qivxif-server" >"$work_dir/server.log" 2>&1 &
 server_pid="$!"
 
 for _ in $(seq 1 120); do
@@ -49,6 +50,15 @@ if ! test -s "$work_dir/health.json"; then
   printf 'server did not become healthy\n' >&2
   exit 1
 fi
+
+sleep 2
+
+entry="$(ls "$web_dist/_app/immutable/entry/start."*.js 2>/dev/null | head -1)"
+if [ -z "$entry" ]; then
+  printf 'missing vite client bundle in %s\n' "$web_dist" >&2
+  exit 1
+fi
+curl -fsS "$base/_app/immutable/entry/$(basename "$entry")" >/dev/null
 
 export NODE_PATH="$(npm root -g)${NODE_PATH:+:$NODE_PATH}"
 export QIVXIF_BROWSER="$browser"

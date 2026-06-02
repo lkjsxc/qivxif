@@ -54,7 +54,10 @@ fn skip(path: &Path) -> bool {
         || value.contains("/target")
         || value.contains("/tmp")
         || value.contains("/dist")
+        || value.contains("/node_modules")
+        || value.contains("/.svelte-kit")
         || value.contains("Cargo.lock")
+        || value.ends_with("package-lock.json")
         || value.ends_with("docs/decisions/rejected.md")
         || value.ends_with("crates/qivxif-quality/src/retired.rs")
 }

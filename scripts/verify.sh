@@ -7,7 +7,7 @@ if [ ! -d "$repo_dir" ]; then
 fi
 cd "$repo_dir"
 
-npm --prefix apps/qivxif-web run build
+env QIVXIF_WEB_DIST_DIR="${QIVXIF_WEB_DIST_DIR:-${TMPDIR:-/tmp}/qivxif-web-dist}" sh scripts/build-web.sh
 cargo fmt --check
 cargo clippy --locked --workspace --all-targets -- -D warnings
 cargo test --locked --workspace

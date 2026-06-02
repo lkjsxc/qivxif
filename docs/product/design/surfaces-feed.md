@@ -44,4 +44,4 @@
 
 - Playwright finds compose textarea and submit by role.
 - Feed cards use `article.feed-card` with visible author text from API data.
-- No placeholder lorem on the main path.
+- No fake lorem content on the main path.

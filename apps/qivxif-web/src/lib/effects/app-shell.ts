@@ -68,9 +68,17 @@ async function registerServiceWorker(state) {
 function selectInitialTab(state) {
   if (state.setupRequired) {
     state.activeTabId = "setup";
-  } else if (!state.auth) {
+    return;
+  }
+  if (!state.auth) {
     state.activeTabId = "login";
-  } else if (state.activeBoardId) {
+    return;
+  }
+  if (state.activeBoardId) {
     state.activeTabId = "board";
+    return;
+  }
+  if (!state.activeTabId || state.activeTabId === "setup" || state.activeTabId === "login") {
+    state.activeTabId = "welcome";
   }
 }

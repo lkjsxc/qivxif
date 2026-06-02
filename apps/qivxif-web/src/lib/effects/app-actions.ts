@@ -70,7 +70,7 @@ export function actionsFor(store, state, notify = () => {}) {
       notify();
     },
     toggleTabChooser: (paneId = "") => {
-      const targetPaneId = paneId || chooserPaneId(state);
+      const targetPaneId = paneId || state.activePaneId || chooserPaneId(state);
       const samePane = state.tabChooserOpen && state.tabChooserPaneId === targetPaneId;
       state.tabChooserOpen = !samePane;
       state.tabChooserPaneId = state.tabChooserOpen ? targetPaneId : "";
@@ -103,7 +103,7 @@ async function runAction(store, state, notify, action) {
     }
   } catch (error) {
     state.lastError = error.api?.message ?? error.api?.code ?? String(error);
-    if (state.activeTabId === "setup") {
+    if (state.setupRequired || state.activeTabId === "setup") {
       state.setupError = state.lastError;
     }
   }

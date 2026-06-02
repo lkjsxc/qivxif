@@ -1,4 +1,10 @@
 import { createRequire } from "node:module";
+import {
+  captureBrowserEvents,
+  loadShell,
+  reloadShell,
+  setupOwner,
+} from "./browser-helpers.mjs";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright-core");
@@ -13,52 +19,27 @@ const browser = await chromium.launch({
 });
 
 try {
-  const context = await browser.newContext({ baseURL: base });
+  const context = await browser.newContext({ baseURL: base, serviceWorkers: "block" });
   const page = await context.newPage();
+  page.setDefaultTimeout(90000);
   const events = captureBrowserEvents(page);
-  await page.goto("/", { waitUntil: "domcontentloaded" });
-  await page.locator(".app-shell").waitFor();
-  await page.locator(".app-header").waitFor();
-  await page.locator(".tile-grid").waitFor();
-  await page.locator(".tile").first().waitFor();
-  await waitForText(page, "Setup required", events);
-  await page.getByRole("tab", { name: "Setup" }).waitFor();
-  await page.evaluate(() => {
-    const form = document.querySelector(".setup-form");
-    const [name, password] = form.querySelectorAll("input");
-    name.value = "admin";
-    password.value = "secret";
-    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
-  });
-  await waitForText(page, "Signed in as admin", events, 15000);
+  await loadShell(page);
+  await setupOwner(page, events);
   await page.getByRole("tab", { name: "Welcome" }).waitFor();
   await page.getByRole("button", { name: "Create text node" }).waitFor();
-  await page.getByRole("button", { name: "New tab" }).click();
-  await page.locator("article.tile").first().locator(".tab-chooser").getByRole("button", { name: "Settings" }).click();
+  await page.getByRole("button", { name: "New tab" }).click({ force: true });
+  await page
+    .locator("article.tile")
+    .first()
+    .locator(".tab-chooser")
+    .getByRole("button", { name: "Settings" })
+    .click({ force: true });
   await page.getByRole("tab", { name: "Settings" }).waitFor();
-  await page.reload({ waitUntil: "domcontentloaded" });
-  await waitForText(page, "Signed in as admin", events, 15000);
-  await page.getByRole("tab", { name: "Welcome" }).waitFor();
+  await reloadShell(page);
+  await page.locator(".header-status").getByText("Signed in as admin").waitFor({ timeout: 60000 });
+  await page.getByRole("tab", { name: "Welcome" }).click({ force: true });
+  await page.getByRole("button", { name: "Create text node" }).waitFor();
   await context.close();
 } finally {
   await browser.close();
-}
-
-function captureBrowserEvents(page) {
-  const events = [];
-  page.on("console", (message) => events.push(`console ${message.type()}: ${message.text()}`));
-  page.on("pageerror", (error) => events.push(`pageerror: ${error.message}`));
-  page.on("requestfailed", (request) => {
-    events.push(`requestfailed: ${request.url()} ${request.failure()?.errorText}`);
-  });
-  return events;
-}
-
-async function waitForText(page, value, events = [], timeout = 5000) {
-  try {
-    await page.getByText(value).waitFor({ timeout });
-  } catch (error) {
-    const bodyText = await page.locator("body").innerText();
-    throw new Error(`${value} missing\n${bodyText}\n${events.join("\n")}`);
-  }
 }

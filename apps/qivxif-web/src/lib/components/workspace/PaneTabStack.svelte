@@ -17,7 +17,7 @@
       hidden={!active}
       aria-hidden={active ? "false" : "true"}
     >
-      <TabSurface viewState={tabState} actions={tabActions} />
+      <TabSurface state={tabState} actions={tabActions} />
     </section>
   {/each}
 </div>

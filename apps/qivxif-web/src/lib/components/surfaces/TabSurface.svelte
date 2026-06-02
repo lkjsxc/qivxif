@@ -16,27 +16,27 @@
 </script>
 
 {#if viewState.setupRequired || viewState.activeTabId === "setup"}
-  <SetupTab {viewState} {actions} />
+  <SetupTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "login"}
   <LoginTab {actions} />
 {:else if viewState.activeTabId === "graph"}
-  <GraphTab {viewState} {actions} />
+  <GraphTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "editor"}
-  <EditorTab {viewState} {actions} />
+  <EditorTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "board"}
-  <BoardTab {viewState} {actions} />
+  <BoardTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "publish"}
-  <PublishTab {viewState} {actions} />
+  <PublishTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "social"}
-  <FeedTab {viewState} {actions} />
+  <FeedTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "sync"}
-  <SyncTab {viewState} {actions} />
+  <SyncTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "settings"}
-  <SettingsTab {viewState} {actions} />
+  <SettingsTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "history"}
-  <HistoryTab {viewState} />
+  <HistoryTab state={viewState} />
 {:else if viewState.activeTabId === "diagnostics"}
-  <DiagnosticsTab {viewState} />
+  <DiagnosticsTab state={viewState} />
 {:else}
-  <WelcomeTab {viewState} {actions} />
+  <WelcomeTab state={viewState} {actions} />
 {/if}

@@ -27,7 +27,7 @@ run_stage() {
 
 web_dist="${QIVXIF_WEB_DIST_DIR:-${TMPDIR:-/tmp}/qivxif-web-dist}"
 
-run_stage web-build env QIVXIF_WEB_DIST_DIR="$web_dist" npm --prefix apps/qivxif-web run build
+run_stage web-build env QIVXIF_WEB_DIST_DIR="$web_dist" sh scripts/build-web.sh
 run_stage web-syntax find "$web_dist" -name '*.js' -exec node --check {} ';'
 run_stage fmt cargo fmt -- --check
 run_stage clippy cargo clippy --locked --workspace --all-targets -- -D warnings

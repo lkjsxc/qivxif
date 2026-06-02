@@ -14,8 +14,9 @@ const STORE_NAMES = [
   "tile_layout",
 ];
 
-export function openLocalStore() {
+function openWithTimeout(ms) {
   return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("indexeddb open timeout")), ms);
     const request = indexedDB.open("qivxif", 4);
     request.onupgradeneeded = () => {
       const db = request.result;
@@ -25,9 +26,19 @@ export function openLocalStore() {
         }
       }
     };
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(wrapDb(request.result));
+    request.onerror = () => {
+      clearTimeout(timer);
+      reject(request.error);
+    };
+    request.onsuccess = () => {
+      clearTimeout(timer);
+      resolve(wrapDb(request.result));
+    };
   });
+}
+
+export function openLocalStore() {
+  return openWithTimeout(15000);
 }
 
 export async function saveLocalWorkspace(store, state) {

@@ -12,7 +12,7 @@ Repository-level integration and browser checks outside crate unit tests.
 
 ## Rules
 
-- Offline tests use real server paths, not mocked APIs.
+- Offline tests use real server paths, not stubbed APIs.
 - Selectors prefer roles, labels, and documented `data-*` attributes.
 - Each test directory has one `README.md` table of contents.
 

@@ -25,6 +25,8 @@
       cmd("Create text node", authed, () => actions.createTextNode?.(), "login required"),
       cmd("Create board", authed, () => actions.createBoard?.(context), "login required"),
       cmd("Split pane", authed && paneId, () => actions.splitPane?.(paneId, context), "pane required"),
+      cmd("Open settings", true, () => actions.openTab?.("settings", paneId)),
+      cmd("Open publishing tools", true, () => actions.openTab?.("publish", paneId)),
       cmd("Open sync status", true, () => actions.openTab?.("sync", paneId)),
       cmd("Open feed", true, () => actions.openTab?.("social", paneId)),
       cmd("Flush queue", authed, () => actions.sync?.(), "login required"),

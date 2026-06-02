@@ -75,10 +75,11 @@ get_json() {
 rm -rf "$QIVXIF_DATA_DIR"
 mkdir -p "$QIVXIF_DATA_DIR"
 web_dist="${QIVXIF_WEB_DIST_DIR:-${TMPDIR:-/tmp}/qivxif-web-dist}"
-QIVXIF_WEB_DIST_DIR="$web_dist" npm --prefix apps/qivxif-web run build
+QIVXIF_WEB_DIST_DIR="$web_dist" sh scripts/build-web.sh
 export QIVXIF_STATIC_DIR="$web_dist"
 
-cargo run --locked -p qivxif-server >"$work_dir/server.log" 2>&1 &
+cargo build --locked -p qivxif-server
+"${CARGO_TARGET_DIR:-target}/debug/qivxif-server" >"$work_dir/server.log" 2>&1 &
 server_pid="$!"
 
 for _ in $(seq 1 120); do
@@ -163,7 +164,7 @@ for (const kind of ["node.create", "text.restore", "edge.create"]) {
 '
 
 curl -fsS "$base/" >"$work_dir/app-shell.html"
-grep -q 'id="app"' "$work_dir/app-shell.html"
+grep -q 'sveltekit' "$work_dir/app-shell.html"
 
 curl -fsS -b "$cookies" -c "$cookies" -H "x-qivxif-csrf: $csrf" \
   -X POST "$base/api/auth/logout" >"$work_dir/logout.json"

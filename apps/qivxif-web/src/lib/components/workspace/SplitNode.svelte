@@ -18,9 +18,9 @@
   {#each tile.children as child, index}
     <div class="tile-split-child" style:flex="{sizes[index]} 1 0">
       {#if child.kind === "split"}
-        <SplitNode tile={child} {viewState} {actions} />
+        <SplitNode tile={child} state={viewState} {actions} />
       {:else}
-        <Pane stack={child} {viewState} {actions} />
+        <Pane stack={child} state={viewState} {actions} />
       {/if}
     </div>
     {#if index < tile.children.length - 1}

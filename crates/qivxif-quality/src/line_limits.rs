@@ -79,6 +79,9 @@ fn check_file(
 }
 
 fn should_check(path: &Path, docs: bool) -> bool {
+    if path.file_name().and_then(|name| name.to_str()) == Some("package-lock.json") {
+        return false;
+    }
     let ext = path.extension().and_then(|ext| ext.to_str());
     if docs {
         return ext == Some("md");
@@ -106,7 +109,7 @@ fn should_skip_dir(path: &Path) -> bool {
     }
     matches!(
         path.file_name().and_then(|name| name.to_str()),
-        Some("target") | Some("dist") | Some("node_modules")
+        Some("target") | Some("dist") | Some("node_modules") | Some(".svelte-kit")
     )
 }
 

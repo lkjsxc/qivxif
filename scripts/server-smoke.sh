@@ -3,10 +3,11 @@ set -eu
 
 cd /workspace
 web_dist="${QIVXIF_WEB_DIST_DIR:-${TMPDIR:-/tmp}/qivxif-web-dist}"
-QIVXIF_WEB_DIST_DIR="$web_dist" npm --prefix apps/qivxif-web run build
+QIVXIF_WEB_DIST_DIR="$web_dist" sh scripts/build-web.sh
 export QIVXIF_STATIC_DIR="$web_dist"
 cargo run --locked -p qivxifctl -- store health --store "$QIVXIF_DATABASE_FILE"
-cargo run --locked -p qivxif-server &
+cargo build --locked -p qivxif-server
+"${CARGO_TARGET_DIR:-target}/debug/qivxif-server" &
 server_pid="$!"
 
 cleanup() {

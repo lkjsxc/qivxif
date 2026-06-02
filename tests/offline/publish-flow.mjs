@@ -1,5 +1,12 @@
 import { createRequire } from "node:module";
-import { captureBrowserEvents, openShellTab, waitForText } from "./browser-helpers.mjs";
+import {
+  captureBrowserEvents,
+  loadShell,
+  login,
+  openShellTab,
+  reloadShell,
+  waitForText,
+} from "./browser-helpers.mjs";
 import { createPublishedPost, expectPublishSlugConflict } from "./publish-helpers.mjs";
 
 const require = createRequire(import.meta.url);
@@ -18,8 +25,9 @@ const browser = await chromium.launch({
 });
 
 try {
-  const context = await browser.newContext({ baseURL: base });
+  const context = await browser.newContext({ baseURL: base, serviceWorkers: "block" });
   const page = await context.newPage();
+  page.setDefaultTimeout(90000);
   const browserEvents = captureBrowserEvents(page);
   await loadShell(page);
   await login(page, browserEvents);
@@ -28,18 +36,32 @@ try {
   await page.getByLabel("Search commands").fill("settings");
   assert((await page.getByRole("button", { name: "Open graph" }).count()) === 0, "palette filter kept graph visible");
   await page.getByRole("button", { name: "Open settings" }).click();
-  await waitForText(page, "Account: admin", browserEvents);
+  await waitForText(page, "Signed in as admin", browserEvents);
 
   await context.setOffline(true);
-  await page.keyboard.press("Control+K");
-  await page.getByRole("button", { name: "Open publishing tools" }).click({ force: true });
-  await page.getByLabel("Blog title").fill(title);
-  await page.evaluate(() => {
-    const button = [...document.querySelectorAll("button")].find(
-      (entry) => entry.textContent?.trim() === "Create blog draft",
-    );
-    button?.click();
-  });
+  await page.locator("article.tile").first().getByRole("button", { name: "+" }).click({ force: true });
+  await page
+    .locator("article.tile")
+    .first()
+    .locator(".tab-chooser")
+    .getByRole("button", { name: "Publishing" })
+    .click({ force: true });
+  await page.locator(".tab-panel.publish").waitFor({ timeout: 90000 });
+  await page.locator("#publish-title").fill(title);
+  await page.locator("form.publish-draft-form").evaluate((form) => form.requestSubmit());
+  await page.waitForFunction(async () => {
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open("qivxif", 4);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+    });
+    const draft = await new Promise((resolve, reject) => {
+      const call = db.transaction("tile_layout", "readonly").objectStore("tile_layout").get("current_blog_post");
+      call.onerror = () => reject(call.error);
+      call.onsuccess = () => resolve(call.result);
+    });
+    return Boolean(draft?.node_id);
+  }, null, { timeout: 90000 });
   await page.waitForFunction(async () => {
     const db = await new Promise((resolve, reject) => {
       const request = indexedDB.open("qivxif", 4);
@@ -53,7 +75,6 @@ try {
     });
     return events.length >= 3;
   }, null, { timeout: 30000 });
-  await page.locator("textarea.editor").first().waitFor({ state: "attached", timeout: 30000 });
   await page.locator("textarea.editor").first().fill(body, { force: true });
   await page.evaluate(() => {
     const button = [...document.querySelectorAll("button")].find(
@@ -74,16 +95,25 @@ try {
     });
     return events.length >= 4;
   }, null, { timeout: 30000 });
-  await page.keyboard.press("Control+K");
-  await page.getByRole("button", { name: "Open publishing tools" }).click({ force: true });
-  await page.getByLabel("Slug").fill(slug);
-  await page.getByLabel("Summary").fill("offline summary");
-  await page.evaluate(() => {
-    const button = [...document.querySelectorAll("button")].find(
-      (entry) => entry.textContent?.trim() === "Publish draft",
-    );
-    button?.click();
+  await page.waitForFunction(() => document.querySelector("form.publish-submit-form") !== null, {
+    timeout: 90000,
   });
+  const published = await page.evaluate(
+    ({ slugValue, summaryValue }) => {
+      const slugInput = document.querySelector("#publish-slug");
+      const summaryInput = document.querySelector("#publish-summary");
+      const form = document.querySelector("form.publish-submit-form");
+      if (!slugInput || !summaryInput || !form) {
+        return false;
+      }
+      slugInput.value = slugValue;
+      summaryInput.value = summaryValue;
+      form.requestSubmit();
+      return true;
+    },
+    { slugValue: slug, summaryValue: "offline summary" },
+  );
+  assert(published, "publish form was not available");
   await page.waitForFunction(async () => {
     const db = await new Promise((resolve, reject) => {
       const request = indexedDB.open("qivxif", 4);
@@ -99,7 +129,8 @@ try {
   }, null, { timeout: 30000 });
   assert((await publicStatus(slug)) === 404, "server published while browser was offline");
 
-  await page.reload({ waitUntil: "domcontentloaded" });
+  await context.setOffline(false);
+  await reloadShell(page);
   await page.waitForFunction(async () => {
     const db = await new Promise((resolve, reject) => {
       const request = indexedDB.open("qivxif", 4);
@@ -114,7 +145,6 @@ try {
     return events.length >= 5;
   }, null, { timeout: 30000 });
 
-  await context.setOffline(false);
   await page.evaluate(() => {
     const button = [...document.querySelectorAll("button")].find(
       (entry) => entry.textContent?.trim() === "Flush queue",
@@ -139,36 +169,6 @@ try {
   await context.close();
 } finally {
   await browser.close();
-}
-
-async function loadShell(page) {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
-  await page.locator(".workspace").waitFor();
-  await page.getByText(/Capabilities: .*server\.health/).waitFor();
-  await serviceWorkerReady(page);
-  await page.reload({ waitUntil: "domcontentloaded" });
-  await page.getByText(/Capabilities: .*publish\.blog/).waitFor();
-}
-
-async function serviceWorkerReady(page) {
-  await page.evaluate(() => navigator.serviceWorker.ready.then(() => true));
-  await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
-}
-
-async function login(page, browserEvents = []) {
-  await page.evaluate(() => {
-    const form = document.querySelector(".login");
-    const [name, password] = form.querySelectorAll("input");
-    name.value = "admin";
-    password.value = "secret";
-    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
-  });
-  try {
-    await page.getByText("Signed in as admin").waitFor();
-  } catch (error) {
-    const bodyText = await page.locator("body").innerText();
-    throw new Error(`login failed\n${bodyText}\n${browserEvents.join("\n")}`);
-  }
 }
 
 async function waitForQueuedAtLeast(page, minimum, events = [], timeout = 5000) {

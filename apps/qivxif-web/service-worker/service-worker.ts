@@ -1,12 +1,16 @@
 const APP_CACHE = "qivxif-app-shell";
-const CORE_ASSETS = ["/", "/index.html", "/main.js", "/styles.css", "/asset-manifest.json"];
+const CORE_ASSETS = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(cacheAppShell().then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== APP_CACHE).map((k) => caches.delete(k)))).then(() =>
+      self.clients.claim(),
+    ),
+  );
 });
 
 self.addEventListener("fetch", (event) => {
@@ -14,8 +18,12 @@ self.addEventListener("fetch", (event) => {
   if (url.pathname.startsWith("/api/")) {
     return;
   }
+  if (url.pathname.startsWith("/_app/")) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
   if (event.request.mode === "navigate") {
-    event.respondWith(fetch(event.request).catch(() => cachedAppAsset("/index.html")));
+    event.respondWith(fetch(event.request).catch(() => cachedPath("/index.html")));
     return;
   }
   event.respondWith(staticAsset(event.request));
@@ -23,21 +31,11 @@ self.addEventListener("fetch", (event) => {
 
 async function cacheAppShell() {
   const cache = await caches.open(APP_CACHE);
-  const assets = await manifestAssets();
-  await cache.addAll([...new Set([...CORE_ASSETS, ...assets])]);
-}
-
-async function manifestAssets() {
-  try {
-    const response = await fetch("/asset-manifest.json", { cache: "no-store" });
-    return await response.json();
-  } catch (_error) {
-    return CORE_ASSETS;
-  }
+  await cache.addAll(CORE_ASSETS);
 }
 
 async function staticAsset(request) {
-  const cached = await cachedAppAsset(request);
+  const cached = await caches.match(request);
   if (cached) {
     return cached;
   }
@@ -49,12 +47,6 @@ async function staticAsset(request) {
   return response;
 }
 
-function cachedAppAsset(requestOrPath) {
-  if (typeof requestOrPath === "string") {
-    return caches.match(requestOrPath);
-  }
-  const url = new URL(requestOrPath.url);
-  return caches
-    .match(requestOrPath)
-    .then((cached) => cached || caches.match(url.pathname));
+function cachedPath(path) {
+  return caches.match(path);
 }

@@ -103,8 +103,12 @@ function selectInitialTab(state) {
     state.activeTabId = "setup";
     return;
   }
-  if (!state.activeTabId || state.activeTabId === "setup") {
-    state.activeTabId = state.auth ? "welcome" : "login";
+  if (!state.auth) {
+    state.activeTabId = "login";
+    return;
+  }
+  if (!state.activeTabId || state.activeTabId === "setup" || state.activeTabId === "login") {
+    state.activeTabId = "welcome";
   }
 }
 

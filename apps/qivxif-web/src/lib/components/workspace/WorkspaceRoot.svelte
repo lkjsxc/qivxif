@@ -3,17 +3,14 @@
   import AppHeader from "./AppHeader.svelte";
   import CommandPalette from "./CommandPalette.svelte";
   import TileGrid from "./TileGrid.svelte";
-
-  const viewState = $derived($workspaceState);
-  const actions = $derived($workspaceActions);
 </script>
 
-{#if viewState}
+{#if $workspaceState}
   <section class="app-shell workspace">
-    <AppHeader {viewState} {actions} />
-    <TileGrid {viewState} {actions} />
-    {#if viewState.commandPaletteOpen}
-      <CommandPalette {viewState} {actions} />
+    <AppHeader state={$workspaceState} actions={$workspaceActions} />
+    <TileGrid state={$workspaceState} actions={$workspaceActions} />
+    {#if $workspaceState.commandPaletteOpen}
+      <CommandPalette state={$workspaceState} actions={$workspaceActions} />
     {/if}
   </section>
 {/if}

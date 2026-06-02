@@ -16,9 +16,9 @@
 </script>
 
 <article class="pane tile" data-pane-id={paneId || undefined} bind:this={paneEl}>
-  <PaneHead bind:headEl {stack} {viewState} {actions} {activeTab} />
+  <PaneHead bind:headEl {stack} state={viewState} {actions} {activeTab} />
   <section class="pane-stack" bind:this={stackEl}>
     <PaneDropLayer {paneId} {actions} {paneEl} {stackEl} {headEl} />
-    <PaneTabStack {stack} {viewState} {actions} />
+    <PaneTabStack {stack} state={viewState} {actions} />
   </section>
 </article>

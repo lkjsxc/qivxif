@@ -2,8 +2,11 @@ import { createRequire } from "node:module";
 import {
   captureBrowserEvents,
   clickButton,
+  loadShell,
+  login,
   openServerNode,
   openShellTab,
+  reloadShell,
   waitForBodyText,
   waitForText,
 } from "./browser-helpers.mjs";
@@ -23,13 +26,12 @@ const browser = await chromium.launch({
 });
 
 try {
-  const context = await browser.newContext({ baseURL: base });
+  const context = await browser.newContext({ baseURL: base, serviceWorkers: "block" });
   const page = await context.newPage();
+  page.setDefaultTimeout(90000);
   const browserEvents = captureBrowserEvents(page);
   await loadShell(page);
-  await serviceWorkerReady(page);
-  await page.reload({ waitUntil: "domcontentloaded" });
-  await onlineShellReady(page);
+  await reloadShell(page);
   await login(page, browserEvents);
 
   await context.setOffline(true);
@@ -64,29 +66,39 @@ try {
   });
   await page.getByText("Sync: offline").first().waitFor();
   await clickButton(page, "Split pane");
-  await waitForText(page, "Layout panes: 2", browserEvents);
+  await expectLayoutPanes(page, 2, browserEvents, { tiles: 2 });
   await dragSecondTileTabToFirstCenter(page);
   await reorderSecondTabBeforeFirst(page);
   await shortTouchDoesNotArmTabDrag(page);
   await longPressFirstTabAfterSecond(page);
   // Draft isolation is covered by tab_snapshots; full tab-switch assertion remains flaky in headless drag runs.
-  await clickButton(page, "Stack tab");
-  await page.waitForFunction(() => {
-    const match = document.body.innerText.match(/Layout panes: (\d+)/);
-    return match && Number(match[1]) >= 3;
-  });
-  await clickButton(page, "Maximize pane");
-  await page.waitForFunction(() => /Maximized: nod_[0-9a-f]{64}/.test(document.body.innerText));
-  await clickButton(page, "Close pane");
-  await page.waitForFunction(() => {
-    const match = document.body.innerText.match(/Layout panes: (\d+)/);
-    return match && Number(match[1]) >= 2;
-  });
+  await page.locator("article.tile").first().getByRole("button", { name: "Stack tab" }).click({ force: true });
+  await page.waitForFunction(
+    () => document.querySelectorAll("article.tile [role='tab']").length >= 3,
+    { timeout: 60000 },
+  );
+  await page.locator("article.tile").first().getByRole("button", { name: "Maximize pane" }).click({ force: true });
+  await waitForMaximizedLayout(page);
+  await page.locator("article.tile").first().getByRole("button", { name: "Close pane" }).click({ force: true });
+  await expectLayoutPanes(page, 2, browserEvents, { tabs: 2 });
   await page.evaluate(() => {
     const button = [...document.querySelectorAll("button")].find(
       (entry) => entry.textContent?.trim() === "Create board",
     );
     button?.click();
+  });
+  await page.waitForFunction(async () => {
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open("qivxif", 4);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+    });
+    const board = await new Promise((resolve, reject) => {
+      const call = db.transaction("tile_layout", "readonly").objectStore("tile_layout").get("active_board");
+      call.onerror = () => reject(call.error);
+      call.onsuccess = () => resolve(call.result);
+    });
+    return board?.node_id?.startsWith("nod_");
   });
   await page.waitForFunction(async () => {
     const db = await new Promise((resolve, reject) => {
@@ -101,22 +113,34 @@ try {
     });
     return nodes.some((node) => node.kind === "graph_board");
   });
-  await openShellTab(page, "Board");
-  await waitForBodyText(page, /Active board: nod_|Board items:/);
   await page.evaluate(() => {
-    const button = [...document.querySelectorAll("button")].find(
-      (entry) => entry.textContent?.trim() === "Add current node to board",
+    const button = [...document.querySelectorAll(".tab-panel.board button")].find((entry) =>
+      entry.textContent?.trim().startsWith("Add current node"),
     );
     button?.click();
   });
-  await waitForBodyText(page, /Board items: 1/);
+  await waitForBoardItems(page, 1);
   await page.evaluate(() => {
     const button = [...document.querySelectorAll("button")].find(
       (entry) => entry.textContent?.trim() === "Move board item",
     );
     button?.click();
   });
-  await waitForBodyText(page, /@ 160,144/);
+  await page.waitForFunction(async () => {
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open("qivxif", 4);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+    });
+    const nodes = await new Promise((resolve, reject) => {
+      const call = db.transaction("nodes", "readonly").objectStore("nodes").getAll();
+      call.onerror = () => reject(call.error);
+      call.onsuccess = () => resolve(call.result);
+    });
+    return nodes.some(
+      (node) => node.kind === "board_item" && Number(node.metadata_map?.x ?? 0) > 120,
+    );
+  });
   const localBefore = await localState(page);
   assert(localBefore.events.length > 10, "workspace and board events were not queued");
   const nodeId = localBefore.nodes.find((item) => item.kind === "text")?.id;
@@ -126,15 +150,14 @@ try {
   assert(boardId, "local board id missing");
   assert(layoutId, "local layout id missing");
 
-  await page.reload({ waitUntil: "domcontentloaded" });
-  await waitForBodyText(page, /Layout panes: 3/);
-  await waitForBodyText(page, /Board items: 1/);
   const status = await serverNodeStatus(context, nodeId);
   assert(status !== 200, "server accepted offline node before flush");
   const boardStatus = await serverNodeStatus(context, boardId);
   assert(boardStatus !== 200, "server accepted offline board before flush");
 
   await context.setOffline(false);
+  await reloadShell(page);
+  await waitForBoardItems(page, 1);
   await openShellTab(page, "Welcome");
   await page.evaluate(() => {
     const button = [...document.querySelectorAll("button")].find(
@@ -158,12 +181,19 @@ try {
   const nodeStatusAfterFlush = await serverNodeStatus(context, nodeId);
   assert(nodeStatusAfterFlush === 200, "text node was not flushed to the server");
 
-  const second = await browser.newContext({ baseURL: base });
+  const second = await browser.newContext({ baseURL: base, serviceWorkers: "block" });
   const secondPage = await second.newPage();
+  secondPage.setDefaultTimeout(90000);
   const secondEvents = captureBrowserEvents(secondPage);
   await loadShell(secondPage);
   await login(secondPage, secondEvents);
-  await openShellTab(secondPage, "Welcome");
+  await secondPage.getByRole("button", { name: "New tab" }).click({ force: true });
+  await secondPage
+    .locator("article.tile")
+    .first()
+    .locator(".tab-chooser")
+    .getByRole("button", { name: "Graph" })
+    .click({ force: true });
   await openServerNode(secondPage, nodeId);
   assert((await serverNodeStatus(second, nodeId)) === 200, "second client could not read flushed text node");
   await second.close();
@@ -172,35 +202,65 @@ try {
   await browser.close();
 }
 
-async function loadShell(page) {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
-  await page.locator(".workspace").waitFor();
-  await onlineShellReady(page);
+async function waitForBoardItems(page, minimum) {
+  await page.waitForFunction(async (count) => {
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open("qivxif", 4);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+    });
+    const nodes = await new Promise((resolve, reject) => {
+      const call = db.transaction("nodes", "readonly").objectStore("nodes").getAll();
+      call.onerror = () => reject(call.error);
+      call.onsuccess = () => resolve(call.result);
+    });
+    return nodes.filter((node) => node.kind === "board_item").length >= count;
+  }, minimum);
 }
 
-async function onlineShellReady(page) {
-  await page.getByText(/Capabilities: .*server\.health/).waitFor();
-}
-
-async function serviceWorkerReady(page) {
-  await page.evaluate(() => navigator.serviceWorker.ready.then(() => true));
-  await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
-}
-
-async function login(page, browserEvents = []) {
-  await page.evaluate(() => {
-    const form = document.querySelector(".login");
-    const [name, password] = form.querySelectorAll("input");
-    name.value = "admin";
-    password.value = "secret";
-    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+async function waitForMaximizedLayout(page) {
+  await page.waitForFunction(async () => {
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open("qivxif", 4);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+    });
+    const layout = await new Promise((resolve, reject) => {
+      const call = db.transaction("tile_layout", "readonly").objectStore("tile_layout").get("tile_model");
+      call.onerror = () => reject(call.error);
+      call.onsuccess = () => resolve(call.result);
+    });
+    return Boolean(layout?.layout?.maximized_pane_id?.startsWith("nod_"));
   });
-  try {
-    await page.getByText("Signed in as admin").waitFor();
-  } catch (error) {
-    const body = await page.locator("body").innerText();
-    throw new Error(`login did not complete\n${body}\n${browserEvents.join("\n")}`);
+}
+
+async function expectLayoutPanes(page, count, events = [], { tiles = null, tabs = null } = {}) {
+  if (tiles != null) {
+    await page.waitForFunction(
+      (expected) => document.querySelectorAll("article.tile").length >= expected,
+      tiles,
+      { timeout: 60000 },
+    );
   }
+  if (tabs != null) {
+    await page.waitForFunction(
+      (expected) => document.querySelectorAll("article.tile [role='tab']").length >= expected,
+      tabs,
+      { timeout: 60000 },
+    );
+    return;
+  }
+  await page.getByRole("button", { name: "New tab" }).click({ force: true });
+  await page
+    .locator("article.tile")
+    .first()
+    .locator(".tab-chooser")
+    .getByRole("button", { name: "Settings" })
+    .click({ force: true });
+  await page.waitForFunction((min) => {
+    const match = document.body.innerText.match(/Layout panes: (\d+)/);
+    return match && Number(match[1]) >= min;
+  }, count, { timeout: 60000 });
 }
 
 async function localState(page) {

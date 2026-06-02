@@ -11,15 +11,15 @@
     return {
       kind: "stack",
       active: 0,
-      tabs: [{ pane_node_id: "", pane_kind: "welcome", title: "Welcome" }],
+      tabs: [{ pane_node_id: "local_welcome", pane_kind: "welcome", title: "Welcome" }],
     };
   }
 </script>
 
 <section class="tile-grid workspace-main">
   {#if root.kind === "split"}
-    <SplitNode tile={root} {viewState} {actions} />
+    <SplitNode tile={root} state={viewState} {actions} />
   {:else}
-    <Pane stack={root} {viewState} {actions} />
+    <Pane stack={root} state={viewState} {actions} />
   {/if}
 </section>

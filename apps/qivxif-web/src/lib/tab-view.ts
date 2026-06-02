@@ -17,7 +17,13 @@ export function tabKindToPanel(kind: string) {
 }
 
 export function stateForTab(state, tab) {
+  if (state.setupRequired) {
+    return { ...state, activePaneId: tab.pane_node_id, activeTabId: "setup" };
+  }
   let activeTabId = tabKindToPanel(tab.pane_kind);
+  if (tab.pane_kind === "welcome" && state.activeTabId && state.activeTabId !== "welcome") {
+    activeTabId = state.activeTabId;
+  }
   if (tab.pane_kind === "welcome" && state.currentNodeId && state.activeTabId === "editor") {
     activeTabId = "editor";
   }
