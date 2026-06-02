@@ -2,36 +2,32 @@
 
 ## Current Lane
 
-UI shell parity with lkjstr plus event-graph reset.
+Zed-minimal UI redesign plus N-way tile layout plus controller refactor.
 
 ## Active Targets
 
 - Keep docs canonical before behavior changes.
-- Extend the real Axum and redb stack through product slices.
-- Preserve offline browser event queues through each new user workflow.
-- Add first-run owner setup inside the app shell.
-- Make `/` render the shell immediately, even for an empty store.
-- Reproduce the reference workspace grammar: split, stack, move, close, restore,
-  and pane-local tab behavior.
-- Keep each visible tab independent while sharing graph, text, feed, and cache
-  resources by ID.
-- Keep durable mutation language event-first across docs, Rust, API, and browser
-  queues.
-- Make edge events first-class enough to support tree and network projections.
-- Keep board composition under qivxif-native wording.
-- Add publishing, social feed, moderation, and transport slices on top of the graph model.
+- Apply Zed-minimal design tokens across the browser shell.
+- Migrate tile layout to N-way splits with resize handles.
+- Refactor browser code to controller, ports, domain, effects, and ui layers.
+- Port lkjstr drag geometry: chrome and body regions, strip priority, shared
+  resolver.
+- Mount inactive tabs in a hidden tab stack with independent pane state.
+- Expand IndexedDB inspection for accepted, dirty, and rejected events.
 - Keep Docker Compose as the acceptance boundary.
 
 ## Stop Condition
 
 The repo is coherent when all of these are true:
 
-- `/` renders the shell immediately.
+- `/` renders the shell immediately with Zed-minimal styling.
 - Empty store opens Setup as a tab.
-- Tabs can split, stack, move, close, and restore locally.
+- Tabs can split, stack, move, reorder, close, restore, and resize locally.
 - Each visible tab has independent state.
+- Hidden tab stack retains inactive tab scroll and drafts.
+- Drag geometry matches [product/tile-shell/drag-drop.md](product/tile-shell/drag-drop.md).
 - Every durable mutation is represented as an event with a random ID.
-- Edge events exist and can form tree projections.
+- UI emits `WorkspaceCommand` only; controller owns state transitions.
 - Docker Compose verification passes.
 - Another agent can read [README.md](README.md), run the Compose verification
   script, and continue from committed slices without hidden context.

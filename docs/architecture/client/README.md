@@ -2,6 +2,7 @@
 
 ## Contents
 
+- [module-layout.md](module-layout.md): browser module tree.
 - [drag-resolver.md](drag-resolver.md): tab drag zone resolver.
 - [app-shell.md](app-shell.md): browser shell.
 - [surface-boundary.md](surface-boundary.md): replaceable UI boundary.
