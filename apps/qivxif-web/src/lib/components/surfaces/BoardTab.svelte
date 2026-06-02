@@ -2,7 +2,7 @@
   import { boardItems } from "$lib/effects/board-actions.ts";
 
   let { state: viewState, actions } = $props();
-  const items = $derived(boardItems(state));
+  const items = $derived(boardItems(viewState));
 </script>
 
 <section class="tab-panel board">

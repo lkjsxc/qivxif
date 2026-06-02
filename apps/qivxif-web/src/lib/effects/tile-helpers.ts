@@ -1,3 +1,4 @@
+import { isNodeId, isSyncableLayout } from "../domain/tile-layout-validation.ts";
 import { activePaneId } from "../domain/tile-tree.ts";
 import { reserveActorSeq } from "./actor-seq.ts";
 import { edgeCreateEntry, nodeCreateEntry, tileLayoutSetEntry } from "./local-events.ts";
@@ -42,7 +43,7 @@ export function requireAuth(state) {
 export async function createPane(store, state, targetNodeId, title, paneKind = "text_editor") {
   const pane = await createNode(store, "pane", { pane_kind: paneKind, title });
   const model = await store.get("tile_layout", "tile_model");
-  if (model?.layout_node_id) {
+  if (isNodeId(model?.layout_node_id) && isSyncableLayout(model?.layout)) {
     await link(store, model.layout_node_id, pane.node.id, "tile_contains_pane", { slot: title });
   }
   if (targetNodeId) {
@@ -66,6 +67,9 @@ export async function link(store, fromNode, toNode, kind, metadata) {
 }
 
 export async function queueLayout(store, state, layoutNodeId, layout) {
+  if (!isNodeId(layoutNodeId) || !isSyncableLayout(layout)) {
+    throw new Error("tile layout contains local-only pane ids");
+  }
   const created = tileLayoutSetEntry(await reserveActorSeq(store), layoutNodeId, layout);
   await store.put("events", created.entry);
   await store.put("tile_layout", created.layoutRecord);

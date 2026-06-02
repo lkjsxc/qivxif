@@ -9,8 +9,8 @@
     function move(ev: PointerEvent) {
       const delta = (axis === "column" ? ev.clientY : ev.clientX) - startPos;
       const next = [...startSizes];
-      next[index] = Math.max(120, startSizes[index] + delta);
-      next[index + 1] = Math.max(120, startSizes[index + 1] - delta);
+      next[index] = Math.round(Math.max(120, startSizes[index] + delta));
+      next[index + 1] = Math.round(Math.max(120, startSizes[index + 1] - delta));
       onResize(next);
     }
 

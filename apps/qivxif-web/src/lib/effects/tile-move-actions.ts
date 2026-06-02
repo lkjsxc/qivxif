@@ -1,7 +1,6 @@
 import { moveTabNearTab, moveTabToEdge, moveTabToStack } from "../domain/tile-move.ts";
-import { reserveActorSeq } from "./actor-seq.ts";
-import { tileLayoutSetEntry } from "./local-events.ts";
 import { ensureLayout } from "./tile-actions.ts";
+import { queueLayout } from "./tile-helpers.ts";
 
 export async function movePane(store, state, sourcePaneId, targetPaneId, zone) {
   requireAuth(state);
@@ -14,11 +13,7 @@ export async function movePane(store, state, sourcePaneId, targetPaneId, zone) {
   if (sameLayout(model.layout, next)) {
     return;
   }
-  const created = tileLayoutSetEntry(await reserveActorSeq(store), model.layout_node_id, next);
-  await store.put("events", created.entry);
-  await store.put("tile_layout", created.layoutRecord);
-  state.layout = next;
-  state.layoutNodeId = model.layout_node_id;
+  await queueLayout(store, state, model.layout_node_id, next);
 }
 
 function nextLayout(layout, sourcePaneId, targetPaneId, zone) {

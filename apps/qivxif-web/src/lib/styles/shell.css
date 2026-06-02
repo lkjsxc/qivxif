@@ -46,6 +46,7 @@
 
 .workspace-main,
 .tile-grid {
+  display: flex;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
@@ -54,6 +55,9 @@
 
 .tile-split {
   display: flex;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
   min-width: 0;
   min-height: 0;
   gap: 0;
@@ -68,9 +72,18 @@
 }
 
 .tile-split-child {
+  display: flex;
   min-width: 0;
   min-height: 0;
-  display: flex;
+}
+
+.workspace-main > .pane,
+.workspace-main > .tile-split,
+.tile-split-child > .pane,
+.tile-split-child > .tile-split {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
 }
 
 .resize-handle {

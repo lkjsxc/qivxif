@@ -66,11 +66,25 @@ async function fetchWithTimeout(path, init) {
 }
 
 async function readEnvelope(response) {
-  const envelope = await response.json();
+  const text = await response.text();
+  const envelope = parseEnvelope(response, text);
   if (!response.ok || envelope.error) {
     throw apiFailure(envelope);
   }
   return envelope.payload;
+}
+
+function parseEnvelope(response, text) {
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    return {
+      error: {
+        code: `http.${response.status}`,
+        message: text || response.statusText || "request failed",
+      },
+    };
+  }
 }
 
 function apiFailure(envelope) {

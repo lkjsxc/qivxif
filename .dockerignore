@@ -1,6 +1,10 @@
 .git
 .gitignore
 target
+node_modules
+**/node_modules
+.svelte-kit
+**/.svelte-kit
 dist
 tmp
 .env

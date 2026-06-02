@@ -1,3 +1,4 @@
+import { isNodeId, isSyncableLayout } from "../domain/tile-layout-validation.ts";
 import {
   activePaneId,
   closePaneInLayout,
@@ -99,7 +100,7 @@ export async function resizeSplit(store, state, paneId, sizes) {
 
 export async function ensureLayout(store, state) {
   const current = await store.get("tile_layout", "tile_model");
-  if (current?.layout_node_id && current?.layout) {
+  if (isNodeId(current?.layout_node_id) && isSyncableLayout(current?.layout)) {
     state.layout = current.layout;
     state.layoutNodeId = current.layout_node_id;
     return current;

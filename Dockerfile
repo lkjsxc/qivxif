@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     npm \
     && rm -rf /var/lib/apt/lists/*
 COPY . .
+RUN npm --prefix apps/qivxif-web ci
 RUN npm --prefix apps/qivxif-web run build
 RUN cargo build --locked --release -p qivxif-server
 

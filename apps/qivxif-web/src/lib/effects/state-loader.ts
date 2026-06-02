@@ -1,4 +1,5 @@
 import { neighborhood, node, nodeHistory, text } from "./api-client.ts";
+import { isNodeId, isSyncableLayout } from "../domain/tile-layout-validation.ts";
 import { activePaneId, containsPane } from "../domain/tile-tree.ts";
 
 export async function loadLocalState(store, state) {
@@ -28,9 +29,18 @@ export async function loadLocalState(store, state) {
     state.nodes.find((node) => node.id === state.currentBlogPostId) ?? null;
   state.lastPublicRoute = publicRoute?.path ?? state.lastPublicRoute;
   state.activeBoardId = board?.node_id ?? state.activeBoardId;
-  state.layout = layout?.layout ?? state.layout;
-  state.layoutDirty = layout?.dirty ?? false;
-  state.layoutNodeId = layout?.layout_node_id ?? state.layoutNodeId;
+  if (isNodeId(layout?.layout_node_id) && isSyncableLayout(layout?.layout)) {
+    state.layout = layout.layout;
+    state.layoutDirty = layout.dirty ?? false;
+    state.layoutNodeId = layout.layout_node_id;
+  } else if (layout) {
+    state.layout = null;
+    state.layoutDirty = false;
+    state.layoutNodeId = "";
+    await store.delete("tile_layout", "tile_model");
+  } else {
+    state.layoutDirty = false;
+  }
   if (state.layout && !containsPane(state.layout.root, state.activePaneId)) {
     state.activePaneId = activePaneId(state.layout.root);
   }
@@ -63,14 +73,17 @@ export async function refreshCurrentNode(store, state) {
   if (nodePayload.projection.node.kind === "tile_layout") {
     const layoutJson = nodePayload.projection.node.metadata_map?.layout_json;
     if (layoutJson) {
-      state.layout = JSON.parse(layoutJson);
-      state.layoutNodeId = state.currentNodeId;
-      await store.put("tile_layout", {
-        dirty: false,
-        id: "tile_model",
-        layout: state.layout,
-        layout_node_id: state.currentNodeId,
-      });
+      const parsedLayout = JSON.parse(layoutJson);
+      if (isSyncableLayout(parsedLayout)) {
+        state.layout = parsedLayout;
+        state.layoutNodeId = state.currentNodeId;
+        await store.put("tile_layout", {
+          dirty: false,
+          id: "tile_model",
+          layout: state.layout,
+          layout_node_id: state.currentNodeId,
+        });
+      }
     }
   }
   if (nodePayload.projection.node.kind === "blog_post") {

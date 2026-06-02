@@ -1,3 +1,4 @@
+import { isSyncableTileLayoutRequest } from "../domain/tile-layout-validation.ts";
 import { sendQueued } from "./api-client.ts";
 
 export async function refreshQueueState(store, state) {
@@ -30,6 +31,12 @@ export async function flushQueue(store, state) {
 }
 
 async function flushEntry(store, state, entry) {
+  if (entry.kind === "tile.layout_set" && !isSyncableTileLayoutRequest(entry.request)) {
+    const lastError = "tile layout contains local-only pane ids";
+    await store.put("events", { ...entry, status: "rejected", last_error: lastError });
+    state.lastError = lastError;
+    return "rejected";
+  }
   await store.put("events", { ...entry, status: "pending_validation" });
   try {
     const payload = await sendQueued(entry, state.auth.csrf_token);
