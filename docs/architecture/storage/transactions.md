@@ -7,14 +7,16 @@
 3. Read required current records.
 4. Validate causal and auth conditions.
 5. Check event idempotency by `EventId` and `(ActorId, actor_seq)`.
-6. Apply pure reducers to in-memory state.
-7. Insert event envelope.
-8. Update primary records.
-9. Update secondary indexes.
-10. Write commit group changes when present.
-11. Update sync markers.
-12. Commit.
-13. Emit post-commit notifications.
+6. Return the prior receipt immediately for an exact duplicate event.
+7. Reject same-ID events whose hash or envelope shape differs.
+8. Apply pure reducers to in-memory state.
+9. Insert event envelope.
+10. Update primary records.
+11. Update secondary indexes.
+12. Write commit group changes when present.
+13. Update opaque sync cursor mappings.
+14. Commit.
+15. Emit post-commit notifications.
 
 ## Boundaries
 

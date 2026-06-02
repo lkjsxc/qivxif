@@ -20,6 +20,7 @@ The command palette exposes tile and graph actions without requiring hidden UI g
 - Open settings.
 - Open publishing tools.
 - Open social tools.
+- Flush queue.
 
 ## Rules
 
@@ -58,3 +59,4 @@ the same command contracts:
 | Open settings | none | available |
 | Open publishing tools | none | available |
 | Open social tools | none | available |
+| Flush queue | none | available when signed in |

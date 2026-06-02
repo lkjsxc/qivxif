@@ -44,6 +44,8 @@
 ## Behavior
 
 - Pane headers contain a tile menu, a new-tab button, and the tab rail.
+- The header New tab command opens the same chooser for the active pane.
+- Before a durable layout exists, header New tab targets the local first pane.
 - The tab rail is one row, scrolls horizontally, and shows fade edges when
   hidden tabs exist.
 - The active tab scrolls into view when focus changes or a tab moves into a

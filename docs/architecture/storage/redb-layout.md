@@ -29,6 +29,7 @@ The default server database file is `data/qivxif.redb`.
 | `event_ids_by_target_node` | `(NodeId, EventId)` | empty marker | `qivxif_store_redb::history::NodeEventIndex` |
 | `event_ids_by_target_edge` | `(EdgeId, EventId)` | empty marker | `qivxif_store_redb::history::EdgeEventIndex` |
 | `event_ids_by_target_event` | `(EventId, EventId)` | empty marker | `qivxif_store_redb::history::TargetEventIndex` |
+| `event_ids_by_acceptance` | internal sequence | `EventId` | `qivxif_store_redb::history::AcceptanceIndex` |
 | `commit_groups` | `CommitGroupId` | `CommitGroup` | `qivxif_history::CommitGroup` |
 | `blobs` | `BlobHash` | `BlobManifest` | `qivxif_store_redb::blob::BlobManifest` |
 | `blob_chunks` | `ChunkHash` | `BlobChunk` | `qivxif_store_redb::blob::BlobChunk` |
@@ -37,7 +38,7 @@ The default server database file is `data/qivxif.redb`.
 | `feed_items` | `EventId` | `FeedItem` | `qivxif_store_redb::feed::FeedItem` |
 | `feed_items_by_user` | `(UserId, EventId)` | empty marker | `qivxif_store_redb::feed::FeedUserIndex` |
 | `auth_tokens` | token hash | `AuthTokenRecord` | `qivxif_store_redb::auth::AuthTokenRecord` |
-| `sync_cursors` | `CursorId` | `SyncCursorRecord` | `qivxif_store_redb::sync::SyncCursorRecord` |
+| `sync_cursors` | cursor mapping key | cursor or sequence | `qivxif_store_redb::sync::SyncCursorRecord` |
 | `server_jobs` | job id | `ServerJobRecord` | `qivxif_store_redb::job::ServerJobRecord` |
 
 ## Meta Records

@@ -20,9 +20,9 @@
 
 | Field | Type | Rule |
 | --- | --- | --- |
-| `accepted` | array | event id, server cursor, commit group |
+| `accepted` | array | event id and server cursor |
 | `rejected` | array | event id and structured error |
-| `server_cursor` | cursor | highest durable server position in response |
+| `server_cursor` | cursor | opaque resume token for the last accepted visible event |
 | `capabilities` | string array | active sync capabilities |
 
 ## Pull Request
@@ -54,10 +54,14 @@
 ## Acceptance Rules
 
 - The server validates auth for each event.
-- Duplicate accepted events return the previous acceptance.
+- Duplicate accepted events return the previous acceptance only when the
+  payload hash and envelope shape match.
+- Same event ID with different bytes, hash, kind, actor, sequence, parents, or
+  targets rejects as a conflict.
 - Unknown event kinds use `schema.unknown_event_kind`.
 - Mixed batches may contain both accepted and rejected entries.
 - Cursor order is deterministic and independent of wall-clock time.
+- Cursor strings are random tokens and do not expose acceptance counts.
 - `node.create` and `edge.create` envelopes update graph records.
 - `text.insert`, `text.delete`, and `text.restore` envelopes update text projections.
 - Text event payload bytes are canonical JSON for the text model from

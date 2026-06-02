@@ -20,7 +20,7 @@ sortable prefix data.
 | `BlobHash` | `blb` | `0x30` | content-addressing service | hash mismatch rejects write |
 | `ChunkHash` | `chk` | `0x31` | content-addressing service | hash mismatch rejects write |
 | `TextDocId` | `txt` | `0x40` | text document service | retry insert before first text event |
-| `CursorId` | `cur` | `0x50` | sync service | duplicate updates same cursor record |
+| `CursorId` | `cur` | `0x50` | sync service | replay returns the prior opaque cursor; random collision retries before publish |
 | `RequestId` | `req` | `0x60` | server request boundary | diagnostic only; not durable truth |
 
 ## String Rules
