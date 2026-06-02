@@ -2,6 +2,7 @@
 
 ## Contents
 
+- [design/README.md](design/README.md): Zed-minimal visual language and tokens.
 - [tile-shell/README.md](tile-shell/README.md): tiled browser shell.
 - [setup/README.md](setup/README.md): first-run owner setup.
 - [boards/README.md](boards/README.md): graph composition boards.
