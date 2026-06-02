@@ -17,7 +17,7 @@ pub use tile_commands::{
     open_tab, resize_split_layout, restore_maximized, split_tab,
 };
 pub use tile_layout::{
-    SplitAxis, TileLayout, TileTab, TileTree, equal_split_sizes, DEFAULT_SPLIT_WEIGHT,
-    MIN_PANE_HEIGHT, MIN_PANE_WIDTH,
+    DEFAULT_SPLIT_WEIGHT, MIN_PANE_HEIGHT, MIN_PANE_WIDTH, SplitAxis, TileLayout, TileTab,
+    TileTree, equal_split_sizes,
 };
 pub use tree::{TreeNode, TreeProjection, project_tree, project_tree_with_kinds};

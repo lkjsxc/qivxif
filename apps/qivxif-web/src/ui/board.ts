@@ -1,4 +1,4 @@
-import { boardItems } from "../actors/board-actions.ts";
+import { boardItems } from "../effects/board-actions.ts";
 
 export function renderBoardPane(state, actions) {
   const pane = document.createElement("section");
@@ -61,5 +61,5 @@ function paneCount(tile) {
   if (tile.kind === "stack") {
     return tile.tabs.length;
   }
-  return paneCount(tile.first) + paneCount(tile.second);
+  return (tile.children ?? []).reduce((sum, child) => sum + paneCount(child), 0);
 }

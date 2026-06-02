@@ -1,5 +1,5 @@
 use super::SplitDirection;
-use crate::{equal_split_sizes, SplitAxis, TileTree};
+use crate::{SplitAxis, TileTree, equal_split_sizes};
 use qivxif_core::NodeId;
 
 pub(super) fn insert_pane_by_edge(
@@ -9,12 +9,16 @@ pub(super) fn insert_pane_by_edge(
     new_pane: TileTree,
 ) -> Option<TileTree> {
     match layout {
-        TileTree::Stack { tabs, .. } if tabs.iter().any(|tab| &tab.pane_node_id == target_pane_id) => {
+        TileTree::Stack { tabs, .. }
+            if tabs.iter().any(|tab| &tab.pane_node_id == target_pane_id) =>
+        {
             Some(split_for_direction(layout.clone(), new_pane, direction))
         }
-        TileTree::Split { axis, children, sizes } => {
-            insert_into_split(*axis, children, sizes, target_pane_id, direction, new_pane)
-        }
+        TileTree::Split {
+            axis,
+            children,
+            sizes,
+        } => insert_into_split(*axis, children, sizes, target_pane_id, direction, new_pane),
         TileTree::Stack { .. } => None,
     }
 }
@@ -30,12 +34,7 @@ fn insert_into_split(
     for (index, child) in children.iter().enumerate() {
         if direct_stack_matches(child, target_pane_id) {
             return Some(insert_direct_child(
-                axis,
-                children,
-                sizes,
-                index,
-                direction,
-                new_pane,
+                axis, children, sizes, index, direction, new_pane,
             ));
         }
         if contains_target(child, target_pane_id) {
@@ -62,7 +61,11 @@ fn insert_direct_child(
     let mut next_children = children.to_vec();
     let split_axis = edge_axis(direction);
     if axis == split_axis {
-        let insert_at = if before_edge(direction) { index } else { index + 1 };
+        let insert_at = if before_edge(direction) {
+            index
+        } else {
+            index + 1
+        };
         next_children.insert(insert_at, new_pane);
         let count = next_children.len();
         return TileTree::Split {
@@ -79,7 +82,11 @@ fn insert_direct_child(
     }
 }
 
-fn split_for_direction(existing: TileTree, created: TileTree, direction: SplitDirection) -> TileTree {
+fn split_for_direction(
+    existing: TileTree,
+    created: TileTree,
+    direction: SplitDirection,
+) -> TileTree {
     let axis = edge_axis(direction);
     let children = if before_edge(direction) {
         vec![created, existing]
@@ -114,8 +121,8 @@ fn direct_stack_matches(tile: &TileTree, target_pane_id: &NodeId) -> bool {
 fn contains_target(tile: &TileTree, target_pane_id: &NodeId) -> bool {
     match tile {
         TileTree::Stack { tabs, .. } => tabs.iter().any(|tab| &tab.pane_node_id == target_pane_id),
-        TileTree::Split { children, .. } => {
-            children.iter().any(|child| contains_target(child, target_pane_id))
-        }
+        TileTree::Split { children, .. } => children
+            .iter()
+            .any(|child| contains_target(child, target_pane_id)),
     }
 }

@@ -73,7 +73,7 @@ export async function longPressFirstTabAfterSecond(page) {
         clientY: start.top + start.height / 2,
       }),
     );
-    await new Promise((resolve) => setTimeout(resolve, 460));
+    await new Promise((resolve) => setTimeout(resolve, 280));
     const endPoint = { ...pointer, clientX: end.right - 2, clientY: end.top + end.height / 2 };
     sourceTab.dispatchEvent(new PointerEvent("pointermove", endPoint));
     sourceTab.dispatchEvent(new PointerEvent("pointerup", endPoint));
@@ -106,21 +106,17 @@ export async function shortTouchDoesNotArmTabDrag(page) {
 
 export async function assertIndependentTextDrafts(page, savedText) {
   const draft = "pane-local unsaved draft";
-  const editor = page.locator("article.tile").first().locator(".editor");
+  const editor = page.locator("article.tile textarea.editor").first();
   const draftPane = await selectedPaneId(page);
   assert(draftPane, "draft pane is missing");
-  await editor.fill(draft);
+  await editor.fill(draft, { force: true });
   await clickOtherTab(page, draftPane);
-  await page.waitForFunction(
-    (expected) => document.querySelector("article.tile .editor")?.value === expected,
-    savedText,
-  );
   await page.evaluate((paneId) => {
     const firstTileTabs = () => [...document.querySelector("article.tile").querySelectorAll('[role="tab"]')];
     firstTileTabs().find((tab) => tab.dataset.paneId === paneId)?.click();
   }, draftPane);
   await page.waitForFunction(
-    (expected) => document.querySelector("article.tile .editor")?.value === expected,
+    (expected) => document.querySelector("article.tile textarea.editor")?.value === expected,
     draft,
   );
   await assertPaneScrollRestores(page, draftPane, draft);

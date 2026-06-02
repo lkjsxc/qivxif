@@ -1,8 +1,8 @@
-import { serverInfo, setupStatus } from "../http/client.ts";
-import { openLocalStore } from "../store/indexed-db.ts";
+import { serverInfo, setupStatus } from "./api-client.ts";
+import { openLocalStore } from "./indexed-db.ts";
 import { renderShell } from "../ui/shell.ts";
 import { actionsFor } from "./app-actions.ts";
-import { initialState } from "./app-state.ts";
+import { initialWorkspaceState } from "../domain/workspace-state.ts";
 import { installKeyboardShortcuts } from "./keyboard-shortcuts.ts";
 import { loadLocalState } from "./state-loader.ts";
 import { flushQueue, refreshQueueState } from "./sync.ts";
@@ -11,7 +11,7 @@ export async function startAppShell(root) {
   if (!root) {
     return;
   }
-  const state = initialState();
+  const state = initialWorkspaceState();
   renderShell(root, state, {});
   await refreshSetupStatus(state);
   const store = await openLocalStore();

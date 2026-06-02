@@ -1,4 +1,4 @@
-import { sendQueued } from "../http/client.ts";
+import { sendQueued } from "./api-client.ts";
 
 export async function refreshQueueState(store, state) {
   const entries = await store.all("events");
@@ -7,6 +7,7 @@ export async function refreshQueueState(store, state) {
     .filter((entry) => entry.status !== "accepted")
     .sort((left, right) => left.actor_seq - right.actor_seq);
   state.rejected = entries.filter((entry) => entry.status === "rejected").length;
+  state.acceptedCount = (await store.count("accepted_events")) ?? 0;
   return entries;
 }
 
@@ -61,6 +62,8 @@ async function flushEntry(store, state, entry) {
 }
 
 async function acceptEntry(store, state, entry, payload) {
+  await store.put("accepted_events", { ...entry, status: "accepted" });
+  await store.delete("dirty_events", entry.id);
   await store.delete("events", entry.id);
   if (entry.kind === "node.create") {
     await store.put("nodes", { ...payload.node, dirty: false });

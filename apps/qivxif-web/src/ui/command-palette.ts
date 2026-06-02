@@ -1,4 +1,4 @@
-import { boardItems } from "../actors/board-actions.ts";
+import { boardItems } from "../effects/board-actions.ts";
 import { visibleRoot } from "../domain/tile-tree.ts";
 import { actionButton, heading, panel, text } from "./dom.ts";
 
@@ -136,14 +136,29 @@ function tabByPane(tile, paneId) {
   if (tile.kind === "stack") {
     return tile.tabs.find((tab) => tab.pane_node_id === paneId) ?? null;
   }
-  return tabByPane(tile.first, paneId) ?? tabByPane(tile.second, paneId);
+  for (const child of tile.children ?? []) {
+    const found = tabByPane(child, paneId);
+    if (found) {
+      return found;
+    }
+  }
+  return null;
 }
 
 function firstStack(tile) {
   if (!tile) {
     return null;
   }
-  return tile.kind === "stack" ? tile : firstStack(tile.first) ?? firstStack(tile.second);
+  if (tile.kind === "stack") {
+    return tile;
+  }
+  for (const child of tile.children ?? []) {
+    const found = firstStack(child);
+    if (found) {
+      return found;
+    }
+  }
+  return null;
 }
 
 function paneContext(tab) {

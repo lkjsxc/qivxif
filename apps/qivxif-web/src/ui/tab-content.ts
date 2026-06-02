@@ -37,6 +37,9 @@ export function renderTabContent(state, actions) {
 }
 
 function welcomePanel(state, actions) {
+  if (state.currentNodeId) {
+    return editorPanel(state, actions);
+  }
   const section = panel("tab-panel welcome", heading("Welcome"));
   if (state.auth) {
     section.append(actionButton("Create text node", () => actions.createTextNode?.()));
@@ -86,7 +89,7 @@ function editorPanel(state, actions) {
   const editor = document.createElement("textarea");
   editor.className = "editor";
   editor.value = state.text ?? "";
-  editor.addEventListener("input", () => actions.updateTextDraft?.(editor.value));
+  editor.addEventListener("input", () => actions.updateTextDraft?.(state.activePaneId, editor.value));
   section.append(editor, actionButton("Save text event", () => actions.saveText?.(editor.value)));
   section.append(actionButton("Create board", () => actions.createBoard?.()));
   section.append(layoutSummary(state), historyList(state));
@@ -166,5 +169,5 @@ function paneCount(tile) {
   if (tile.kind === "stack") {
     return tile.tabs.length;
   }
-  return paneCount(tile.first) + paneCount(tile.second);
+  return (tile.children ?? []).reduce((sum, child) => sum + paneCount(child), 0);
 }

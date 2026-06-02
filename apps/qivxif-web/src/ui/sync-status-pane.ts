@@ -3,6 +3,7 @@ export function renderSyncStatus(state) {
   pane.className = "pane status";
   pane.append(row("Sync", state.online ? "online" : "offline"));
   pane.append(row("Queued", String(state.queued)));
+  pane.append(row("Accepted", String(state.acceptedCount ?? 0)));
   pane.append(row("Rejected", String(state.rejected ?? 0)));
   pane.append(row("Session", state.auth ? state.auth.user.name : "none"));
   pane.append(row("Capabilities", capabilityText(state.capabilities)));
@@ -43,13 +44,20 @@ function queueList(entries) {
 function queueEntry(entry) {
   const item = document.createElement("article");
   item.className = `queue-entry ${entry.status}`;
+  const id = document.createElement("div");
+  id.className = "mono";
+  id.textContent = entry.id;
   item.append(
     row("Event", `${entry.kind} ${entry.status}`),
-    row("Id", entry.id),
+    id,
+    row("Target", entry.node_id ?? entry.request?.layout_node_id ?? "—"),
     row("Route", `${entry.route?.method ?? "POST"} ${entry.route?.path ?? ""}`),
   );
   if (entry.last_error) {
-    item.append(row("Error", entry.last_error));
+    const error = document.createElement("div");
+    error.className = "error-text";
+    error.textContent = entry.last_error;
+    item.append(error);
   }
   return item;
 }

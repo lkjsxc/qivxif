@@ -1,4 +1,4 @@
-import { neighborhood, node, nodeHistory, text } from "../http/client.ts";
+import { neighborhood, node, nodeHistory, text } from "./api-client.ts";
 import { activePaneId, containsPane } from "../domain/tile-tree.ts";
 
 export async function loadLocalState(store, state) {

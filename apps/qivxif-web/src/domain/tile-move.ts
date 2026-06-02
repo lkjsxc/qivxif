@@ -44,11 +44,14 @@ function findTab(tile, paneId) {
     }
     throw new Error("pane missing");
   }
-  try {
-    return findTab(tile.first, paneId);
-  } catch (error) {
-    return findTab(tile.second, paneId);
+  for (const child of tile.children ?? []) {
+    try {
+      return findTab(child, paneId);
+    } catch (error) {
+      /* try next child */
+    }
   }
+  throw new Error("pane missing");
 }
 
 function insertNear(tile, targetPaneId, tab, side) {
@@ -62,12 +65,14 @@ function insertNear(tile, targetPaneId, tab, side) {
     tabs.splice(insertAt, 0, tab);
     return changed({ ...tile, active: insertAt, tabs });
   }
-  const first = insertNear(tile.first, targetPaneId, tab, side);
-  if (first.changed) {
-    return changed({ ...tile, first: first.tile });
+  const children = tile.children.map((child) => insertNear(child, targetPaneId, tab, side));
+  const hit = children.findIndex((child) => child.changed);
+  if (hit < 0) {
+    return unchanged(tile);
   }
-  const second = insertNear(tile.second, targetPaneId, tab, side);
-  return second.changed ? changed({ ...tile, second: second.tile }) : unchanged(tile);
+  const next = [...tile.children];
+  next[hit] = children[hit].tile;
+  return changed({ ...tile, children: next });
 }
 
 function changed(tile) {

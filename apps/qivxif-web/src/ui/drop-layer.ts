@@ -1,32 +1,72 @@
 import { draggedPaneId } from "./tab-drag.ts";
-import { tileDropZone } from "./drop-resolver.ts";
+import {
+  applyDropPreview,
+  clearDropPreview,
+  dropZoneToMove,
+  measurePaneRects,
+  resolvePaneDrop,
+} from "../domain/drop-resolver.ts";
 
-export function installDropLayer(tile, targetPaneId, actions) {
+export function installDropLayer(pane, targetPaneId, actions, head, body) {
   if (!targetPaneId?.startsWith("nod_")) {
     return;
   }
-  tile.addEventListener("dragover", (event) => {
-    const sourcePaneId = draggedPaneId(event);
+  let sourcePaneId = "";
+  pane.addEventListener("dragover", (event) => {
+    sourcePaneId = draggedPaneId(event);
     if (!sourcePaneId) {
       return;
     }
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
-    tile.dataset.dropZone = tileDropZone(tile, event);
+    const rects = measurePaneRects(pane, head, body);
+    const result = resolvePaneDrop({
+      clientX: event.clientX,
+      clientY: event.clientY,
+      inSourceStrip: stripPriority(sourcePaneId, event.clientY, rects.stripBottom),
+      rects,
+      targetPane: pane,
+      targetPaneId,
+    });
+    applyDropPreview(pane, body, rects, result.kind === "pane" ? result.zone : "center");
   });
-  tile.addEventListener("dragleave", (event) => {
-    if (!tile.contains(event.relatedTarget)) {
-      delete tile.dataset.dropZone;
+  pane.addEventListener("dragleave", (event) => {
+    if (!pane.contains(event.relatedTarget)) {
+      clearDropPreview(pane, body);
     }
   });
-  tile.addEventListener("drop", (event) => {
-    const sourcePaneId = draggedPaneId(event);
-    const zone = tileDropZone(tile, event);
-    delete tile.dataset.dropZone;
+  pane.addEventListener("drop", (event) => {
+    sourcePaneId = draggedPaneId(event);
+    const rects = measurePaneRects(pane, head, body);
+    const result = resolvePaneDrop({
+      clientX: event.clientX,
+      clientY: event.clientY,
+      inSourceStrip: stripPriority(sourcePaneId, event.clientY, rects.stripBottom),
+      rects,
+      targetPane: pane,
+      targetPaneId,
+    });
+    clearDropPreview(pane, body);
     if (!sourcePaneId) {
       return;
     }
     event.preventDefault();
-    actions.movePane?.(sourcePaneId, targetPaneId, zone);
+    if (result.kind === "rail") {
+      actions.movePane?.(sourcePaneId, result.targetPaneId, `tab-${result.insertSide}`);
+      return;
+    }
+    actions.movePane?.(sourcePaneId, targetPaneId, dropZoneToMove(result.zone));
   });
+}
+
+function stripPriority(sourcePaneId, clientY, stripBottom) {
+  if (!sourcePaneId) {
+    return false;
+  }
+  const sourceStrip = document.querySelector(`[data-pane-id="${sourcePaneId}"] .tab-strip`);
+  if (!sourceStrip) {
+    return false;
+  }
+  const stripRect = sourceStrip.getBoundingClientRect();
+  return clientY <= Math.max(stripRect.bottom, stripBottom);
 }

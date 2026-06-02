@@ -35,6 +35,7 @@ export async function createBlogDraft(store, state, title) {
   await store.put("tile_layout", { id: "current_blog_post", node_id: post.node.id });
   state.currentNodeId = body.node.id;
   state.currentBlogPostId = post.node.id;
+  state.activeTabId = "editor";
   state.text = content;
 }
 

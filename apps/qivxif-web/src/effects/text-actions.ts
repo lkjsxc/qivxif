@@ -8,11 +8,11 @@ export async function createTextNode(store, state) {
   requireAuth(state);
   const actorSeq = await reserveActorSeq(store);
   const created = textNodeCreateEntry(actorSeq);
+  state.currentNodeId = created.node.id;
+  state.activeTabId = "editor";
   await store.put("events", created.entry);
   await store.put("nodes", created.node);
   await store.put("tile_layout", { id: "current_node", node_id: created.node.id });
-  state.currentNodeId = created.node.id;
-  state.activeTabId = "editor";
 }
 
 export async function saveText(store, state, content, nodeId = state.currentNodeId, paneId = "") {

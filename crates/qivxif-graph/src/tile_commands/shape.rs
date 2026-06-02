@@ -1,6 +1,6 @@
 use super::SplitDirection;
 use super::insert::insert_pane_by_edge;
-use crate::{equal_split_sizes, SplitAxis, TileTab, TileTree};
+use crate::{SplitAxis, TileTab, TileTree, equal_split_sizes};
 use qivxif_core::NodeId;
 
 pub(super) fn reject_existing(root: &TileTree, pane_id: &NodeId) -> crate::GraphResult<()> {
@@ -19,23 +19,29 @@ pub(super) fn ensure_contains(root: &TileTree, pane_id: &NodeId) -> crate::Graph
 
 pub(super) fn activate(tile: &mut TileTree, pane_id: &NodeId) -> bool {
     match tile {
-        TileTree::Split { children, .. } => children.iter_mut().any(|child| activate(child, pane_id)),
-        TileTree::Stack { active, tabs } => match tabs.iter().position(|tab| &tab.pane_node_id == pane_id) {
-            Some(index) => {
-                *active = index;
-                true
+        TileTree::Split { children, .. } => {
+            children.iter_mut().any(|child| activate(child, pane_id))
+        }
+        TileTree::Stack { active, tabs } => {
+            match tabs.iter().position(|tab| &tab.pane_node_id == pane_id) {
+                Some(index) => {
+                    *active = index;
+                    true
+                }
+                None => false,
             }
-            None => false,
-        },
+        }
     }
 }
 
 pub(super) fn append_to_stack(tile: &mut TileTree, target: &NodeId, tab: TileTab) -> bool {
     match tile {
-        TileTree::Split { children, .. } => {
-            children.iter_mut().any(|child| append_to_stack(child, target, tab.clone()))
-        }
-        TileTree::Stack { active, tabs } if tabs.iter().any(|item| &item.pane_node_id == target) => {
+        TileTree::Split { children, .. } => children
+            .iter_mut()
+            .any(|child| append_to_stack(child, target, tab.clone())),
+        TileTree::Stack { active, tabs }
+            if tabs.iter().any(|item| &item.pane_node_id == target) =>
+        {
             *active = tabs.len();
             tabs.push(tab);
             true
@@ -50,7 +56,11 @@ pub(super) fn remove_tab(tile: TileTree, pane_id: &NodeId) -> (Option<TileTree>,
             mut active,
             mut tabs,
         } => remove_from_stack(&mut active, &mut tabs, pane_id),
-        TileTree::Split { axis, children, sizes } => {
+        TileTree::Split {
+            axis,
+            children,
+            sizes,
+        } => {
             for index in 0..children.len() {
                 let (maybe_child, maybe_removed) = remove_tab(children[index].clone(), pane_id);
                 if maybe_removed.is_some() {
@@ -90,20 +100,24 @@ pub(super) fn split_stack(
     (tile, false)
 }
 
-pub(super) fn resize_split(
-    tile: &mut TileTree,
-    pane_id: &NodeId,
-    sizes: Vec<u16>,
-) -> bool {
+pub(super) fn resize_split(tile: &mut TileTree, pane_id: &NodeId, sizes: Vec<u16>) -> bool {
     match tile {
-        TileTree::Split { children, sizes: current, .. } => {
-            if children.iter().any(|child| direct_child_contains(child, pane_id))
+        TileTree::Split {
+            children,
+            sizes: current,
+            ..
+        } => {
+            if children
+                .iter()
+                .any(|child| direct_child_contains(child, pane_id))
                 && sizes.len() == children.len()
             {
                 *current = sizes;
                 return true;
             }
-            children.iter_mut().any(|child| resize_split(child, pane_id, sizes.clone()))
+            children
+                .iter_mut()
+                .any(|child| resize_split(child, pane_id, sizes.clone()))
         }
         TileTree::Stack { .. } => false,
     }
@@ -131,7 +145,9 @@ fn remove_from_stack(
 
 fn contains_pane(tile: &TileTree, pane_id: &NodeId) -> bool {
     match tile {
-        TileTree::Split { children, .. } => children.iter().any(|child| contains_pane(child, pane_id)),
+        TileTree::Split { children, .. } => {
+            children.iter().any(|child| contains_pane(child, pane_id))
+        }
         TileTree::Stack { tabs, .. } => tabs.iter().any(|tab| &tab.pane_node_id == pane_id),
     }
 }

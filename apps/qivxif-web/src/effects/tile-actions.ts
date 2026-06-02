@@ -1,13 +1,24 @@
-import { reserveActorSeq } from "./actor-seq.ts";
 import {
   activePaneId,
   closePaneInLayout,
   focusPaneInLayout,
   maximizePaneInLayout,
+  resizeSplitInLayout,
   splitPaneInLayout,
   stackTabInLayout,
 } from "../domain/tile-tree.ts";
-import { edgeCreateEntry, nodeCreateEntry, tileLayoutSetEntry } from "./local-events.ts";
+import {
+  createNode,
+  createPane,
+  initialPaneSpec,
+  link,
+  queueLayout,
+  requireAuth,
+  stackTile,
+  tabFor,
+  tabSpec,
+  targetPane,
+} from "./tile-helpers.ts";
 
 export async function focusPane(store, state, paneId) {
   requireAuth(state);
@@ -78,6 +89,14 @@ export async function closePane(store, state, paneId) {
   await queueLayout(store, state, model.layout_node_id, next);
 }
 
+export async function resizeSplit(store, state, paneId, sizes) {
+  requireAuth(state);
+  const model = await ensureLayout(store, state);
+  const target = targetPane(model.layout.root, paneId);
+  const next = resizeSplitInLayout(model.layout, target, sizes);
+  await queueLayout(store, state, model.layout_node_id, next);
+}
+
 export async function ensureLayout(store, state) {
   const current = await store.get("tile_layout", "tile_model");
   if (current?.layout_node_id && current?.layout) {
@@ -104,94 +123,4 @@ export async function ensureLayout(store, state) {
   state.layoutNodeId = layout.node.id;
   state.activePaneId = pane.node.id;
   return record;
-}
-
-async function createPane(store, state, targetNodeId, title, paneKind = "text_editor") {
-  const pane = await createNode(store, "pane", { pane_kind: paneKind, title });
-  const model = await store.get("tile_layout", "tile_model");
-  if (model?.layout_node_id) {
-    await link(store, model.layout_node_id, pane.node.id, "tile_contains_pane", { slot: title });
-  }
-  if (targetNodeId) {
-    await link(store, pane.node.id, targetNodeId, "pane_views_node", { pane_kind: paneKind });
-  }
-  return pane;
-}
-
-async function createNode(store, kind, metadata) {
-  const created = nodeCreateEntry(await reserveActorSeq(store), kind, metadata);
-  await store.put("events", created.entry);
-  await store.put("nodes", created.node);
-  return created;
-}
-
-async function link(store, fromNode, toNode, kind, metadata) {
-  const created = edgeCreateEntry(await reserveActorSeq(store), fromNode, toNode, kind, metadata);
-  await store.put("events", created.entry);
-  await store.put("edges", created.edge);
-  return created;
-}
-
-async function queueLayout(store, state, layoutNodeId, layout) {
-  const created = tileLayoutSetEntry(await reserveActorSeq(store), layoutNodeId, layout);
-  await store.put("events", created.entry);
-  await store.put("tile_layout", created.layoutRecord);
-  state.layout = layout;
-  state.layoutNodeId = layoutNodeId;
-}
-
-function stackTile(tabs) {
-  return { active: Math.max(0, tabs.length - 1), kind: "stack", tabs };
-}
-
-function tabFor(paneNodeId, targetNodeId, title, paneKind) {
-  return {
-    pane_kind: paneKind,
-    pane_node_id: paneNodeId,
-    target_node_id: targetNodeId || null,
-    title,
-  };
-}
-
-function initialPaneSpec(state) {
-  if (state.currentNodeId) {
-    return { paneKind: "text_editor", targetNodeId: state.currentNodeId, title: "Text pane" };
-  }
-  return { paneKind: "welcome", targetNodeId: null, title: "Welcome" };
-}
-
-function tabSpec(tabId, state) {
-  const targetNodeId =
-    tabId === "editor" || tabId === "graph" ? state.currentNodeId || null : boardTarget(tabId, state);
-  const specs = {
-    board: ["graph_board", "Board"],
-    diagnostics: ["diagnostics", "Diagnostics"],
-    editor: ["text_editor", "Text Node"],
-    graph: ["graph_node", "Graph Node"],
-    history: ["history", "History"],
-    publish: ["publishing", "Publishing"],
-    settings: ["settings", "Settings"],
-    social: ["social_feed", "Social"],
-    sync: ["sync_status", "Sync Status"],
-    welcome: ["welcome", "Welcome"],
-  };
-  const [paneKind, title] = specs[tabId] ?? ["welcome", "Welcome"];
-  return { paneKind, targetNodeId, title };
-}
-
-function targetPane(root, paneId) {
-  return paneId?.startsWith("nod_") ? paneId : activePaneId(root);
-}
-
-function boardTarget(tabId, state) {
-  if (tabId === "board") {
-    return state.activeBoardId || state.currentNodeId || null;
-  }
-  return null;
-}
-
-function requireAuth(state) {
-  if (!state.auth?.user?.actor_id) {
-    throw new Error("login is required");
-  }
 }

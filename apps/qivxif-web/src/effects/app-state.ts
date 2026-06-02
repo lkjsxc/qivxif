@@ -1,4 +1,4 @@
-export function initialState() {
+export function initialWorkspaceState() {
   return {
     activeBoardId: "",
     activePaneId: "",

@@ -28,7 +28,8 @@
 
 ## Client Implementation
 
-- The first browser shell uses minimal TypeScript modules and DOM rendering.
+- The browser shell uses SvelteKit with a Vite production build to `dist/`.
+- Components emit `WorkspaceCommand`; the controller owns state transitions.
 - The first editor uses a textarea only when edits map into qivxif text events.
 - CodeMirror may replace the widget after the durable text event model is stable.
 - Server-side Rust reducers are the first durable authority.

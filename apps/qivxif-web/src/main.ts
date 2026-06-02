@@ -1,3 +1,3 @@
-import { startAppShell } from "./actors/app-shell.ts";
+import { bootstrapApp } from "./app/bootstrap.ts";
 
-startAppShell(document.querySelector("#app"));
+bootstrapApp(document.querySelector("#app"));

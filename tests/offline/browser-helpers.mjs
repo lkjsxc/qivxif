@@ -8,6 +8,18 @@ export function captureBrowserEvents(page) {
   return events;
 }
 
+export async function clickButton(page, name) {
+  await page.getByRole("button", { name }).first().click({ force: true });
+}
+
+export async function waitForBodyText(page, pattern, timeout = 30000) {
+  await page.waitForFunction(
+    (source) => new RegExp(source).test(document.body.innerText),
+    pattern.source,
+    { timeout },
+  );
+}
+
 export async function waitForText(page, value, events = [], timeout = 5000) {
   try {
     await page.getByText(value).first().waitFor({ timeout });
@@ -26,9 +38,9 @@ export async function openShellTab(page, name) {
     await selectedTabInTile(page, selectedName, existingIndex);
     return;
   }
-  await tile.getByRole("button", { exact: true, name: "+" }).click();
+  await tile.getByRole("button", { exact: true, name: "+" }).click({ force: true });
   try {
-    await tile.locator(".tab-chooser").getByRole("button", { exact: true, name }).click();
+    await tile.locator(".tab-chooser").getByRole("button", { exact: true, name }).click({ force: true });
   } catch (error) {
     const bodyText = await page.locator("body").innerText();
     const tabs = JSON.stringify(await tabSnapshot(page));

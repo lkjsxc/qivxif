@@ -1,19 +1,22 @@
 const STORE_NAMES = [
-  "nodes",
-  "edges",
-  "events",
-  "text_snapshots",
-  "sync_cursors",
+  "accepted_events",
   "cache_entries",
   "cache_journal",
+  "dirty_events",
+  "edges",
+  "events",
   "feed_windows",
+  "local_workspace",
+  "nodes",
+  "sync_cursors",
   "tab_snapshots",
+  "text_snapshots",
   "tile_layout",
 ];
 
 export function openLocalStore() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("qivxif", 3);
+    const request = indexedDB.open("qivxif", 4);
     request.onupgradeneeded = () => {
       const db = request.result;
       for (const name of STORE_NAMES) {
@@ -27,6 +30,20 @@ export function openLocalStore() {
   });
 }
 
+export async function saveLocalWorkspace(store, state) {
+  await store.put("local_workspace", {
+    id: "workspace",
+    layout: state.layout,
+    layoutNodeId: state.layoutNodeId,
+    tabDrafts: state.tabDrafts,
+    tabScrolls: state.tabScrolls,
+  });
+}
+
+export async function loadLocalWorkspace(store) {
+  return store.get("local_workspace", "workspace");
+}
+
 function wrapDb(db) {
   return {
     all(name) {
@@ -35,14 +52,14 @@ function wrapDb(db) {
     count(name) {
       return request(db, name, "readonly", (store) => store.count());
     },
-    delete(name, id) {
-      return request(db, name, "readwrite", (store) => store.delete(id));
-    },
     get(name, id) {
       return request(db, name, "readonly", (store) => store.get(id));
     },
     put(name, value) {
       return request(db, name, "readwrite", (store) => store.put(value));
+    },
+    delete(name, id) {
+      return request(db, name, "readwrite", (store) => store.delete(id));
     },
   };
 }

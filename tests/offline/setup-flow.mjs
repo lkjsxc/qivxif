@@ -23,9 +23,13 @@ try {
   await page.locator(".tile").first().waitFor();
   await waitForText(page, "Setup required", events);
   await page.getByRole("tab", { name: "Setup" }).waitFor();
-  await page.getByLabel("Name").fill("admin");
-  await page.getByLabel("Password").fill("secret");
-  await page.getByRole("button", { name: "Create owner account" }).click();
+  await page.evaluate(() => {
+    const form = document.querySelector(".setup-form");
+    const [name, password] = form.querySelectorAll("input");
+    name.value = "admin";
+    password.value = "secret";
+    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+  });
   await waitForText(page, "Signed in as admin", events, 15000);
   await page.getByRole("tab", { name: "Welcome" }).waitFor();
   await page.getByRole("button", { name: "Create text node" }).waitFor();

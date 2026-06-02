@@ -1,13 +1,13 @@
 import { activePaneId, visibleRoot } from "../domain/tile-tree.ts";
 import { actionButton, text } from "./dom.ts";
 import { installDropLayer } from "./drop-layer.ts";
-import { renderTabContent } from "./tab-content.ts";
+import { renderTabStack } from "./tab-stack.ts";
 import { renderStackTabRail, tabsFor } from "./tab-rail.ts";
-import { installPaneScrollSnapshot } from "./tab-scroll.ts";
+import { installResizeHandle } from "./resize-handle.ts";
 
 export function renderTileGrid(state, actions) {
   const grid = document.createElement("section");
-  grid.className = "tile-grid";
+  grid.className = "tile-grid workspace-main";
   const root = visibleRoot(state.layout) ?? defaultTile(state);
   grid.append(renderTile(root, state, actions));
   return grid;
@@ -15,35 +15,57 @@ export function renderTileGrid(state, actions) {
 
 function renderTile(tile, state, actions) {
   if (tile.kind === "split") {
-    const split = document.createElement("section");
-    split.className = `tile-split ${tile.axis === "column" ? "column" : "row"}`;
-    split.append(renderTile(tile.first, state, actions), renderTile(tile.second, state, actions));
-    return split;
+    return renderSplit(tile, state, actions);
   }
-  const activeTab = tile.tabs[boundedActive(tile)] ?? null;
+  return renderPane(tile, state, actions);
+}
+
+function renderSplit(tile, state, actions) {
+  const split = document.createElement("section");
+  split.className = `tile-split ${tile.axis === "column" ? "column" : "row"}`;
+  const sizes = tile.sizes?.length === tile.children.length ? tile.sizes : tile.children.map(() => 500);
+  tile.children.forEach((child, index) => {
+    const childWrap = document.createElement("div");
+    childWrap.className = "tile-split-child";
+    childWrap.style.flex = `${sizes[index]} 1 0`;
+    childWrap.append(renderTile(child, state, actions));
+    split.append(childWrap);
+    if (index < tile.children.length - 1) {
+      split.append(
+        installResizeHandle(tile, index, sizes, (nextSizes) => {
+          const paneId = activePaneId(tile.children[index]);
+          actions.resizeSplit?.(paneId, nextSizes);
+        }),
+      );
+    }
+  });
+  return split;
+}
+
+function renderPane(stack, state, actions) {
+  const activeTab = stack.tabs[boundedActive(stack)] ?? null;
   const article = document.createElement("article");
-  article.className = "tile";
+  article.className = "pane tile";
   if (activeTab?.pane_node_id) {
     article.dataset.paneId = activeTab.pane_node_id;
   }
-  installDropLayer(article, activeTab?.pane_node_id, actions);
-  article.append(tileHeader(tile, state, actions, activeTab), tabBody(state, actions, activeTab));
+  const head = document.createElement("header");
+  head.className = "pane-head tile-header";
+  head.append(renderStackTabRail(stack, actions), tileControls(actions, activeTab));
+  if (state.tabChooserOpen && state.tabChooserPaneId === (activeTab?.pane_node_id ?? "")) {
+    head.append(tabChooser(state, actions, activeTab?.pane_node_id));
+  }
+  const body = document.createElement("section");
+  body.className = "pane-stack";
+  installDropLayer(article, activeTab?.pane_node_id, actions, head, body);
+  body.append(renderTabStack(stack, state, actions));
+  article.append(head, body);
   return article;
 }
 
-function tileHeader(stack, state, actions, activeTab) {
-  const header = document.createElement("div");
-  const paneId = activeTab?.pane_node_id ?? activePaneId(stack);
-  header.className = "tile-header";
-  header.append(renderStackTabRail(stack, actions), tileControls(actions, paneId, activeTab));
-  if (state.tabChooserOpen && state.tabChooserPaneId === paneId) {
-    header.append(tabChooser(state, actions, paneId));
-  }
-  return header;
-}
-
-function tileControls(actions, paneId, activeTab) {
+function tileControls(actions, activeTab) {
   const controls = document.createElement("div");
+  const paneId = activeTab?.pane_node_id ?? "";
   const context = paneContext(activeTab);
   controls.className = "tile-controls";
   controls.append(
@@ -65,72 +87,12 @@ function tabChooser(state, actions, paneId) {
   return chooser;
 }
 
-function tabBody(state, actions, activeTab) {
-  const body = document.createElement("section");
-  body.className = "tab-body";
-  if (!activeTab) {
-    body.append(text("No tab is open."));
-    return body;
-  }
-  body.dataset.paneId = activeTab.pane_node_id;
-  body.append(renderTabContent(stateForTab(state, activeTab), actionsForTab(actions, activeTab)));
-  installPaneScrollSnapshot(body, activeTab.pane_node_id, state, actions);
-  return body;
-}
-
-function stateForTab(state, tab) {
-  const tabState = { ...state, activePaneId: tab.pane_node_id, activeTabId: tabKindToPanel(tab.pane_kind) };
-  if (tab.target_node_id && tabState.activeTabId === "editor") {
-    tabState.currentNodeId = tab.target_node_id;
-    const snapshot = state.textSnapshots?.[tab.target_node_id];
-    const hasDraft = Object.prototype.hasOwnProperty.call(state.tabDrafts ?? {}, tab.pane_node_id);
-    tabState.text = hasDraft ? state.tabDrafts[tab.pane_node_id] : snapshot?.state?.content ?? "";
-    tabState.textDirty = hasDraft || Boolean(snapshot?.dirty);
-  }
-  if (tab.target_node_id && tabState.activeTabId === "graph") {
-    tabState.currentNodeId = tab.target_node_id;
-  }
-  if (tab.target_node_id && tabState.activeTabId === "board") {
-    tabState.activeBoardId = tab.target_node_id;
-  }
-  return tabState;
-}
-
-function actionsForTab(actions, tab) {
-  const context = paneContext(tab);
-  return {
-    ...actions,
-    addCurrentNodeToBoard: () => actions.addCurrentNodeToBoard?.(context),
-    createBoard: () => actions.createBoard?.(context),
-    saveText: (content) => actions.saveText?.(content, tab.target_node_id, tab.pane_node_id),
-    updateTextDraft: (content) => actions.updateTextDraft?.(tab.pane_node_id, content),
-  };
-}
-
 function paneContext(tab) {
   return {
     paneId: tab?.pane_node_id ?? "",
     paneKind: tab?.pane_kind ?? "",
     targetNodeId: tab?.target_node_id ?? "",
   };
-}
-
-function tabKindToPanel(kind) {
-  const panels = {
-    diagnostics: "diagnostics",
-    graph_board: "board",
-    graph_node: "graph",
-    history: "history",
-    login: "login",
-    publishing: "publish",
-    settings: "settings",
-    setup: "setup",
-    social_feed: "social",
-    sync_status: "sync",
-    text_editor: "editor",
-    welcome: "welcome",
-  };
-  return panels[kind] ?? "welcome";
 }
 
 function boundedActive(stack) {

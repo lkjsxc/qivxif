@@ -1,19 +1,27 @@
 :root {
-  --q-bg: #303446;
-  --q-bg-deep: #232634;
-  --q-surface: #292c3c;
-  --q-surface-raised: #414559;
-  --q-overlay: #51576d;
-  --q-border: #626880;
-  --q-text: #c6d0f5;
-  --q-muted: #a5adce;
-  --q-accent: #babbf1;
-  --q-blue: #8caaee;
-  --q-green: #a6d189;
-  --q-red: #e78284;
+  color-scheme: dark;
+  --q-bg: #0b0b0c;
+  --q-bg-deep: #111113;
+  --q-surface: #151518;
+  --q-surface-raised: #1b1b1f;
+  --q-overlay: #222228;
+  --q-border: #2d2d33;
+  --q-border-strong: #3a3a42;
+  --q-text: #e7e7ea;
+  --q-muted: #a1a1aa;
+  --q-faint: #71717a;
+  --q-accent: #d4d4d8;
+  --q-focus: #f4f4f5;
+  --q-danger: #ef4444;
+  --q-warning: #eab308;
+  --q-success: #86efac;
+  --radius-ui: 2px;
+  --radius-panel: 1px;
+  --font-ui: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
   color: var(--q-text);
   background: var(--q-bg);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font: 13px/1.4 var(--font-ui);
 }
 
 html,
@@ -40,9 +48,14 @@ p {
 }
 
 h1 {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 h2 {
-  font-size: 15px;
+  font-size: 14px;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
 }

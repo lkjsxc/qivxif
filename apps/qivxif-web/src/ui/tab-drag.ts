@@ -1,13 +1,18 @@
-import { tabInsertSide, tileDropZone } from "./drop-resolver.ts";
+import { tabInsertSide } from "../domain/drop-resolver.ts";
+import { measurePaneRects, resolvePaneDrop } from "../domain/drop-resolver.ts";
 
 const TAB_MIME = "application/x-qivxif-pane";
-const LONG_PRESS_MS = 420;
-const MOVE_TOLERANCE = 10;
+const LONG_PRESS_MS = 250;
+const MOVE_TOLERANCE = 6;
+const COARSE_CANCEL = 8;
 
 export function markDraggableTab(button, paneId, actions) {
   if (!paneId?.startsWith("nod_")) {
     return;
   }
+  button.className = "tab-frame tab";
+  button.dataset.paneId = paneId;
+  button.setAttribute("role", "tab");
   button.draggable = true;
   button.addEventListener("dragstart", (event) => {
     event.dataTransfer?.setData(TAB_MIME, paneId);
@@ -31,12 +36,12 @@ function tabDragOver(button, event) {
   event.preventDefault();
   event.stopPropagation();
   event.dataTransfer.dropEffect = "move";
-  button.dataset.dropSide = tabInsertSide(button, event);
+  button.dataset.dropSide = tabInsertSide(button, event.clientX);
 }
 
 function tabDrop(button, targetPaneId, actions, event) {
   const sourcePaneId = draggedPaneId(event);
-  const side = tabInsertSide(button, event);
+  const side = tabInsertSide(button, event.clientX);
   delete button.dataset.dropSide;
   if (!sourcePaneId) {
     return;
@@ -72,7 +77,7 @@ function pointerDrag(button, paneId, actions, start) {
     try {
       button.setPointerCapture(start.pointerId);
     } catch (error) {
-      /* synthetic tests do not create capturable browser pointers */
+      /* headless tests may not support capture */
     }
   }, LONG_PRESS_MS);
   const cleanup = () => {
@@ -83,7 +88,7 @@ function pointerDrag(button, paneId, actions, start) {
     button.removeEventListener("pointermove", move);
   };
   const move = (event) => {
-    if (!armed && movedTooFar(origin, event)) {
+    if (!armed && movedTooFar(origin, event, COARSE_CANCEL)) {
       cleanup();
       return;
     }
@@ -91,10 +96,10 @@ function pointerDrag(button, paneId, actions, start) {
       return;
     }
     event.preventDefault();
-    markPointerTarget(event);
+    markPointerTarget(event, paneId);
   };
   const end = (event) => {
-    const target = armed ? pointerTarget(event) : null;
+    const target = armed ? pointerTarget(event, paneId) : null;
     cleanup();
     if (target) {
       event.preventDefault();
@@ -104,42 +109,63 @@ function pointerDrag(button, paneId, actions, start) {
   return { cancel: cleanup, end, move };
 }
 
-function pointerTarget(event) {
+function pointerTarget(event, sourcePaneId) {
   const element = document.elementFromPoint(event.clientX, event.clientY);
-  const tab = element?.closest?.("[role='tab'][data-pane-id]");
+  const tab = element?.closest?.(".tab-frame[data-pane-id]");
   if (tab) {
-    return { paneId: tab.dataset.paneId, zone: `tab-${tabInsertSide(tab, event)}` };
+    return { paneId: tab.dataset.paneId, zone: `tab-${tabInsertSide(tab, event.clientX)}` };
   }
-  const tile = element?.closest?.("article.tile[data-pane-id]");
-  return tile ? { paneId: tile.dataset.paneId, zone: tileDropZone(tile, event) } : null;
+  const pane = element?.closest?.("article.pane[data-pane-id]");
+  if (!pane) {
+    return null;
+  }
+  const head = pane.querySelector(".pane-head");
+  const body = pane.querySelector(".pane-stack");
+  if (!head || !body) {
+    return null;
+  }
+  const rects = measurePaneRects(pane, head, body);
+  const result = resolvePaneDrop({
+    clientX: event.clientX,
+    clientY: event.clientY,
+    inSourceStrip: event.clientY <= rects.stripBottom,
+    rects,
+    targetPane: pane,
+    targetPaneId: pane.dataset.paneId,
+  });
+  if (result.kind === "rail") {
+    return { paneId: result.targetPaneId, zone: `tab-${result.insertSide}` };
+  }
+  return { paneId: result.targetPaneId, zone: result.zone };
 }
 
-function markPointerTarget(event) {
+function markPointerTarget(event, sourcePaneId) {
   clearDropMarks();
-  const target = pointerTarget(event);
+  const target = pointerTarget(event, sourcePaneId);
   if (!target) {
     return;
   }
-  const selector =
-    target.zone.startsWith("tab-") ? `[role='tab'][data-pane-id='${target.paneId}']` : "";
-  const element = selector ? document.querySelector(selector) : null;
-  if (element) {
-    element.dataset.dropSide = target.zone.replace("tab-", "");
+  if (target.zone.startsWith("tab-")) {
+    const tab = document.querySelector(`.tab-frame[data-pane-id='${target.paneId}']`);
+    if (tab) {
+      tab.dataset.dropSide = target.zone.replace("tab-", "");
+    }
     return;
   }
-  const tile = document.querySelector(`article.tile[data-pane-id='${target.paneId}']`);
-  if (tile) {
-    tile.dataset.dropZone = target.zone;
+  const pane = document.querySelector(`article.pane[data-pane-id='${target.paneId}']`);
+  const body = pane?.querySelector(".pane-stack");
+  if (body) {
+    body.dataset.dropZone = target.zone;
   }
 }
 
 function clearDropMarks() {
   document.querySelectorAll("[data-drop-side]").forEach((item) => delete item.dataset.dropSide);
-  document.querySelectorAll("article.tile[data-drop-zone]").forEach((item) => delete item.dataset.dropZone);
+  document.querySelectorAll("[data-drop-zone]").forEach((item) => delete item.dataset.dropZone);
 }
 
-function movedTooFar(origin, event) {
-  return Math.hypot(event.clientX - origin.x, event.clientY - origin.y) > MOVE_TOLERANCE;
+function movedTooFar(origin, event, tolerance) {
+  return Math.hypot(event.clientX - origin.x, event.clientY - origin.y) > tolerance;
 }
 
 function isCoarsePointer(event) {
