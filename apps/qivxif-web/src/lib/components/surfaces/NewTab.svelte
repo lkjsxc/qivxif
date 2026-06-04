@@ -30,7 +30,7 @@
       <button
         type="button"
         class="new-tab-choice"
-        onclick={() => actions.openTab?.(option.id, viewState.activePaneId)}
+        onclick={() => actions.openTab?.(option.id)}
       >
         <strong>{option.label}</strong>
         <span>{option.detail}</span>

@@ -55,6 +55,7 @@ export function actionsForTab(actions, tab) {
     ...actions,
     addCurrentNodeToBoard: () => actions.addCurrentNodeToBoard?.(context),
     createBoard: () => actions.createBoard?.(context),
+    openTab: (tabId: string, paneId = tab.pane_node_id) => actions.openTab?.(tabId, paneId),
     saveText: (content: string) => actions.saveText?.(content, tab.target_node_id, tab.pane_node_id),
     updateTextDraft: (content: string) => actions.updateTextDraft?.(tab.pane_node_id, content),
   };

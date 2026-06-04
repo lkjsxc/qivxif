@@ -1,4 +1,6 @@
 import { generateId } from "../ids.ts";
+import { isSyncableLayout } from "../domain/tile-layout-validation.ts";
+import { replaceTabInLayout } from "../domain/tile-tab-update.ts";
 import { reserveActorSeq } from "./actor-seq.ts";
 import {
   blogPostCreateEntry,
@@ -7,6 +9,7 @@ import {
   textRestoreEntry,
   unpublishPostEntry,
 } from "./local-events.ts";
+import { queueLayout } from "./tile-helpers.ts";
 
 export async function createBlogDraft(store, state, title) {
   requireAuth(state);
@@ -38,6 +41,20 @@ export async function createBlogDraft(store, state, title) {
   state.currentBlogPost = post.node;
   state.activeTabId = "editor";
   state.text = content;
+  await convertActivePaneToEditor(store, state, body.node.id, `${safeTitle} body`);
+}
+
+async function convertActivePaneToEditor(store, state, bodyNodeId, title) {
+  const model = await store.get("tile_layout", "tile_model");
+  if (!state.activePaneId || !isSyncableLayout(model?.layout)) {
+    return;
+  }
+  const next = replaceTabInLayout(model.layout, state.activePaneId, {
+    pane_kind: "text_editor",
+    target_node_id: bodyNodeId,
+    title,
+  });
+  await queueLayout(store, state, model.layout_node_id, next);
 }
 
 export async function publishBlogPost(store, state, slug, summary) {

@@ -90,7 +90,7 @@ export async function openShellTab(page, name) {
   }
   await tile.getByRole("button", { exact: true, name: "Add tab" }).click({ force: true });
   try {
-    await tile.locator(".new-tab-panel").getByRole("button", { name }).click({ force: true });
+    await tile.locator(".tab-body:not([hidden]) .new-tab-panel").getByRole("button", { name }).click({ force: true });
   } catch (error) {
     const bodyText = await page.locator("body").innerText();
     const tabs = JSON.stringify(await tabSnapshot(page));
@@ -102,9 +102,10 @@ export async function openShellTab(page, name) {
 async function waitForExistingTab(page, name) {
   try {
     await page.waitForFunction((label) => {
+      const labelOf = (tab) => tab.getAttribute("aria-label") ?? tab.textContent?.trim();
       return [...document.querySelectorAll("article.tile")].some((tile) => {
         return [...tile.querySelectorAll('[role="tab"]')].some((tab) => {
-          return tabName(tab) === label;
+          return labelOf(tab) === label;
         });
       });
     }, name, { timeout: 2000 });
@@ -116,10 +117,11 @@ async function waitForExistingTab(page, name) {
 
 async function selectExistingTab(page, name) {
   return page.evaluate((label) => {
+    const labelOf = (tab) => tab.getAttribute("aria-label") ?? tab.textContent?.trim();
     const tiles = [...document.querySelectorAll("article.tile")];
     for (const [index, tile] of tiles.entries()) {
       const tabs = [...tile.querySelectorAll('[role="tab"]')];
-      const tab = tabs.find((item) => tabName(item) === label);
+      const tab = tabs.find((item) => labelOf(item) === label);
       if (!tab) {
         continue;
       }
@@ -146,6 +148,21 @@ async function tabSnapshot(page) {
   });
 }
 
+async function tileLayoutSnapshot(page) {
+  return page.evaluate(async () => {
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open("qivxif", 4);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+    });
+    return new Promise((resolve, reject) => {
+      const call = db.transaction("tile_layout", "readonly").objectStore("tile_layout").get("tile_model");
+      call.onerror = () => reject(call.error);
+      call.onsuccess = () => resolve(call.result);
+    });
+  });
+}
+
 export async function openServerNode(page, nodeId, timeout = 90000) {
   await page.waitForSelector("form.open-node input[name='nodeId'], #graph-node-id", { timeout });
   await page.locator("form.open-node input[name='nodeId'], #graph-node-id").first().fill(nodeId);
@@ -155,19 +172,18 @@ export async function openServerNode(page, nodeId, timeout = 90000) {
 async function selectedTabInTile(page, name, index) {
   try {
     await page.waitForFunction(({ index, label }) => {
+      const labelOf = (tab) => tab.getAttribute("aria-label") ?? tab.textContent?.trim();
       const tile = document.querySelectorAll("article.tile")[index];
       return [...(tile?.querySelectorAll('[role="tab"]') ?? [])].some((tab) => {
-        return tabName(tab) === label && tab.getAttribute("aria-selected") === "true";
+        return labelOf(tab) === label && tab.getAttribute("aria-selected") === "true";
       });
     }, { index, label: name });
   } catch (error) {
     const bodyText = await page.locator("body").innerText();
-    throw new Error(`${name} tab was not selected\n${bodyText}`);
+    const tabs = JSON.stringify(await tabSnapshot(page));
+    const layout = JSON.stringify(await tileLayoutSnapshot(page));
+    throw new Error(`${name} tab was not selected\n${tabs}\n${layout}\n${bodyText}`);
   }
-}
-
-function tabName(tab) {
-  return tab.getAttribute("aria-label") ?? tab.textContent?.trim();
 }
 
 function tabTitle(name) {

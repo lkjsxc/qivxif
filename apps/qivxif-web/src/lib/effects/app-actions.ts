@@ -92,6 +92,7 @@ export function actionsFor(store, state, notify = () => {}) {
 async function runAction(store, state, notify, action) {
   try {
     await action();
+    notify();
     await loadLocalState(store, state);
     await refreshQueueState(store, state);
     state.storageStatus = await localStoreDiagnostics(store);

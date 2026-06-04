@@ -187,7 +187,7 @@ try {
   await loadShell(secondPage);
   await login(secondPage, secondEvents);
   await secondPage.getByRole("button", { name: "New tab" }).click({ force: true });
-  await secondPage.locator("article.tile").first().locator(".new-tab-panel").getByRole("button", { name: /Graph/ }).click({ force: true });
+  await secondPage.locator("article.tile").first().locator(".tab-body:not([hidden]) .new-tab-panel").getByRole("button", { name: /Graph/ }).click({ force: true });
   await openServerNode(secondPage, nodeId);
   assert((await serverNodeStatus(second, nodeId)) === 200, "second client could not read flushed text node");
   await second.close();
@@ -245,7 +245,7 @@ async function expectLayoutPanes(page, count, events = [], { tiles = null, tabs 
     return;
   }
   await page.getByRole("button", { name: "New tab" }).click({ force: true });
-  await page.locator("article.tile").first().locator(".new-tab-panel").getByRole("button", { name: /Settings/ }).click({ force: true });
+  await page.locator("article.tile").first().locator(".tab-body:not([hidden]) .new-tab-panel").getByRole("button", { name: /Settings/ }).click({ force: true });
   await page.waitForFunction((min) => {
     const match = document.body.innerText.match(/Layout panes: (\d+)/);
     return match && Number(match[1]) >= min;
