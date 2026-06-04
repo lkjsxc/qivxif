@@ -22,11 +22,8 @@ export function stateForTab(state, tab) {
     return { ...state, activePaneId: tab.pane_node_id, activeTabId: "setup" };
   }
   let activeTabId = tabKindToPanel(tab.pane_kind);
-  if (tab.pane_kind === "welcome" && state.activeTabId && state.activeTabId !== "welcome") {
+  if (tab.pane_node_id?.startsWith("local_") && state.activeTabId && state.activeTabId !== "welcome") {
     activeTabId = state.activeTabId;
-  }
-  if (tab.pane_kind === "welcome" && state.currentNodeId && state.activeTabId === "editor") {
-    activeTabId = "editor";
   }
   const tabState = { ...state, activePaneId: tab.pane_node_id, activeTabId };
   if ((tab.target_node_id || state.currentNodeId) && tabState.activeTabId === "editor") {

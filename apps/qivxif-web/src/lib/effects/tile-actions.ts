@@ -80,6 +80,7 @@ export async function openProductTab(store, state, paneId, tabId) {
   }
   const model = await ensureLayout(store, state);
   const spec = tabSpec(tabId, state);
+  state.activeTabId = tabId;
   const target = targetPane(model.layout.root, paneId);
   if (tabKindForPane(model.layout, target) === "new_tab") {
     await convertTab(store, state, model, target, spec);

@@ -1,5 +1,5 @@
 #!/bin/sh
-set -eu
+set -u
 
 repo_dir="${QIVXIF_REPO_DIR:-$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)}"
 cd "$repo_dir"
@@ -13,8 +13,23 @@ cleanup() {
   fi
   rm -rf "$work_dir"
 }
-
 trap cleanup EXIT HUP INT TERM
+
+run_stage() {
+  stage="$1"
+  shift
+  log_file="$work_dir/$stage.log"
+  "$@" >"$log_file" 2>&1
+  status="$?"
+  if [ "$status" -eq 0 ]; then
+    printf 'offline %s ... ok\n' "$stage"
+    return 0
+  fi
+  printf 'offline %s ... failed\n' "$stage"
+  printf -- '----- %s output -----\n' "$stage"
+  cat "$log_file"
+  exit "$status"
+}
 
 browser="${QIVXIF_BROWSER:-}"
 if [ -z "$browser" ]; then
@@ -31,15 +46,15 @@ fi
 rm -rf "$QIVXIF_DATA_DIR"
 mkdir -p "$QIVXIF_DATA_DIR"
 web_dist="${QIVXIF_WEB_DIST_DIR:-${TMPDIR:-/tmp}/qivxif-web-dist}"
-QIVXIF_WEB_DIST_DIR="$web_dist" sh scripts/build-web.sh
+run_stage web-build env QIVXIF_WEB_DIST_DIR="$web_dist" sh scripts/build-web.sh
 export QIVXIF_STATIC_DIR="$web_dist"
 
-cargo build --locked -p qivxif-server
+run_stage server-build cargo build --locked -p qivxif-server
 "${CARGO_TARGET_DIR:-target}/debug/qivxif-server" >"$work_dir/server.log" 2>&1 &
 server_pid="$!"
 
 for _ in $(seq 1 120); do
-  if curl -fsS "$base/health" >"$work_dir/health.json"; then
+  if curl -fsS "$base/health" >"$work_dir/health.json" 2>/dev/null; then
     break
   fi
   sleep 1
@@ -53,18 +68,18 @@ fi
 
 sleep 2
 
-entry="$(ls "$web_dist/_app/immutable/entry/start."*.js 2>/dev/null | head -1)"
+entry="$(ls "$web_dist"/_app/immutable/entry/start.*.js 2>/dev/null | head -1)"
 if [ -z "$entry" ]; then
   printf 'missing vite client bundle in %s\n' "$web_dist" >&2
   exit 1
 fi
-curl -fsS "$base/_app/immutable/entry/$(basename "$entry")" >/dev/null
+run_stage client-bundle curl -fsS "$base/_app/immutable/entry/$(basename "$entry")"
 
 export NODE_PATH="$(npm root -g)${NODE_PATH:+:$NODE_PATH}"
 export QIVXIF_BROWSER="$browser"
 export QIVXIF_E2E_BASE="$base"
-node tests/offline/setup-flow.mjs
-node tests/offline/proof-slice.mjs
-node tests/offline/publish-flow.mjs
+run_stage setup-flow node tests/offline/setup-flow.mjs
+run_stage proof-slice node tests/offline/proof-slice.mjs
+run_stage publish-flow node tests/offline/publish-flow.mjs
 
 printf 'offline e2e pass\n'
