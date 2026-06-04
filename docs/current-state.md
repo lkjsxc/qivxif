@@ -46,6 +46,14 @@ The frontend target is Svelte plus WASM plus SQLite.
 - Split, stack, maximize, and tile close actions live in the three-dot menu.
 - Docker Compose remains the final acceptance boundary.
 
+## Latest Verification
+
+- `docker compose -f docker-compose.yml config` passed.
+- `docker compose --progress quiet -f docker-compose.yml run --rm verify` passed.
+- `docker compose --progress quiet -f docker-compose.yml run --rm offline-e2e` passed.
+- `docker compose --progress quiet -f docker-compose.yml run --rm server-smoke` passed.
+- `docker compose --progress quiet -f docker-compose.yml run --rm api-test` passed.
+
 ## Audit Link
 
 See [product/doc-impl-audit.md](product/doc-impl-audit.md) for row-by-row evidence.

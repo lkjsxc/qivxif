@@ -23,6 +23,7 @@ Rows change only when the owner doc and implementation change together.
 | Touch long-press tab drag | [tile-shell/drag-drop.md](tile-shell/drag-drop.md) | Native drag path covers current checks | Open |
 | Settings shows typed storage diagnostics | [tile-shell/settings-pane.md](tile-shell/settings-pane.md) | Settings shows local store mode, reason, usage, quota, and inventory | In review |
 | Product surfaces avoid fake content | [design/tab-surfaces.md](design/tab-surfaces.md) | Empty states use real local data and absence copy | In review |
+| Docker Compose gates pass | [../operations/verification/compose-pipeline.md](../operations/verification/compose-pipeline.md) | verify, offline-e2e, server-smoke, and api-test passed | Done |
 
 ## Update Rule
 
