@@ -103,6 +103,22 @@
   font-size: var(--text-xs);
 }
 
+.settings-inventory {
+  display: grid;
+  gap: 4px;
+  margin: 8px 0 0;
+}
+
+.settings-inventory div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.settings-inventory dt {
+  color: var(--q-muted);
+}
+
 .pane-drop-layer {
   position: absolute;
   inset: 0;

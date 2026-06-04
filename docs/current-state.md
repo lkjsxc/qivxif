@@ -32,8 +32,8 @@ The frontend target is Svelte plus WASM plus SQLite.
   Product UI must not depend on direct server account flow as its local truth.
 - Pointer tab dragging needs the full long-press and edge-split path, beyond the
   native drag coverage currently used by offline browser checks.
-- Settings and Diagnostics need real storage mode, fallback reason, and queue
-  inventory sourced from the repository boundary.
+- Settings and Diagnostics now show local store mode, reason, usage, quota, and
+  inventory; SQLite-backed protected and prunable cache bytes remain open.
 
 ## Completed Facts
 

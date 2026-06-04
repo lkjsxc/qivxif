@@ -1,6 +1,6 @@
 import { initialWorkspaceState } from "../domain/workspace-state.ts";
 import { serverInfo, setupStatus } from "../effects/api-client.ts";
-import { openLocalStore } from "../effects/indexed-db.ts";
+import { localStoreDiagnostics, openLocalStore } from "../effects/indexed-db.ts";
 import { actionsFor } from "../effects/app-actions.ts";
 import { installKeyboardShortcuts } from "../effects/keyboard.ts";
 import { loadLocalState } from "../effects/state-loader.ts";
@@ -9,6 +9,7 @@ import { flushQueue, refreshQueueState } from "../effects/sync.ts";
 export async function createController() {
   const state = initialWorkspaceState();
   const store = await openLocalStore();
+  state.storageStatus = await localStoreDiagnostics(store);
   const listeners = new Set<any>();
 
   const notify = () => {
@@ -35,6 +36,7 @@ export async function createController() {
       installKeyboardShortcuts(() => actionsFor(store, state, notify), state);
       await loadLocalState(store, state);
       await refreshQueueState(store, state);
+      state.storageStatus = await localStoreDiagnostics(store);
       selectInitialTab(state);
       await refreshServerInfo(state);
       await registerServiceWorker(state);

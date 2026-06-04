@@ -55,6 +55,28 @@ export async function loadLocalWorkspace(store) {
   return store.get("local_workspace", "workspace");
 }
 
+export async function localStoreDiagnostics(store) {
+  const stores = Object.fromEntries(
+    await Promise.all(STORE_NAMES.map(async (name) => [name, await countOrMinusOne(store, name)])),
+  );
+  const estimate: any = await navigator.storage?.estimate?.().catch(() => ({}));
+  return {
+    mode: "indexeddb",
+    reason: "sqlite worker is not active",
+    quota: estimate?.quota ?? 0,
+    stores,
+    usage: estimate?.usage ?? 0,
+  };
+}
+
+async function countOrMinusOne(store, name) {
+  try {
+    return await store.count(name);
+  } catch {
+    return -1;
+  }
+}
+
 function wrapDb(db) {
   return {
     all(name) {

@@ -11,7 +11,7 @@ import {
   followProfile,
   muteProfile,
 } from "./social-actions.ts";
-import { saveLocalWorkspace } from "./indexed-db.ts";
+import { localStoreDiagnostics, saveLocalWorkspace } from "./indexed-db.ts";
 import { loadLocalState, refreshCurrentNode } from "./state-loader.ts";
 import { flushQueue, refreshQueueState } from "./sync.ts";
 import { updateTextDraft } from "./tab-drafts.ts";
@@ -94,6 +94,7 @@ async function runAction(store, state, notify, action) {
     await action();
     await loadLocalState(store, state);
     await refreshQueueState(store, state);
+    state.storageStatus = await localStoreDiagnostics(store);
     await flushQueue(store, state);
     await loadLocalState(store, state);
     if (state.online && state.currentNodeId) {

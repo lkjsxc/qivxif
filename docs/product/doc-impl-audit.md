@@ -21,7 +21,7 @@ Rows change only when the owner doc and implementation change together.
 | Split and close tile actions live in three-dot menu | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | `TileMenu.svelte` owns split, stack, maximize, and close actions | Done |
 | Pane body edge split excludes header chrome | [tile-shell/drag-drop.md](tile-shell/drag-drop.md) | Resolver measures body rect and header band | Done |
 | Touch long-press tab drag | [tile-shell/drag-drop.md](tile-shell/drag-drop.md) | Native drag path covers current checks | Open |
-| Settings shows typed storage diagnostics | [tile-shell/settings-pane.md](tile-shell/settings-pane.md) | Settings shows session and pane counts only | Open |
+| Settings shows typed storage diagnostics | [tile-shell/settings-pane.md](tile-shell/settings-pane.md) | Settings shows local store mode, reason, usage, quota, and inventory | In review |
 | Product surfaces avoid fake content | [design/tab-surfaces.md](design/tab-surfaces.md) | Empty states use real local data and absence copy | In review |
 
 ## Update Rule

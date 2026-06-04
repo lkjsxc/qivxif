@@ -2,6 +2,8 @@
   let { state: viewState } = $props();
 
   const paneCount = $derived(countPanes(viewState.layout?.root));
+  const storage = $derived(viewState.storageStatus);
+  const storeCount = $derived(Object.keys(storage?.stores ?? {}).length);
 
   function countPanes(tile) {
     if (!tile) return 0;
@@ -13,6 +15,9 @@
 <section class="tab-panel diagnostics">
   <h1>Diagnostics</h1>
   <p>Service worker: {viewState.serviceWorkerReady ? "ready" : "pending"}</p>
+  <p>Storage mode: {storage?.mode ?? "unknown"}</p>
+  {#if storage?.reason}<p>Storage detail: {storage.reason}</p>{/if}
+  <p>Storage stores inspected: {storeCount}</p>
   <p class="mono">Last error: {viewState.lastError || "none"}</p>
   <p>Layout panes: {paneCount}</p>
   <p>Queued: {viewState.queued} · Rejected: {viewState.rejected}</p>

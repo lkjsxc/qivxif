@@ -25,6 +25,7 @@ export function initialWorkspaceState() {
     setupChecked: false,
     setupError: "",
     setupRequired: false,
+    storageStatus: null as any,
     tabChooserOpen: false,
     tabChooserPaneId: "",
     tabDrafts: {},
