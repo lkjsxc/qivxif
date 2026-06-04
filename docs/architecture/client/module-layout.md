@@ -12,7 +12,6 @@ apps/qivxif-web/
     lib/
       app/
         README.md
-        bootstrap.ts
         controller.ts
         ports.ts
       domain/
@@ -25,16 +24,21 @@ apps/qivxif-web/
       effects/
         README.md
         api-client.ts
-        indexed-db.ts
+        app-actions.ts
         sync.ts
         tile-actions.ts
+      storage/
+        README.md
+        sqlite-worker-client.ts
+        repositories.ts
+      wasm/
+        README.md
+        module-loader.ts
+        result.ts
+        workspace-service.ts
       workspace/
         README.md
-        pane-drop-resolve.ts
         tab-drop-hit.ts
-        tab-drop-preview.ts
-        pointer-tab-drag.ts
-        move-tab.ts
       components/
         workspace/
           WorkspaceRoot.svelte
@@ -50,15 +54,11 @@ apps/qivxif-web/
         surfaces/
           SetupTab.svelte
           WelcomeTab.svelte
+          NewTab.svelte
           FeedTab.svelte
           EditorTab.svelte
-        ui/
-          Button.svelte
-          Field.svelte
-          Card.svelte
       styles/
-        README.md
-        tokens.css
+        base.css
         shell.css
         panes.css
         tabs.css
@@ -75,25 +75,27 @@ Each directory has one `README.md`. Each source file stays at 200 lines or fewer
 
 | Layer | May import | Must not import |
 | --- | --- | --- |
-| `components/` | controller callbacks, `domain/` types | `effects/`, IndexedDB |
+| `components/` | controller callbacks, `domain/` types | `effects/`, raw storage, fetch |
 | `domain/` | other `domain/` modules | components, `effects/`, DOM |
-| `effects/` | `domain/`, `app/ports.ts` | Svelte components |
+| `effects/` | `domain/`, `app/ports.ts`, typed repositories | Svelte components |
+| `storage/` | worker client, repository DTOs | Svelte components |
+| `wasm/` | generated bindings, result helpers | Svelte components |
 | `app/` | `domain/`, `effects/`, bootstrap | business rules outside reducers |
 
 ## Bootstrap Flow
 
 1. `+page.svelte` mounts `WorkspaceRoot`.
-2. `bootstrap.ts` builds ports and controller.
-3. Controller loads workspace through ports and subscribes Svelte state.
-4. Service worker registers through ports after first render.
+2. Controller starts storage and bridge ports.
+3. Controller loads workspace through repositories.
+4. Controller subscribes Svelte state.
+5. Service worker registers through ports after first render.
 
 ## WorkspaceCommand
 
-UI dispatches commands only. Examples: `focusTab`, `openTab`, `closeTab`,
-`splitPane`, `moveTabToEdge`, `reorderTab`, `resizeSplit`, `saveTextDraft`,
-`flushSyncQueue`.
+UI dispatches commands only. Examples: `focusTab`, `openNewTab`, `convertNewTab`,
+`closeTab`, `splitPane`, `moveTabToEdge`, `reorderTab`, `resizeSplit`,
+`saveTextDraft`, `flushSyncQueue`.
 
 ## Retirement
 
-The retired DOM tree under `src/ui/*.ts` is removed after Svelte parity and E2E
-gates pass. Do not keep parallel renderers.
+The direct DOM tree under `src/ui/*.ts` is gone. Do not keep parallel renderers.

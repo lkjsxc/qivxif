@@ -8,13 +8,20 @@
 - Text event grouping.
 - Feed derivation.
 - Cache planning.
+- Tile layout reducers.
+- Storage row codecs.
 
 ## Effectful Boundaries
 
-- Axum handlers.
-- redb transactions.
+- SQLite worker and OPFS access.
+- WASM module loading.
+- Axum handlers for optional service paths.
+- redb transactions for optional service storage.
 - WebTransport IO.
-- IndexedDB adapters.
 - Service worker cache writes.
 - Password hashing.
 - Time and randomness.
+
+## UI Boundary
+
+Svelte components render snapshots and emit commands. They do not own effects.

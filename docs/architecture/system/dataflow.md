@@ -12,9 +12,17 @@
 
 ## Client Sync
 
-1. Persist local event in IndexedDB.
+1. Persist local event in the SQLite worker repository.
 2. Apply local projection reducer.
-3. Upload event over reliable lane.
+3. Upload event over the reliable lane when sync is available.
 4. Receive acceptance or rejection.
 5. Pull remote events.
 6. Replay into projections.
+
+## UI Dataflow
+
+1. Svelte component emits a command.
+2. Controller runs pure reducers.
+3. Effects call typed repositories or service ports.
+4. State snapshot updates the Svelte store.
+5. Components render the new snapshot.

@@ -11,9 +11,10 @@
 
 - The browser shell uses SvelteKit with a static adapter output to `dist/`.
 - `WorkspaceRoot.svelte` subscribes to `AppController` snapshots.
-- Components never mutate IndexedDB; they dispatch `WorkspaceCommand`.
+- Components never mutate storage; they dispatch `WorkspaceCommand`.
 - The first visible surface is header plus tile grid, not a marketing page.
 - No permanent sidebar or dashboard lives outside tiles.
+- No Leptos product UI shell is part of the rendering path.
 
 ## Styling
 

@@ -5,6 +5,8 @@
 - [module-layout.md](module-layout.md): browser module tree.
 - [drag-resolver.md](drag-resolver.md): tab drag zone resolver.
 - [app-shell.md](app-shell.md): browser shell.
+- [wasm-boundary.md](wasm-boundary.md): Svelte to Rust/WASM service boundary.
+- [sqlite-worker.md](sqlite-worker.md): worker-owned browser SQLite storage.
 - [surface-boundary.md](surface-boundary.md): replaceable UI boundary.
 - [setup-flow.md](setup-flow.md): first-run setup flow.
 - [state.md](state.md): actors and state ownership.

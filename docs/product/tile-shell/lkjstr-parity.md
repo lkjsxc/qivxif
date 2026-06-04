@@ -25,7 +25,7 @@ This file defines what "like lkjstr except colors" means for qivxif.
   [../design/visual-language.md](../design/visual-language.md).
 - Do not copy Nostr-specific product tools.
 - Do not copy relay settings, Mine npub, profile-only tools, or signing surfaces.
-- Do not turn qivxif into a browser-only local app.
+- Do not require a hidden app backend for local workspace behavior.
 
 ## qivxif Surfaces
 
@@ -47,6 +47,6 @@ qivxif tabs should cover these product surfaces:
 
 - qivxif uses SvelteKit components under `src/lib/components/workspace/`.
 - The browser surface mirrors: app shell, app header, split node, pane, pane head,
-  tab strip, tab frame, tab stack, `PaneDropLayer`, and tab body.
+  tab strip, tab frame, tab stack, tile menu, `PaneDropLayer`, and tab body.
 - Domain reducers and effect adapters own durable state transitions.
 - Components emit `WorkspaceCommand` and render controller snapshots.

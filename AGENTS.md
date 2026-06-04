@@ -8,6 +8,14 @@
 4. Verify through Docker Compose when possible.
 5. Commit small coherent batches.
 
+## Product Direction
+
+- Svelte owns all rendered product UI.
+- Rust and WASM own pure kernels, reducers, codecs, runtime planning, and typed browser-host bridges.
+- SQLite WASM in a worker owns durable browser state; product code calls typed repositories.
+- Do not add or restore a Leptos product UI shell.
+- Do not make Svelte components open SQLite, OPFS, IndexedDB, raw SQL, or network transports directly.
+
 ## Hard Limits
 
 - Markdown files under `docs/`: `<=300` lines.

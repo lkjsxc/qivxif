@@ -1,31 +1,25 @@
-# IndexedDB
+# IndexedDB Cache Ledger Retirement
 
-## Stores
+## Current Contract
 
-- nodes
-- edges
-- dirty_events
-- accepted_events
-- text snapshots
-- sync cursors
-- cache entries
-- cache journal
-- feed windows
+IndexedDB is not the durable product storage target. Browser durable data belongs
+to the SQLite worker described in [../client/sqlite-worker.md](../client/sqlite-worker.md).
 
-## Rule
+## Allowed Uses
 
-IndexedDB stores structured qivxif data. The Cache API stores app shell and safe HTTP responses.
+- Browser feature detection during migration.
+- Historical tests that prove old data can be read before deletion.
+- Service worker Cache API metadata only when routed through typed repositories.
 
-## Queue Store
+## Forbidden Uses
 
-The `dirty_events` store is keyed by event id. Queue records include:
+- Svelte components opening IndexedDB.
+- Product repositories choosing IndexedDB when SQLite is available.
+- Dexie or other IndexedDB wrappers in active product source.
+- Cache ledger repair or inventory sourced from IndexedDB after SQLite cutover.
 
-- documented event kind
-- dirty or rejected state
-- target node id when present
-- route method and path
-- route request body
-- client display timestamp
-- last structured rejection when present
+## Cache Boundary
 
-The sync actor is the only browser component that sends queued records to the network. UI components request queue writes through actor messages.
+The Cache API may store app-shell assets and safe HTTP responses. Structured
+product cache records, cache journal rows, inventory, protected bytes, and
+prunable bytes belong to the SQLite worker repository boundary.

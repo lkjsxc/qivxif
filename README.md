@@ -1,29 +1,29 @@
 # qivxif
 
-qivxif is a Rust-first Web super app for graph-shaped knowledge work, offline editing, publishing, social feeds, board composition, and a tiled tab shell.
+qivxif is a browser-first Svelte workspace for graph-shaped knowledge work, offline editing, publishing, social feeds, board composition, and tiled tabs.
 
 Durable truth belongs in [docs/](docs/). Implementation follows the owner docs and may be reshaped freely when the canon changes.
 
 ## Start Here
 
 - [docs/README.md](docs/README.md): documentation map and reading order.
+- [docs/current-state.md](docs/current-state.md): current evidence and open migration lanes.
 - [docs/vision/purpose.md](docs/vision/purpose.md): product purpose.
 - [docs/decisions/accepted.md](docs/decisions/accepted.md): active architecture decisions.
-- [docs/architecture/system/process-model.md](docs/architecture/system/process-model.md): process model.
-- [docs/product/setup/first-run.md](docs/product/setup/first-run.md): first-run owner setup.
+- [docs/architecture/client/app-shell.md](docs/architecture/client/app-shell.md): Svelte browser shell.
+- [docs/architecture/client/wasm-boundary.md](docs/architecture/client/wasm-boundary.md): Svelte to Rust/WASM boundary.
+- [docs/architecture/client/sqlite-worker.md](docs/architecture/client/sqlite-worker.md): worker-owned SQLite storage.
 - [docs/product/tile-shell/tiled-tabs.md](docs/product/tile-shell/tiled-tabs.md): tile and tab behavior.
-- [docs/product/boards/composition.md](docs/product/boards/composition.md): board composition behavior.
+- [docs/product/doc-impl-audit.md](docs/product/doc-impl-audit.md): contract to implementation audit.
 - [docs/operations/verification/compose-pipeline.md](docs/operations/verification/compose-pipeline.md): acceptance path.
 
 ## Current Direction
 
-- Axum HTTP server.
-- redb embedded storage.
-- Typed KV plus typed graph data.
-- Event log and commit groups for history.
-- Browser client with IndexedDB, service worker, and local-first sync.
-- WebTransport as the preferred live sync lane.
-- Header plus tiled tab shell as the first visible product surface.
+- Svelte owns every rendered product UI surface.
+- Rust/WASM owns pure kernels, reducers, row codecs, and browser-host bridge logic.
+- SQLite WASM in a worker owns browser durable state with OPFS as normal storage and explicit memory fallback.
+- The shipped product has no Leptos UI shell, no Dexie path, no fake product data, and no hidden app backend requirement.
+- Optional sync and serving code may exist only behind documented ports and must not leak into Svelte components.
 
 ## Development Rule
 

@@ -15,6 +15,7 @@
 
 - [AGENTS.md](AGENTS.md): docs-specific agent contract.
 - [active-work.md](active-work.md): current lane and stop condition.
+- [current-state.md](current-state.md): current evidence and open migration lanes.
 - [architecture/README.md](architecture/README.md): system contracts.
 - [decisions/README.md](decisions/README.md): accepted, rejected, and open choices.
 - [operations/README.md](operations/README.md): verification, quality, deployment, observability, recovery.
@@ -29,15 +30,17 @@
 2. [vision/product-shape.md](vision/product-shape.md)
 3. [decisions/accepted.md](decisions/accepted.md)
 4. [architecture/system/process-model.md](architecture/system/process-model.md)
-5. [architecture/storage/redb-layout.md](architecture/storage/redb-layout.md)
-6. [architecture/graph/node-records.md](architecture/graph/node-records.md)
-7. [architecture/events/event-envelope.md](architecture/events/event-envelope.md)
-8. [architecture/events/event-graph.md](architecture/events/event-graph.md)
-9. [architecture/sync/push-pull.md](architecture/sync/push-pull.md)
-10. [architecture/client/local-first.md](architecture/client/local-first.md)
-11. [architecture/client/surface-boundary.md](architecture/client/surface-boundary.md)
-12. [architecture/client/pane-context.md](architecture/client/pane-context.md)
-13. [product/design/visual-language.md](product/design/visual-language.md)
+5. [architecture/client/wasm-boundary.md](architecture/client/wasm-boundary.md)
+6. [architecture/client/sqlite-worker.md](architecture/client/sqlite-worker.md)
+7. [architecture/storage/redb-layout.md](architecture/storage/redb-layout.md)
+8. [architecture/graph/node-records.md](architecture/graph/node-records.md)
+9. [architecture/events/event-envelope.md](architecture/events/event-envelope.md)
+10. [architecture/events/event-graph.md](architecture/events/event-graph.md)
+11. [architecture/sync/push-pull.md](architecture/sync/push-pull.md)
+12. [architecture/client/local-first.md](architecture/client/local-first.md)
+13. [architecture/client/surface-boundary.md](architecture/client/surface-boundary.md)
+14. [architecture/client/pane-context.md](architecture/client/pane-context.md)
+15. [product/design/visual-language.md](product/design/visual-language.md)
 14. [product/tile-shell/tiled-tabs.md](product/tile-shell/tiled-tabs.md)
 15. [product/tile-shell/lkjstr-parity.md](product/tile-shell/lkjstr-parity.md)
 16. [product/tile-shell/drag-drop.md](product/tile-shell/drag-drop.md)
@@ -49,6 +52,7 @@
 
 - [AGENTS.md](AGENTS.md)
 - [active-work.md](active-work.md)
+- [current-state.md](current-state.md)
 - [architecture/README.md](architecture/README.md)
 - [architecture/cache/README.md](architecture/cache/README.md)
 - [architecture/cache/eviction.md](architecture/cache/eviction.md)
@@ -63,10 +67,12 @@
 - [architecture/client/rendering.md](architecture/client/rendering.md)
 - [architecture/client/setup-flow.md](architecture/client/setup-flow.md)
 - [architecture/client/social-actions.md](architecture/client/social-actions.md)
+- [architecture/client/sqlite-worker.md](architecture/client/sqlite-worker.md)
 - [architecture/client/state.md](architecture/client/state.md)
 - [architecture/client/module-layout.md](architecture/client/module-layout.md)
 - [architecture/client/drag-resolver.md](architecture/client/drag-resolver.md)
 - [architecture/client/surface-boundary.md](architecture/client/surface-boundary.md)
+- [architecture/client/wasm-boundary.md](architecture/client/wasm-boundary.md)
 - [architecture/events/README.md](architecture/events/README.md)
 - [architecture/events/edge-events.md](architecture/events/edge-events.md)
 - [architecture/events/event-envelope.md](architecture/events/event-envelope.md)
@@ -151,6 +157,7 @@
 - [operations/verification/dynamic-gates.md](operations/verification/dynamic-gates.md)
 - [operations/verification/static-gates.md](operations/verification/static-gates.md)
 - [product/README.md](product/README.md)
+- [product/doc-impl-audit.md](product/doc-impl-audit.md)
 - [product/boards/README.md](product/boards/README.md)
 - [product/boards/canvas.md](product/boards/canvas.md)
 - [product/boards/composition.md](product/boards/composition.md)

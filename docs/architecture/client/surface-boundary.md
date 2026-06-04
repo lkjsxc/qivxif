@@ -41,7 +41,7 @@ type AppPorts = {
 };
 ```
 
-Ports hide HTTP, IndexedDB, and service worker details from UI and domain code.
+Ports hide HTTP, SQLite worker, WASM bridge, and service worker details from UI and domain code.
 
 ## UI Modules
 
@@ -67,8 +67,8 @@ Domain reducers:
 Effect adapters:
 
 - Implement `AppPorts`.
-- Persist workspace snapshots and dirty event drafts.
-- Push and pull accepted events over HTTP sync.
+- Persist workspace snapshots and dirty event drafts through typed repositories.
+- Push and pull accepted events over HTTP sync when a service is available.
 - Register the service worker.
 - Load and save tab scroll and draft snapshots.
 

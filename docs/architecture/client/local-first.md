@@ -2,15 +2,16 @@
 
 ## Stores
 
-- Durable event log in IndexedDB.
-- Materialized node projections in IndexedDB.
-- Tab-local snapshots in IndexedDB.
+- Durable event log in browser SQLite.
+- Materialized node projections in browser SQLite.
+- Tab-local snapshots in browser SQLite.
 - Hot in-memory state for visible panes.
 - Derived indexes for graph neighborhoods and feeds.
 
 ## Rule
 
-The UI reads projections. Events update projections through reducers.
+The UI reads projections. Events update projections through reducers. Components
+never open storage directly.
 
 ## Local Queue Records
 
@@ -20,18 +21,18 @@ The browser event queue stores one record per pending durable mutation:
 - `kind`: documented event kind.
 - `status`: `dirty`, `pending_validation`, `accepted`, or `rejected`.
 - `node_id`: target node when the event targets one node.
-- `request`: exact JSON body sent to the durable route.
+- `request`: exact JSON body sent to the durable route when sync is available.
 - `route`: HTTP method and path used by the sync actor.
 - `created_at`: client timestamp for display only.
 - `last_error`: last structured rejection when present.
 
-`created_at` is never a sync cursor. The queue key is the event id.
-The sync actor exposes non-accepted queue entries to panes in actor sequence
-order so dirty and rejected state remains inspectable while offline.
+`created_at` is never a sync cursor. The queue key is the event id. The sync
+actor exposes non-accepted queue entries to panes in actor sequence order so
+dirty and rejected state remains inspectable while offline.
 
 Login returns `next_actor_seq`. A fresh browser stores `next_actor_seq - 1`
-before reserving the first local actor sequence, so a second client for the
-same user does not collide with accepted events from another browser.
+before reserving the first local actor sequence, so another client for the same
+user does not collide with accepted events from another browser.
 
 ## Route Flush Lane
 
@@ -57,4 +58,4 @@ returning acceptance.
 - Pane body scroll offsets are stored in `tab_snapshots` by pane ID and survive
   tab switches, tab moves, and reload.
 - Edge events are flushed after their source and target node events.
-- A second client reconstructs board items from accepted graph records.
+- Another client reconstructs board items from accepted graph records.

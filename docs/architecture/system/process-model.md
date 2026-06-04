@@ -1,20 +1,30 @@
 # Process Model
 
-## Server Process
-
-- Axum HTTP server listens on TCP.
-- WebTransport server listens beside HTTP for live sync.
-- Storage service owns redb access.
-- Live session registry fans out post-commit notifications.
-
 ## Browser Process
 
-- App shell renders the header and tile grid.
-- IndexedDB adapter owns structured local persistence.
+- Svelte app shell renders the header and tile grid.
+- Controller owns workspace state and dispatch.
+- SQLite worker owns browser durable storage.
+- WASM services own deterministic kernels and codecs.
 - Service worker owns app-shell cache and offline route.
-- Sync actor pushes and pulls events.
+- Sync actor pushes and pulls events only through documented ports.
+
+## SQLite Worker
+
+- Starts before durable local reads.
+- Chooses OPFS when available.
+- Falls back to memory only with an explicit degraded diagnostic.
+- Exposes typed repository messages, not raw SQL messages.
+- Reports mode, reason, inventory, and last operation error.
+
+## Optional Sync Service
+
+- Axum may serve HTTP API, public routes, auth routes, and static assets.
+- redb may back accepted event storage for that service.
+- The browser remains usable without the service after assets and local storage open.
+- Product UI treats service failures as sync diagnostics, not local acceptance.
 
 ## CLI Process
 
 `qivxifctl` owns admin bootstrap, event and store inspection, repair checks,
-feed rebuilds, and quality gates.
+feed rebuilds, and quality gates for the optional sync service and repository.
