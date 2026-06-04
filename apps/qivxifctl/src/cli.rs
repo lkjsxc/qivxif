@@ -90,6 +90,8 @@ pub enum QualityCommand {
     ImplementationMarkers,
     #[command(name = "check-workspace")]
     Workspace,
+    #[command(name = "check-browser-storage")]
+    BrowserStorage,
     #[command(name = "check-routes")]
     Routes,
     #[command(name = "check-redb-tables")]

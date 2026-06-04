@@ -18,5 +18,6 @@ cargo run --locked -p qivxifctl -- quality check-retired-canon
 cargo run --locked -p qivxifctl -- quality check-public-names
 cargo run --locked -p qivxifctl -- quality check-placeholders
 cargo run --locked -p qivxifctl -- quality check-workspace
+cargo run --locked -p qivxifctl -- quality check-browser-storage
 cargo run --locked -p qivxifctl -- quality check-routes
 cargo run --locked -p qivxifctl -- quality check-redb-tables

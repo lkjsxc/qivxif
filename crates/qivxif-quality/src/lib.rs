@@ -1,3 +1,4 @@
+mod browser_storage;
 mod error;
 mod line_limits;
 mod markers;
@@ -9,6 +10,7 @@ mod topology;
 mod wording;
 mod workspace;
 
+pub use browser_storage::check_browser_storage_boundaries;
 pub use error::QualityError;
 pub use line_limits::check_lines;
 pub use markers::check_placeholders;

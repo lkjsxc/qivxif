@@ -28,6 +28,7 @@ fn quality(command: QualityCommand) -> Result<()> {
         QualityCommand::PublicNames => qivxif_quality::check_public_names()?,
         QualityCommand::ImplementationMarkers => qivxif_quality::check_placeholders()?,
         QualityCommand::Workspace => qivxif_quality::check_workspace_matches_docs()?,
+        QualityCommand::BrowserStorage => qivxif_quality::check_browser_storage_boundaries()?,
         QualityCommand::Routes => qivxif_quality::check_route_docs_match_api()?,
         QualityCommand::RedbTables => qivxif_quality::check_redb_tables_match_docs()?,
     }

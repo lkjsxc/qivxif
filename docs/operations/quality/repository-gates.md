@@ -14,8 +14,15 @@
 - `qivxifctl quality check-public-names`
 - `qivxifctl quality check-placeholders`
 - `qivxifctl quality check-workspace`
+- `qivxifctl quality check-browser-storage`
 - `qivxifctl quality check-routes`
 - `qivxifctl quality check-redb-tables`
+
+## Browser Storage Gate
+
+`check-browser-storage` rejects Dexie in the web app manifest or source tree and
+rejects Svelte components that open raw storage. Components must dispatch actions
+that reach typed repositories.
 
 ## Route Gate
 

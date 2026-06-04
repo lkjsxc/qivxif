@@ -13,7 +13,7 @@ Rows change only when the owner doc and implementation change together.
 | Leptos UI shell retired | [architecture/client/wasm-boundary.md](../architecture/client/wasm-boundary.md) | No Leptos Cargo member or package dependency | Done |
 | Direct DOM shell removed | [repository/workflow/current-shell-and-event-audit.md](../repository/workflow/current-shell-and-event-audit.md) | `src/ui` tree absent | Done |
 | SQLite worker owns durable browser state | [architecture/client/sqlite-worker.md](../architecture/client/sqlite-worker.md) | `indexed-db.ts` still present | Open |
-| Dexie absent from product path | [architecture/client/sqlite-worker.md](../architecture/client/sqlite-worker.md) | No Dexie package dependency | Done |
+| Dexie absent from product path | [architecture/client/sqlite-worker.md](../architecture/client/sqlite-worker.md) | `check-browser-storage` rejects Dexie in web app source | Done |
 | Svelte to WASM service boundary | [architecture/client/wasm-boundary.md](../architecture/client/wasm-boundary.md) | Rust kernels exist; generated bridge services still open | Open |
 | New Tab is a real chooser tab | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | `NewTab.svelte` is inserted by the plus action | Done |
 | Selected New Tab kind converts same tab id | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | `replaceTabInLayout` preserves `pane_node_id` | Done |

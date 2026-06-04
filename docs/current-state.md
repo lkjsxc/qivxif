@@ -40,6 +40,7 @@ The frontend target is Svelte plus WASM plus SQLite.
 - Svelte is the only rendered product UI path in this repository.
 - The old direct DOM renderer is gone from `apps/qivxif-web/src/ui/`.
 - Leptos and Dexie are absent from active dependency manifests.
+- `qivxifctl quality check-browser-storage` rejects Dexie in web app source.
 - The New Tab command opens a real chooser tab and selected kinds convert that pane in place.
 - The active tab alone exposes the close control.
 - Split, stack, maximize, and tile close actions live in the three-dot menu.
