@@ -28,12 +28,7 @@ try {
   await page.getByRole("tab", { name: "Welcome" }).waitFor();
   await page.getByRole("button", { name: "Create text node" }).waitFor();
   await page.getByRole("button", { name: "New tab" }).click({ force: true });
-  await page
-    .locator("article.tile")
-    .first()
-    .locator(".tab-chooser")
-    .getByRole("button", { name: "Settings" })
-    .click({ force: true });
+  await page.locator("article.tile").first().locator(".new-tab-panel").getByRole("button", { name: /Settings/ }).click({ force: true });
   await page.getByRole("tab", { name: "Settings" }).waitFor();
   await reloadShell(page);
   await page.locator(".header-status").getByText("Signed in as admin").waitFor({ timeout: 60000 });

@@ -6,6 +6,11 @@
 
   let railEl: HTMLDivElement | undefined;
   const activeIndex = $derived(boundedActive(stack));
+
+  $effect(() => {
+    const active = railEl?.querySelector('[aria-selected="true"]');
+    active?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+  });
 </script>
 
 <div class="tab-rail tab-strip" role="tablist" bind:this={railEl}>
@@ -14,6 +19,7 @@
       {tab}
       active={index === activeIndex}
       label={tabLabel(tab)}
+      onClose={() => actions.closePane?.(tab.pane_node_id)}
       onFocus={() => actions.focusPane?.(tab.pane_node_id)}
       onMove={(source, zone) => actions.movePane?.(source, tab.pane_node_id, zone)}
     />

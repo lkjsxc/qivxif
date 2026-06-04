@@ -18,11 +18,19 @@
 .tile-header {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  min-width: 0;
   padding: 4px 6px;
   border-bottom: 1px solid var(--q-border);
   background: var(--q-surface-raised);
-  z-index: 1;
+  z-index: 2;
+}
+
+.pane-tabbar {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 0;
 }
 
 .pane-stack {

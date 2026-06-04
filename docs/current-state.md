@@ -30,8 +30,6 @@ The frontend target is Svelte plus WASM plus SQLite.
   and must move behind the SQLite worker repository boundary.
 - Server routes and redb storage still exist as optional sync and serving code.
   Product UI must not depend on direct server account flow as its local truth.
-- The New Tab chooser needs to be a real tab that converts in place.
-- Tile actions need the compact tabbar plus three-dot menu shape.
 - Pointer tab dragging needs the full long-press and edge-split path, beyond the
   native drag coverage currently used by offline browser checks.
 - Settings and Diagnostics need real storage mode, fallback reason, and queue
@@ -42,6 +40,9 @@ The frontend target is Svelte plus WASM plus SQLite.
 - Svelte is the only rendered product UI path in this repository.
 - The old direct DOM renderer is gone from `apps/qivxif-web/src/ui/`.
 - Leptos and Dexie are absent from active dependency manifests.
+- The New Tab command opens a real chooser tab and selected kinds convert that pane in place.
+- The active tab alone exposes the close control.
+- Split, stack, maximize, and tile close actions live in the three-dot menu.
 - Docker Compose remains the final acceptance boundary.
 
 ## Audit Link

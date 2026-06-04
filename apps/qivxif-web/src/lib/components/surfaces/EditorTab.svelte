@@ -1,6 +1,6 @@
 <script lang="ts">
   let { state: viewState, actions } = $props();
-  let text = $state(viewState.text ?? "");
+  let text = $state("");
 
   $effect(() => {
     text = viewState.text ?? "";

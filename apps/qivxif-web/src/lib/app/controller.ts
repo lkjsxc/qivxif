@@ -9,7 +9,7 @@ import { flushQueue, refreshQueueState } from "../effects/sync.ts";
 export async function createController() {
   const state = initialWorkspaceState();
   const store = await openLocalStore();
-  const listeners = new Set();
+  const listeners = new Set<any>();
 
   const notify = () => {
     const actions = actionsFor(store, state, notify);
@@ -20,7 +20,7 @@ export async function createController() {
 
   async function dispatch(command) {
     const actions = actionsFor(store, state, notify);
-    const handler = commandHandlers[command.type];
+    const handler = (commandHandlers as Record<string, any>)[command.type];
     if (!handler) {
       return;
     }

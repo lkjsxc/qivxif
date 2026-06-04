@@ -87,6 +87,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 <div
   class="command-palette-backdrop"
+  role="presentation"
   onclick={(event) => {
     if (event.target === event.currentTarget) actions.toggleCommandPalette?.(false);
   }}

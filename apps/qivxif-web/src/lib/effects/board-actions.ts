@@ -60,10 +60,10 @@ export function boardItems(state) {
   const boardId = state.activeBoardId;
   const nodes = state.nodes ?? [];
   const edges = state.edges ?? [];
-  const byId = new Map(nodes.map((node) => [node.id, node]));
-  const latest = new Map();
-  for (const edge of edges.filter((item) => item.kind === "placed_on_board" && item.to_node === boardId)) {
-    const placement = byId.get(edge.from_node);
+  const byId = new Map(nodes.map((node: any) => [node.id, node]));
+  const latest = new Map<string, any>();
+  for (const edge of edges.filter((item: any) => item.kind === "placed_on_board" && item.to_node === boardId)) {
+    const placement: any = byId.get(edge.from_node);
     if (!placement || placement.kind !== "board_item") {
       continue;
     }

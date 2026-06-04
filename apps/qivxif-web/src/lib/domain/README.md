@@ -1,13 +1,14 @@
 # Browser Domain
 
 Pure browser reducers live here. They transform local state snapshots and never
-touch DOM, IndexedDB, HTTP, service workers, random IDs, or clocks.
+touch DOM, storage, HTTP, service workers, random IDs, or clocks.
 
 ## Contents
 
 - [tile-tree.ts](tile-tree.ts): focus, open, close, split, maximize, and restore
   operations over the local tile tree.
 - [tile-move.ts](tile-move.ts): move and reorder operations for dragged tabs.
+- [tile-tab-update.ts](tile-tab-update.ts): New Tab insertion and conversion helpers.
 
 ## Rules
 

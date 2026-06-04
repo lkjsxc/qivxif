@@ -22,6 +22,7 @@ import {
   closePane,
   focusPane,
   maximizePane,
+  openNewTabChooser,
   openProductTab,
   resizeSplit,
   splitPane,
@@ -49,6 +50,7 @@ export function actionsFor(store, state, notify = () => {}) {
     moveBoardItem: () => run(() => moveBoardItem(store, state)),
     movePane: (source, target, zone) => run(() => movePane(store, state, source, target, zone)),
     muteProfile: (target) => run(() => muteProfile(store, state, target)),
+    openNewTabChooser: (paneId) => run(() => openNewTabChooser(store, state, paneId || chooserPaneId(state))),
     openNode: (nodeId) => run(() => openNode(store, state, nodeId)),
     openTab: (tabId, paneId) => {
       if (paneId) {
@@ -62,7 +64,10 @@ export function actionsFor(store, state, notify = () => {}) {
     resizeSplit: (paneId, sizes) => run(() => resizeSplit(store, state, paneId, sizes)),
     saveText: (content, nodeId, paneId) => run(() => saveText(store, state, content, nodeId, paneId)),
     selectNode: (nodeId) => run(() => selectNode(store, state, nodeId)),
-    splitPane: (paneId, context) => run(() => splitPane(store, withPaneContext(state, context), paneId)),
+    splitPane: (paneId, context: any = {}) => {
+      const scoped = withPaneContext(state, context);
+      return run(() => splitPane(store, scoped, paneId, context.direction ?? "right"));
+    },
     stackTab: (paneId, context) => run(() => stackTab(store, withPaneContext(state, context), paneId)),
     sync: () => run(() => flushQueue(store, state)),
     toggleCommandPalette: (open) => {
@@ -71,10 +76,7 @@ export function actionsFor(store, state, notify = () => {}) {
     },
     toggleTabChooser: (paneId = "") => {
       const targetPaneId = paneId || state.activePaneId || chooserPaneId(state);
-      const samePane = state.tabChooserOpen && state.tabChooserPaneId === targetPaneId;
-      state.tabChooserOpen = !samePane;
-      state.tabChooserPaneId = state.tabChooserOpen ? targetPaneId : "";
-      notify();
+      return run(() => openNewTabChooser(store, state, targetPaneId));
     },
     unpublishBlogPost: () => run(() => unpublishBlogPost(store, state)),
     updatePaneScroll: (paneId, scrollTop) => {
@@ -102,7 +104,8 @@ async function runAction(store, state, notify, action) {
       }
     }
   } catch (error) {
-    state.lastError = error.api?.message ?? error.api?.code ?? String(error);
+    const failure = error as any;
+    state.lastError = failure.api?.message ?? failure.api?.code ?? String(error);
     if (state.setupRequired || state.activeTabId === "setup") {
       state.setupError = state.lastError;
     }
@@ -134,13 +137,14 @@ function localPaneId(state) {
 }
 
 function paneKindForPanel(panel) {
-  const kinds = {
+  const kinds: Record<string, string> = {
     board: "graph_board",
     diagnostics: "diagnostics",
     editor: "text_editor",
     graph: "graph_node",
     history: "history",
     login: "login",
+    "new-tab": "new_tab",
     publish: "publishing",
     settings: "settings",
     setup: "setup",

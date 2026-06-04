@@ -77,6 +77,8 @@
 {#if paneId?.startsWith("nod_")}
   <div
     class="pane-drop-layer"
+    role="presentation"
+    aria-hidden="true"
     ondragover={onDragOver}
     ondragleave={onDragLeave}
     ondrop={onDrop}

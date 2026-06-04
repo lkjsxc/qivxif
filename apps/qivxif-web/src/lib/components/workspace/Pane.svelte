@@ -6,9 +6,9 @@
 
   let { stack, state: viewState, actions } = $props();
 
-  let paneEl: HTMLElement | undefined;
-  let headEl: HTMLElement | undefined;
-  let stackEl: HTMLElement | undefined;
+  let paneEl = $state<HTMLElement | undefined>();
+  let headEl = $state<HTMLElement | undefined>();
+  let stackEl = $state<HTMLElement | undefined>();
 
   const activeIndex = $derived(boundedActive(stack));
   const activeTab = $derived(stack.tabs[activeIndex] ?? null);

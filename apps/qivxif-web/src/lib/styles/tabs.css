@@ -1,8 +1,12 @@
 .tab-rail {
-  flex: 1;
+  display: flex;
+  flex: 1 1 auto;
   gap: 2px;
+  min-width: 0;
   overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
+  scrollbar-width: thin;
 }
 
 .tab-rail[data-overflow="true"] {
@@ -10,16 +14,43 @@
 }
 
 .tab-frame {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   max-width: 180px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  min-height: 28px;
+  min-width: 44px;
+  user-select: none;
 }
 
 .tab-frame.active {
   color: var(--q-text);
   background: var(--q-surface-raised);
   border-color: var(--q-border-strong);
+}
+
+.tab-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tab-close {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 50%;
+  color: var(--q-muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.tab-close:hover,
+.tab-close:focus-visible {
+  color: var(--q-text);
+  background: var(--q-overlay);
 }
 
 .tab-frame[data-drop-side] {

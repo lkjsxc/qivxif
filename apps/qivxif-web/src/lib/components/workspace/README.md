@@ -8,6 +8,8 @@ Tiled tab shell: header, splits, panes, drag layer, and resize handles.
 - [TileGrid.svelte](TileGrid.svelte): recursive split layout.
 - [Pane.svelte](Pane.svelte): pane chrome and tab stack host.
 - [PaneDropLayer.svelte](PaneDropLayer.svelte): drag preview overlay.
+- [PaneHead.svelte](PaneHead.svelte): compact tabbar composition.
+- [TileMenu.svelte](TileMenu.svelte): three-dot tile actions.
 - [TabStrip.svelte](TabStrip.svelte): horizontal tab rail.
 
 ## Related Docs

@@ -11,6 +11,7 @@
   import HistoryTab from "./HistoryTab.svelte";
   import DiagnosticsTab from "./DiagnosticsTab.svelte";
   import LoginTab from "./LoginTab.svelte";
+  import NewTab from "./NewTab.svelte";
 
   let { state: viewState, actions } = $props();
 </script>
@@ -19,6 +20,8 @@
   <SetupTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "login"}
   <LoginTab {actions} />
+{:else if viewState.activeTabId === "new-tab"}
+  <NewTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "graph"}
   <GraphTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "editor"}

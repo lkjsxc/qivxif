@@ -5,6 +5,7 @@ export function tabKindToPanel(kind: string) {
     graph_node: "graph",
     history: "history",
     login: "login",
+    new_tab: "new-tab",
     publishing: "publish",
     settings: "settings",
     setup: "setup",
@@ -69,6 +70,7 @@ export function boundedActive(stack) {
 export function tabLabel(tab) {
   const labels: Record<string, string> = {
     login: "Login",
+    new_tab: "New Tab",
     setup: "Setup",
     text_editor: "Editor",
   };

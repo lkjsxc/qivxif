@@ -90,7 +90,7 @@ export async function openShellTab(page, name) {
   }
   await tile.getByRole("button", { exact: true, name: "+" }).click({ force: true });
   try {
-    await tile.locator(".tab-chooser").getByRole("button", { exact: true, name }).click({ force: true });
+    await tile.locator(".new-tab-panel").getByRole("button", { name }).click({ force: true });
   } catch (error) {
     const bodyText = await page.locator("body").innerText();
     const tabs = JSON.stringify(await tabSnapshot(page));
@@ -104,7 +104,7 @@ async function waitForExistingTab(page, name) {
     await page.waitForFunction((label) => {
       return [...document.querySelectorAll("article.tile")].some((tile) => {
         return [...tile.querySelectorAll('[role="tab"]')].some((tab) => {
-          return tab.textContent?.trim() === label;
+          return tabName(tab) === label;
         });
       });
     }, name, { timeout: 2000 });
@@ -119,7 +119,7 @@ async function selectExistingTab(page, name) {
     const tiles = [...document.querySelectorAll("article.tile")];
     for (const [index, tile] of tiles.entries()) {
       const tabs = [...tile.querySelectorAll('[role="tab"]')];
-      const tab = tabs.find((item) => item.textContent?.trim() === label);
+      const tab = tabs.find((item) => tabName(item) === label);
       if (!tab) {
         continue;
       }
@@ -138,7 +138,7 @@ async function tabSnapshot(page) {
       return [...tile.querySelectorAll('[role="tab"], button')].map((item) => {
         return {
           selected: item.getAttribute("aria-selected"),
-          text: item.textContent?.trim(),
+          text: item.getAttribute("aria-label") ?? item.textContent?.trim(),
           type: item.getAttribute("role") ?? item.tagName.toLowerCase(),
         };
       });
@@ -157,13 +157,17 @@ async function selectedTabInTile(page, name, index) {
     await page.waitForFunction(({ index, label }) => {
       const tile = document.querySelectorAll("article.tile")[index];
       return [...(tile?.querySelectorAll('[role="tab"]') ?? [])].some((tab) => {
-        return tab.textContent?.trim() === label && tab.getAttribute("aria-selected") === "true";
+        return tabName(tab) === label && tab.getAttribute("aria-selected") === "true";
       });
     }, { index, label: name });
   } catch (error) {
     const bodyText = await page.locator("body").innerText();
     throw new Error(`${name} tab was not selected\n${bodyText}`);
   }
+}
+
+function tabName(tab) {
+  return tab.getAttribute("aria-label") ?? tab.textContent?.trim();
 }
 
 function tabTitle(name) {

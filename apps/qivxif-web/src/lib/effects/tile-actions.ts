@@ -9,6 +9,11 @@ import {
   stackTabInLayout,
 } from "../domain/tile-tree.ts";
 import {
+  insertTabAfterPaneInLayout,
+  replaceTabInLayout,
+  tabKindForPane,
+} from "../domain/tile-tab-update.ts";
+import {
   createNode,
   createPane,
   initialPaneSpec,
@@ -29,13 +34,13 @@ export async function focusPane(store, state, paneId) {
   await queueLayout(store, state, model.layout_node_id, focusPaneInLayout(model.layout, target));
 }
 
-export async function splitPane(store, state, paneId) {
+export async function splitPane(store, state, paneId, direction = "right") {
   requireAuth(state);
   const model = await ensureLayout(store, state);
   const target = targetPane(model.layout.root, paneId);
   const pane = await createPane(store, state, state.currentNodeId, "Split pane", "text_editor");
   const tab = tabFor(pane.node.id, state.currentNodeId, "Split pane", "text_editor");
-  const next = splitPaneInLayout(model.layout, target, tab, "right");
+  const next = splitPaneInLayout(model.layout, target, tab, direction);
   state.activePaneId = pane.node.id;
   await queueLayout(store, state, model.layout_node_id, next);
 }
@@ -51,6 +56,22 @@ export async function stackTab(store, state, paneId) {
   await queueLayout(store, state, model.layout_node_id, next);
 }
 
+export async function openNewTabChooser(store, state, paneId) {
+  if (!state.auth?.user?.actor_id) {
+    state.activeTabId = "new-tab";
+    return;
+  }
+  const model = await ensureLayout(store, state);
+  const target = targetPane(model.layout.root, paneId);
+  const pane = await createPane(store, state, null, "New Tab", "new_tab");
+  const tab = tabFor(pane.node.id, null, "New Tab", "new_tab");
+  const next = insertTabAfterPaneInLayout(model.layout, target, tab);
+  state.activePaneId = pane.node.id;
+  state.tabChooserOpen = false;
+  state.tabChooserPaneId = "";
+  await queueLayout(store, state, model.layout_node_id, next);
+}
+
 export async function openProductTab(store, state, paneId, tabId) {
   if (!state.auth?.user?.actor_id) {
     state.activeTabId = tabId;
@@ -60,6 +81,10 @@ export async function openProductTab(store, state, paneId, tabId) {
   const model = await ensureLayout(store, state);
   const spec = tabSpec(tabId, state);
   const target = targetPane(model.layout.root, paneId);
+  if (tabKindForPane(model.layout, target) === "new_tab") {
+    await convertTab(store, state, model, target, spec);
+    return;
+  }
   const pane = await createPane(store, state, spec.targetNodeId, spec.title, spec.paneKind);
   const tab = tabFor(pane.node.id, spec.targetNodeId, spec.title, spec.paneKind);
   const next = stackTabInLayout(model.layout, target, tab);
@@ -95,6 +120,21 @@ export async function resizeSplit(store, state, paneId, sizes) {
   const model = await ensureLayout(store, state);
   const target = targetPane(model.layout.root, paneId);
   const next = resizeSplitInLayout(model.layout, target, sizes);
+  await queueLayout(store, state, model.layout_node_id, next);
+}
+
+async function convertTab(store, state, model, paneId, spec) {
+  if (spec.targetNodeId) {
+    await link(store, paneId, spec.targetNodeId, "pane_views_node", { pane_kind: spec.paneKind });
+  }
+  const next = replaceTabInLayout(model.layout, paneId, {
+    pane_kind: spec.paneKind,
+    target_node_id: spec.targetNodeId,
+    title: spec.title,
+  });
+  state.activePaneId = paneId;
+  state.tabChooserOpen = false;
+  state.tabChooserPaneId = "";
   await queueLayout(store, state, model.layout_node_id, next);
 }
 

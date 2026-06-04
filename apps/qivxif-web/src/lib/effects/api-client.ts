@@ -41,7 +41,7 @@ async function getEnvelope(path) {
   return readEnvelope(response);
 }
 
-async function postEnvelope(path, body, csrfToken) {
+async function postEnvelope(path, body, csrfToken = "") {
   const headers = { "content-type": "application/json" };
   if (csrfToken) {
     headers["x-qivxif-csrf"] = csrfToken;
@@ -88,7 +88,7 @@ function parseEnvelope(response, text) {
 }
 
 function apiFailure(envelope) {
-  const error = new Error(envelope.error?.message ?? "request failed");
+  const error: Error & { api?: unknown } = new Error(envelope.error?.message ?? "request failed");
   error.api = envelope.error;
   return error;
 }

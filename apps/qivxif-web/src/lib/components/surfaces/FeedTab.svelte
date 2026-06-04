@@ -46,7 +46,10 @@
 
   {#if viewState.auth}
     <form class="feed-compose" onsubmit={submitPost}>
-      <textarea rows="3" placeholder="Write a short post" bind:value={body}></textarea>
+      <label>
+        Short post
+        <textarea rows="3" aria-label="Short post body" bind:value={body}></textarea>
+      </label>
       <button type="submit" class="primary" disabled={!body.trim()}>Post</button>
     </form>
   {/if}

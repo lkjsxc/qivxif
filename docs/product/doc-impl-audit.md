@@ -15,10 +15,10 @@ Rows change only when the owner doc and implementation change together.
 | SQLite worker owns durable browser state | [architecture/client/sqlite-worker.md](../architecture/client/sqlite-worker.md) | `indexed-db.ts` still present | Open |
 | Dexie absent from product path | [architecture/client/sqlite-worker.md](../architecture/client/sqlite-worker.md) | No Dexie package dependency | Done |
 | Svelte to WASM service boundary | [architecture/client/wasm-boundary.md](../architecture/client/wasm-boundary.md) | Rust kernels exist; generated bridge services still open | Open |
-| New Tab is a real chooser tab | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | Current UI uses header chooser overlay | Open |
-| Selected New Tab kind converts same tab id | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | Current action opens a new pane | Open |
-| Active tab alone exposes close | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | Tab frame has no active close control yet | Open |
-| Split and close tile actions live in three-dot menu | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | Direct header buttons still present | Open |
+| New Tab is a real chooser tab | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | `NewTab.svelte` is inserted by the plus action | Done |
+| Selected New Tab kind converts same tab id | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | `replaceTabInLayout` preserves `pane_node_id` | Done |
+| Active tab alone exposes close | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | `TabFrame.svelte` renders close only inside active branch | Done |
+| Split and close tile actions live in three-dot menu | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | `TileMenu.svelte` owns split, stack, maximize, and close actions | Done |
 | Pane body edge split excludes header chrome | [tile-shell/drag-drop.md](tile-shell/drag-drop.md) | Resolver measures body rect and header band | Done |
 | Touch long-press tab drag | [tile-shell/drag-drop.md](tile-shell/drag-drop.md) | Native drag path covers current checks | Open |
 | Settings shows typed storage diagnostics | [tile-shell/settings-pane.md](tile-shell/settings-pane.md) | Settings shows session and pane counts only | Open |

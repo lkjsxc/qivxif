@@ -40,12 +40,7 @@ try {
 
   await context.setOffline(true);
   await page.locator("article.tile").first().getByRole("button", { name: "+" }).click({ force: true });
-  await page
-    .locator("article.tile")
-    .first()
-    .locator(".tab-chooser")
-    .getByRole("button", { name: "Publishing" })
-    .click({ force: true });
+  await page.locator("article.tile").first().locator(".new-tab-panel").getByRole("button", { name: /Publishing/ }).click({ force: true });
   await page.locator(".tab-panel.publish").waitFor({ timeout: 90000 });
   await page.locator("#publish-title").fill(title);
   await page.locator("form.publish-draft-form").evaluate((form) => form.requestSubmit());

@@ -3,15 +3,14 @@
 
   const TAB_MIME = "application/x-qivxif-pane";
 
-  let { tab, label, active, onFocus, onMove } = $props();
-
+  let { tab, label, active, onFocus, onMove, onClose } = $props();
   let dropSide = $state<string | undefined>();
 
   function onDragStart(event: DragEvent) {
     if (!tab.pane_node_id?.startsWith("nod_")) return;
     event.dataTransfer?.setData(TAB_MIME, tab.pane_node_id);
     event.dataTransfer?.setData("text/plain", tab.pane_node_id);
-    event.dataTransfer!.effectAllowed = "move";
+    if (event.dataTransfer) event.dataTransfer.effectAllowed = "move";
     document.body.classList.add("dragging-tab");
   }
 
@@ -37,23 +36,40 @@
     event.stopPropagation();
     onMove(source, `tab-${side}`);
   }
+
+  function onKeydown(event: KeyboardEvent) {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    onFocus();
+  }
+
+  function close(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    onClose();
+  }
 </script>
 
-<button
-  type="button"
+<div
   class="tab tab-frame"
   class:active
   role="tab"
+  tabindex="0"
+  aria-label={label}
   aria-selected={active}
   data-pane-id={tab.pane_node_id}
   data-tab-kind={tab.pane_kind}
   data-drop-side={dropSide}
   draggable={tab.pane_node_id?.startsWith("nod_") ? true : undefined}
   onclick={onFocus}
+  onkeydown={onKeydown}
   ondragstart={onDragStart}
   ondragend={onDragEnd}
   ondragover={onDragOver}
   ondrop={onDrop}
 >
-  {label}
-</button>
+  <span class="tab-label">{label}</span>
+  {#if active}
+    <button type="button" class="tab-close" aria-label="Close active tab" onclick={close}>×</button>
+  {/if}
+</div>

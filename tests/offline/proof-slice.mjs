@@ -1,7 +1,6 @@
 import { createRequire } from "node:module";
 import {
   captureBrowserEvents,
-  clickButton,
   loadShell,
   login,
   openServerNode,
@@ -65,21 +64,21 @@ try {
     return events.filter((entry) => entry.kind.startsWith("text.")).length >= 1;
   });
   await page.getByText("Sync: offline").first().waitFor();
-  await clickButton(page, "Split pane");
+  await clickTileMenuItem(page, "Split right");
   await expectLayoutPanes(page, 2, browserEvents, { tiles: 2 });
   await dragSecondTileTabToFirstCenter(page);
   await reorderSecondTabBeforeFirst(page);
   await shortTouchDoesNotArmTabDrag(page);
   await longPressFirstTabAfterSecond(page);
   // Draft isolation is covered by tab_snapshots; full tab-switch assertion remains flaky in headless drag runs.
-  await page.locator("article.tile").first().getByRole("button", { name: "Stack tab" }).click({ force: true });
+  await clickTileMenuItem(page, "Stack tab");
   await page.waitForFunction(
     () => document.querySelectorAll("article.tile [role='tab']").length >= 3,
     { timeout: 60000 },
   );
-  await page.locator("article.tile").first().getByRole("button", { name: "Maximize pane" }).click({ force: true });
+  await clickTileMenuItem(page, "Maximize pane");
   await waitForMaximizedLayout(page);
-  await page.locator("article.tile").first().getByRole("button", { name: "Close pane" }).click({ force: true });
+  await clickTileMenuItem(page, "Close tile");
   await expectLayoutPanes(page, 2, browserEvents, { tabs: 2 });
   await page.evaluate(() => {
     const button = [...document.querySelectorAll("button")].find(
@@ -188,12 +187,7 @@ try {
   await loadShell(secondPage);
   await login(secondPage, secondEvents);
   await secondPage.getByRole("button", { name: "New tab" }).click({ force: true });
-  await secondPage
-    .locator("article.tile")
-    .first()
-    .locator(".tab-chooser")
-    .getByRole("button", { name: "Graph" })
-    .click({ force: true });
+  await secondPage.locator("article.tile").first().locator(".new-tab-panel").getByRole("button", { name: /Graph/ }).click({ force: true });
   await openServerNode(secondPage, nodeId);
   assert((await serverNodeStatus(second, nodeId)) === 200, "second client could not read flushed text node");
   await second.close();
@@ -251,16 +245,17 @@ async function expectLayoutPanes(page, count, events = [], { tiles = null, tabs 
     return;
   }
   await page.getByRole("button", { name: "New tab" }).click({ force: true });
-  await page
-    .locator("article.tile")
-    .first()
-    .locator(".tab-chooser")
-    .getByRole("button", { name: "Settings" })
-    .click({ force: true });
+  await page.locator("article.tile").first().locator(".new-tab-panel").getByRole("button", { name: /Settings/ }).click({ force: true });
   await page.waitForFunction((min) => {
     const match = document.body.innerText.match(/Layout panes: (\d+)/);
     return match && Number(match[1]) >= min;
   }, count, { timeout: 60000 });
+}
+
+async function clickTileMenuItem(page, name) {
+  const tile = page.locator("article.tile").first();
+  await tile.getByRole("button", { name: "Tile menu" }).click({ force: true });
+  await tile.getByRole("menuitem", { name }).click({ force: true });
 }
 
 async function localState(page) {

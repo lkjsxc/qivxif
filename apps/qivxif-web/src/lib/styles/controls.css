@@ -1,9 +1,9 @@
 .tab,
 .command,
 .header-button,
-.tile-menu,
+.tile-menu-popover button,
 .icon-button,
-.chooser-tab,
+.new-tab-choice,
 .primary,
 form button {
   border: 1px solid var(--q-border);
@@ -43,17 +43,36 @@ textarea:focus-visible {
   outline-offset: 1px;
 }
 
-.tab-chooser {
+.tile-add,
+.tile-menu-trigger {
+  flex: 0 0 auto;
+  min-width: 30px;
+  min-height: 28px;
+}
+
+.tile-menu-wrap {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.tile-menu-popover {
   position: absolute;
-  right: 6px;
-  top: 38px;
-  z-index: 2;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 10;
   display: grid;
+  min-width: 148px;
   gap: 4px;
   padding: 6px;
   border: 1px solid var(--q-border);
   border-radius: var(--radius-ui);
   background: var(--q-bg-deep);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 32%);
+}
+
+.tile-menu-popover button,
+.new-tab-choice {
+  text-align: left;
 }
 
 .command-palette-backdrop {
