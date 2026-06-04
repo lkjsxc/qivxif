@@ -88,7 +88,7 @@ export async function openShellTab(page, name) {
     await selectedTabInTile(page, selectedName, existingIndex);
     return;
   }
-  await tile.getByRole("button", { exact: true, name: "+" }).click({ force: true });
+  await tile.getByRole("button", { exact: true, name: "Add tab" }).click({ force: true });
   try {
     await tile.locator(".new-tab-panel").getByRole("button", { name }).click({ force: true });
   } catch (error) {

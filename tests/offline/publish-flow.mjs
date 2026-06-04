@@ -39,7 +39,7 @@ try {
   await waitForText(page, "Signed in as admin", browserEvents);
 
   await context.setOffline(true);
-  await page.locator("article.tile").first().getByRole("button", { name: "+" }).click({ force: true });
+  await page.locator("article.tile").first().getByRole("button", { name: "Add tab" }).click({ force: true });
   await page.locator("article.tile").first().locator(".new-tab-panel").getByRole("button", { name: /Publishing/ }).click({ force: true });
   await page.locator(".tab-panel.publish").waitFor({ timeout: 90000 });
   await page.locator("#publish-title").fill(title);

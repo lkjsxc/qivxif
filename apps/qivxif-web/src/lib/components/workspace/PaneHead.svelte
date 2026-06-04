@@ -19,7 +19,7 @@
     <button
       type="button"
       class="icon-button tile-add"
-      aria-label="New tab"
+      aria-label="Add tab"
       onclick={() => actions.openNewTabChooser?.(paneId) ?? actions.toggleTabChooser?.(paneId)}
     >
       +
