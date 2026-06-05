@@ -43,7 +43,8 @@
 6. Login through the browser UI.
 7. Switch the browser context offline.
 8. Create a text node and save text.
-9. Confirm IndexedDB has dirty events.
+9. Confirm the SQLite worker repository has dirty events through the typed test
+   diagnostics bridge.
 10. Reload offline and confirm shell, node, text, and queue survive.
 11. Confirm the server does not yet have the local node.
 12. Reconnect, flush, and confirm the queue clears only after acceptance.

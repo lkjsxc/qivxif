@@ -10,7 +10,7 @@ Playwright scripts that run inside the `offline-e2e` Docker Compose service.
 - [browser-helpers.mjs](browser-helpers.mjs): shared page helpers and event capture.
 - [drag-helpers.mjs](drag-helpers.mjs): tab drag and drop geometry helpers.
 - [publish-helpers.mjs](publish-helpers.mjs): publish form and draft helpers.
-- [local-snapshot-helpers.mjs](local-snapshot-helpers.mjs): IndexedDB snapshot utilities.
+- [local-snapshot-helpers.mjs](local-snapshot-helpers.mjs): SQLite worker snapshot checks.
 
 ## Run
 

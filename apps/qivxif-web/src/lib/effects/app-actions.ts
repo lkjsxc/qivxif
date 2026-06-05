@@ -1,5 +1,5 @@
 import { createOwner, login } from "./api-client.ts";
-import { activePaneId as firstActivePaneId } from "../domain/tile-tree.ts";
+import { activePaneId as firstActivePaneId, containsPane } from "../domain/tile-tree.ts";
 import { storeAuthPayload } from "./auth-state.ts";
 import { addCurrentNodeToBoard, createBoard, linkBoardNodes, moveBoardItem } from "./board-actions.ts";
 import { withPaneContext } from "./pane-context.ts";
@@ -75,7 +75,7 @@ export function actionsFor(store, state, notify = () => {}) {
       notify();
     },
     toggleTabChooser: (paneId = "") => {
-      const targetPaneId = paneId || state.activePaneId || chooserPaneId(state);
+      const targetPaneId = paneId || chooserPaneId(state);
       return run(() => openNewTabChooser(store, state, targetPaneId));
     },
     unpublishBlogPost: () => run(() => unpublishBlogPost(store, state)),
@@ -130,7 +130,10 @@ async function createOwnerAccount(store, state, name, password) {
 }
 
 function chooserPaneId(state) {
-  return state.activePaneId || firstActivePaneId(state.layout?.root) || localPaneId(state);
+  if (state.activePaneId && state.layout?.root && containsPane(state.layout.root, state.activePaneId)) {
+    return state.activePaneId;
+  }
+  return firstActivePaneId(state.layout?.root) || localPaneId(state);
 }
 
 function localPaneId(state) {

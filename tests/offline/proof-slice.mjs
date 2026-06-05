@@ -5,9 +5,9 @@ import {
   login,
   openServerNode,
   openShellTab,
+  readLocalStore,
   reloadShell,
-  waitForBodyText,
-  waitForText,
+  waitForLocalStore,
 } from "./browser-helpers.mjs";
 import { assertIndependentTextDrafts, dragSecondTileTabToFirstCenter, longPressFirstTabAfterSecond, reorderSecondTabBeforeFirst, shortTouchDoesNotArmTabDrag } from "./drag-helpers.mjs";
 
@@ -50,19 +50,7 @@ try {
     );
     button?.click();
   });
-  await page.waitForFunction(async () => {
-    const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 4);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
-    const events = await new Promise((resolve, reject) => {
-      const call = db.transaction("events", "readonly").objectStore("events").getAll();
-      call.onerror = () => reject(call.error);
-      call.onsuccess = () => resolve(call.result);
-    });
-    return events.filter((entry) => entry.kind.startsWith("text.")).length >= 1;
-  });
+  await waitForLocalStore(page, "events", "(rows) => rows.filter((entry) => entry.kind.startsWith('text.')).length >= 1");
   await page.getByText("Sync: offline").first().waitFor();
   await clickTileMenuItem(page, "Split right");
   await expectLayoutPanes(page, 2, browserEvents, { tiles: 2 });
@@ -86,32 +74,8 @@ try {
     );
     button?.click();
   });
-  await page.waitForFunction(async () => {
-    const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 4);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
-    const board = await new Promise((resolve, reject) => {
-      const call = db.transaction("tile_layout", "readonly").objectStore("tile_layout").get("active_board");
-      call.onerror = () => reject(call.error);
-      call.onsuccess = () => resolve(call.result);
-    });
-    return board?.node_id?.startsWith("nod_");
-  });
-  await page.waitForFunction(async () => {
-    const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 4);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
-    const nodes = await new Promise((resolve, reject) => {
-      const call = db.transaction("nodes", "readonly").objectStore("nodes").getAll();
-      call.onerror = () => reject(call.error);
-      call.onsuccess = () => resolve(call.result);
-    });
-    return nodes.some((node) => node.kind === "graph_board");
-  });
+  await waitForLocalStore(page, "tile_layout", "(rows) => rows.some((row) => row.id === 'active_board' && row.node_id?.startsWith('nod_'))");
+  await waitForLocalStore(page, "nodes", "(rows) => rows.some((node) => node.kind === 'graph_board')");
   await page.evaluate(() => {
     const button = [...document.querySelectorAll(".tab-panel.board button")].find((entry) =>
       entry.textContent?.trim().startsWith("Add current node"),
@@ -125,21 +89,7 @@ try {
     );
     button?.click();
   });
-  await page.waitForFunction(async () => {
-    const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 4);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
-    const nodes = await new Promise((resolve, reject) => {
-      const call = db.transaction("nodes", "readonly").objectStore("nodes").getAll();
-      call.onerror = () => reject(call.error);
-      call.onsuccess = () => resolve(call.result);
-    });
-    return nodes.some(
-      (node) => node.kind === "board_item" && Number(node.metadata_map?.x ?? 0) > 120,
-    );
-  });
+  await waitForLocalStore(page, "nodes", "(rows) => rows.some((node) => node.kind === 'board_item' && Number(node.metadata_map?.x ?? 0) > 120)");
   const localBefore = await localState(page);
   assert(localBefore.events.length > 10, "workspace and board events were not queued");
   const nodeId = localBefore.nodes.find((item) => item.kind === "text")?.id;
@@ -164,19 +114,7 @@ try {
     );
     button?.click();
   });
-  await page.waitForFunction(async () => {
-    const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 4);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
-    const events = await new Promise((resolve, reject) => {
-      const call = db.transaction("events", "readonly").objectStore("events").getAll();
-      call.onerror = () => reject(call.error);
-      call.onsuccess = () => resolve(call.result);
-    });
-    return events.every((entry) => entry.status !== "dirty" && entry.status !== "pending_validation");
-  }, null, { timeout: 120000 });
+  await waitForLocalStore(page, "events", "(rows) => rows.every((entry) => entry.status !== 'dirty' && entry.status !== 'pending_validation')", null, 120000);
   const nodeStatusAfterFlush = await serverNodeStatus(context, nodeId);
   assert(nodeStatusAfterFlush === 200, "text node was not flushed to the server");
 
@@ -187,7 +125,7 @@ try {
   await loadShell(secondPage);
   await login(secondPage, secondEvents);
   await secondPage.getByRole("button", { name: "New tab" }).click({ force: true });
-  await secondPage.locator("article.tile").first().locator(".tab-body:not([hidden]) .new-tab-panel").getByRole("button", { name: /Graph/ }).click({ force: true });
+  await secondPage.locator(".tab-body:not([hidden]) .new-tab-panel").getByRole("button", { name: /Graph/ }).click({ force: true });
   await openServerNode(secondPage, nodeId);
   assert((await serverNodeStatus(second, nodeId)) === 200, "second client could not read flushed text node");
   await second.close();
@@ -197,35 +135,11 @@ try {
 }
 
 async function waitForBoardItems(page, minimum) {
-  await page.waitForFunction(async (count) => {
-    const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 4);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
-    const nodes = await new Promise((resolve, reject) => {
-      const call = db.transaction("nodes", "readonly").objectStore("nodes").getAll();
-      call.onerror = () => reject(call.error);
-      call.onsuccess = () => resolve(call.result);
-    });
-    return nodes.filter((node) => node.kind === "board_item").length >= count;
-  }, minimum);
+  await waitForLocalStore(page, "nodes", "(rows, count) => rows.filter((node) => node.kind === 'board_item').length >= count", minimum);
 }
 
 async function waitForMaximizedLayout(page) {
-  await page.waitForFunction(async () => {
-    const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 4);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
-    const layout = await new Promise((resolve, reject) => {
-      const call = db.transaction("tile_layout", "readonly").objectStore("tile_layout").get("tile_model");
-      call.onerror = () => reject(call.error);
-      call.onsuccess = () => resolve(call.result);
-    });
-    return Boolean(layout?.layout?.maximized_pane_id?.startsWith("nod_"));
-  });
+  await waitForLocalStore(page, "tile_layout", "(rows) => rows.some((row) => row.id === 'tile_model' && row.layout?.maximized_pane_id?.startsWith('nod_'))");
 }
 
 async function expectLayoutPanes(page, count, events = [], { tiles = null, tabs = null } = {}) {
@@ -245,7 +159,7 @@ async function expectLayoutPanes(page, count, events = [], { tiles = null, tabs 
     return;
   }
   await page.getByRole("button", { name: "New tab" }).click({ force: true });
-  await page.locator("article.tile").first().locator(".tab-body:not([hidden]) .new-tab-panel").getByRole("button", { name: /Settings/ }).click({ force: true });
+  await page.locator(".tab-body:not([hidden]) .new-tab-panel").getByRole("button", { name: /Settings/ }).click({ force: true });
   await page.waitForFunction((min) => {
     const match = document.body.innerText.match(/Layout panes: (\d+)/);
     return match && Number(match[1]) >= min;
@@ -259,57 +173,17 @@ async function clickTileMenuItem(page, name) {
 }
 
 async function localState(page) {
-  return page.evaluate(async () => {
-    const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 4);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
-    const read = (name) =>
-      new Promise((resolve, reject) => {
-        const call = db.transaction(name, "readonly").objectStore(name).getAll();
-        call.onerror = () => reject(call.error);
-        call.onsuccess = () => resolve(call.result);
-      });
-    return {
-      nodes: await read("nodes"),
-      edges: await read("edges"),
-      events: await read("events"),
-      text: await read("text_snapshots"),
-      layoutRecords: await read("tile_layout"),
-    };
-  });
+  return {
+    edges: await readLocalStore(page, "edges"),
+    events: await readLocalStore(page, "events"),
+    layoutRecords: await readLocalStore(page, "tile_layout"),
+    nodes: await readLocalStore(page, "nodes"),
+    text: await readLocalStore(page, "text_snapshots"),
+  };
 }
 
 async function waitForNodeCreateEvent(page) {
-  await page.waitForFunction(async () => {
-    const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 4);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
-    const events = await new Promise((resolve, reject) => {
-      const call = db.transaction("events", "readonly").objectStore("events").getAll();
-      call.onerror = () => reject(call.error);
-      call.onsuccess = () => resolve(call.result);
-    });
-    return events.some((entry) => entry.kind === "node.create");
-  });
-}
-
-async function waitForLocalEvents(page, count) {
-  await page.waitForFunction(async (expected) => {
-    const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 4);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
-    return new Promise((resolve, reject) => {
-      const call = db.transaction("events", "readonly").objectStore("events").getAll();
-      call.onerror = () => reject(call.error);
-      call.onsuccess = () => resolve(call.result.length === expected);
-    });
-  }, count);
+  await waitForLocalStore(page, "events", "(rows) => rows.some((entry) => entry.kind === 'node.create')");
 }
 
 async function serverNodeStatus(context, nodeId) {

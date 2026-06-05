@@ -4,9 +4,9 @@ import type { JsonRecord, LocalStore, StoreName, StorageDiagnostics } from "./ty
 
 export async function openLocalStore(): Promise<LocalStore> {
   try {
-    return await openSqliteWorkerStore();
+    return exposeStorageDebug(await openSqliteWorkerStore());
   } catch (error) {
-    return unavailableStore(error?.message ?? String(error));
+    return exposeStorageDebug(unavailableStore(error?.message ?? String(error)));
   }
 }
 
@@ -26,6 +26,17 @@ export function loadLocalWorkspace(store: LocalStore) {
 
 export function localStoreDiagnostics(store: LocalStore): Promise<StorageDiagnostics> {
   return store.diagnostics();
+}
+
+function exposeStorageDebug(store: LocalStore): LocalStore {
+  if (typeof window !== "undefined") {
+    (window as any).__qivxifStorageDebug = {
+      all: store.all,
+      diagnostics: store.diagnostics,
+      get: store.get,
+    };
+  }
+  return store;
 }
 
 function unavailableStore(reason: string): LocalStore {

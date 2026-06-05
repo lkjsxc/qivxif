@@ -11,13 +11,14 @@ import {
 import { isStoreName, STORE_NAMES, type JsonRecord, type StoreName } from "./types.ts";
 
 let db: any;
+let sqlite3Module: any;
 let mode: "opfs" | "memory" | "unavailable" = "unavailable";
 let reason = "worker has not opened sqlite";
 let lastOperationError = "";
 
 export async function handleStorageRequest(kind: string, payload: any = {}) {
   if (kind === "open") return openDatabase();
-  if (!db) throw Object.assign(new Error(reason), { code: "not_open" });
+  if (!db) await openDatabase();
   try {
     return await dispatch(kind, payload);
   } catch (error) {
@@ -28,19 +29,19 @@ export async function handleStorageRequest(kind: string, payload: any = {}) {
 
 async function openDatabase() {
   if (db) return { diagnostics: await diagnostics() };
-  const sqlite3 = await sqlite3InitModule().catch((error) => {
+  sqlite3Module ??= await sqlite3InitModule().catch((error) => {
     mode = "unavailable";
     reason = "sqlite wasm failed to load";
     lastOperationError = error?.message ?? String(error);
     throw error;
   });
-  db = openOpfs(sqlite3) ?? openMemory(sqlite3);
+  db = openOpfs(sqlite3Module) ?? openMemory(sqlite3Module);
   db.exec(createSchemaSql());
   return { diagnostics: await diagnostics() };
 }
 
 function openOpfs(sqlite3: any) {
-  if (!("opfs" in sqlite3)) return undefined;
+  if (!sqlite3.oo1?.OpfsDb) return undefined;
   try {
     const connection = new sqlite3.oo1.OpfsDb("/qivxif.sqlite3", "c");
     mode = "opfs";
@@ -170,8 +171,15 @@ function transaction(run: () => void) {
   try {
     run();
     db.exec("COMMIT");
+    closeDurableConnection();
   } catch (error) {
     db.exec("ROLLBACK");
     throw Object.assign(error, { code: "transaction_failed" });
   }
+}
+
+function closeDurableConnection() {
+  if (mode !== "opfs" || !db) return;
+  db.close();
+  db = undefined;
 }

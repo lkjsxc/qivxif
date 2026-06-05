@@ -2,9 +2,7 @@ export async function assertPaneScrollRestores(page, paneId, expectedText) {
   await page.setViewportSize({ width: 980, height: 360 });
   const top = await page.evaluate(() => {
     const body = document.querySelector("article.tile .tab-body");
-    if (!body) {
-      throw new Error("active tab body missing");
-    }
+    if (!body) throw new Error("active tab body missing");
     body.scrollTop = Math.min(140, body.scrollHeight - body.clientHeight);
     body.dispatchEvent(new Event("scroll", { bubbles: true }));
     return body.scrollTop;
@@ -26,23 +24,11 @@ export async function assertPaneScrollRestores(page, paneId, expectedText) {
 
 async function waitForPaneScrollSnapshot(page, paneId, top) {
   await page.waitForFunction(async ({ paneId, top }) => {
-    const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 3);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
-    return new Promise((resolve, reject) => {
-      const call = db.transaction("tab_snapshots", "readonly")
-        .objectStore("tab_snapshots")
-        .get(`pane_scroll:${paneId}`);
-      call.onerror = () => reject(call.error);
-      call.onsuccess = () => resolve(call.result?.scroll_top === top);
-    });
+    const rows = await window.__qivxifStorageDebug?.all("tab_snapshots");
+    return rows?.some((row) => row.id === `pane_scroll:${paneId}` && row.scroll_top === top);
   }, { paneId, top });
 }
 
 function assert(condition, message) {
-  if (!condition) {
-    throw new Error(message);
-  }
+  if (!condition) throw new Error(message);
 }

@@ -149,18 +149,22 @@ async function tabSnapshot(page) {
 }
 
 async function tileLayoutSnapshot(page) {
-  return page.evaluate(async () => {
-    const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("qivxif", 4);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
-    return new Promise((resolve, reject) => {
-      const call = db.transaction("tile_layout", "readonly").objectStore("tile_layout").get("tile_model");
-      call.onerror = () => reject(call.error);
-      call.onsuccess = () => resolve(call.result);
-    });
-  });
+  const rows = await readLocalStore(page, "tile_layout");
+  return rows.find((row) => row.id === "tile_model");
+}
+
+export async function readLocalStore(page, name) {
+  return page.evaluate(async (storeName) => {
+    return window.__qivxifStorageDebug?.all(storeName) ?? [];
+  }, name);
+}
+
+export async function waitForLocalStore(page, name, predicateSource, arg, timeout = 90000) {
+  await page.waitForFunction(async ({ name, predicateSource, arg }) => {
+    const rows = await window.__qivxifStorageDebug?.all(name);
+    if (!rows) return false;
+    return Function("rows", "arg", `return (${predicateSource})(rows, arg);`)(rows, arg);
+  }, { arg, name, predicateSource }, { timeout });
 }
 
 export async function openServerNode(page, nodeId, timeout = 90000) {

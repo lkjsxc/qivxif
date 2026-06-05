@@ -62,17 +62,18 @@ The frontend target is Svelte plus WASM plus SQLite.
 
 ## Latest Verification
 
-After the SQLite worker switch, host diagnostics passed:
+After the SQLite worker, AppPorts, and offline test updates, these gates passed:
 
-- `cd apps/qivxif-web && npm run build`
-- `cargo check --locked -p qivxif-server`
-- `cd apps/qivxif-web && npm run check`
+- `docker compose -f docker-compose.yml config`
+- `docker compose --progress quiet -f docker-compose.yml build qivxif verify offline-e2e server-smoke api-test`
+- `docker compose --progress quiet -f docker-compose.yml run --rm verify`
+- `docker compose --progress quiet -f docker-compose.yml run --rm offline-e2e`
+- `docker compose --progress quiet -f docker-compose.yml run --rm server-smoke`
+- `docker compose --progress quiet -f docker-compose.yml run --rm api-test`
 - `cargo run --locked -p qivxifctl -- quality check-lines`
+- `cargo run --locked -p qivxifctl -- quality check-placeholders`
 - `cargo run --locked -p qivxifctl -- quality check-browser-storage`
-- `cargo run --locked -p qivxifctl -- quality check-workspace`
 - `cargo run --locked -p qivxifctl -- docs validate-topology`
-
-Docker Compose verification is pending for the final gate after this batch.
 
 ## Audit Link
 

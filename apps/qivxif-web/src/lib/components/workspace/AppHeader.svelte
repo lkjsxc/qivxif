@@ -21,6 +21,7 @@
     <span>Queued: {viewState.queued}</span>
     <span>Rejected: {viewState.rejected ?? 0}</span>
     <span>Capabilities: {caps}</span>
+    {#if viewState.lastError}<span>Error: {viewState.lastError}</span>{/if}
   </div>
   <div class="header-actions">
     <button type="button" class="header-button" onclick={() => actions.toggleCommandPalette?.()}>
