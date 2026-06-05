@@ -106,10 +106,10 @@ pub fn feeds_rebuild(store: PathBuf, json_output: bool) -> Result<()> {
 }
 
 fn resolve_user_id(store: &qivxif_store_redb::QivxifStore, value: &str) -> Result<UserId> {
-    if let Ok(user_id) = value.parse::<UserId>() {
-        if store.get_user(&user_id)?.is_some() {
-            return Ok(user_id);
-        }
+    if let Ok(user_id) = value.parse::<UserId>()
+        && store.get_user(&user_id)?.is_some()
+    {
+        return Ok(user_id);
     }
     store
         .find_user_by_name(value)?
