@@ -1,87 +1,90 @@
 import { initialWorkspaceState } from "../domain/workspace-state.ts";
-import { serverInfo, setupStatus } from "../effects/api-client.ts";
-import { localStoreDiagnostics, openLocalStore } from "../storage/current-store.ts";
-import { actionsFor } from "../effects/app-actions.ts";
-import { installKeyboardShortcuts } from "../effects/keyboard.ts";
-import { loadLocalState } from "../effects/state-loader.ts";
-import { flushQueue, refreshQueueState } from "../effects/sync.ts";
+import { reduceWorkspace } from "../domain/workspace-reducer.ts";
+import type { WorkspaceCommand } from "../domain/workspace-command.ts";
+import { createBrowserPorts } from "./browser-ports.ts";
+import { runEffectPlans } from "./effect-runner.ts";
+import type { AppPorts } from "./ports.ts";
 
-export async function createController() {
+export async function createController(givenPorts?: AppPorts) {
   const state = initialWorkspaceState();
-  const store = await openLocalStore();
-  state.storageStatus = await localStoreDiagnostics(store);
+  const ports = givenPorts ?? (await createBrowserPorts());
+  state.storageStatus = await ports.storage.diagnostics();
   const listeners = new Set<any>();
 
+  const actionTable = () => ports.actions.forState(state, notify);
   const notify = () => {
-    const actions = actionsFor(store, state, notify);
-    for (const listener of listeners) {
-      listener(state, actions);
-    }
+    const actions = actionTable();
+    for (const listener of listeners) listener(state, actions);
   };
 
-  async function dispatch(command) {
-    const actions = actionsFor(store, state, notify);
-    const handler = (commandHandlers as Record<string, any>)[command.type];
-    if (!handler) {
+  async function dispatch(command: WorkspaceCommand) {
+    if (await runDomainCommand(ports, state, command)) {
+      notify();
       return;
     }
-    await handler(actions, command);
+    const handler = commandHandlers[command.type];
+    if (!handler) return;
+    await handler(actionTable(), command);
     notify();
   }
 
   return {
     async start() {
       notify();
-      await refreshSetupStatus(state);
-      installKeyboardShortcuts(() => actionsFor(store, state, notify), state);
-      await loadLocalState(store, state);
-      await refreshQueueState(store, state);
-      state.storageStatus = await localStoreDiagnostics(store);
+      await refreshSetupStatus(ports, state);
+      ports.keyboard.install(actionTable, state);
+      await ports.localState.load(state);
+      await ports.sync.refreshQueue(state);
+      state.storageStatus = await ports.storage.diagnostics();
       selectInitialTab(state);
-      await refreshServerInfo(state);
-      await registerServiceWorker(state);
-      if (state.auth && !state.setupRequired) {
-        await flushQueue(store, state);
-      }
+      await refreshServerInfo(ports, state);
+      await registerServiceWorker(ports, state);
+      if (state.auth && !state.setupRequired) await ports.sync.flush(state);
       notify();
     },
-    state: () => state,
     dispatch,
+    state: () => state,
     subscribe(listener) {
       listeners.add(listener);
-      listener(state, actionsFor(store, state, notify));
+      listener(state, actionTable());
       return () => listeners.delete(listener);
     },
   };
 }
 
-const commandHandlers = {
-  focusPane: (actions, command) => actions.focusPane?.(command.paneId),
-  splitPane: (actions, command) => actions.splitPane?.(command.paneId, command.context),
-  stackTab: (actions, command) => actions.stackTab?.(command.paneId, command.context),
+const commandHandlers: Record<string, (actions: any, command: any) => Promise<void> | void> = {
   closePane: (actions, command) => actions.closePane?.(command.paneId),
+  createOwner: (actions, command) => actions.createOwner?.(command.name, command.password),
+  focusPane: (actions, command) => actions.focusPane?.(command.paneId),
+  login: (actions, command) => actions.login?.(command.name, command.password),
   maximizePane: (actions, command) => actions.maximizePane?.(command.paneId),
   movePane: (actions, command) => actions.movePane?.(command.source, command.target, command.zone),
-  resizeSplit: (actions, command) => actions.resizeSplit?.(command.paneId, command.sizes),
   openTab: (actions, command) => actions.openTab?.(command.tabId, command.paneId),
-  toggleTabChooser: (actions, command) => actions.toggleTabChooser?.(command.paneId),
-  toggleCommandPalette: (actions, command) => actions.toggleCommandPalette?.(command.open),
-  createOwner: (actions, command) => actions.createOwner?.(command.name, command.password),
-  login: (actions, command) => actions.login?.(command.name, command.password),
+  resizeSplit: (actions, command) => actions.resizeSplit?.(command.paneId, command.sizes),
+  splitPane: (actions, command) => actions.splitPane?.(command.paneId, command.context),
+  stackTab: (actions, command) => actions.stackTab?.(command.paneId, command.context),
   sync: (actions) => actions.sync?.(),
-  updateTextDraft: (actions, command) => actions.updateTextDraft?.(command.paneId, command.content),
+  toggleCommandPalette: (actions, command) => actions.toggleCommandPalette?.(command.open),
+  toggleTabChooser: (actions, command) => actions.toggleTabChooser?.(command.paneId),
   updatePaneScroll: (actions, command) => actions.updatePaneScroll?.(command.paneId, command.scrollTop),
+  updateTextDraft: (actions, command) => actions.updateTextDraft?.(command.paneId, command.content),
 };
 
-async function refreshSetupStatus(state) {
+async function runDomainCommand(ports: AppPorts, state: any, command: WorkspaceCommand) {
+  if (!["bootstrap", "flushSyncQueue", "refreshDiagnostics"].includes(command.type)) return false;
+  const reduced = reduceWorkspace(state, command);
+  Object.assign(state, reduced.state);
+  await runEffectPlans(ports, state, reduced.effects);
+  return true;
+}
+
+async function refreshSetupStatus(ports: AppPorts, state: any) {
   try {
-    const status = await setupStatus();
+    const status = await ports.setup.status();
     state.setupChecked = true;
     state.setupRequired = Boolean(status.required);
     state.setupError = "";
-    if (state.setupRequired) {
-      state.activeTabId = "setup";
-    }
+    if (state.setupRequired) state.activeTabId = "setup";
   } catch (error) {
     state.online = false;
     state.setupError = String(error);
@@ -89,9 +92,9 @@ async function refreshSetupStatus(state) {
   }
 }
 
-async function refreshServerInfo(state) {
+async function refreshServerInfo(ports: AppPorts, state: any) {
   try {
-    const payload = await serverInfo();
+    const payload = await ports.server.info();
     state.capabilities = payload.capabilities?.capabilities ?? [];
     state.online = true;
   } catch (error) {
@@ -100,26 +103,17 @@ async function refreshServerInfo(state) {
   }
 }
 
-function selectInitialTab(state) {
-  if (state.setupRequired) {
-    state.activeTabId = "setup";
-    return;
-  }
-  if (!state.auth) {
-    state.activeTabId = "login";
-    return;
-  }
-  if (!state.activeTabId || state.activeTabId === "setup" || state.activeTabId === "login") {
+function selectInitialTab(state: any) {
+  if (state.setupRequired) state.activeTabId = "setup";
+  else if (!state.auth) state.activeTabId = "login";
+  else if (!state.activeTabId || state.activeTabId === "setup" || state.activeTabId === "login") {
     state.activeTabId = "welcome";
   }
 }
 
-async function registerServiceWorker(state) {
-  if (!("serviceWorker" in navigator)) {
-    return;
-  }
+async function registerServiceWorker(ports: AppPorts, state: any) {
   try {
-    await navigator.serviceWorker.register("/service-worker.js");
+    await ports.serviceWorker.register();
     state.serviceWorkerReady = true;
   } catch (error) {
     state.lastError = String(error);

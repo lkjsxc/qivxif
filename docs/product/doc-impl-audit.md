@@ -16,7 +16,7 @@ Rows change only when the owner doc and implementation change together.
 | IndexedDB active path removed | [architecture/client/storage-migration.md](../architecture/client/storage-migration.md) | `effects/indexed-db.ts` deleted; active source has no `indexedDB.open` | Done |
 | Dexie absent from product path | [architecture/client/sqlite-worker.md](../architecture/client/sqlite-worker.md) | `check-browser-storage` rejects Dexie in web app source | Done |
 | Components emit typed commands only | [architecture/client/surface-boundary.md](../architecture/client/surface-boundary.md) | Controller still adapts through `actionsFor` | Open |
-| AppPorts hide storage and network details | [architecture/client/surface-boundary.md](../architecture/client/surface-boundary.md) | Controller imports concrete storage and API effects | Open |
+| AppPorts hide storage and network details | [architecture/client/surface-boundary.md](../architecture/client/surface-boundary.md) | Controller imports `browser-ports.ts`; `actionsFor` remains the migration adapter | In review |
 | Svelte to WASM service boundary | [architecture/client/wasm-boundary.md](../architecture/client/wasm-boundary.md) | Rust kernels exist; generated bridge services still open | Open |
 | New Tab is a real chooser tab | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | `NewTab.svelte` is inserted by the plus action | Done |
 | Selected New Tab kind converts same tab id | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | `replaceTabInLayout` preserves `pane_node_id` | Done |

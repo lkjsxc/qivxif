@@ -1,19 +1,30 @@
-/** Port surface documented in docs/architecture/client/surface-boundary.md */
-export function createPorts(store, api) {
-  return {
-    loadLocalWorkspace: () => store.get("local_workspace", "workspace"),
-    saveLocalWorkspace: (state) =>
-      store.put("local_workspace", {
-        id: "workspace",
-        layout: state.layout,
-        layoutNodeId: state.layoutNodeId,
-        tabDrafts: state.tabDrafts,
-        tabScrolls: state.tabScrolls,
-      }),
-    getSetupStatus: api.setupStatus,
-    submitOwnerSetup: api.createOwner,
-    pushEvents: api.sendQueued,
-    pullEvents: api.nodeHistory,
-    registerServiceWorker: () => navigator.serviceWorker.register("/service-worker.js"),
+import type { LocalStore, StorageDiagnostics } from "../storage/types.ts";
+
+export type AppPorts = {
+  actions: {
+    forState(state: any, notify: () => void): Record<string, any>;
   };
-}
+  keyboard: {
+    install(actions: () => Record<string, any>, state: any): void;
+  };
+  localState: {
+    load(state: any): Promise<void>;
+  };
+  server: {
+    info(): Promise<any>;
+  };
+  serviceWorker: {
+    register(): Promise<void>;
+  };
+  setup: {
+    status(): Promise<any>;
+  };
+  storage: {
+    diagnostics(): Promise<StorageDiagnostics>;
+    store: LocalStore;
+  };
+  sync: {
+    flush(state: any): Promise<void>;
+    refreshQueue(state: any): Promise<void>;
+  };
+};

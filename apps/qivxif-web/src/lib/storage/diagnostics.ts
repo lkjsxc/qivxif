@@ -19,7 +19,7 @@ export function unavailableDiagnostics(reason: string, detail?: string): Storage
 }
 
 export async function estimateStorage() {
-  const estimate = await globalThis.navigator?.storage?.estimate?.().catch(() => ({}));
+  const estimate: any = await globalThis.navigator?.storage?.estimate?.().catch(() => ({}));
   return {
     quota: Number(estimate?.quota ?? 0),
     usage: Number(estimate?.usage ?? 0),

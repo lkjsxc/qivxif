@@ -10,8 +10,8 @@ workspace interaction, and honest local-first diagnostics.
 - Keep docs canonical before behavior changes.
 - Keep every rendered product surface in Svelte.
 - Keep worker-owned SQLite as the only active browser storage path.
-- Complete the browser shell migration to typed `WorkspaceCommand`, pure reducer
-  plans, and `AppPorts`.
+- Complete the browser shell migration from the `actionsFor` adapter to typed
+  `WorkspaceCommand`, pure reducer plans, and `AppPorts`.
 - Move deterministic reducers and codecs behind typed WASM services.
 - Preserve OPFS as the normal local storage mode and memory as an explicit
   degraded mode.

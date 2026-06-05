@@ -24,13 +24,15 @@ The frontend target is Svelte plus WASM plus SQLite.
 - Browser storage now opens a dedicated SQLite WASM worker through
   `src/lib/storage/`, with OPFS as normal mode and memory as degraded mode.
 - Active product source no longer calls `indexedDB.open`.
+- The browser controller now opens concrete storage, HTTP, service worker, and
+  sync effects through `src/lib/app/browser-ports.ts`.
 - Rust crates already own graph, history, auth, sync, cache model, quality, and
   store logic that can be reused for WASM kernels or optional sync services.
 
 ## Open Migration Lanes
 
-- Complete the `AppPorts` migration so the controller no longer imports
-  concrete storage, HTTP, service worker, or sync effects directly.
+- Complete the dispatch migration so components receive typed command dispatch
+  instead of the `actionsFor` migration adapter.
 - Route effect modules from the typed `LocalStore` adapter to repository-family
   methods where it improves clarity.
 - Refactor the browser controller toward typed `WorkspaceCommand`, pure reducer
@@ -64,6 +66,7 @@ After the SQLite worker switch, host diagnostics passed:
 
 - `cd apps/qivxif-web && npm run build`
 - `cargo check --locked -p qivxif-server`
+- `cd apps/qivxif-web && npm run check`
 - `cargo run --locked -p qivxifctl -- quality check-lines`
 - `cargo run --locked -p qivxifctl -- quality check-browser-storage`
 - `cargo run --locked -p qivxifctl -- quality check-workspace`
