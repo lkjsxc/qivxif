@@ -1,3 +1,4 @@
+use crate::cli_admin::AdminCommand;
 use clap::{Args, Parser, Subcommand};
 use std::path::PathBuf;
 
@@ -28,45 +29,6 @@ pub enum Command {
         #[command(subcommand)]
         command: FeedsCommand,
     },
-}
-
-#[derive(Args)]
-pub struct AdminCommand {
-    #[command(subcommand)]
-    pub command: AdminSubcommand,
-}
-
-#[derive(Subcommand)]
-#[command(rename_all = "kebab-case")]
-pub enum AdminSubcommand {
-    Bootstrap(AdminBootstrap),
-    CreateUser(AdminCreateUser),
-}
-
-#[derive(Args)]
-pub struct AdminBootstrap {
-    #[arg(long)]
-    pub store: PathBuf,
-    #[arg(long)]
-    pub name: String,
-    #[arg(long)]
-    pub password_stdin: bool,
-    #[arg(long)]
-    pub json: bool,
-}
-
-#[derive(Args)]
-pub struct AdminCreateUser {
-    #[arg(long)]
-    pub store: PathBuf,
-    #[arg(long)]
-    pub name: String,
-    #[arg(long)]
-    pub password_stdin: bool,
-    #[arg(long = "role")]
-    pub roles: Vec<String>,
-    #[arg(long)]
-    pub json: bool,
 }
 
 #[derive(Subcommand)]

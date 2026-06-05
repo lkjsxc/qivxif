@@ -30,7 +30,7 @@ Rows change only when the owner doc and implementation change together.
 | Automatic relationship suggestions | [../architecture/graph/auto-linking.md](../architecture/graph/auto-linking.md) | Suggestion records and UI are open | Open |
 | Media foundation | [media/README.md](media/README.md) | Browser imports files into OPFS chunks, writes `media_asset` nodes, metadata, chunk rows, and attachment edges; server routes remain open | In review |
 | Resource orchestration | [resource-orchestration/README.md](resource-orchestration/README.md) | Browser has pure resource planner, resource stores, and Settings/Diagnostics explanations; executors remain open | In review |
-| Admin invites and keys | [admin/keys.md](admin/keys.md) | Bootstrap and create-user exist; scoped keys are open | Open |
+| Admin invites and keys | [admin/keys.md](admin/keys.md) | CLI can issue, list, revoke invites and keys, stores hashed secrets, and records audit rows; HTTP routes remain open | In review |
 | Profile edit surfaces | [profiles/README.md](profiles/README.md) | User creation stores profile node id; UI editing is open | Open |
 | Settings shows SQLite storage diagnostics | [tile-shell/settings-pane.md](tile-shell/settings-pane.md) | Settings and Diagnostics render worker mode, reason, quota, inventory, queue, cache, and last error | Done |
 | Product surfaces avoid invented content | [design/tab-surfaces.md](design/tab-surfaces.md) | Empty states use real local data and absence copy; scan remains required after storage switch | In review |

@@ -36,6 +36,8 @@ pub enum StoreError {
     SlugConflict,
     #[error("access denied")]
     Forbidden,
+    #[error("key record missing")]
+    KeyMissing,
     #[error("cursor invalid")]
     CursorInvalid,
     #[error("event envelope invalid")]

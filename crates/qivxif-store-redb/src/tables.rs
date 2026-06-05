@@ -22,15 +22,21 @@ pub const EVENT_IDS_BY_TARGET_EVENT: TableDefinition<&str, &[u8]> =
 pub const EVENT_IDS_BY_ACCEPTANCE: TableDefinition<&str, &[u8]> =
     TableDefinition::new("event_ids_by_acceptance");
 pub const COMMIT_GROUPS: TableDefinition<&str, &[u8]> = TableDefinition::new("commit_groups");
-pub const BLOBS: TableDefinition<&str, &[u8]> = TableDefinition::new("blobs");
-pub const BLOB_CHUNKS: TableDefinition<&str, &[u8]> = TableDefinition::new("blob_chunks");
+pub const MEDIA_ASSETS: TableDefinition<&str, &[u8]> = TableDefinition::new("media_assets");
+pub const MEDIA_VARIANTS: TableDefinition<&str, &[u8]> = TableDefinition::new("media_variants");
+pub const MEDIA_CHUNKS: TableDefinition<&str, &[u8]> = TableDefinition::new("media_chunks");
+pub const MEDIA_UPLOADS: TableDefinition<&str, &[u8]> = TableDefinition::new("media_uploads");
 pub const TEXT_DOCS: TableDefinition<&str, &[u8]> = TableDefinition::new("text_docs");
 pub const TEXT_SNAPSHOTS: TableDefinition<&str, &[u8]> = TableDefinition::new("text_snapshots");
 pub const FEED_ITEMS: TableDefinition<&str, &[u8]> = TableDefinition::new("feed_items");
 pub const FEED_ITEMS_BY_USER: TableDefinition<&str, &[u8]> =
     TableDefinition::new("feed_items_by_user");
+pub const INVITE_CODES: TableDefinition<&str, &[u8]> = TableDefinition::new("invite_codes");
+pub const ACCESS_KEYS: TableDefinition<&str, &[u8]> = TableDefinition::new("access_keys");
 pub const AUTH_TOKENS: TableDefinition<&str, &[u8]> = TableDefinition::new("auth_tokens");
+pub const KEY_AUDIT: TableDefinition<&str, &[u8]> = TableDefinition::new("key_audit");
 pub const SYNC_CURSORS: TableDefinition<&str, &[u8]> = TableDefinition::new("sync_cursors");
+pub const RESOURCE_ENTRIES: TableDefinition<&str, &[u8]> = TableDefinition::new("resource_entries");
 pub const SERVER_JOBS: TableDefinition<&str, &[u8]> = TableDefinition::new("server_jobs");
 
 pub const ALL: &[(&str, TableDefinition<&str, &[u8]>)] = &[
@@ -50,13 +56,19 @@ pub const ALL: &[(&str, TableDefinition<&str, &[u8]>)] = &[
     ("event_ids_by_target_event", EVENT_IDS_BY_TARGET_EVENT),
     ("event_ids_by_acceptance", EVENT_IDS_BY_ACCEPTANCE),
     ("commit_groups", COMMIT_GROUPS),
-    ("blobs", BLOBS),
-    ("blob_chunks", BLOB_CHUNKS),
+    ("media_assets", MEDIA_ASSETS),
+    ("media_variants", MEDIA_VARIANTS),
+    ("media_chunks", MEDIA_CHUNKS),
+    ("media_uploads", MEDIA_UPLOADS),
     ("text_docs", TEXT_DOCS),
     ("text_snapshots", TEXT_SNAPSHOTS),
     ("feed_items", FEED_ITEMS),
     ("feed_items_by_user", FEED_ITEMS_BY_USER),
+    ("invite_codes", INVITE_CODES),
+    ("access_keys", ACCESS_KEYS),
     ("auth_tokens", AUTH_TOKENS),
+    ("key_audit", KEY_AUDIT),
     ("sync_cursors", SYNC_CURSORS),
+    ("resource_entries", RESOURCE_ENTRIES),
     ("server_jobs", SERVER_JOBS),
 ];

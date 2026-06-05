@@ -1,4 +1,5 @@
 mod cli;
+mod cli_admin;
 mod commands;
 
 use anyhow::Result;

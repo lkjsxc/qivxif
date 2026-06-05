@@ -12,6 +12,7 @@ qivxif-auth.workspace = true
 qivxif-core.workspace = true
 qivxif-graph.workspace = true
 qivxif-history.workspace = true
+rand.workspace = true
 redb.workspace = true
 serde.workspace = true
 serde_json.workspace = true

@@ -791,6 +791,7 @@ dependencies = [
  "qivxif-core",
  "qivxif-graph",
  "qivxif-history",
+ "rand",
  "redb",
  "serde",
  "serde_json",
