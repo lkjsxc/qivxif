@@ -36,11 +36,6 @@ Every `/api` response uses [../schema/api-envelope.md](../schema/api-envelope.md
 | `POST` | `/api/social/unblock` | session | yes | moderation clear request | tombstoned block edge and event acceptance | appends event and tombstones edge | local event queues first |
 | `POST` | `/api/publish/{node_id}` | session | yes | publish request | publication state | appends publish event | queued pending server validation |
 | `POST` | `/api/unpublish/{node_id}` | session | yes | unpublish request | publication state | appends unpublish event | queued pending server validation |
-| `POST` | `/api/media/uploads` | session or token | yes for cookie | upload metadata | upload session | creates media upload session | local upload session persists |
-| `GET` | `/api/media/assets/{asset_id}/content` | viewer | no | range query | media bytes | none | local media cache may satisfy visible content |
-| `POST` | `/api/admin/invites` | admin | yes | invite request | invite secret once | stores invite hash and audit | server required |
-| `POST` | `/api/admin/keys` | admin | yes | key request | token secret once | stores token hash and audit | server required |
-| `POST` | `/api/invites/accept` | public | no | invite secret and account fields | user summary and profile | creates user and profile | server required |
 | `GET` | `/@{author}/{slug}` | public | no | none | rendered blog post | none | cached public page may render |
 
 ## Error Codes
