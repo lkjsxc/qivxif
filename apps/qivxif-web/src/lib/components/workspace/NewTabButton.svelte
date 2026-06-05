@@ -5,7 +5,7 @@
 <button
   type="button"
   class="icon-button tile-add"
-  aria-label="New tab"
+  aria-label="Add tab"
   {disabled}
   onclick={open}
 >
