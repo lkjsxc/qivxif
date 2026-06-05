@@ -35,9 +35,8 @@ The frontend target is Svelte plus WASM plus SQLite.
   instead of the `actionsFor` migration adapter.
 - Route effect modules from the typed `LocalStore` adapter to repository-family
   methods where it improves clarity.
-- Refactor the browser controller toward typed `WorkspaceCommand`, pure reducer
-  plans, and `AppPorts` that hide storage, HTTP, workers, service worker, sync,
-  and WASM bridge details.
+- Finish pure reducer and effect-plan coverage for commands that still pass
+  through the `actionsFor` migration adapter.
 - Build initial WASM service modules after the storage seam is stable, starting
   with tile reducers, row codecs, canonical payload hashing, and sync planning.
 - Server routes and redb storage remain optional sync and serving code. Product
