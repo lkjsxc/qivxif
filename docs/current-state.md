@@ -26,13 +26,21 @@ The frontend target is Svelte plus WASM plus SQLite.
 
 ## Open Migration Lanes
 
-- `apps/qivxif-web/src/lib/effects/indexed-db.ts` still owns browser local data
-  and must move behind the SQLite worker repository boundary.
-- Server routes and redb storage still exist as optional sync and serving code.
-  Product UI must not depend on direct server account flow as its local truth.
+- Replace the active IndexedDB adapter with a worker-owned SQLite repository
+  boundary using OPFS as normal storage and memory as degraded storage.
+- Route product storage through typed repositories for workspace, event queue,
+  graph projection, text snapshots, tab snapshots, tile layout, cache ledger,
+  inventory, and diagnostics.
+- Refactor the browser controller toward typed `WorkspaceCommand`, pure reducer
+  plans, and `AppPorts` that hide storage, HTTP, workers, service worker, sync,
+  and WASM bridge details.
+- Build initial WASM service modules after the storage seam is stable, starting
+  with tile reducers, row codecs, canonical payload hashing, and sync planning.
+- Server routes and redb storage remain optional sync and serving code. Product
+  UI must not depend on direct server account flow as its local truth.
 - Pointer tab dragging needs the full long-press and edge-split path, beyond the
   native drag coverage currently used by offline browser checks.
-- Settings and Diagnostics now show local store mode, reason, usage, quota, and
+- Settings and Diagnostics show local store mode, reason, usage, quota, and
   inventory; SQLite-backed protected and prunable cache bytes remain open.
 
 ## Completed Facts

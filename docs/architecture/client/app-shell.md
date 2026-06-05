@@ -10,7 +10,7 @@
 - Start sync actor when a session and service are available.
 - Render sync status, settings, diagnostics, graph, editor, board, feed, and
   publishing as tabs.
-- Install the app action table that connects UI commands to reducers and effects.
+- Install the controller dispatcher that maps typed commands to reducers and effect plans.
 
 ## Rule
 
@@ -27,7 +27,7 @@ history surfaces are tabs.
 5. Register `/service-worker.js` when available.
 6. Fetch optional `/api/setup` and `/api/server-info` when reachable.
 7. Start sync actor when setup, login, and network state allow it.
-8. Install keyboard shortcuts against the app action table.
+8. Install keyboard shortcuts against controller dispatch.
 9. Show storage and sync diagnostics in Settings and Diagnostics.
 
 ## Offline Rule
@@ -41,13 +41,13 @@ as accepted.
 The browser shell owns the first end-to-end graph and text proof through actor
 messages:
 
-1. Local store actor records session state when login succeeds.
-2. Tile action actor creates a text node command.
+1. Auth port records session state when login succeeds.
+2. Controller dispatches a text node command.
 3. Local repository writes a dirty `node.create` queue entry before queued count changes.
-4. Sync actor sends the entry to `POST /api/nodes` when a session and network are available.
+4. Sync port sends the entry to `POST /api/nodes` when a session and network are available.
 5. Local repository marks the entry accepted only after the response contains an event acceptance.
-6. Editor actor writes a dirty `text.restore` or `text.insert` queue entry before showing the edit as queued.
-7. Sync actor sends the entry to `POST /api/text/{node_id}/events` when available.
+6. Editor command writes a dirty `text.restore` or `text.insert` queue entry before showing the edit as queued.
+7. Sync port sends the entry to `POST /api/text/{node_id}/events` when available.
 8. Pull and history panes read accepted service state only after accepted events are visible through API responses.
 
 This browser flow uses route-specific durable mutation endpoints until Rust

@@ -14,6 +14,22 @@ Svelte owns rendered product UI. Rust/WASM owns deterministic browser kernels:
 Rust/WASM does not own a product UI shell. No Leptos component tree receives new
 product work.
 
+## Kernel Migration Order
+
+Start sharing pure Rust reducers with the browser runtime now, but only behind
+service modules and only after TypeScript fixture parity exists for each moved
+kernel.
+
+Initial kernels:
+
+1. Tile reducer service for focus, split, stack, close, maximize, resize, move,
+   and reorder commands.
+2. Tile layout validation and durable row codec service.
+3. Event envelope canonical payload hashing service.
+4. Sync planning service for queue order and retry classification.
+5. Feed geometry and cache calculation service after storage and tile reducers
+   are stable.
+
 ## Service Modules
 
 Generated bindings stay behind TypeScript service modules. Svelte components
@@ -49,7 +65,7 @@ honest unavailable or degraded states when the bridge cannot load.
 - Cache the module handle in one documented loader.
 - Expose reset only for tests.
 - Keep the Svelte shell usable when WASM load fails.
-- Delete duplicated TypeScript reducer logic after WASM parity is proven by
+- Delete duplicated TypeScript reducer logic only after WASM parity is proven by
   focused tests.
 
 ## Forbidden Paths

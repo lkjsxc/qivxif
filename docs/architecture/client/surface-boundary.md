@@ -20,8 +20,23 @@ type AppController = {
 
 - UI calls `dispatch` with `WorkspaceCommand` values.
 - Controller runs pure reducers, updates state, notifies subscribers.
-- Controller passes event drafts to effect adapters.
+- Controller sends typed `EffectPlan` values to the effect runner.
 - Controller re-renders through a single subscribe hook in bootstrap.
+- `actionsFor` is retired when dispatch migration is complete.
+
+## WorkspaceCommand
+
+`WorkspaceCommand` is an algebraic union. Controller internals do not dispatch
+untyped string commands after the migration.
+
+Initial commands include `bootstrap`, `focusPane`, `openNewTab`,
+`convertNewTab`, `closePane`, `splitPane`, `stackTab`, `maximizePane`,
+`restorePane`, `movePane`, `reorderTab`, `resizeSplit`, `createOwner`, `login`,
+`logout`, `createTextNode`, `openNode`, `saveTextDraft`, `saveText`,
+`updatePaneScroll`, `createBoard`, `addCurrentNodeToBoard`, `moveBoardItem`,
+`linkBoardNodes`, `createShortPost`, `followProfile`, `clearSocialEdge`,
+`createBlogDraft`, `publishBlogPost`, `unpublishBlogPost`, `flushSyncQueue`,
+`refreshDiagnostics`, and `toggleCommandPalette`.
 
 ## AppPorts
 
@@ -29,19 +44,27 @@ Effect adapters implement `AppPorts`:
 
 ```typescript
 type AppPorts = {
-  loadLocalWorkspace(): Promise<WorkspaceState | undefined>;
-  saveLocalWorkspace(state: WorkspaceState): Promise<void>;
-  getSetupStatus(): Promise<SetupStatus>;
-  submitOwnerSetup(input: OwnerSetupInput): Promise<AuthSession>;
-  pushEvents(events: EventDraft[]): Promise<PushResult>;
-  pullEvents(cursor: SyncCursor): Promise<PullResult>;
-  registerServiceWorker(): Promise<void>;
-  loadTabSnapshots(): Promise<TabSnapshotMap>;
-  saveTabSnapshot(paneId: string, snapshot: TabSnapshot): Promise<void>;
+  storage: LocalRepositories;
+  setup: SetupPort;
+  auth: AuthPort;
+  sync: SyncPort;
+  serviceWorker: ServiceWorkerPort;
+  diagnostics: DiagnosticsPort;
+  wasm: WasmKernelPort;
 };
 ```
 
-Ports hide HTTP, SQLite worker, WASM bridge, and service worker details from UI and domain code.
+Ports hide HTTP, SQLite worker, WASM bridge, service worker, storage diagnostics,
+and sync actor details from UI and domain code.
+
+## EffectPlan
+
+Reducers return typed effect plans such as `PersistWorkspace`,
+`AppendDirtyEvent`, `FlushQueue`, `RegisterServiceWorker`,
+`LoadStorageDiagnostics`, `FetchServerInfo`, and `StartSyncActor`.
+
+The effect runner executes plans through `AppPorts` and returns typed results
+that the controller feeds into follow-up commands or state updates.
 
 ## UI Modules
 
@@ -58,9 +81,11 @@ UI modules:
 Domain reducers:
 
 - Accept `WorkspaceCommand` and current `WorkspaceState`.
-- Return `{ state, drafts }`.
+- Return `{ state, effects }`.
 - Stay pure and deterministic.
-- Mirror Rust tile and graph reducers for optimistic shell updates.
+- Do not read clocks, random values, DOM, storage, HTTP, workers, or globals.
+- Mirror Rust tile and graph reducers for optimistic shell updates until WASM
+  parity allows duplicate TypeScript logic to be deleted.
 
 ## Effect Adapters
 
@@ -70,6 +95,7 @@ Effect adapters:
 - Persist workspace snapshots and dirty event drafts through typed repositories.
 - Push and pull accepted events over HTTP sync when a service is available.
 - Register the service worker.
+- Load storage diagnostics.
 - Load and save tab scroll and draft snapshots.
 
 ## Authority

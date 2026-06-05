@@ -12,30 +12,45 @@ apps/qivxif-web/
     lib/
       app/
         README.md
+        browser-ports.ts
         controller.ts
+        effect-runner.ts
         ports.ts
+        workspace-context.ts
       domain/
         README.md
+        effect-plan.ts
         workspace-state.ts
         workspace-command.ts
+        workspace-reducer.ts
         tile-tree.ts
         tile-move.ts
         drop-resolver.ts
       effects/
         README.md
         api-client.ts
-        app-actions.ts
         sync.ts
         tile-actions.ts
       storage/
         README.md
-        sqlite-worker-client.ts
+        current-store.ts
+        diagnostics.ts
         repositories.ts
+        sqlite-schema.ts
+        sqlite-statements.ts
+        sqlite-worker-client.ts
+        sqlite.worker.ts
+        types.ts
+        worker-protocol.ts
+        worker-runtime.ts
       wasm/
         README.md
         module-loader.ts
         result.ts
         workspace-service.ts
+        storage-codec-service.ts
+        sync-planning-service.ts
+        feed-geometry-service.ts
       workspace/
         README.md
         tab-drop-hit.ts
@@ -75,12 +90,12 @@ Each directory has one `README.md`. Each source file stays at 200 lines or fewer
 
 | Layer | May import | Must not import |
 | --- | --- | --- |
-| `components/` | controller callbacks, `domain/` types | `effects/`, raw storage, fetch |
-| `domain/` | other `domain/` modules | components, `effects/`, DOM |
+| `components/` | controller dispatch, `domain/` types | `effects/`, raw storage, fetch, workers |
+| `domain/` | other `domain/` modules | components, `effects/`, DOM, storage |
 | `effects/` | `domain/`, `app/ports.ts`, typed repositories | Svelte components |
-| `storage/` | worker client, repository DTOs | Svelte components |
+| `storage/` | worker client, repository DTOs | Svelte components, raw UI state |
 | `wasm/` | generated bindings, result helpers | Svelte components |
-| `app/` | `domain/`, `effects/`, bootstrap | business rules outside reducers |
+| `app/` | `domain/`, effects through `AppPorts`, bootstrap | business rules outside reducers |
 
 ## Bootstrap Flow
 
@@ -92,9 +107,10 @@ Each directory has one `README.md`. Each source file stays at 200 lines or fewer
 
 ## WorkspaceCommand
 
-UI dispatches commands only. Examples: `focusTab`, `openNewTab`, `convertNewTab`,
-`closeTab`, `splitPane`, `moveTabToEdge`, `reorderTab`, `resizeSplit`,
-`saveTextDraft`, `flushSyncQueue`.
+UI dispatches commands only. Examples: `bootstrap`, `focusPane`, `openNewTab`,
+`convertNewTab`, `closePane`, `splitPane`, `stackTab`, `maximizePane`,
+`restorePane`, `movePane`, `reorderTab`, `resizeSplit`, `createTextNode`,
+`saveTextDraft`, `saveText`, `flushSyncQueue`, and `refreshDiagnostics`.
 
 ## Retirement
 

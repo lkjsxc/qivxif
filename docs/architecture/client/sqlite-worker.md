@@ -19,18 +19,16 @@ browser APIs, and last operation error.
 
 ## Repository Boundary
 
-Target repositories:
-
-- workspace layout repository,
-- event queue repository,
-- graph projection repository,
-- text snapshot repository,
-- tab snapshot repository,
-- cache ledger repository,
-- storage inventory repository.
+Target repositories are defined in
+[storage-repositories.md](storage-repositories.md): workspace layout, event
+queue, graph projection, text snapshot, tab snapshot, tile layout, cache ledger,
+inventory, and diagnostics.
 
 Each repository exposes typed commands and typed query results. Transactions are
 worker-owned envelopes, not component-owned storage calls.
+
+The request and response contract is defined in
+[storage-worker-protocol.md](storage-worker-protocol.md).
 
 ## Tables
 
@@ -56,18 +54,15 @@ component names.
 ## Migration Rule
 
 IndexedDB is not the durable product target. Existing IndexedDB code is an open
-migration lane tracked in [../../current-state.md](../../current-state.md) and
+migration lane tracked in [storage-migration.md](storage-migration.md),
+[../../current-state.md](../../current-state.md), and
 [../../product/doc-impl-audit.md](../../product/doc-impl-audit.md).
 
 Dexie is forbidden in active product source.
 
 ## Diagnostics
 
-Settings and Diagnostics show:
-
-- storage mode,
-- unavailable or degraded reason,
-- event queue counts,
-- inventory by repository,
-- protected and prunable cache bytes when the cache ledger exists,
-- last storage operation error.
+Settings and Diagnostics render the record defined in
+[storage-diagnostics.md](storage-diagnostics.md): mode, reason, quota, usage,
+SQLite page count when available, inventory, queue counts, cache bytes, and the
+last operation error.

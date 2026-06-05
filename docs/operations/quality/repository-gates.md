@@ -20,9 +20,15 @@
 
 ## Browser Storage Gate
 
-`check-browser-storage` rejects Dexie in the web app manifest or source tree and
-rejects Svelte components that open raw storage. Components must dispatch actions
-that reach typed repositories.
+`check-browser-storage` rejects:
+
+- Dexie in the web app manifest or source tree,
+- Svelte components that open raw storage,
+- active `indexedDB.open` product source,
+- raw SQL outside `src/lib/storage/` worker runtime files,
+- direct worker messages outside `sqlite-worker-client.ts`.
+
+Components must dispatch commands that reach typed repositories through ports.
 
 ## Route Gate
 

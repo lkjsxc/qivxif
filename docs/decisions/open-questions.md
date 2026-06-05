@@ -3,7 +3,6 @@
 ## Client
 
 - Which editor widget best preserves qivxif text events after the textarea shell is stable?
-- When should pure Rust reducers be shared with the browser runtime?
 
 ## Protocol
 

@@ -21,9 +21,12 @@ service path when sync is part of the slice.
 ## Final Gate
 
 ```text
-docker compose --progress quiet -f docker-compose.yml build app verify offline-e2e
+docker compose -f docker-compose.yml config
+docker compose --progress quiet -f docker-compose.yml build qivxif verify offline-e2e server-smoke api-test
 docker compose --progress quiet -f docker-compose.yml run --rm verify
 docker compose --progress quiet -f docker-compose.yml run --rm offline-e2e
+docker compose --progress quiet -f docker-compose.yml run --rm server-smoke
+docker compose --progress quiet -f docker-compose.yml run --rm api-test
 ```
 
 Passing quiet commands print one final success line or short stage lines. Captured

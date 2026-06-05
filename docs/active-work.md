@@ -9,8 +9,13 @@ workspace interaction, and honest local-first diagnostics.
 
 - Keep docs canonical before behavior changes.
 - Keep every rendered product surface in Svelte.
-- Move deterministic reducers and codecs behind typed WASM services.
-- Move browser durable state behind a SQLite worker repository boundary.
+- Replace the active IndexedDB adapter with a worker-owned SQLite repository
+  boundary.
+- Route product storage through typed repositories and typed diagnostics.
+- Refactor the browser shell around typed `WorkspaceCommand`, pure reducer
+  plans, and `AppPorts`.
+- Move deterministic reducers and codecs behind typed WASM services after the
+  storage seam is stable.
 - Preserve OPFS as the normal local storage mode and memory as an explicit
   degraded mode.
 - Keep Leptos, Dexie, and direct component storage access out of product code.
@@ -32,7 +37,7 @@ The repo is coherent when all of these are true:
 - Drag geometry matches [product/tile-shell/drag-drop.md](product/tile-shell/drag-drop.md).
 - Every durable local mutation is represented in the event queue repository.
 - UI emits `WorkspaceCommand` only; controller owns state transitions.
-- Components call typed actions, never raw storage or transport APIs.
+- Components receive dispatchers, never effect tables, raw storage, or transport APIs.
 - `npm run build` produces Vite `dist/` assets consumed by verify and smoke services.
 - Docker Compose verification passes.
 - Another agent can read [README.md](README.md), run the Compose verification

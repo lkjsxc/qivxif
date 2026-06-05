@@ -33,6 +33,8 @@
 - The first editor uses a textarea only when edits map into qivxif text events.
 - CodeMirror may replace the widget after the durable text event model is stable.
 - Rust reducers are the first durable authority for shared deterministic logic.
+- Pure Rust reducers are shared with the browser behind TypeScript WASM service
+  modules after fixture parity is proven for each moved reducer.
 - Browser UI modules emit commands; reducers and effect adapters own event
   drafts, persistence, and sync.
 
