@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { planResources, resourceSnapshot } from "$lib/domain/resource-planner.ts";
+
   let { state: viewState, actions } = $props();
 
   const paneCount = $derived(countPanes(viewState.layout?.root));
   const storage = $derived(viewState.storageStatus);
   const stores = $derived(Object.entries(storage?.stores ?? {}).sort());
+  const resourcePlan = $derived(planResources(resourceSnapshot(viewState)));
 
   function countPanes(tile) {
     if (!tile) return 0;
@@ -29,6 +32,8 @@
   <p>Storage usage: {bytes(storage?.usage)} / {bytes(storage?.quota)}</p>
   <p>Queue: dirty {storage?.queue?.dirty ?? viewState.queued} · pending {storage?.queue?.pending ?? 0} · rejected {storage?.queue?.rejected ?? viewState.rejected}</p>
   <p>Cache: protected {bytes(storage?.cache?.protected)} · prunable {bytes(storage?.cache?.prunable)}</p>
+  <p>Resource plan: {resourcePlan.summary}</p>
+  <p>Protected resources: {bytes(resourcePlan.protectedBytes)}</p>
   {#if viewState.layoutDirty}<p>Layout has a dirty local event.</p>{/if}
   {#if stores.length}
     <details>

@@ -29,6 +29,22 @@ export function repositoriesFor(store: LocalStore) {
       putNodeProjection: (node: JsonRecord) => store.put("nodes", node),
     },
     inventory: { read: () => store.diagnostics().then((item) => item.inventory) },
+    media: {
+      listAssets: () => store.all("media_assets"),
+      recordAsset: (entry: JsonRecord) => store.put("media_assets", entry),
+      recordChunk: (entry: JsonRecord) => store.put("media_chunks", entry),
+      recordUpload: (entry: JsonRecord) => store.put("media_uploads", entry),
+    },
+    profiles: {
+      get: (profileId: string) => store.get("profile_snapshots", profileId),
+      saveSnapshot: (entry: JsonRecord) => store.put("profile_snapshots", entry),
+    },
+    resources: {
+      recordEntry: (entry: JsonRecord) => store.put("resource_entries", entry),
+      recordJob: (entry: JsonRecord) => store.put("resource_jobs", entry),
+      recordJournal: (entry: JsonRecord) => store.put("resource_journal", entry),
+      recordLease: (entry: JsonRecord) => store.put("resource_leases", entry),
+    },
     tabs: {
       loadAll: () => store.all("tab_snapshots"),
       saveDraft: (paneId: string, content: string) =>

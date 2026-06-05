@@ -36,7 +36,7 @@ authority for behavior and architecture.
 | Media | `product/media/`, `architecture/media/` | server and browser media foundation is open |
 | Admin keys | `product/admin/`, `architecture/server/key-issuance.md` | CLI and route extension is open |
 | Profiles | `product/profiles/`, `architecture/social/profiles.md` | user creation stores profile ids; edit surfaces are open |
-| Resource orchestration | `product/resource-orchestration/` | cache model exists; full planner is open |
+| Resource orchestration | `product/resource-orchestration/` | `resource-planner.ts` explains protection and actions in Settings and Diagnostics |
 
 ## Evidence In The Repository
 
@@ -64,7 +64,7 @@ authority for behavior and architecture.
 - Build media metadata, chunk storage, upload resume, range serving, and ACL checks.
 - Build admin invite codes, scoped API tokens, revocation, CLI, routes, and audit.
 - Build profile edit surfaces and avatar media edges.
-- Expand the cache planner into full resource orchestration.
+- Add resource plan executors, leases, persistent journal writes, and media/cache mutation jobs.
 - Build initial WASM service modules after the storage seam is stable.
 
 ## Completed Facts

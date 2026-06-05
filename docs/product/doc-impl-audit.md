@@ -29,7 +29,7 @@ Rows change only when the owner doc and implementation change together.
 | Graph dimensions | [../architecture/graph/dimensions.md](../architecture/graph/dimensions.md) | Graph Map has edge-kind toggles; richer dimensions remain open | In review |
 | Automatic relationship suggestions | [../architecture/graph/auto-linking.md](../architecture/graph/auto-linking.md) | Suggestion records and UI are open | Open |
 | Media foundation | [media/README.md](media/README.md) | Media metadata, chunks, routes, and range serving are open | Open |
-| Resource orchestration | [resource-orchestration/README.md](resource-orchestration/README.md) | Cache model exists; full planner and diagnostics are open | Open |
+| Resource orchestration | [resource-orchestration/README.md](resource-orchestration/README.md) | Browser has pure resource planner, resource stores, and Settings/Diagnostics explanations; executors remain open | In review |
 | Admin invites and keys | [admin/keys.md](admin/keys.md) | Bootstrap and create-user exist; scoped keys are open | Open |
 | Profile edit surfaces | [profiles/README.md](profiles/README.md) | User creation stores profile node id; UI editing is open | Open |
 | Settings shows SQLite storage diagnostics | [tile-shell/settings-pane.md](tile-shell/settings-pane.md) | Settings and Diagnostics render worker mode, reason, quota, inventory, queue, cache, and last error | Done |
