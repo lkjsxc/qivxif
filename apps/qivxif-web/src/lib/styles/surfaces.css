@@ -72,10 +72,43 @@
   height: 100%;
 }
 
-.editor-panel .editor {
+.editor-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  min-height: 0;
+}
+
+.editor-workspace.preview-open {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 38%);
+}
+
+.editor-panel .editor,
+.markdown-preview {
   min-height: 0;
   height: 100%;
   resize: none;
+}
+
+.markdown-preview {
+  overflow: auto;
+  padding: 8px;
+  border: 1px solid var(--q-border);
+  border-radius: var(--radius-panel);
+  background: var(--q-bg-deep);
+}
+
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.editor-search {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
 }
 
 .editor-meta {

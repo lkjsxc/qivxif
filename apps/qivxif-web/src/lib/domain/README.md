@@ -24,6 +24,7 @@ Pure reducers and deterministic helpers for workspace state.
 - `tile-tab-update.ts`: New Tab insertion and conversion helpers.
 - `drop-resolver.ts`: pure drop zone resolver.
 - `graph-map-view.ts`: pure Graph Map item and edge projection helpers.
+- `markdown-preview.ts`: pure Markdown blocks, stats, and search counts.
 
 ## Verification
 

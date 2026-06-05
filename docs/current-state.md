@@ -58,8 +58,8 @@ authority for behavior and architecture.
   instead of the `actionsFor` migration adapter.
 - Complete lkjstr shell parity for drag, touch drag, tab rail behavior, and tile menus.
 - Make the N-ary tile reducer the only tile model and enforce performance budgets.
-- Build the standard editor: durable text events, undo/redo, search, preview,
-  IME-safe input, and reload restore.
+- Finish the standard editor reducer path: character-id range events, remote merge,
+  conflict fixtures, and deeper accessibility checks.
 - Extend Graph Map with richer dimension controls, manual edge forms, layout cancellation, and saved view state.
 - Build media metadata, chunk storage, upload resume, range serving, and ACL checks.
 - Build admin invite codes, scoped API tokens, revocation, CLI, routes, and audit.
