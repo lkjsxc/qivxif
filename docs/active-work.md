@@ -9,13 +9,10 @@ workspace interaction, and honest local-first diagnostics.
 
 - Keep docs canonical before behavior changes.
 - Keep every rendered product surface in Svelte.
-- Replace the active IndexedDB adapter with a worker-owned SQLite repository
-  boundary.
-- Route product storage through typed repositories and typed diagnostics.
-- Refactor the browser shell around typed `WorkspaceCommand`, pure reducer
+- Keep worker-owned SQLite as the only active browser storage path.
+- Complete the browser shell migration to typed `WorkspaceCommand`, pure reducer
   plans, and `AppPorts`.
-- Move deterministic reducers and codecs behind typed WASM services after the
-  storage seam is stable.
+- Move deterministic reducers and codecs behind typed WASM services.
 - Preserve OPFS as the normal local storage mode and memory as an explicit
   degraded mode.
 - Keep Leptos, Dexie, and direct component storage access out of product code.

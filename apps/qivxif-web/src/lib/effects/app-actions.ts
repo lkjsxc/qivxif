@@ -11,7 +11,7 @@ import {
   followProfile,
   muteProfile,
 } from "./social-actions.ts";
-import { localStoreDiagnostics, saveLocalWorkspace } from "./indexed-db.ts";
+import { localStoreDiagnostics, saveLocalWorkspace } from "../storage/current-store.ts";
 import { loadLocalState, refreshCurrentNode } from "./state-loader.ts";
 import { flushQueue, refreshQueueState } from "./sync.ts";
 import { updateTextDraft } from "./tab-drafts.ts";

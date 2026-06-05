@@ -12,7 +12,8 @@
   }
 
   function bytes(value) {
-    return value ? `${Math.round(value / 1024)} KiB` : "unknown";
+    const size = Number(value ?? 0);
+    return `${Math.round(size / 1024)} KiB`;
   }
 </script>
 
@@ -22,8 +23,12 @@
   <p>Layout panes: {paneCount}</p>
   <p>Maximized: {viewState.layout?.maximized_pane_id ?? "none"}</p>
   <p>Storage mode: {storage?.mode ?? "unknown"}</p>
+  {#if storage?.mode === "memory"}<p>Storage is degraded; reload may lose local changes.</p>{/if}
+  {#if storage?.mode === "unavailable"}<p>Local storage is unavailable.</p>{/if}
   {#if storage?.reason}<p>Storage detail: {storage.reason}</p>{/if}
   <p>Storage usage: {bytes(storage?.usage)} / {bytes(storage?.quota)}</p>
+  <p>Queue: dirty {storage?.queue?.dirty ?? viewState.queued} · pending {storage?.queue?.pending ?? 0} · rejected {storage?.queue?.rejected ?? viewState.rejected}</p>
+  <p>Cache: protected {bytes(storage?.cache?.protected)} · prunable {bytes(storage?.cache?.prunable)}</p>
   {#if viewState.layoutDirty}<p>Layout has a dirty local event.</p>{/if}
   {#if stores.length}
     <details>

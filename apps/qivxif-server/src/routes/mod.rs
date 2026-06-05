@@ -17,7 +17,12 @@ mod text;
 mod tile_layout;
 
 use crate::state::AppState;
-use axum::Router;
+use axum::{
+    Router,
+    http::{HeaderName, HeaderValue},
+    middleware::map_response,
+    response::Response,
+};
 use tower_http::trace::TraceLayer;
 
 pub fn router(state: AppState) -> Router {
@@ -38,5 +43,18 @@ pub fn router(state: AppState) -> Router {
         .merge(tile_layout::routes())
         .fallback_service(static_files::service(&state.config.static_dir))
         .with_state(state)
+        .layer(map_response(add_isolation_headers))
         .layer(TraceLayer::new_for_http())
+}
+
+async fn add_isolation_headers(mut response: Response) -> Response {
+    response.headers_mut().insert(
+        HeaderName::from_static("cross-origin-opener-policy"),
+        HeaderValue::from_static("same-origin"),
+    );
+    response.headers_mut().insert(
+        HeaderName::from_static("cross-origin-embedder-policy"),
+        HeaderValue::from_static("require-corp"),
+    );
+    response
 }

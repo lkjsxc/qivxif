@@ -29,4 +29,4 @@ Own browser side effects while the controller migrates to typed `AppPorts`.
 
 ## Verification
 
-Run web build and storage, route, and placeholder quality gates after changes.
+Run web build and storage, route, and implementation-marker quality gates after changes.

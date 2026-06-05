@@ -1,6 +1,6 @@
 import { initialWorkspaceState } from "../domain/workspace-state.ts";
 import { serverInfo, setupStatus } from "../effects/api-client.ts";
-import { localStoreDiagnostics, openLocalStore } from "../effects/indexed-db.ts";
+import { localStoreDiagnostics, openLocalStore } from "../storage/current-store.ts";
 import { actionsFor } from "../effects/app-actions.ts";
 import { installKeyboardShortcuts } from "../effects/keyboard.ts";
 import { loadLocalState } from "../effects/state-loader.ts";

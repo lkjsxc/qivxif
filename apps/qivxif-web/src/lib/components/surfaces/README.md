@@ -27,4 +27,4 @@ Render product tab bodies inside pane stacks.
 
 ## Verification
 
-Run web build, placeholder gate, and offline checks after product surface edits.
+Run web build, implementation-marker gate, and offline checks after product surface edits.

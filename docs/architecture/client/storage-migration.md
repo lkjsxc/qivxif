@@ -2,8 +2,8 @@
 
 ## Purpose
 
-This doc owns the active browser storage migration from the current IndexedDB
-adapter to worker-owned SQLite repositories.
+This doc owns the browser storage migration from the removed IndexedDB adapter
+to worker-owned SQLite repositories.
 
 ## Target
 
@@ -13,24 +13,23 @@ adapter to worker-owned SQLite repositories.
 - Product code calls typed repositories.
 - Product source does not call `indexedDB.open`.
 
-## Current Open Lane
+## Current State
 
-IndexedDB is a migration input only. It is not the product storage target and it
-is not a hidden fallback. Dexie remains forbidden.
+IndexedDB is not a product storage path and is not a hidden fallback. Dexie
+remains forbidden.
 
-The migration is complete only when active product source contains no
-`indexedDB.open` call and local restore uses the SQLite worker repository
-boundary.
+The active browser source contains no `indexedDB.open` call. Local restore uses
+the SQLite worker repository boundary through `src/lib/storage/current-store.ts`.
 
-## Steps
+## Completed Steps
 
-1. Define typed repository interfaces and diagnostics DTOs.
-2. Implement the real SQLite worker, schema creation, and typed protocol.
-3. Route the controller and effects through repositories.
-4. Remove active imports from the IndexedDB adapter.
-5. Delete the IndexedDB adapter.
-6. Strengthen repository gates so active IndexedDB storage cannot return.
-7. Update [../../current-state.md](../../current-state.md) and
+1. Defined typed repository interfaces and diagnostics DTOs.
+2. Implemented the real SQLite worker, schema creation, and typed protocol.
+3. Routed the controller and effects through the local store boundary.
+4. Removed active imports from the IndexedDB adapter.
+5. Deleted the IndexedDB adapter.
+6. Strengthened repository gates so active IndexedDB storage cannot return.
+7. Updated [../../current-state.md](../../current-state.md) and
    [../../product/doc-impl-audit.md](../../product/doc-impl-audit.md).
 
 ## Acceptance

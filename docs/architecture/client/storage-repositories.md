@@ -79,6 +79,7 @@ type LocalRepositories = {
 
 ## Implementation Status
 
-The active implementation lane replaces the IndexedDB adapter with this
-SQLite-worker-backed repository boundary. Completion requires no active product
-source to call `indexedDB.open`.
+The IndexedDB adapter is deleted. `src/lib/storage/` now owns the
+SQLite-worker-backed repository boundary. The next cleanup is replacing remaining
+generic `LocalStore` calls in effect modules with repository-family methods when
+that improves reducer and port clarity.

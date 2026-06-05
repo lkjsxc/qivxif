@@ -53,12 +53,12 @@ component names.
 
 ## Migration Rule
 
-IndexedDB is not the durable product target. Existing IndexedDB code is an open
-migration lane tracked in [storage-migration.md](storage-migration.md),
+IndexedDB is not the durable product target and is not a hidden fallback. The
+completed migration is tracked in [storage-migration.md](storage-migration.md),
 [../../current-state.md](../../current-state.md), and
 [../../product/doc-impl-audit.md](../../product/doc-impl-audit.md).
 
-Dexie is forbidden in active product source.
+Dexie and active `indexedDB.open` calls are forbidden in product source.
 
 ## Diagnostics
 
