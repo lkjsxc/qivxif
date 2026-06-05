@@ -33,7 +33,7 @@ authority for behavior and architecture.
 | Editor | `product/editor/` | `src/lib/components/surfaces/EditorTab.svelte`, text effects |
 | Graph records | `architecture/graph/` | `crates/qivxif-graph/`, graph routes and store modules |
 | Graph Map | `product/graph-map/` | `GraphMapTab.svelte`, `graph-map-actions.ts`, and `graph-map-view.ts` use real graph records |
-| Media | `product/media/`, `architecture/media/` | server and browser media foundation is open |
+| Media | `product/media/`, `architecture/media/` | browser imports files as OPFS chunks with metadata and graph attachment edges; server routes are open |
 | Admin keys | `product/admin/`, `architecture/server/key-issuance.md` | CLI and route extension is open |
 | Profiles | `product/profiles/`, `architecture/social/profiles.md` | user creation stores profile ids; edit surfaces are open |
 | Resource orchestration | `product/resource-orchestration/` | `resource-planner.ts` explains protection and actions in Settings and Diagnostics |
@@ -61,7 +61,7 @@ authority for behavior and architecture.
 - Finish the standard editor reducer path: character-id range events, remote merge,
   conflict fixtures, and deeper accessibility checks.
 - Extend Graph Map with richer dimension controls, manual edge forms, layout cancellation, and saved view state.
-- Build media metadata, chunk storage, upload resume, range serving, and ACL checks.
+- Build server media routes, upload resume, range serving, thumbnail jobs, and ACL checks.
 - Build admin invite codes, scoped API tokens, revocation, CLI, routes, and audit.
 - Build profile edit surfaces and avatar media edges.
 - Add resource plan executors, leases, persistent journal writes, and media/cache mutation jobs.

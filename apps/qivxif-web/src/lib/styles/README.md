@@ -23,6 +23,7 @@ points only.
 - `tabs.css`: tab rail, tab frames, drag classes.
 - `surfaces.css`: tab surface layout.
 - `graph-map.css`: Graph Map canvas and inspector layout.
+- `media.css`: media import and detail layout.
 - `controls.css`: shared form and button controls.
 
 ## Verification

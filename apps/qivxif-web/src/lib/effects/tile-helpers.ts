@@ -20,6 +20,7 @@ export function tabSpec(tabId, state) {
     editor: ["text_editor", "Text Node"],
     graph: ["graph_node", "Graph Node"],
     history: ["history", "History"],
+    media: ["media", "Media"],
     publish: ["publishing", "Publishing"],
     settings: ["settings", "Settings"],
     social: ["social_feed", "Social"],

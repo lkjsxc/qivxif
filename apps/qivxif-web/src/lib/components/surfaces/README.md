@@ -22,6 +22,7 @@ Render product tab bodies inside pane stacks.
 - `SetupTab.svelte`, `LoginTab.svelte`, `WelcomeTab.svelte`: entry surfaces.
 - `NewTab.svelte`: chooser tab that converts in place.
 - `EditorTab.svelte`, `GraphTab.svelte`, `GraphMapTab.svelte`: knowledge surfaces.
+- `MediaTab.svelte`: media import and inspection surface.
 - `FeedTab.svelte`, `PublishTab.svelte`: social and publishing surfaces.
 - `SyncTab.svelte`, `SettingsTab.svelte`, `DiagnosticsTab.svelte`: status surfaces.
 

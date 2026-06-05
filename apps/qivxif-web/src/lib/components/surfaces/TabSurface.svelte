@@ -12,6 +12,7 @@
   import DiagnosticsTab from "./DiagnosticsTab.svelte";
   import LoginTab from "./LoginTab.svelte";
   import NewTab from "./NewTab.svelte";
+  import MediaTab from "./MediaTab.svelte";
 
   let { state: viewState, actions } = $props();
 </script>
@@ -28,6 +29,8 @@
   <EditorTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "graph-map"}
   <GraphMapTab state={viewState} {actions} />
+{:else if viewState.activeTabId === "media"}
+  <MediaTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "publish"}
   <PublishTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "social"}

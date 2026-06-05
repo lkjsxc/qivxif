@@ -12,6 +12,7 @@ export async function loadLocalState(store, state) {
   state.auth = auth?.auth ?? state.auth;
   state.edges = await store.all("edges");
   state.feedItems = await store.all("feed_windows");
+  state.mediaAssets = await store.all("media_assets");
   state.nodes = await store.all("nodes");
   const tabSnapshots = await store.all("tab_snapshots");
   state.tabDrafts = Object.fromEntries(

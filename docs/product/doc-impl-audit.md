@@ -28,7 +28,7 @@ Rows change only when the owner doc and implementation change together.
 | Graph Map replaces retired surface term | [graph-map/README.md](graph-map/README.md) | Source uses `graph_map`, `graph_map_item`, `placed_on_graph_map`, and `GraphMapTab.svelte` | Done |
 | Graph dimensions | [../architecture/graph/dimensions.md](../architecture/graph/dimensions.md) | Graph Map has edge-kind toggles; richer dimensions remain open | In review |
 | Automatic relationship suggestions | [../architecture/graph/auto-linking.md](../architecture/graph/auto-linking.md) | Suggestion records and UI are open | Open |
-| Media foundation | [media/README.md](media/README.md) | Media metadata, chunks, routes, and range serving are open | Open |
+| Media foundation | [media/README.md](media/README.md) | Browser imports files into OPFS chunks, writes `media_asset` nodes, metadata, chunk rows, and attachment edges; server routes remain open | In review |
 | Resource orchestration | [resource-orchestration/README.md](resource-orchestration/README.md) | Browser has pure resource planner, resource stores, and Settings/Diagnostics explanations; executors remain open | In review |
 | Admin invites and keys | [admin/keys.md](admin/keys.md) | Bootstrap and create-user exist; scoped keys are open | Open |
 | Profile edit surfaces | [profiles/README.md](profiles/README.md) | User creation stores profile node id; UI editing is open | Open |

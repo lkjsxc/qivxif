@@ -2,6 +2,7 @@ import { createOwner, login } from "./api-client.ts";
 import { activePaneId as firstActivePaneId, containsPane } from "../domain/tile-tree.ts";
 import { storeAuthPayload } from "./auth-state.ts";
 import { addCurrentNodeToGraphMap, createGraphMap, linkGraphMapNodes, moveGraphMapItem } from "./graph-map-actions.ts";
+import { importMediaFile, attachMediaToNode } from "./media-actions.ts";
 import { withPaneContext } from "./pane-context.ts";
 import { createBlogDraft, publishBlogPost, unpublishBlogPost } from "./publish-actions.ts";
 import {
@@ -44,7 +45,9 @@ export function actionsFor(store, state, notify = () => {}) {
     createTextNode: () => run(() => createTextNode(store, state)),
     followProfile: (target) => run(() => followProfile(store, state, target)),
     focusPane: (paneId) => run(() => focusPane(store, state, paneId)),
+    importMediaFile: (file) => run(() => importMediaFile(store, state, file)),
     linkGraphMapNodes: () => run(() => linkGraphMapNodes(store, state)),
+    attachMediaToNode: (assetId) => run(() => attachMediaToNode(store, state, assetId)),
     login: (name, password) => run(() => loginUser(store, state, name, password)),
     maximizePane: (paneId) => run(() => maximizePane(store, state, paneId)),
     moveGraphMapItem: () => run(() => moveGraphMapItem(store, state)),
@@ -149,6 +152,7 @@ function paneKindForPanel(panel) {
     graph: "graph_node",
     history: "history",
     login: "login",
+    media: "media",
     "new-tab": "new_tab",
     publish: "publishing",
     settings: "settings",

@@ -24,6 +24,7 @@
       cmd("Open publishing tools", true, () => actions.openTab?.("publish", paneId)),
       cmd("Open sync status", true, () => actions.openTab?.("sync", paneId)),
       cmd("Open feed", true, () => actions.openTab?.("social", paneId)),
+      cmd("Open media", true, () => actions.openTab?.("media", paneId)),
       cmd("Flush queue", authed, () => actions.sync?.(), "login required"),
       cmd(
         "Add current node to Graph Map",

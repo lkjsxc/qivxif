@@ -10,6 +10,7 @@
     { id: "editor", label: "Editor", detail: "Edit the active text node." },
     { id: "graph-map", label: "Graph Map", detail: "Explore relationships visually." },
     { id: "social", label: "Feed", detail: "Read and write local graph posts." },
+    { id: "media", label: "Media", detail: "Import and inspect media assets." },
     { id: "publish", label: "Publishing", detail: "Prepare public posts." },
     { id: "sync", label: "Sync", detail: "Review queued local events." },
     { id: "settings", label: "Settings", detail: "Inspect account and storage state." },
