@@ -25,8 +25,8 @@ Rows change only when the owner doc and implementation change together.
 | Pane body edge split excludes header chrome | [tile-shell/drag-drop.md](tile-shell/drag-drop.md) | Resolver measures body rect and header band | Done |
 | Touch long-press tab drag | [tile-shell/drag-drop.md](tile-shell/drag-drop.md) | Native drag path covers current checks | Open |
 | Standard editor | [editor/standard-editor.md](editor/standard-editor.md) | Current editor surface still needs full event mapping and editor features | Open |
-| Graph Map replaces retired surface term | [graph-map/README.md](graph-map/README.md) | Docs updated; source migration remains open | Open |
-| Graph dimensions | [../architecture/graph/dimensions.md](../architecture/graph/dimensions.md) | Dimension projection implementation is open | Open |
+| Graph Map replaces retired surface term | [graph-map/README.md](graph-map/README.md) | Source uses `graph_map`, `graph_map_item`, `placed_on_graph_map`, and `GraphMapTab.svelte` | Done |
+| Graph dimensions | [../architecture/graph/dimensions.md](../architecture/graph/dimensions.md) | Graph Map has edge-kind toggles; richer dimensions remain open | In review |
 | Automatic relationship suggestions | [../architecture/graph/auto-linking.md](../architecture/graph/auto-linking.md) | Suggestion records and UI are open | Open |
 | Media foundation | [media/README.md](media/README.md) | Media metadata, chunks, routes, and range serving are open | Open |
 | Resource orchestration | [resource-orchestration/README.md](resource-orchestration/README.md) | Cache model exists; full planner and diagnostics are open | Open |

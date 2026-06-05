@@ -70,43 +70,43 @@ try {
   await expectLayoutPanes(page, 2, browserEvents, { tabs: 2 });
   await page.evaluate(() => {
     const button = [...document.querySelectorAll("button")].find(
-      (entry) => entry.textContent?.trim() === "Create board",
+      (entry) => entry.textContent?.trim() === "Create Graph Map",
     );
     button?.click();
   });
-  await waitForLocalStore(page, "tile_layout", "(rows) => rows.some((row) => row.id === 'active_board' && row.node_id?.startsWith('nod_'))");
-  await waitForLocalStore(page, "nodes", "(rows) => rows.some((node) => node.kind === 'graph_board')");
+  await waitForLocalStore(page, "tile_layout", "(rows) => rows.some((row) => row.id === 'active_graph_map' && row.node_id?.startsWith('nod_'))");
+  await waitForLocalStore(page, "nodes", "(rows) => rows.some((node) => node.kind === 'graph_map')");
   await page.evaluate(() => {
-    const button = [...document.querySelectorAll(".tab-panel.board button")].find((entry) =>
+    const button = [...document.querySelectorAll(".tab-panel.graph-map button")].find((entry) =>
       entry.textContent?.trim().startsWith("Add current node"),
     );
     button?.click();
   });
-  await waitForBoardItems(page, 1);
+  await waitForGraphMapItems(page, 1);
   await page.evaluate(() => {
     const button = [...document.querySelectorAll("button")].find(
-      (entry) => entry.textContent?.trim() === "Move board item",
+      (entry) => entry.textContent?.trim() === "Pin first node",
     );
     button?.click();
   });
-  await waitForLocalStore(page, "nodes", "(rows) => rows.some((node) => node.kind === 'board_item' && Number(node.metadata_map?.x ?? 0) > 120)");
+  await waitForLocalStore(page, "nodes", "(rows) => rows.some((node) => node.kind === 'graph_map_item' && Number(node.metadata_map?.x ?? 0) > 120)");
   const localBefore = await localState(page);
-  assert(localBefore.events.length > 10, "workspace and board events were not queued");
+  assert(localBefore.events.length > 10, "workspace and Graph Map events were not queued");
   const nodeId = localBefore.nodes.find((item) => item.kind === "text")?.id;
-  const boardId = localBefore.layoutRecords.find((item) => item.id === "active_board")?.node_id;
+  const graphMapId = localBefore.layoutRecords.find((item) => item.id === "active_graph_map")?.node_id;
   const layoutId = localBefore.layoutRecords.find((item) => item.id === "tile_model")?.layout_node_id;
   assert(nodeId, "local node id missing");
-  assert(boardId, "local board id missing");
+  assert(graphMapId, "local Graph Map id missing");
   assert(layoutId, "local layout id missing");
 
   const status = await serverNodeStatus(context, nodeId);
   assert(status !== 200, "server accepted offline node before flush");
-  const boardStatus = await serverNodeStatus(context, boardId);
-  assert(boardStatus !== 200, "server accepted offline board before flush");
+  const graphMapStatus = await serverNodeStatus(context, graphMapId);
+  assert(graphMapStatus !== 200, "server accepted offline Graph Map before flush");
 
   await context.setOffline(false);
   await reloadShell(page);
-  await waitForBoardItems(page, 1);
+  await waitForGraphMapItems(page, 1);
   await openShellTab(page, "Welcome");
   await page.evaluate(() => {
     const button = [...document.querySelectorAll("button")].find(
@@ -134,8 +134,8 @@ try {
   await browser.close();
 }
 
-async function waitForBoardItems(page, minimum) {
-  await waitForLocalStore(page, "nodes", "(rows, count) => rows.filter((node) => node.kind === 'board_item').length >= count", minimum);
+async function waitForGraphMapItems(page, minimum) {
+  await waitForLocalStore(page, "nodes", "(rows, count) => rows.filter((node) => node.kind === 'graph_map_item').length >= count", minimum);
 }
 
 async function waitForMaximizedLayout(page) {

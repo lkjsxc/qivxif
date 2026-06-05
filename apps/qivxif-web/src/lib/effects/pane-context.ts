@@ -1,13 +1,11 @@
 export function withPaneContext(state, context) {
-  if (!context) {
-    return state;
-  }
+  if (!context) return state;
   const next = { ...state };
   if (context.targetNodeId && isNodePane(context.paneKind)) {
     next.currentNodeId = context.targetNodeId;
   }
-  if (context.targetNodeId && context.paneKind === "graph_board") {
-    next.activeBoardId = context.targetNodeId;
+  if (context.targetNodeId && context.paneKind === "graph_map") {
+    next.activeGraphMapId = context.targetNodeId;
   }
   return next;
 }

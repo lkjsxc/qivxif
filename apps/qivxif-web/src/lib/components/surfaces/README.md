@@ -13,7 +13,7 @@ Render product tab bodies inside pane stacks.
 
 - `../../effects/`, `../../storage/`, raw network calls, SQL, IndexedDB, OPFS, or
   direct workers.
-- Fake product content or hidden sample data.
+- Invented product content or hidden sample data.
 - Accepted event construction inside components.
 
 ## Owner Files
@@ -21,7 +21,7 @@ Render product tab bodies inside pane stacks.
 - `TabSurface.svelte`: routes tab kind to surface component.
 - `SetupTab.svelte`, `LoginTab.svelte`, `WelcomeTab.svelte`: entry surfaces.
 - `NewTab.svelte`: chooser tab that converts in place.
-- `EditorTab.svelte`, `GraphTab.svelte`, `BoardTab.svelte`: knowledge surfaces.
+- `EditorTab.svelte`, `GraphTab.svelte`, `GraphMapTab.svelte`: knowledge surfaces.
 - `FeedTab.svelte`, `PublishTab.svelte`: social and publishing surfaces.
 - `SyncTab.svelte`, `SettingsTab.svelte`, `DiagnosticsTab.svelte`: status surfaces.
 

@@ -16,7 +16,7 @@ Own browser side effects while the controller migrates to typed `AppPorts`.
 - Svelte components.
 - Raw storage calls from action modules.
 - Raw worker messages outside storage client.
-- Fake product data.
+- Invented product data.
 
 ## Owner Files
 
@@ -25,6 +25,7 @@ Own browser side effects while the controller migrates to typed `AppPorts`.
 - `sync.ts`: queue flush and pull behavior.
 - `state-loader.ts`: local and remote state hydration.
 - `tile-actions.ts`: tile layout commands.
+- `graph-map-actions.ts`: Graph Map mutations through graph records.
 - `keyboard.ts`: keyboard shortcut wiring.
 
 ## Verification

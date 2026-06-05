@@ -19,10 +19,10 @@ export type WorkspaceCommand =
   | { type: "saveTextDraft"; content: string; paneId: string }
   | { type: "saveText"; content: string; nodeId?: string; paneId?: string }
   | { type: "updatePaneScroll"; paneId: string; scrollTop: number }
-  | { type: "createBoard"; context?: any }
-  | { type: "addCurrentNodeToBoard"; context?: any }
-  | { type: "moveBoardItem" }
-  | { type: "linkBoardNodes" }
+  | { type: "createGraphMap"; context?: any }
+  | { type: "addCurrentNodeToGraphMap"; context?: any }
+  | { type: "moveGraphMapItem" }
+  | { type: "linkGraphMapNodes" }
   | { type: "createShortPost"; body: string }
   | { type: "followProfile"; target: string }
   | { type: "clearSocialEdge"; edge: string; kind: string }

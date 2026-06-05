@@ -13,9 +13,9 @@ export function tabFor(paneNodeId, targetNodeId, title, paneKind) {
 
 export function tabSpec(tabId, state) {
   const targetNodeId =
-    tabId === "editor" || tabId === "graph" ? state.currentNodeId || null : boardTarget(tabId, state);
+    tabId === "editor" || tabId === "graph" ? state.currentNodeId || null : graphMapTarget(tabId, state);
   const specs = {
-    board: ["graph_board", "Board"],
+    "graph-map": ["graph_map", "Graph Map"],
     diagnostics: ["diagnostics", "Diagnostics"],
     editor: ["text_editor", "Text Node"],
     graph: ["graph_node", "Graph Node"],
@@ -77,9 +77,9 @@ export async function queueLayout(store, state, layoutNodeId, layout) {
   state.layoutNodeId = layoutNodeId;
 }
 
-function boardTarget(tabId, state) {
-  if (tabId === "board") {
-    return state.activeBoardId || state.currentNodeId || null;
+function graphMapTarget(tabId, state) {
+  if (tabId === "graph-map") {
+    return state.activeGraphMapId || state.currentNodeId || null;
   }
   return null;
 }

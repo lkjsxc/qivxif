@@ -8,7 +8,7 @@
     { id: "welcome", label: "Welcome", detail: "Open the product overview." },
     { id: "graph", label: "Graph", detail: "Inspect the active graph node." },
     { id: "editor", label: "Editor", detail: "Edit the active text node." },
-    { id: "board", label: "Board", detail: "Compose graph items visually." },
+    { id: "graph-map", label: "Graph Map", detail: "Explore relationships visually." },
     { id: "social", label: "Feed", detail: "Read and write local graph posts." },
     { id: "publish", label: "Publishing", detail: "Prepare public posts." },
     { id: "sync", label: "Sync", detail: "Review queued local events." },

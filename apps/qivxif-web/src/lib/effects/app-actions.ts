@@ -1,7 +1,7 @@
 import { createOwner, login } from "./api-client.ts";
 import { activePaneId as firstActivePaneId, containsPane } from "../domain/tile-tree.ts";
 import { storeAuthPayload } from "./auth-state.ts";
-import { addCurrentNodeToBoard, createBoard, linkBoardNodes, moveBoardItem } from "./board-actions.ts";
+import { addCurrentNodeToGraphMap, createGraphMap, linkGraphMapNodes, moveGraphMapItem } from "./graph-map-actions.ts";
 import { withPaneContext } from "./pane-context.ts";
 import { createBlogDraft, publishBlogPost, unpublishBlogPost } from "./publish-actions.ts";
 import {
@@ -33,21 +33,21 @@ export function actionsFor(store, state, notify = () => {}) {
   const run = (action) => runAction(store, state, notify, action);
 
   return {
-    addCurrentNodeToBoard: (context) => run(() => addCurrentNodeToBoard(store, withPaneContext(state, context))),
+    addCurrentNodeToGraphMap: (context) => run(() => addCurrentNodeToGraphMap(store, withPaneContext(state, context))),
     blockProfile: (target) => run(() => blockProfile(store, state, target)),
     clearSocialEdge: (edge, kind) => run(() => clearSocialEdge(store, state, edge, kind)),
     closePane: (paneId) => run(() => closePane(store, state, paneId)),
-    createBoard: (context) => run(() => createBoard(store, withPaneContext(state, context))),
+    createGraphMap: (context) => run(() => createGraphMap(store, withPaneContext(state, context))),
     createBlogDraft: (title) => run(() => createBlogDraft(store, state, title)),
     createOwner: (name, password) => run(() => createOwnerAccount(store, state, name, password)),
     createShortPost: (body) => run(() => createShortPost(store, state, body)),
     createTextNode: () => run(() => createTextNode(store, state)),
     followProfile: (target) => run(() => followProfile(store, state, target)),
     focusPane: (paneId) => run(() => focusPane(store, state, paneId)),
-    linkBoardNodes: () => run(() => linkBoardNodes(store, state)),
+    linkGraphMapNodes: () => run(() => linkGraphMapNodes(store, state)),
     login: (name, password) => run(() => loginUser(store, state, name, password)),
     maximizePane: (paneId) => run(() => maximizePane(store, state, paneId)),
-    moveBoardItem: () => run(() => moveBoardItem(store, state)),
+    moveGraphMapItem: () => run(() => moveGraphMapItem(store, state)),
     movePane: (source, target, zone) => run(() => movePane(store, state, source, target, zone)),
     muteProfile: (target) => run(() => muteProfile(store, state, target)),
     openNewTabChooser: (paneId) => run(() => openNewTabChooser(store, state, paneId || chooserPaneId(state))),
@@ -143,7 +143,7 @@ function localPaneId(state) {
 
 function paneKindForPanel(panel) {
   const kinds: Record<string, string> = {
-    board: "graph_board",
+    "graph-map": "graph_map",
     diagnostics: "diagnostics",
     editor: "text_editor",
     graph: "graph_node",

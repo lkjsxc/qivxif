@@ -6,7 +6,7 @@ export async function loadLocalState(store, state) {
   const auth = await store.get("sync_cursors", "auth");
   const current = await store.get("tile_layout", "current_node");
   const currentBlog = await store.get("tile_layout", "current_blog_post");
-  const board = await store.get("tile_layout", "active_board");
+  const graphMap = await store.get("tile_layout", "active_graph_map");
   const layout = await store.get("tile_layout", "tile_model");
   const publicRoute = await store.get("sync_cursors", "last_public_route");
   state.auth = auth?.auth ?? state.auth;
@@ -28,7 +28,7 @@ export async function loadLocalState(store, state) {
   state.currentBlogPost =
     state.nodes.find((node) => node.id === state.currentBlogPostId) ?? null;
   state.lastPublicRoute = publicRoute?.path ?? state.lastPublicRoute;
-  state.activeBoardId = board?.node_id ?? state.activeBoardId;
+  state.activeGraphMapId = graphMap?.node_id ?? state.activeGraphMapId;
   if (isNodeId(layout?.layout_node_id) && isSyncableLayout(layout?.layout)) {
     state.layout = layout.layout;
     state.layoutDirty = layout.dirty ?? false;
@@ -64,10 +64,10 @@ export async function refreshCurrentNode(store, state) {
       state: textPayload.state,
     });
   }
-  if (nodePayload.projection.node.kind === "graph_board") {
-    state.activeTabId = "board";
-    state.activeBoardId = state.currentNodeId;
-    await store.put("tile_layout", { id: "active_board", node_id: state.currentNodeId });
+  if (nodePayload.projection.node.kind === "graph_map") {
+    state.activeTabId = "graph-map";
+    state.activeGraphMapId = state.currentNodeId;
+    await store.put("tile_layout", { id: "active_graph_map", node_id: state.currentNodeId });
     await refreshNeighborhood(store, state.currentNodeId);
   }
   if (nodePayload.projection.node.kind === "tile_layout") {

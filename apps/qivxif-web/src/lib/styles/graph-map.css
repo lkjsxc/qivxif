@@ -1,0 +1,65 @@
+.graph-map {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 8px;
+  height: 100%;
+}
+
+.surface-head,
+.surface-actions,
+.dimension-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dimension-row {
+  justify-content: flex-start;
+  color: var(--q-muted);
+  font-size: var(--text-xs);
+}
+
+.graph-map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
+  gap: 8px;
+  min-height: 0;
+}
+
+.graph-map-canvas,
+.graph-map-inspector {
+  min-width: 0;
+  border: 1px solid var(--q-border);
+  border-radius: var(--radius-panel);
+  background: var(--q-bg-deep);
+}
+
+.graph-edge {
+  stroke: var(--q-muted);
+  stroke-width: 1.5;
+}
+
+.graph-node {
+  cursor: pointer;
+  fill: var(--q-surface-raised);
+  stroke: var(--q-border-strong);
+  stroke-width: 1.5;
+}
+
+g.selected .graph-node {
+  stroke: var(--q-accent);
+  stroke-width: 2;
+}
+
+.graph-map-canvas text {
+  fill: var(--q-text);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.graph-map-inspector {
+  overflow: auto;
+  padding: 8px;
+}

@@ -1,6 +1,6 @@
 export function initialWorkspaceState() {
   return {
-    activeBoardId: "",
+    activeGraphMapId: "",
     activePaneId: "",
     activeTabId: "welcome",
     auth: null,

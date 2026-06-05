@@ -44,7 +44,7 @@ export function repositoriesFor(store: LocalStore) {
     tile: {
       getLayout: () => store.get("tile_layout", "tile_model"),
       putLayout: (record: JsonRecord) => store.put("tile_layout", record),
-      setActiveBoard: (nodeId: string) => store.put("tile_layout", { id: "active_board", node_id: nodeId }),
+      setActiveGraphMap: (nodeId: string) => store.put("tile_layout", { id: "active_graph_map", node_id: nodeId }),
       setCurrentBlogPost: (nodeId: string) =>
         store.put("tile_layout", { id: "current_blog_post", node_id: nodeId }),
     },

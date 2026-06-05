@@ -77,9 +77,9 @@ async function acceptEntry(store, state, entry, payload) {
     if (payload.node.kind === "text") {
       state.currentNodeId = payload.node.id;
     }
-    if (payload.node.kind === "graph_board") {
-      state.activeBoardId = payload.node.id;
-      await store.put("tile_layout", { id: "active_board", node_id: payload.node.id });
+    if (payload.node.kind === "graph_map") {
+      state.activeGraphMapId = payload.node.id;
+      await store.put("tile_layout", { id: "active_graph_map", node_id: payload.node.id });
     }
   }
   if (entry.kind === "edge.create") {

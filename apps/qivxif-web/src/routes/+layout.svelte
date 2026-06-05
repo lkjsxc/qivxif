@@ -5,6 +5,7 @@
   import "$lib/styles/tabs.css";
   import "$lib/styles/controls.css";
   import "$lib/styles/surfaces.css";
+  import "$lib/styles/graph-map.css";
 </script>
 
 <slot />

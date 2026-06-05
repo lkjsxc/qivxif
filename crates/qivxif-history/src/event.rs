@@ -57,8 +57,8 @@ pub enum EventKind {
     TextRestore,
     #[serde(rename = "tile.layout_set")]
     TileLayoutSet,
-    #[serde(rename = "board.item_place")]
-    BoardItemPlace,
+    #[serde(rename = "graph_map.item_place")]
+    GraphMapItemPlace,
     #[serde(rename = "sync.cursor_advance")]
     SyncCursorAdvance,
     #[serde(rename = "publish.post")]

@@ -13,7 +13,7 @@ Expose Rust/WASM kernels through TypeScript service modules.
 
 - Svelte components importing generated bindings.
 - Leptos UI code.
-- Fake success when a module load fails.
+- Invented success when a module load fails.
 
 ## Owner Files
 

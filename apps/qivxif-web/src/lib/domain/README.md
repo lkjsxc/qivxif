@@ -23,6 +23,7 @@ Pure reducers and deterministic helpers for workspace state.
 - `tile-move.ts`: move and reorder reducers for dragged tabs.
 - `tile-tab-update.ts`: New Tab insertion and conversion helpers.
 - `drop-resolver.ts`: pure drop zone resolver.
+- `graph-map-view.ts`: pure Graph Map item and edge projection helpers.
 
 ## Verification
 

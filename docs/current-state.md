@@ -32,7 +32,7 @@ authority for behavior and architecture.
 | SQLite repositories | `architecture/client/sqlite-worker.md` | `src/lib/storage/` |
 | Editor | `product/editor/` | `src/lib/components/surfaces/EditorTab.svelte`, text effects |
 | Graph records | `architecture/graph/` | `crates/qivxif-graph/`, graph routes and store modules |
-| Graph Map | `product/graph-map/` | current code still uses retired surface names; migration is open |
+| Graph Map | `product/graph-map/` | `GraphMapTab.svelte`, `graph-map-actions.ts`, and `graph-map-view.ts` use real graph records |
 | Media | `product/media/`, `architecture/media/` | server and browser media foundation is open |
 | Admin keys | `product/admin/`, `architecture/server/key-issuance.md` | CLI and route extension is open |
 | Profiles | `product/profiles/`, `architecture/social/profiles.md` | user creation stores profile ids; edit surfaces are open |
@@ -60,7 +60,7 @@ authority for behavior and architecture.
 - Make the N-ary tile reducer the only tile model and enforce performance budgets.
 - Build the standard editor: durable text events, undo/redo, search, preview,
   IME-safe input, and reload restore.
-- Remove retired surface names from code and ship Graph Map over real graph records.
+- Extend Graph Map with richer dimension controls, manual edge forms, layout cancellation, and saved view state.
 - Build media metadata, chunk storage, upload resume, range serving, and ACL checks.
 - Build admin invite codes, scoped API tokens, revocation, CLI, routes, and audit.
 - Build profile edit surfaces and avatar media edges.

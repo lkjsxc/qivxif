@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { boardItems } from "$lib/effects/board-actions.ts";
+  import { graphMapItems } from "$lib/domain/graph-map-view.ts";
   import { visibleRoot } from "$lib/domain/tile-tree.ts";
 
   let { state: viewState, actions } = $props();
@@ -8,22 +8,17 @@
   const paneId = $derived(activeTab()?.pane_node_id ?? "");
   const context = $derived(paneContext(activeTab()));
   const commands = $derived(buildCommands());
-  const filtered = $derived(
-    commands.filter((cmd) => {
-      const needle = query.trim().toLowerCase();
-      if (!needle) return true;
-      return `${cmd.label} ${cmd.reason}`.toLowerCase().includes(needle);
-    }),
-  );
+  const filtered = $derived(commands.filter((cmd) => matches(cmd)));
 
   function buildCommands() {
     const authed = Boolean(viewState.auth);
-    const items = boardItems(viewState);
-    const hasBoardTarget = Boolean(viewState.activeBoardId && viewState.currentNodeId);
+    const items = graphMapItems(viewState);
+    const hasMapTarget = Boolean(viewState.activeGraphMapId && viewState.currentNodeId);
     return [
       cmd("Open graph", true, () => actions.openTab?.("graph", paneId)),
+      cmd("Open Graph Map", true, () => actions.openTab?.("graph-map", paneId)),
       cmd("Create text node", authed, () => actions.createTextNode?.(), "login required"),
-      cmd("Create board", authed, () => actions.createBoard?.(context), "login required"),
+      cmd("Create Graph Map", authed, () => actions.createGraphMap?.(context), "login required"),
       cmd("Split pane", authed && paneId, () => actions.splitPane?.(paneId, context), "pane required"),
       cmd("Open settings", true, () => actions.openTab?.("settings", paneId)),
       cmd("Open publishing tools", true, () => actions.openTab?.("publish", paneId)),
@@ -31,13 +26,18 @@
       cmd("Open feed", true, () => actions.openTab?.("social", paneId)),
       cmd("Flush queue", authed, () => actions.sync?.(), "login required"),
       cmd(
-        "Add current node to board",
-        authed && hasBoardTarget,
-        () => actions.addCurrentNodeToBoard?.(),
-        "board required",
+        "Add current node to Graph Map",
+        authed && hasMapTarget,
+        () => actions.addCurrentNodeToGraphMap?.(),
+        "Graph Map required",
       ),
-      cmd("Move board item", authed && items.length > 0, () => actions.moveBoardItem?.(), "item required"),
+      cmd("Pin Graph Map node", authed && items.length > 0, () => actions.moveGraphMapItem?.(), "item required"),
     ];
+  }
+
+  function matches(cmdItem) {
+    const needle = query.trim().toLowerCase();
+    return !needle || `${cmdItem.label} ${cmdItem.reason}`.toLowerCase().includes(needle);
   }
 
   function cmd(label, enabled, run, reason = "") {

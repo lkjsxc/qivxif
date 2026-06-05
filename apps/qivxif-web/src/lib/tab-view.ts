@@ -1,7 +1,7 @@
 export function tabKindToPanel(kind: string) {
   const panels: Record<string, string> = {
     diagnostics: "diagnostics",
-    graph_board: "board",
+    graph_map: "graph-map",
     graph_node: "graph",
     history: "history",
     login: "login",
@@ -28,9 +28,6 @@ export function stateForTab(state, tab) {
   const tabState = { ...state, activePaneId: tab.pane_node_id, activeTabId };
   if ((tab.target_node_id || state.currentNodeId) && tabState.activeTabId === "editor") {
     tabState.currentNodeId = tab.target_node_id || state.currentNodeId;
-    if (tab.target_node_id) {
-      tabState.currentNodeId = tab.target_node_id;
-    }
     const snapshot = state.textSnapshots?.[tab.target_node_id];
     const hasDraft = Object.prototype.hasOwnProperty.call(state.tabDrafts ?? {}, tab.pane_node_id);
     tabState.text = hasDraft ? state.tabDrafts[tab.pane_node_id] : snapshot?.state?.content ?? "";
@@ -39,8 +36,8 @@ export function stateForTab(state, tab) {
   if (tab.target_node_id && tabState.activeTabId === "graph") {
     tabState.currentNodeId = tab.target_node_id;
   }
-  if (tab.target_node_id && tabState.activeTabId === "board") {
-    tabState.activeBoardId = tab.target_node_id;
+  if (tab.target_node_id && tabState.activeTabId === "graph-map") {
+    tabState.activeGraphMapId = tab.target_node_id;
   }
   return tabState;
 }
@@ -53,8 +50,8 @@ export function actionsForTab(actions, tab) {
   };
   return {
     ...actions,
-    addCurrentNodeToBoard: () => actions.addCurrentNodeToBoard?.(context),
-    createBoard: () => actions.createBoard?.(context),
+    addCurrentNodeToGraphMap: () => actions.addCurrentNodeToGraphMap?.(context),
+    createGraphMap: () => actions.createGraphMap?.(context),
     openTab: (tabId: string, paneId = tab.pane_node_id) => actions.openTab?.(tabId, paneId),
     saveText: (content: string) => actions.saveText?.(content, tab.target_node_id, tab.pane_node_id),
     updateTextDraft: (content: string) => actions.updateTextDraft?.(tab.pane_node_id, content),
@@ -67,8 +64,10 @@ export function boundedActive(stack) {
 
 export function tabLabel(tab) {
   const labels: Record<string, string> = {
+    graph_map: "Graph Map",
     login: "Login",
     new_tab: "New Tab",
+    profile: "Profile",
     setup: "Setup",
     text_editor: "Editor",
   };

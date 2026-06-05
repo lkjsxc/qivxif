@@ -23,7 +23,7 @@
     <textarea class="editor" bind:value={text} oninput={onInput}></textarea>
     <div>
       <button type="button" class="primary" onclick={() => actions.saveText?.(text)}>Save text event</button>
-      <button type="button" onclick={() => actions.createBoard?.()}>Create board</button>
+      <button type="button" onclick={() => actions.createGraphMap?.()}>Create Graph Map</button>
     </div>
   {/if}
 </section>

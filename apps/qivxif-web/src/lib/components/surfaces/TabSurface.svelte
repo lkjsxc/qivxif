@@ -3,7 +3,7 @@
   import WelcomeTab from "./WelcomeTab.svelte";
   import GraphTab from "./GraphTab.svelte";
   import EditorTab from "./EditorTab.svelte";
-  import BoardTab from "./BoardTab.svelte";
+  import GraphMapTab from "./GraphMapTab.svelte";
   import FeedTab from "./FeedTab.svelte";
   import PublishTab from "./PublishTab.svelte";
   import SyncTab from "./SyncTab.svelte";
@@ -26,8 +26,8 @@
   <GraphTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "editor"}
   <EditorTab state={viewState} {actions} />
-{:else if viewState.activeTabId === "board"}
-  <BoardTab state={viewState} {actions} />
+{:else if viewState.activeTabId === "graph-map"}
+  <GraphMapTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "publish"}
   <PublishTab state={viewState} {actions} />
 {:else if viewState.activeTabId === "social"}

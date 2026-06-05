@@ -6,7 +6,7 @@
   <h1>Welcome</h1>
   {#if viewState.auth}
     <button type="button" onclick={() => actions.createTextNode?.()}>Create text node</button>
-    <button type="button" onclick={() => actions.createBoard?.()}>Create board</button>
+    <button type="button" onclick={() => actions.createGraphMap?.()}>Create Graph Map</button>
     <button type="button" onclick={() => actions.sync?.()}>Flush queue</button>
     {#if viewState.nodes?.length}
       <div class="node-list">
