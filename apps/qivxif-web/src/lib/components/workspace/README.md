@@ -24,7 +24,7 @@ resize handles.
 - `Pane.svelte`, `PaneHead.svelte`, and `PaneTabStack.svelte`: pane shell.
 - `TabStrip.svelte` and `TabFrame.svelte`: tab rail interactions.
 - `PaneDropLayer.svelte`: drag preview overlay.
-- `ResizeHandle.svelte` and `TileMenu.svelte`: tile controls.
+- `ResizeHandle.svelte`, `NewTabButton.svelte`, and `TileMenu.svelte`: tile controls.
 
 ## Verification
 

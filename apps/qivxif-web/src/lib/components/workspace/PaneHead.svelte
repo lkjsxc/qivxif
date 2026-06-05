@@ -1,6 +1,7 @@
 <script lang="ts">
   import TabStrip from "./TabStrip.svelte";
   import TileMenu from "./TileMenu.svelte";
+  import NewTabButton from "./NewTabButton.svelte";
 
   let { stack, state: viewState, actions, activeTab, headEl = $bindable() } = $props();
 
@@ -16,14 +17,7 @@
 <header class="pane-head tile-header" bind:this={headEl}>
   <div class="pane-tabbar">
     <TabStrip {stack} {actions} />
-    <button
-      type="button"
-      class="icon-button tile-add"
-      aria-label="Add tab"
-      onclick={() => actions.openNewTabChooser?.(paneId) ?? actions.toggleTabChooser?.(paneId)}
-    >
-      +
-    </button>
+    <NewTabButton open={() => actions.openNewTabChooser?.(paneId) ?? actions.toggleTabChooser?.(paneId)} />
   </div>
   <TileMenu {paneId} {context} {actions} {maximized} />
 </header>
