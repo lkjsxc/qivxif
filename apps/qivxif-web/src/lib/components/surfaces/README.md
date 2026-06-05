@@ -1,16 +1,30 @@
 # Tab Surfaces
 
-Product tab bodies rendered inside pane stacks.
+## Purpose
 
-## Surfaces
+Render product tab bodies inside pane stacks.
 
-- [TabSurface.svelte](TabSurface.svelte): routes tab kind to surface component.
-- [SetupTab.svelte](SetupTab.svelte): first-run owner setup.
-- [NewTab.svelte](NewTab.svelte): chooser tab that converts in place.
-- [FeedTab.svelte](FeedTab.svelte): timeline cards and compose bar.
-- [EditorTab.svelte](EditorTab.svelte): textarea editor.
+## Allowed Imports
 
-## Related Docs
+- Plain view state and dispatch callbacks from parent components.
+- Shared styles and pure domain view helpers.
 
-- [../../../../docs/product/design/tab-surfaces.md](../../../../docs/product/design/tab-surfaces.md)
-- [../../../../docs/product/design/surfaces-feed.md](../../../../docs/product/design/surfaces-feed.md)
+## Forbidden Imports
+
+- `../../effects/`, `../../storage/`, raw network calls, SQL, IndexedDB, OPFS, or
+  direct workers.
+- Fake product content or hidden sample data.
+- Accepted event construction inside components.
+
+## Owner Files
+
+- `TabSurface.svelte`: routes tab kind to surface component.
+- `SetupTab.svelte`, `LoginTab.svelte`, `WelcomeTab.svelte`: entry surfaces.
+- `NewTab.svelte`: chooser tab that converts in place.
+- `EditorTab.svelte`, `GraphTab.svelte`, `BoardTab.svelte`: knowledge surfaces.
+- `FeedTab.svelte`, `PublishTab.svelte`: social and publishing surfaces.
+- `SyncTab.svelte`, `SettingsTab.svelte`, `DiagnosticsTab.svelte`: status surfaces.
+
+## Verification
+
+Run web build, placeholder gate, and offline checks after product surface edits.

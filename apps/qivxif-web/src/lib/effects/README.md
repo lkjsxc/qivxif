@@ -1,15 +1,32 @@
 # Effects
 
-## Contents
+## Purpose
 
-- [api-client.ts](api-client.ts): HTTP API client for optional sync service.
-- [app-actions.ts](app-actions.ts): action table wired to effects.
-- [sync.ts](sync.ts): queue flush and pull.
-- [state-loader.ts](state-loader.ts): hydrate workspace from local and remote data.
-- [tile-actions.ts](tile-actions.ts): tile layout commands.
-- [keyboard.ts](keyboard.ts): keyboard shortcuts.
+Own browser side effects while the controller migrates to typed `AppPorts`.
 
-## Boundary
+## Allowed Imports
 
-Effects implement `AppPorts` IO. They do not render DOM. Browser storage access
-must move behind typed repositories and the SQLite worker boundary.
+- `../domain/` types and reducers.
+- `../app/ports.ts` contracts.
+- `../storage/` typed repositories.
+- Optional service API client modules.
+
+## Forbidden Imports
+
+- Svelte components.
+- Raw storage calls from action modules.
+- Raw worker messages outside storage client.
+- Fake product data.
+
+## Owner Files
+
+- `api-client.ts`: HTTP client for the optional sync service.
+- `app-actions.ts`: migration action table to be retired by dispatch.
+- `sync.ts`: queue flush and pull behavior.
+- `state-loader.ts`: local and remote state hydration.
+- `tile-actions.ts`: tile layout commands.
+- `keyboard.ts`: keyboard shortcut wiring.
+
+## Verification
+
+Run web build and storage, route, and placeholder quality gates after changes.

@@ -1,17 +1,31 @@
 # Workspace Components
 
-Tiled tab shell: header, splits, panes, drag layer, and resize handles.
+## Purpose
 
-## Components
+Render the compact header, recursive splits, panes, tab rails, drag previews, and
+resize handles.
 
-- [WorkspaceRoot.svelte](WorkspaceRoot.svelte): app shell entry.
-- [TileGrid.svelte](TileGrid.svelte): recursive split layout.
-- [Pane.svelte](Pane.svelte): pane chrome and tab stack host.
-- [PaneDropLayer.svelte](PaneDropLayer.svelte): drag preview overlay.
-- [PaneHead.svelte](PaneHead.svelte): compact tabbar composition.
-- [TileMenu.svelte](TileMenu.svelte): three-dot tile actions.
-- [TabStrip.svelte](TabStrip.svelte): horizontal tab rail.
+## Allowed Imports
 
-## Related Docs
+- Controller dispatch callbacks from component props or context.
+- `../surfaces/` tab body router.
+- `../../domain/` view types and pure resolver helpers.
 
-- [../../../../docs/product/tile-shell/README.md](../../../../docs/product/tile-shell/README.md)
+## Forbidden Imports
+
+- `../../effects/`, `../../storage/`, raw `fetch`, SQL, IndexedDB, OPFS, or
+  direct workers.
+- Durable event construction inside components.
+
+## Owner Files
+
+- `WorkspaceRoot.svelte`: app shell entry.
+- `TileGrid.svelte` and `SplitNode.svelte`: recursive layout rendering.
+- `Pane.svelte`, `PaneHead.svelte`, and `PaneTabStack.svelte`: pane shell.
+- `TabStrip.svelte` and `TabFrame.svelte`: tab rail interactions.
+- `PaneDropLayer.svelte`: drag preview overlay.
+- `ResizeHandle.svelte` and `TileMenu.svelte`: tile controls.
+
+## Verification
+
+Run web build and offline browser checks after interaction changes.

@@ -1,18 +1,29 @@
 # Browser Domain
 
-Pure browser reducers live here. They transform local state snapshots and never
-touch DOM, storage, HTTP, service workers, random IDs, or clocks.
+## Purpose
 
-## Contents
+Pure reducers and deterministic helpers for workspace state.
 
-- [tile-tree.ts](tile-tree.ts): focus, open, close, split, maximize, and restore
-  operations over the local tile tree.
-- [tile-move.ts](tile-move.ts): move and reorder operations for dragged tabs.
-- [tile-tab-update.ts](tile-tab-update.ts): New Tab insertion and conversion helpers.
+## Allowed Imports
 
-## Rules
+- Other `../domain/` modules.
+- Plain DTO types with no side effects.
 
-- Functions return new layout objects instead of mutating callers' state.
-- Missing panes are reported with errors so UI actions can become no-ops.
-- Visible tab identity is the durable pane node ID in the current shell.
-- Domain behavior mirrors the Rust tile reducer contract.
+## Forbidden Imports
+
+- Svelte components.
+- `../effects/`, `../storage/`, `../wasm/`, or `../app/` concrete ports.
+- DOM, storage, HTTP, workers, random IDs, clocks, or global mutable state.
+
+## Owner Files
+
+- `workspace-state.ts`: initial state shape.
+- `workspace-command.ts`: UI command union.
+- `tile-tree.ts`: focus, open, close, split, maximize, and restore reducers.
+- `tile-move.ts`: move and reorder reducers for dragged tabs.
+- `tile-tab-update.ts`: New Tab insertion and conversion helpers.
+- `drop-resolver.ts`: pure drop zone resolver.
+
+## Verification
+
+Prefer fixture tests for reducers and run `qivxifctl quality check-lines`.
