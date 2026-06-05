@@ -116,7 +116,7 @@ try {
   });
   await waitForLocalStore(page, "events", "(rows) => rows.every((entry) => entry.status !== 'dirty' && entry.status !== 'pending_validation')", null, 120000);
   const nodeStatusAfterFlush = await serverNodeStatus(context, nodeId);
-  assert(nodeStatusAfterFlush === 200, "text node was not flushed to the server");
+  assert(nodeStatusAfterFlush === 200, `text node was not flushed to the server: ${nodeStatusAfterFlush}`);
 
   const second = await browser.newContext({ baseURL: base, serviceWorkers: "block" });
   const secondPage = await second.newPage();
@@ -125,7 +125,7 @@ try {
   await loadShell(secondPage);
   await login(secondPage, secondEvents);
   await secondPage.getByRole("button", { name: "New tab" }).click({ force: true });
-  await secondPage.locator(".tab-body:not([hidden]) .new-tab-panel").getByRole("button", { name: /Graph/ }).click({ force: true });
+  await secondPage.locator(".tab-body:not([hidden]) .new-tab-panel").getByRole("button", { name: /Graph Inspect/ }).click({ force: true });
   await openServerNode(secondPage, nodeId);
   assert((await serverNodeStatus(second, nodeId)) === 200, "second client could not read flushed text node");
   await second.close();
