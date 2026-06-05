@@ -49,6 +49,14 @@ export function splitStack(tile, targetPaneId, tab, direction) {
   if (tile.kind === "stack") {
     return unchanged(tile);
   }
+  const axis = directionAxis(direction);
+  const directIndex = tile.children.findIndex((child) => directChildContains(child, targetPaneId));
+  if (directIndex >= 0 && tile.axis === axis) {
+    const next = [...tile.children];
+    const insertAt = insertionIndex(directIndex, direction);
+    next.splice(insertAt, 0, stackTile([tab], 0));
+    return changed(splitTile(tile.axis, next, equalSizes(next.length)));
+  }
   const children = tile.children.map((child) => splitStack(child, targetPaneId, tab, direction));
   const index = children.findIndex((child) => child.changed);
   if (index < 0) {
@@ -132,8 +140,16 @@ export function assertMissing(tile, paneId) {
   }
 }
 
+function directionAxis(direction) {
+  return direction === "top" || direction === "bottom" ? "column" : "row";
+}
+
+function insertionIndex(index, direction) {
+  return direction === "left" || direction === "top" ? index : index + 1;
+}
+
 function splitForDirection(existing, created, direction) {
-  const axis = direction === "top" || direction === "bottom" ? "column" : "row";
+  const axis = directionAxis(direction);
   const children =
     direction === "left" || direction === "top" ? [created, existing] : [existing, created];
   return splitTile(axis, children, equalSizes(2));

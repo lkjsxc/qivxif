@@ -17,7 +17,7 @@ Rows change only when the owner doc and implementation change together.
 | AppPorts hide storage and network details | [architecture/client/surface-boundary.md](../architecture/client/surface-boundary.md) | Controller imports `browser-ports.ts`; `actionsFor` remains migration adapter | In review |
 | Svelte to WASM service boundary | [architecture/client/wasm-boundary.md](../architecture/client/wasm-boundary.md) | Rust kernels exist; generated bridge services still open | Open |
 | lkjstr shell parity | [tile-shell/lkjstr-parity.md](tile-shell/lkjstr-parity.md) | Components exist; parity gaps remain in drag and touch paths | Open |
-| N-ary tile layout contract | [tile-shell/layout-tree.md](tile-shell/layout-tree.md) | TypeScript and Rust tile reducers exist; final shape migration is open | Open |
+| N-ary tile layout contract | [tile-shell/layout-tree.md](tile-shell/layout-tree.md) | Smart insertion now appends siblings on matching axes; final type-shape migration remains open | In review |
 | Tile performance budgets | [tile-shell/performance.md](tile-shell/performance.md) | Fixture and pointer budget gates are open | Open |
 | New Tab is a real chooser tab | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | `NewTab.svelte` is inserted by the plus action | Done |
 | Selected New Tab kind converts same tab id | [tile-shell/tiled-tabs.md](tile-shell/tiled-tabs.md) | `replaceTabInLayout` preserves `pane_node_id` | Done |
