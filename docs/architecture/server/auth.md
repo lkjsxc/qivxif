@@ -3,7 +3,7 @@
 ## Requirements
 
 - First admin is created through `qivxifctl`.
-- Additional users are durable store records created by `qivxifctl admin create-user` until invite routes are documented.
+- Additional users are durable store records created by CLI or accepted invite codes.
 - Password hashes use Argon2id.
 - Sessions are stored in redb.
 - Session cookies are HttpOnly, Secure when TLS is active, and SameSite.
@@ -63,8 +63,8 @@ Both admin commands return:
 - `next_actor_seq`
 
 `next_actor_seq` is the next server-safe actor sequence for this actor. A fresh
-browser stores one less than this value in IndexedDB before reserving local
-event numbers.
+browser stores one less than this value in the local actor-sequence repository
+before reserving local event numbers.
 
 `POST /api/auth/logout` returns:
 

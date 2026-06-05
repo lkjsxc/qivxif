@@ -2,36 +2,39 @@
 
 ## Actors
 
-- AppShellActor
-- TileLayoutActor
-- CacheOrchestrator
-- IndexedDbStore
-- SyncActor
-- TransportActor
-- PresenceActor
-- EditorActor
-- FeedActor
-- PublicationActor
-- NotificationActor
+- AppShellActor.
+- TileLayoutActor.
+- ResourceOrchestrator.
+- SQLiteRepositoryActor.
+- SyncActor.
+- TransportActor.
+- PresenceActor.
+- EditorActor.
+- GraphMapActor.
+- MediaActor.
+- ProfileActor.
+- FeedActor.
+- PublicationActor.
+- NotificationActor.
 
 ## Rule
 
-Components send messages. They do not mutate IndexedDB directly.
+Components send typed commands. They do not mutate browser storage directly.
 
 ## Tile Layout Actor State
 
 The tile layout actor owns:
 
-- active layout node ID.
-- active pane node ID.
+- active layout node id.
+- active pane node id.
 - tile tree snapshot.
-- active board node ID.
-- selected board item node ID.
-- per-pane text drafts keyed by pane node ID.
-- per-pane scroll snapshots keyed by pane node ID.
-- per-node accepted text snapshots keyed by node ID.
+- active Graph Map node id.
+- selected Graph Map item node id.
+- per-pane text drafts keyed by pane node id.
+- per-pane scroll snapshots keyed by pane node id.
+- per-node accepted text snapshots keyed by node id.
 
-The actor persists state through IndexedDB messages and queued durable
+The actor persists state through SQLite repository messages and queued durable
 events. UI controls render from actor state and local projections.
 
 Per-pane drafts are local visible-tab state. Saving a text event writes the

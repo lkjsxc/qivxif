@@ -3,7 +3,7 @@
 ## View Types
 
 - Neighborhood view.
-- Board view.
+- Graph Map view.
 - Saved topic view.
 - Search result view.
 - Feed-derived graph view.

@@ -50,12 +50,12 @@ produce the full envelope payload. The browser route flush lane is valid only
 because the server route creates the same durable event log entry before
 returning acceptance.
 
-## Tile Layout And Board Queue Rules
+## Tile Layout And Graph Map Queue Rules
 
 - Layout commands write the local layout snapshot before queue display changes.
-- Board placement records are visible locally while dirty.
+- Graph Map placement records are visible locally while dirty.
 - Text drafts are stored in `tab_snapshots` by pane ID and survive reload.
 - Pane body scroll offsets are stored in `tab_snapshots` by pane ID and survive
   tab switches, tab moves, and reload.
 - Edge events are flushed after their source and target node events.
-- Another client reconstructs board items from accepted graph records.
+- Another client reconstructs Graph Map items from accepted graph records.

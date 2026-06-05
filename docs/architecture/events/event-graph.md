@@ -23,7 +23,7 @@ Semantic relations are represented by edge events and indexes:
 - `node.ordered_child`
 - `edge.supersedes`
 - `edge.tombstones`
-- `board.contains`
+- `graph_map.contains`
 - `tile.contains_pane`
 - `pane.views_node`
 

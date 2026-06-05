@@ -7,7 +7,8 @@
 - The browser app opens directly into a compact header plus tiled tab shell.
 - First-run owner setup lives inside the tile shell when optional sync service
   setup is enabled.
-- Board composition is a qivxif-native graph surface.
+- Graph Map is the 2D graph projection surface.
+- Resource orchestration is a core product differentiator.
 - No retired local GUI shell canon remains.
 - No backward compatibility is preserved during the reset.
 
@@ -19,18 +20,18 @@
 - OPFS is the normal browser storage mode.
 - Memory storage is allowed only as an explicit degraded mode with diagnostics.
 - Product code reaches storage through typed repositories.
-- Optional Axum routes may serve static assets and sync lanes behind ports.
+- Optional Axum routes may serve static assets, sync lanes, media, and public pages behind ports.
 - Optional redb storage may back a sync service but is not browser local truth.
 - Durable data uses typed records, typed graph edges, and append-only events.
 - The app shell and static assets use a service worker and Cache API.
-- Client cache behavior is governed by a cache orchestrator.
+- Client cache, media retention, graph indexes, and background jobs are governed by the resource orchestrator.
 
 ## Client Implementation
 
 - The browser shell uses SvelteKit with a Vite production build to `dist/`.
 - Components emit `WorkspaceCommand`; the controller owns state transitions.
 - Components never call raw storage, OPFS, IndexedDB, SQL, fetch, or workers directly.
-- The first editor uses a textarea only when edits map into qivxif text events.
+- The editor widget is acceptable only when edits map into qivxif text events.
 - CodeMirror may replace the widget after the durable text event model is stable.
 - Rust reducers are the first durable authority for shared deterministic logic.
 - Pure Rust reducers are shared with the browser behind TypeScript WASM service
@@ -38,12 +39,12 @@
 - Browser UI modules emit commands; reducers and effect adapters own event
   drafts, persistence, and sync.
 
-## Protocol and Media
+## Protocol, Media, And Keys
 
 - The first durable HTTP wire format is JSON using `qivxif-api` DTOs when the
   optional sync service is present.
 - Binary framing waits until HTTP sync behavior is proven by integration tests.
-- HTTP push and pull are the always-available durable sync lane for the optional
-  service.
+- HTTP push and pull are the always-available durable sync lane for the optional service.
 - WebTransport is preferred when available and uses the same durable message types.
-- Media chunking waits until upload thresholds and public serving behavior are documented.
+- Media bytes use content-addressed chunks outside raw SQLite and redb value fields.
+- Administrators can issue invites and scoped API tokens with audit evidence.

@@ -3,12 +3,16 @@
 ## Contents
 
 - [doc-impl-audit.md](doc-impl-audit.md): product contract to implementation audit.
-- [design/README.md](design/README.md): Zed-minimal visual language and tokens.
+- [design/README.md](design/README.md): minimal visual language and tokens.
 - [tile-shell/README.md](tile-shell/README.md): tiled browser shell.
 - [setup/README.md](setup/README.md): first-run owner setup.
-- [boards/README.md](boards/README.md): graph composition boards.
+- [graph-map/README.md](graph-map/README.md): 2D relationship surface.
 - [graph/README.md](graph/README.md): user-visible graph behavior.
 - [editor/README.md](editor/README.md): text and Markdown editing.
+- [media/README.md](media/README.md): large-file and media workflows.
+- [profiles/README.md](profiles/README.md): profile viewing and editing.
+- [admin/README.md](admin/README.md): invite, key, and audit flows.
+- [resource-orchestration/README.md](resource-orchestration/README.md): resource planner UX.
 - [publishing/README.md](publishing/README.md): blog publishing.
 - [social/README.md](social/README.md): social feed behavior.
 - [offline/README.md](offline/README.md): offline and conflict behavior.

@@ -2,7 +2,7 @@
 
 ## Direction
 
-qivxif uses a **Zed-minimal dark** visual language. The workspace should feel
+qivxif uses a dark minimal visual language. The workspace should feel
 tool-neutral, dense, and calm. Color is functional, not decorative.
 
 ## Principles
@@ -18,7 +18,7 @@ tool-neutral, dense, and calm. Color is functional, not decorative.
 
 ## Layout Grammar
 
-Copy lkjstr workspace grammar:
+Copy the reference workspace grammar:
 
 - Header plus recursive tile grid fills the viewport.
 - One root tile tree.
@@ -53,5 +53,5 @@ Do not copy lkjstr palette or Nostr-specific chrome.
 - Pill tabs with large corner radius.
 - Purple or pastel "editor theme" palettes on shell chrome.
 - Centered marketing-style landing layouts inside product tabs.
-- Placeholder lorem or fake data on the main path.
+- Invented lorem or fake data on the main path.
 - External palette names in public docs, source, tests, or styles.

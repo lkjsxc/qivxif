@@ -16,8 +16,8 @@
 
 ## Pane Kinds
 
-Product tabs map to pane kinds: setup, welcome, graph, text editor, board, feed,
-publish, history, sync, settings, diagnostics.
+Product tabs map to pane kinds: setup, welcome, graph, text editor, graph map,
+feed, publish, history, sync, settings, diagnostics, admin, profile, media.
 
 ## Rules
 

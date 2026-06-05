@@ -58,6 +58,16 @@ tile.put_layout
 tile.put_marker
 cache.record_entry
 cache.record_journal
+resource.record_entry
+resource.record_lease
+resource.record_job
+resource.record_journal
+media.record_asset
+media.record_chunk
+media.record_upload
+media.list_assets
+profile.get
+profile.save_snapshot
 ```
 
 ## Transactions
@@ -69,7 +79,10 @@ The worker wraps these method groups in SQLite transactions:
 - event queue append with projection writes when supplied,
 - pending, accepted, and rejected status transitions,
 - tile layout snapshot plus marker updates,
-- cache entry plus journal writes.
+- cache entry plus journal writes,
+- resource plan records plus journal writes,
+- media metadata plus upload session writes,
+- profile snapshot writes.
 
 ## Forbidden Payloads
 

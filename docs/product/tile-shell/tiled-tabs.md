@@ -94,8 +94,11 @@ Command buttons create the same durable records as direct manipulation:
 - New Tab
 - Graph Node
 - Text Node
-- Board
+- Graph Map
 - History
 - Sync Status
 - Settings
 - Diagnostics
+- Admin
+- Profile
+- Media

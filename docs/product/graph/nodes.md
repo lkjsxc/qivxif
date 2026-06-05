@@ -14,7 +14,7 @@
 - feed
 - media
 - search view
-- graph board
+- graph map
 - settings
 - system
 

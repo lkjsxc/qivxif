@@ -24,7 +24,7 @@ in one transaction.
 
 - The edge remains inspectable.
 - Endpoint indexes remain repairable.
-- Tree and board projections ignore tombstoned relation edges unless the owner
+- Tree and Graph Map projections ignore tombstoned relation edges unless the owner
   doc explicitly asks for history display.
 
 ## Edge Relate
@@ -45,4 +45,4 @@ Initial edge-backed relation kinds include:
 - `supersedes`
 - `tile_contains_pane`
 - `pane_views_node`
-- `placed_on_board`
+- `placed_on_graph_map`

@@ -72,6 +72,10 @@ apps/qivxif-web/
           NewTab.svelte
           FeedTab.svelte
           EditorTab.svelte
+          GraphMapTab.svelte
+          MediaTab.svelte
+          ProfileTab.svelte
+          AdminTab.svelte
       styles/
         base.css
         shell.css
@@ -110,7 +114,9 @@ Each directory has one `README.md`. Each source file stays at 200 lines or fewer
 UI dispatches commands only. Examples: `bootstrap`, `focusPane`, `openNewTab`,
 `convertNewTab`, `closePane`, `splitPane`, `stackTab`, `maximizePane`,
 `restorePane`, `movePane`, `reorderTab`, `resizeSplit`, `createTextNode`,
-`saveTextDraft`, `saveText`, `flushSyncQueue`, and `refreshDiagnostics`.
+`createGraphMap`, `saveTextDraft`, `saveText`, `createMediaUpload`,
+`updateProfile`, `issueInvite`, `issueApiKey`, `flushSyncQueue`, and
+`refreshDiagnostics`.
 
 ## Retirement
 

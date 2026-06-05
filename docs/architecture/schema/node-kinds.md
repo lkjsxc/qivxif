@@ -1,6 +1,7 @@
 # Node Kinds
 
-Node kinds are durable names. Unknown kinds are rejected by API validation, sync acceptance, and graph reducers.
+Node kinds are durable names. Unknown kinds are rejected by API validation, sync
+acceptance, and graph reducers.
 
 ## Registry
 
@@ -12,27 +13,28 @@ Node kinds are durable names. Unknown kinds are rejected by API validation, sync
 | `profile` | auth/social | user-facing identity node |
 | `tag` | graph/social | reusable label node |
 | `topic` | graph/social | subject grouping node |
-| `graph_board` | boards | graph composition board |
-| `board_item` | boards | board placement record when a node needs per-board state |
-| `media` | publishing/social | uploaded media descriptor |
+| `graph_map` | graph map | saved 2D relationship view |
+| `graph_map_item` | graph map | view-local placement record |
+| `media_asset` | media | uploaded media descriptor |
 | `tile_layout` | tile layout | durable tiled layout root |
 | `pane` | tile layout | pane state in a layout |
 | `feed_window` | social/offline | materialized feed range marker |
+| `resource_job` | resource orchestration | inspectable background job |
 
 ## Required Node Fields
 
-- `id`
-- `kind`
-- `owner_user_id`
-- `created_by`
-- `created_at`
-- `updated_at`
-- `visibility`
-- `acl_ref`
-- `current_commit_group`
-- `current_text_ref`
-- `metadata_map`
-- `tombstone`
+- `id`.
+- `kind`.
+- `owner_user_id`.
+- `created_by`.
+- `created_at`.
+- `updated_at`.
+- `visibility`.
+- `acl_ref`.
+- `current_commit_group`.
+- `current_text_ref`.
+- `metadata_map`.
+- `tombstone`.
 
 ## Rules
 
@@ -53,12 +55,31 @@ Node kinds are durable names. Unknown kinds are rejected by API validation, sync
 - `pane_kind`: documented pane kind.
 - `title`: display label.
 
-`board_item` metadata:
+## Graph Map Metadata
+
+`graph_map` metadata:
+
+- `title`: display label.
+- `query_shape`: serialized bounded graph query.
+- `dimension_state`: serialized enabled dimensions.
+
+`graph_map_item` metadata:
 
 - `item_node_id`: displayed graph node.
-- `x`: board x coordinate as decimal text.
-- `y`: board y coordinate as decimal text.
-- `placement_seq`: monotonic board placement sequence as decimal text.
+- `x`: map x coordinate as decimal text.
+- `y`: map y coordinate as decimal text.
+- `placement_seq`: monotonic placement sequence as decimal text.
+- `position_key`: deterministic placement ordering key.
+
+## Media Metadata
+
+`media_asset` metadata:
+
+- `content_hash`.
+- `size`.
+- `mime_type`.
+- `filename`.
+- `processing_state`.
 
 ## Publishing Metadata
 

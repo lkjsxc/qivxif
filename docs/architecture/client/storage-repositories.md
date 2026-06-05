@@ -22,6 +22,9 @@ raw SQL strings.
 | Tab snapshot | Draft and scroll snapshot per durable pane id |
 | Tile layout | Complete tile tree snapshot and active tile markers |
 | Cache ledger | Protected and prunable cache records plus journal entries |
+| Resource planner | Resource entries, leases, jobs, and planner journal |
+| Media | Media metadata, chunk locators, upload sessions, and cache state |
+| Profile | Editable profile snapshots and profile cache entries |
 | Storage inventory | Counts and byte summaries by repository family |
 
 ## Method Groups
@@ -35,6 +38,9 @@ type LocalRepositories = {
   tabs: TabSnapshotRepository;
   tile: TileLayoutRepository;
   cache: CacheLedgerRepository;
+  resources: ResourceRepository;
+  media: MediaRepository;
+  profiles: ProfileRepository;
   inventory: InventoryRepository;
   diagnostics: StorageDiagnosticsRepository;
 };
@@ -71,11 +77,14 @@ type LocalRepositories = {
 - Tab methods store draft and scroll state by pane id.
 - Tile methods store complete layout snapshots and shell markers.
 
-## Cache And Inventory
+## Resource, Cache, Media, And Inventory
 
 - Cache records classify protected and prunable bytes.
+- Resource records explain protection, leases, plans, and job state.
+- Media records store metadata and OPFS chunk locators, not large bytes in SQLite.
+- Profile records cache editable profile projections.
 - Cache journal entries describe cache state changes.
-- Inventory reads count rows by table and summarize cache bytes.
+- Inventory reads count rows by table and summarize cache and media bytes.
 
 ## Implementation Status
 

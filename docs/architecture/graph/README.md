@@ -6,6 +6,8 @@
 - [edge-records.md](edge-records.md): edge schema.
 - [event-reducers.md](event-reducers.md): graph reducers.
 - [acl-projection.md](acl-projection.md): viewer projection.
+- [dimensions.md](dimensions.md): Graph Map dimension projections.
+- [auto-linking.md](auto-linking.md): relationship suggestion contract.
 
 ## Schema Links
 

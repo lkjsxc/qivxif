@@ -31,14 +31,20 @@ The default server database file is `data/qivxif.redb`.
 | `event_ids_by_target_event` | `(EventId, EventId)` | empty marker | `qivxif_store_redb::history::TargetEventIndex` |
 | `event_ids_by_acceptance` | internal sequence | `EventId` | `qivxif_store_redb::history::AcceptanceIndex` |
 | `commit_groups` | `CommitGroupId` | `CommitGroup` | `qivxif_history::CommitGroup` |
-| `blobs` | `BlobHash` | `BlobManifest` | `qivxif_store_redb::blob::BlobManifest` |
-| `blob_chunks` | `ChunkHash` | `BlobChunk` | `qivxif_store_redb::blob::BlobChunk` |
+| `media_assets` | `MediaAssetId` | `MediaAssetRecord` | `qivxif_store_redb::media::MediaAssetRecord` |
+| `media_variants` | `(MediaAssetId, VariantKind)` | `MediaVariantRecord` | `qivxif_store_redb::media::MediaVariantRecord` |
+| `media_chunks` | `(UploadId, chunk_index)` | `MediaChunkRecord` | `qivxif_store_redb::media::MediaChunkRecord` |
+| `media_uploads` | `UploadId` | `MediaUploadSession` | `qivxif_store_redb::media::MediaUploadSession` |
 | `text_docs` | `TextDocId` | `TextDocState` | `qivxif_history::text::TextDocState` |
 | `text_snapshots` | `(TextDocId, EventId)` | `TextSnapshot` | `qivxif_history::text::TextSnapshot` |
 | `feed_items` | `EventId` | `FeedItem` | `qivxif_store_redb::feed::FeedItem` |
 | `feed_items_by_user` | `(UserId, EventId)` | empty marker | `qivxif_store_redb::feed::FeedUserIndex` |
+| `invite_codes` | invite id | `InviteCodeRecord` | `qivxif_store_redb::auth::InviteCodeRecord` |
+| `access_keys` | key id | `AccessKeyRecord` | `qivxif_store_redb::auth::AccessKeyRecord` |
 | `auth_tokens` | token hash | `AuthTokenRecord` | `qivxif_store_redb::auth::AuthTokenRecord` |
+| `key_audit` | audit id | `KeyAuditRecord` | `qivxif_store_redb::auth::KeyAuditRecord` |
 | `sync_cursors` | cursor mapping key | cursor or sequence | `qivxif_store_redb::sync::SyncCursorRecord` |
+| `resource_entries` | resource id | `ResourceEntry` | `qivxif_store_redb::resource::ResourceEntry` |
 | `server_jobs` | job id | `ServerJobRecord` | `qivxif_store_redb::job::ServerJobRecord` |
 
 ## Meta Records

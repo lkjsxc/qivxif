@@ -46,6 +46,14 @@ Browser SQLite tables mirror local product needs:
 - `feed_windows`
 - `cache_entries`
 - `cache_journal`
+- `resource_entries`
+- `resource_leases`
+- `resource_journal`
+- `resource_jobs`
+- `media_assets`
+- `media_chunks`
+- `media_uploads`
+- `profile_snapshots`
 - `sync_cursors`
 
 Schema names are durable `schema_contract` facts and are not inferred from UI

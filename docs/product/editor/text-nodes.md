@@ -10,6 +10,8 @@
 - Show save and sync state.
 - Restore after refresh.
 - Map text edits into ordered character-id events instead of byte offsets.
+- Keep cursor, selection, scroll, search, preview, and status state pane-local.
+- Never report queued status before local durable persistence succeeds.
 
 ## Constraint
 

@@ -16,15 +16,15 @@ Every `/api` response uses [../schema/api-envelope.md](../schema/api-envelope.md
 | `POST` | `/api/auth/logout` | session | yes | none | logout status | deletes session | queued logout is not accepted |
 | `GET` | `/api/me` | session | no | none | current user and profile | none | stale local user may be shown as offline |
 | `POST` | `/api/nodes` | session | yes | node create request | node record and event acceptance | appends event, writes node | local event queues first |
-| `GET` | `/api/nodes/{node_id}` | viewer | no | none | node projection | none | IndexedDB may satisfy stale read |
-| `GET` | `/api/nodes/{node_id}/history` | viewer | no | limit query | event summaries | none | IndexedDB may show cached summaries |
+| `GET` | `/api/nodes/{node_id}` | viewer | no | none | node projection | none | local repository may satisfy stale read |
+| `GET` | `/api/nodes/{node_id}/history` | viewer | no | limit query | event summaries | none | local repository may show cached summaries |
 | `POST` | `/api/edges` | session | yes | edge create request | edge record and event acceptance | appends event, writes edge and indexes | local event queues first |
-| `GET` | `/api/nodes/{node_id}/edges` | viewer | no | direction and limit query | edge list | none | IndexedDB may satisfy stale read |
-| `GET` | `/api/graph/neighborhood` | viewer | no | node, depth, limit query | bounded graph projection | none | IndexedDB may satisfy stale read |
+| `GET` | `/api/nodes/{node_id}/edges` | viewer | no | direction and limit query | edge list | none | local repository may satisfy stale read |
+| `GET` | `/api/graph/neighborhood` | viewer | no | node, depth, limit query | bounded graph projection | none | local repository may satisfy stale read |
 | `POST` | `/api/tile-layout` | session | yes | layout set request | layout node and event acceptance | appends layout event, writes layout metadata | local event queues first |
 | `POST` | `/api/sync/push` | session | yes | event batch | accepted and rejected event results | appends accepted events | queued while offline |
 | `GET` | `/api/sync/pull` | session | no | cursor, scope, limit query | event batch and cursor | none | resumes after reconnect |
-| `GET` | `/api/text/{node_id}` | viewer | no | none | text document projection | none | IndexedDB may satisfy stale read |
+| `GET` | `/api/text/{node_id}` | viewer | no | none | text document projection | none | local repository may satisfy stale read |
 | `POST` | `/api/text/{node_id}/events` | session | yes | text event request | event acceptance and text projection | appends text event | local event queues first |
 | `GET` | `/api/feed/home` | session | no | cursor and limit query | feed items | none | cached feed window may render |
 | `POST` | `/api/social/short-posts` | session | yes | short post create request | post node, feed item, event acceptance | appends event, writes node and feed index | local event queues first |
@@ -36,6 +36,11 @@ Every `/api` response uses [../schema/api-envelope.md](../schema/api-envelope.md
 | `POST` | `/api/social/unblock` | session | yes | moderation clear request | tombstoned block edge and event acceptance | appends event and tombstones edge | local event queues first |
 | `POST` | `/api/publish/{node_id}` | session | yes | publish request | publication state | appends publish event | queued pending server validation |
 | `POST` | `/api/unpublish/{node_id}` | session | yes | unpublish request | publication state | appends unpublish event | queued pending server validation |
+| `POST` | `/api/media/uploads` | session or token | yes for cookie | upload metadata | upload session | creates media upload session | local upload session persists |
+| `GET` | `/api/media/assets/{asset_id}/content` | viewer | no | range query | media bytes | none | local media cache may satisfy visible content |
+| `POST` | `/api/admin/invites` | admin | yes | invite request | invite secret once | stores invite hash and audit | server required |
+| `POST` | `/api/admin/keys` | admin | yes | key request | token secret once | stores token hash and audit | server required |
+| `POST` | `/api/invites/accept` | public | no | invite secret and account fields | user summary and profile | creates user and profile | server required |
 | `GET` | `/@{author}/{slug}` | public | no | none | rendered blog post | none | cached public page may render |
 
 ## Error Codes

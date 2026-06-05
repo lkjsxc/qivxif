@@ -20,7 +20,11 @@ before reducer application.
 | `text.delete` | write | text doc | range ids | text CRDT delete |
 | `text.restore` | write | text doc | snapshot ref | append restore event |
 | `tile.layout_set` | write | tile layout | complete tile tree | tile layout reducer |
-| `board.item_place` | write | board, item | placement metadata | board projection reducer |
+| `graph_map.item_place` | write | map, item | placement metadata | graph-map projection reducer |
+| `media.upload_complete` | media.write | media asset | committed chunks and variants | media reducer |
+| `media.attach` | media.write | media asset, node | attachment edge | edge reducer |
+| `profile.update` | profile.write | profile | field patches | profile reducer |
+| `resource.plan_recorded` | write | resource job | plan summary | resource journal reducer |
 | `sync.cursor_advance` | write | cursor | cursor id, position | cursor update |
 | `publish.post` | publish | blog post | slug, summary, public time | publication reducer |
 | `publish.unpublish` | publish | blog post | reason code | publication reducer |
@@ -34,20 +38,20 @@ before reducer application.
 
 ## Shared Envelope Fields
 
-- `event_id`
-- `actor_id`
-- `actor_seq`
-- `parents`
-- `scope`
-- `kind`
-- `target_node_ids`
-- `target_edge_ids`
-- `target_event_ids`
-- `payload`
-- `payload_hash`
-- `created_at_client`
-- `received_at_server`
-- `auth_context`
+- `event_id`.
+- `actor_id`.
+- `actor_seq`.
+- `parents`.
+- `scope`.
+- `kind`.
+- `target_node_ids`.
+- `target_edge_ids`.
+- `target_event_ids`.
+- `payload`.
+- `payload_hash`.
+- `created_at_client`.
+- `received_at_server`.
+- `auth_context`.
 
 ## Reducer Rules
 
@@ -65,21 +69,31 @@ before reducer application.
 - `layout`: complete tile tree snapshot.
 - `maximized_pane_id`: optional pane node ID inside the tile tree.
 
-The `layout.root` tree uses N-way splits:
+The `layout.root` tree uses N-way splits. Split nodes contain `axis`, `children`,
+and `weights`. Stack nodes contain `id`, `activePaneId`, and `paneIds`.
+See [../../product/tile-shell/layout-tree.md](../../product/tile-shell/layout-tree.md).
 
-- Split nodes contain `axis`, `children`, and `sizes`.
-- Stack nodes contain `active` and `tabs`.
-- See [../../product/tile-shell/layout-tree.md](../../product/tile-shell/layout-tree.md).
+## Graph Map Placement Payload
 
-## Board Placement Payload
+`graph_map.item_place` payload:
 
-`board.item_place` payload:
-
-- `board_node_id`: board receiving the placement.
+- `graph_map_node_id`: graph map receiving the placement.
 - `item_node_id`: displayed graph node.
-- `placement_node_id`: board item node for this visible placement.
+- `placement_node_id`: graph-map item node for this visible placement.
 - `position_key`: deterministic ordering key when needed.
-- `x` and `y`: board coordinates.
+- `x` and `y`: map coordinates.
 
-Movement creates another placement event and tombstones or supersedes the older
-placement relation when the owner doc requires a single visible item.
+Movement creates another placement event and supersedes the older active
+placement relation for the same map and item.
+
+## Media Payloads
+
+`media.upload_complete` records asset id, content hash, size, MIME type, committed
+chunks, and variant metadata.
+
+`media.attach` records source node, media asset id, attachment kind, and edge id.
+
+## Profile Payload
+
+`profile.update` stores field patches for the profile node and never stores
+password hashes, session ids, or token secrets.

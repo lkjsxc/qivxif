@@ -30,6 +30,6 @@ Edges are visible relationships between nodes.
 
 ## Behavior
 
-- Edges can be created from graph views and boards.
+- Edges can be created from graph views and Graph Map.
 - Forward and reverse traversal are equally supported.
 - Deleted edges become tombstones before compaction eligibility.

@@ -8,6 +8,8 @@
 - [server/README.md](server/README.md): Axum server contracts.
 - [storage/README.md](storage/README.md): redb storage contracts.
 - [graph/README.md](graph/README.md): graph record contracts.
+- [media/README.md](media/README.md): media storage and HTTP contracts.
+- [resource-orchestration/README.md](resource-orchestration/README.md): resource planner contracts.
 - [history/README.md](history/README.md): event history query contracts.
 - [text/README.md](text/README.md): CRDT text contracts.
 - [social/README.md](social/README.md): social post and feed contracts.

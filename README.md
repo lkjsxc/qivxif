@@ -1,8 +1,11 @@
 # qivxif
 
-qivxif is a browser-first Svelte workspace for graph-shaped knowledge work, offline editing, publishing, social feeds, board composition, and tiled tabs.
+qivxif is a browser-first Svelte workspace for graph-shaped knowledge work,
+offline editing, Graph Map exploration, media handling, publishing, social feeds,
+profiles, admin keys, resource orchestration, and tiled tabs.
 
-Durable truth belongs in [docs/](docs/). Implementation follows the owner docs and may be reshaped freely when the canon changes.
+Durable truth belongs in [docs/](docs/). Implementation follows the owner docs
+and may be reshaped freely when the canon changes.
 
 ## Start Here
 
@@ -14,6 +17,8 @@ Durable truth belongs in [docs/](docs/). Implementation follows the owner docs a
 - [docs/architecture/client/wasm-boundary.md](docs/architecture/client/wasm-boundary.md): Svelte to Rust/WASM boundary.
 - [docs/architecture/client/sqlite-worker.md](docs/architecture/client/sqlite-worker.md): worker-owned SQLite storage.
 - [docs/product/tile-shell/tiled-tabs.md](docs/product/tile-shell/tiled-tabs.md): tile and tab behavior.
+- [docs/product/graph-map/README.md](docs/product/graph-map/README.md): relationship map surface.
+- [docs/product/resource-orchestration/README.md](docs/product/resource-orchestration/README.md): planner UX.
 - [docs/product/doc-impl-audit.md](docs/product/doc-impl-audit.md): contract to implementation audit.
 - [docs/operations/verification/compose-pipeline.md](docs/operations/verification/compose-pipeline.md): acceptance path.
 
@@ -22,8 +27,8 @@ Durable truth belongs in [docs/](docs/). Implementation follows the owner docs a
 - Svelte owns every rendered product UI surface.
 - Rust/WASM owns pure kernels, reducers, row codecs, and browser-host bridge logic.
 - SQLite WASM in a worker owns browser durable state with OPFS as normal storage and explicit memory fallback.
-- The shipped product has no Leptos UI shell, no Dexie path, no fake product data, and no hidden app backend requirement.
-- Optional sync and serving code may exist only behind documented ports and must not leak into Svelte components.
+- The shipped product has no Leptos UI shell, no Dexie path, no invented product data, and no hidden app backend requirement.
+- Optional sync, serving, media, and admin code may exist only behind documented ports and must not leak into Svelte components.
 
 ## Development Rule
 

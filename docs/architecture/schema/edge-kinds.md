@@ -1,11 +1,12 @@
 # Edge Kinds
 
-Edges are first-class durable records. Unknown kinds are rejected by API validation, sync acceptance, and graph reducers.
+Edges are first-class durable records. Unknown kinds are rejected by API
+validation, sync acceptance, and graph reducers.
 
 ## Registry
 
 | Kind | From | To | Purpose |
-| --- | --- | --- | --- |
+| --- | --- | --- |
 | `links_to` | any node | any node | generic user-created link |
 | `contains` | container node | child node | composition or containment |
 | `parent_of` | parent node | child node | tree parent relation |
@@ -22,7 +23,8 @@ Edges are first-class durable records. Unknown kinds are rejected by API validat
 | `follows` | `profile` | `profile` | social follow relation |
 | `mutes` | `profile` | `profile` | one-way home-feed hiding relation |
 | `blocks` | `profile` | `profile` | two-way interaction blocking relation |
-| `placed_on_board` | any node | `graph_board` | board membership |
+| `placed_on_graph_map` | `graph_map_item` | `graph_map` | map membership |
+| `media_attachment` | any node | `media_asset` | attached media relation |
 | `tile_contains_pane` | `tile_layout` | `pane` | layout membership |
 | `pane_views_node` | `pane` | any node | pane target |
 | `supersedes` | replacement node | replaced node | projection replacement relation |
@@ -30,14 +32,14 @@ Edges are first-class durable records. Unknown kinds are rejected by API validat
 
 ## Required Edge Fields
 
-- `id`
-- `from_node`
-- `to_node`
-- `kind`
-- `created_by`
-- `created_at`
-- `metadata_map`
-- `tombstone`
+- `id`.
+- `from_node`.
+- `to_node`.
+- `kind`.
+- `created_by`.
+- `created_at`.
+- `metadata_map`.
+- `tombstone`.
 
 ## Rules
 
@@ -48,7 +50,7 @@ Edges are first-class durable records. Unknown kinds are rejected by API validat
 - Tree projections use explicit relation edges and never hidden child arrays.
 - Edge event owner docs define event-to-event and edge-to-edge relation indexes.
 
-## Tile Layout And Board Metadata
+## Tile Layout Metadata
 
 `tile_contains_pane` metadata:
 
@@ -58,20 +60,26 @@ Edges are first-class durable records. Unknown kinds are rejected by API validat
 
 - `pane_kind`: documented pane kind.
 
-`placed_on_board` metadata:
+## Graph Map Metadata
 
-- `placement_seq`: mirrors the board item placement sequence.
-- `position_key`: deterministic board ordering key when present.
+`placed_on_graph_map` metadata:
 
-`ordered_child` metadata:
+- `placement_seq`: mirrors the graph-map item placement sequence.
+- `position_key`: deterministic map ordering key when present.
 
-- `position_key`: primary deterministic child ordering key.
-- `ordinal`: secondary deterministic child ordering key.
+`contains` metadata for graph-map items:
 
-`contains` metadata for board items:
+- `relation`: `graph_map_item_target`.
 
-- `relation`: `board_item_target`.
+## Media Metadata
 
-`references_text` metadata for publishing:
+`media_attachment` metadata:
+
+- `attachment_kind`: inline, avatar, cover, reference, or download.
+- `caption`: optional user text.
+
+## Publishing Metadata
+
+`references_text` metadata:
 
 - `relation`: `blog_body`.

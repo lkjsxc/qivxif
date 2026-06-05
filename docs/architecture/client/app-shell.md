@@ -8,15 +8,15 @@
 - Check optional sync setup state when the service is reachable.
 - Register service worker.
 - Start sync actor when a session and service are available.
-- Render sync status, settings, diagnostics, graph, editor, board, feed, and
-  publishing as tabs.
+- Render sync status, settings, diagnostics, graph, editor, Graph Map, media,
+  profiles, admin, feed, and publishing as tabs.
 - Install the controller dispatcher that maps typed commands to reducers and effect plans.
 
 ## Rule
 
 The first visible surface is the app shell: one top header and a tile grid. Setup,
-login, sync status, diagnostics, graph, editor, board, social, publishing, and
-history surfaces are tabs.
+login, sync status, diagnostics, graph, editor, Graph Map, media, profiles,
+admin, social, publishing, and history surfaces are tabs.
 
 ## Startup Order
 

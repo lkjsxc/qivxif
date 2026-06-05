@@ -28,7 +28,7 @@
 - `accepted[]` from push clears dirty state for those events.
 - `rejected[]` creates visible conflict or rejection rows.
 - Pull progress updates last applied cursor only after reducers apply.
-- Offline mode increments queued count only after IndexedDB write succeeds.
+- Offline mode increments queued count only after local repository write succeeds.
 
 ## Route Flush Mapping
 

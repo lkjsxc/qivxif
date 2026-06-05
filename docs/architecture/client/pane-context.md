@@ -16,14 +16,15 @@ state left behind by another tab.
 - UI modules derive pane context from the active tab record.
 - Header commands receive the active tab context for that stack.
 - Body commands receive the tab context for the body that rendered them.
-- Actors may use context to override `currentNodeId` or `activeBoardId` for one
-  command.
-- Shared resource caches remain keyed by graph node, text doc, edge, feed, and
-  event IDs.
+- Actors may use context to override `currentNodeId` or `activeGraphMapId` for one command.
+- Shared resource caches remain keyed by graph node, text doc, edge, feed, media,
+  profile, and event ids.
 - Context overrides do not replace durable layout records.
 
 ## Current Mappings
 
 - `text_editor` and `graph_node` set `currentNodeId`.
-- `graph_board` sets `activeBoardId`.
-- Non-resource panes leave resource IDs unchanged.
+- `graph_map` sets `activeGraphMapId`.
+- `profile` sets active profile node id.
+- `media` sets active media asset id.
+- Non-resource panes leave resource ids unchanged.

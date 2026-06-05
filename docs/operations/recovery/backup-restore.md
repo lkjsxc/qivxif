@@ -3,6 +3,6 @@
 ## Rules
 
 - Stop writes before copying the redb file.
-- Include blob chunks with the database.
+- Include media blob directories with the database.
 - Restore runs repair check before server start is considered healthy.
-- Client IndexedDB data is separate from server backup.
+- Browser SQLite and OPFS data are client-local and separate from server backup.

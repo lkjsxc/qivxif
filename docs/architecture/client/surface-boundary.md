@@ -33,10 +33,11 @@ Initial commands include `bootstrap`, `focusPane`, `openNewTab`,
 `convertNewTab`, `closePane`, `splitPane`, `stackTab`, `maximizePane`,
 `restorePane`, `movePane`, `reorderTab`, `resizeSplit`, `createOwner`, `login`,
 `logout`, `createTextNode`, `openNode`, `saveTextDraft`, `saveText`,
-`updatePaneScroll`, `createBoard`, `addCurrentNodeToBoard`, `moveBoardItem`,
-`linkBoardNodes`, `createShortPost`, `followProfile`, `clearSocialEdge`,
-`createBlogDraft`, `publishBlogPost`, `unpublishBlogPost`, `flushSyncQueue`,
-`refreshDiagnostics`, and `toggleCommandPalette`.
+`updatePaneScroll`, `createGraphMap`, `addCurrentNodeToGraphMap`,
+`pinGraphMapNode`, `linkGraphNodes`, `createMediaUpload`, `updateProfile`,
+`issueInvite`, `issueApiKey`, `createShortPost`, `followProfile`,
+`clearSocialEdge`, `createBlogDraft`, `publishBlogPost`, `unpublishBlogPost`,
+`flushSyncQueue`, `refreshDiagnostics`, and `toggleCommandPalette`.
 
 ## AppPorts
 

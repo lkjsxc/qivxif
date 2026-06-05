@@ -2,13 +2,13 @@
 
 ## Contents
 
-- [visual-language.md](visual-language.md): Zed-minimal visual principles.
+- [visual-language.md](visual-language.md): dark minimal visual principles.
 - [tokens.md](tokens.md): CSS variable and typography contract.
 - [components.md](components.md): shell and control component specs.
 - [tab-surfaces.md](tab-surfaces.md): per-tab product surface layout rules.
 - [reference-patterns.md](reference-patterns.md): borrowed interaction and surface patterns.
 - [surfaces-feed.md](surfaces-feed.md): feed and social card layout.
-- [surfaces-editor.md](surfaces-editor.md): textarea editor layout.
+- [surfaces-editor.md](surfaces-editor.md): editor surface layout.
 - [motion-and-drag.md](motion-and-drag.md): drag classes, thresholds, drop layer vars.
 
 ## Scope
@@ -19,5 +19,5 @@ This tree owns qivxif visible design. Interaction grammar remains in
 ## References
 
 - **lkjstr**: layout density, pane fit, tab rail behavior, drag grammar.
-- **Zed**: near-black surfaces, sharp radii, muted accents, dense chrome.
+- qivxif palette: near-black surfaces, sharp radii, muted accents, dense chrome.
 - Do not copy lkjstr palette or Nostr-specific tools.

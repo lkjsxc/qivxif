@@ -15,7 +15,7 @@ The app shell owns setup state:
 2. Call `GET /api/setup`.
 3. If setup is required, activate Setup and skip login-only actions.
 4. Fetch server info when reachable.
-5. Open IndexedDB.
+5. Open the SQLite worker repository boundary.
 6. Register the service worker.
 7. Start sync when setup or login state allows it.
 

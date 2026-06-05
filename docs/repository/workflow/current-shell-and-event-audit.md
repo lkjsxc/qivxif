@@ -24,7 +24,7 @@ Do not restore DOM-only shell modules as canon.
   subscribers; effects implement IO and reducers stay pure in `domain/`.
 - SvelteKit client ships under `apps/qivxif-web/src/lib/` with workspace shell, product
   surfaces, and Vite `dist/` output consumed by `qivxif-server`.
-- IndexedDB stores include `local_workspace`, `dirty_events`, `accepted_events`,
+- Browser SQLite tables include `local_workspace`, `dirty_events`, `accepted_events`,
   `tab_snapshots`, and `sync_cursors`.
 
 ## Residual Gaps

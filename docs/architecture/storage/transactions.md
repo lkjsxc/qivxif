@@ -24,6 +24,8 @@
 - `node.create` writes event and node in one transaction.
 - `edge.create` writes event, edge, endpoint indexes, and target indexes in one transaction.
 - `text.insert` and `text.delete` write event and text projection in one transaction.
+- `profile.update` writes event and profile projection in one transaction.
+- Media upload completion writes event, media metadata, chunk indexes, and graph node in one transaction.
 - Feed index updates happen in the same transaction as the event that creates feed visibility.
 - Sync pull is read-only and must pass auth context into the store before event envelopes leave storage.
 

@@ -13,4 +13,4 @@ This directory owns durable event contracts.
 ## Rule
 
 Events are durable facts. Nodes, edges, tile layouts, feeds, text projections,
-and board views are projections of accepted events.
+and Graph Map views are projections of accepted events.
